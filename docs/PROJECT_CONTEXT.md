@@ -74,13 +74,15 @@ musical category.
 
 ## Present boundary
 
-The raw and Java-resolved inventories are frozen evidence. The current task is
-the reporting-only Phase 3 review gate: it measures unique impact, reconciles
-the resolved census, and produces deterministic review samples without
-classifying objects or changing the snapshot. It does not settle the
-functional taxonomy, select the Phase 4 core set, define the final Schuss graph
-schema, implement a GUI, replace firmware, or create a new compiler frontend.
-See `docs/tasks/002-phase-3-inventory-review-gate.md` for the exact contract.
+The raw and Java-resolved inventories and the Phase 3 review packet are
+accepted frozen evidence with documented limitations. The current task is
+Phase 4A: define a separate versioned family/implementation overlay, an actual
+draft functional taxonomy, and a manually reviewed 20-30-family pilot. It does
+not classify the full census, select the complete reviewed core, define the
+final Schuss graph or Gills contracts, implement a GUI or CLI, replace
+firmware, or create a compiler frontend. See
+`docs/tasks/003-phase-4a-semantic-catalog-foundation.md` for the exact
+contract.
 
 ## Terminology
 
@@ -91,5 +93,8 @@ See `docs/tasks/002-phase-3-inventory-review-gate.md` for the exact contract.
 | Ksoloti Core | The initial compute target |
 | Legacy bridge | The isolated adapter around the Ksoloti Java model and tools |
 | Object | A graph node type with a stable identity and explicit facets |
+| Family | The category-independent item a musician discovers in the catalog |
+| Implementation | A backend-selectable component belonging to a family |
+| Legacy observation | A snapshot-scoped evidence record, not a Schuss ID |
 | Compound | A reusable graph presented as one object without hiding internals |
 | Instrument | A musical contract that maps a device profile onto behavior and a DSP graph |

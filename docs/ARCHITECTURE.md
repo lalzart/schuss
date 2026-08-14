@@ -85,6 +85,14 @@ The inventory pipeline is deliberately staged:
    ports, parameters, attributes, displays, dependencies, and diagnostics;
 4. curate function and preferred presentation later.
 
+Phase 4A adds a separate semantic overlay with the identity progression
+`legacy observation -> implementation variant -> user-facing family`.
+Snapshot-scoped legacy references remain evidence locators. Opaque family and
+implementation IDs are independent of category, provenance, source path, and
+display name. Families own drawer presentation; implementations own legacy
+membership, backend/target compatibility evidence, and preferred selection.
+See `docs/SEMANTIC_CATALOG.md`.
+
 ## Operation boundary
 
 The future headless model will expose the same typed operations to GUI, CLI,

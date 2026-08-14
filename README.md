@@ -12,7 +12,7 @@ one compatibility backend.
 
 ## Current status
 
-Schuss is at the inventory and architecture-foundation stage:
+Schuss is at the Phase 4A semantic-catalog foundation stage:
 
 - the project boundaries and terminology are documented;
 - upstream sources are pinned without committing machine-local paths;
@@ -22,8 +22,12 @@ Schuss is at the inventory and architecture-foundation stage:
   independently validated snapshot;
 - a deterministic Phase 3 review packet quantifies unique taxonomy, migration,
   and compilation-readiness impact without changing that snapshot;
-- functional taxonomy and manual core-library curation is the next phase after
-  review of that packet;
+- the Phase 3 evidence and review packet are accepted and frozen with their
+  documented limitations;
+- a separate versioned overlay now defines family and implementation identity,
+  the draft functional taxonomy, and a manually reviewed 26-family pilot;
+- Phase 4A validation is the current task; complete-census classification and
+  the 150-250-family reviewed core are later work;
 - no Schuss graph editor, compiler frontend, device runtime, or desktop app is
   implemented yet.
 
@@ -41,6 +45,8 @@ python3 tools/inventory/validate_resolved_inventory.py \
   catalog/snapshots/legacy-resolved-catalog-v0
 python3 tools/inventory/validate_phase3_review_packet.py \
   catalog/reviews/phase-3-inventory-review-v0
+python3 tools/catalog/validate_semantic_catalog.py \
+  catalog/overlays/phase-4a-semantic-catalog-v0
 ```
 
 The raw snapshot records 4,209 candidate files and two retained XML parse
@@ -57,7 +63,8 @@ connected hardware, or audible behavior.
 | `docs/` | Project context, architecture, decisions, and bounded tasks |
 | `schemas/` | Versioned machine-readable contracts that already exist |
 | `tools/inventory/` | Raw and Java-resolved inventory tooling |
-| `catalog/` | Source locks, frozen snapshots, and derived review packets |
+| `tools/catalog/` | Semantic-overlay validation tooling |
+| `catalog/` | Source locks, frozen evidence, reviews, and semantic overlays |
 | `legacy/ksoloti-bridge/` | Isolated Ksoloti Java compatibility work |
 | `packages/` | Future headless model, compiler, and CLI packages |
 | `apps/` | Future user-facing applications |

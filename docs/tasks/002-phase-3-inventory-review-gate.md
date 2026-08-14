@@ -1,7 +1,7 @@
 # Task 002: Phase 3 inventory review gate
 
-Status: review. The packet is generated and all mechanical acceptance tests
-pass; human review of the impact policy and samples remains.
+Status: complete. The packet passed its mechanical gates and its documented
+limitations were accepted for Phase 4A in ADR 0004.
 
 Read `AGENTS.md`, `docs/PROJECT_CONTEXT.md`, `docs/ARCHITECTURE.md`,
 `docs/TAXONOMY.md`, `docs/LEGACY_STRATEGY.md`,
@@ -182,3 +182,10 @@ invalid, uncompilable, or musically unsuitable.
 
 No snapshot or upstream file changed, and neither the frozen snapshot nor the
 review packet contains a detected machine-specific absolute path.
+
+## Human review conclusion
+
+The review gate is accepted. The packet is sufficient frozen input for a
+separate semantic overlay; its partial, ambiguous, overloaded, provider-only,
+zombie, failed, and unresolved records remain evidence limitations that later
+work must preserve rather than silently repair.

@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "semantic-catalog-overlay-v0.schema.json",
+  "type": "object",
+  "required": ["schema_version", "overlay_id", "taxonomy_version", "legacy_evidence", "controlled_vocabulary", "families", "implementations"],
+  "properties": {
+    "schema_version": {"const": "semantic-catalog-overlay-v0"},
+    "overlay_id": {"const": "phase-4a-semantic-catalog-v0"},
+    "taxonomy_version": {"const": "semantic-taxonomy-v0"},
+    "legacy_evidence": {
+      "type": "object",
+      "required": ["snapshot_schema_version", "manifest_sha256"],
+      "properties": {
+        "snapshot_schema_version": {"const": "legacy-resolved-catalog-v0"},
+        "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "controlled_vocabulary": {
+      "type": "object",
+      "required": ["primary_categories", "secondary_function_tags", "abstraction_levels", "implementation_forms"],
+      "properties": {
+        "primary_categories": {"type": "array", "minItems": 13, "uniqueItems": true, "items": {"$ref": "#/$defs/primaryCategory"}},
+        "secondary_function_tags": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/functionTag"}},
+        "abstraction_levels": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"enum": ["primitive", "compound", "instrument"]}},
+        "implementation_forms": {"type": "array", "minItems": 5, "uniqueItems": true, "items": {"enum": ["native-object", "generated-object", "legacy-subpatch", "service", "example"]}}
+      },
+      "additionalProperties": false
+    },
+    "families": {"type": "array", "minItems": 20, "maxItems": 30, "items": {"$ref": "#/$defs/family"}},
+    "implementations": {"type": "array", "minItems": 20, "items": {"$ref": "#/$defs/implementation"}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "familyId": {"type": "string", "pattern": "^schuss-family-[0-9]{6}$"},
+    "implementationId": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"},
+    "evidenceRef": {"type": "string", "pattern": "^legacy-resolved-catalog-v0:(object|graph):[0-9]+$"},
+    "confidence": {"enum": ["high", "medium", "low"]},
+    "reviewStatus": {"enum": ["pilot-reviewed", "needs-review", "deferred"]},
+    "primaryCategory": {
+      "enum": [
+        "input-output", "sound-sources", "sampling-buffers", "modulation-control",
+        "filters-resonators", "shaping-dynamics", "delay-reverb", "spectral-analysis",
+        "mixing-routing", "pitch-notes", "timing-sequencing", "data-math-logic",
+        "interface-system"
+      ]
+    },
+    "functionTag": {
+      "enum": [
+        "algorithmic-sequencing", "audio-input", "audio-output", "boolean-logic",
+        "buffer-recording", "clock-generation", "compression", "crossfade",
+        "device-display", "distortion", "envelope-generation", "feedback-delay",
+        "granular-processing", "hardware-input", "low-frequency-modulation",
+        "mathematical-arithmetic", "mixing", "noise-generation",
+        "note-frequency-conversion", "oscillation", "physical-modeling", "resonance",
+        "scale-quantization", "spectral-display", "spectral-transform", "step-sequencing",
+        "time-processing", "variable-filtering", "waveform-shaping"
+      ]
+    },
+    "question": {
+      "type": "object",
+      "required": ["code", "affects", "question"],
+      "properties": {
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "affects": {"enum": ["classification", "membership", "compatibility", "presentation"]},
+        "question": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "family": {
+      "type": "object",
+      "required": [
+        "schema_version", "family_id", "display_name", "aliases", "description",
+        "primary_category", "secondary_function_tags", "abstraction_level",
+        "review_status", "classification_confidence", "classification_rationale",
+        "selection_status", "unresolved_questions"
+      ],
+      "properties": {
+        "schema_version": {"const": "semantic-catalog-family-v0"},
+        "family_id": {"$ref": "#/$defs/familyId"},
+        "display_name": {"type": "string", "minLength": 1},
+        "aliases": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "description": {"type": "string", "minLength": 1},
+        "primary_category": {"$ref": "#/$defs/primaryCategory"},
+        "secondary_function_tags": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/functionTag"}},
+        "abstraction_level": {"enum": ["primitive", "compound", "instrument"]},
+        "review_status": {"$ref": "#/$defs/reviewStatus"},
+        "classification_confidence": {"$ref": "#/$defs/confidence"},
+        "classification_rationale": {"type": "string", "minLength": 1},
+        "selection_status": {
+          "type": "object",
+          "required": ["pilot", "core_status"],
+          "properties": {
+            "pilot": {"const": true},
+            "core_status": {"enum": ["candidate", "not-evaluated", "deferred"]}
+          },
+          "additionalProperties": false
+        },
+        "unresolved_questions": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/question"}}
+      },
+      "additionalProperties": false
+    },
+    "provenanceRef": {
+      "type": "object",
+      "required": ["source_id", "evidence_ref"],
+      "properties": {
+        "source_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "evidence_ref": {"$ref": "#/$defs/evidenceRef"}
+      },
+      "additionalProperties": false
+    },
+    "compatibilityEvidence": {
+      "type": "object",
+      "required": ["target_id", "backend_id", "status", "evidence_level", "evidence_refs", "rationale"],
+      "properties": {
+        "target_id": {"const": "ksoloti-core"},
+        "backend_id": {"const": "legacy-ksoloti"},
+        "status": {"const": "not-evaluated"},
+        "evidence_level": {"const": "legacy-resolved-export"},
+        "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/evidenceRef"}},
+        "rationale": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "implementation": {
+      "type": "object",
+      "required": [
+        "schema_version", "implementation_id", "family_id", "display_name", "form",
+        "legacy_evidence_refs", "provenance_refs", "compatibility_evidence",
+        "review_status", "membership_confidence", "membership_rationale",
+        "preferred_status", "unresolved_questions"
+      ],
+      "properties": {
+        "schema_version": {"const": "semantic-catalog-implementation-v0"},
+        "implementation_id": {"$ref": "#/$defs/implementationId"},
+        "family_id": {"$ref": "#/$defs/familyId"},
+        "display_name": {"type": "string", "minLength": 1},
+        "form": {"enum": ["native-object", "generated-object", "legacy-subpatch", "service", "example"]},
+        "legacy_evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/evidenceRef"}},
+        "provenance_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/provenanceRef"}},
+        "compatibility_evidence": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/compatibilityEvidence"}},
+        "review_status": {"$ref": "#/$defs/reviewStatus"},
+        "membership_confidence": {"$ref": "#/$defs/confidence"},
+        "membership_rationale": {"type": "string", "minLength": 1},
+        "preferred_status": {"enum": ["preferred", "alternate", "not-evaluated"]},
+        "unresolved_questions": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/question"}}
+      },
+      "additionalProperties": false
+    }
+  }
+}
