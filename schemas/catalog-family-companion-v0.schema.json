@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catalog-family-companion-v0.schema.json",
+  "title": "Schuss catalog family companion v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "family_id",
+    "revision",
+    "content_hash",
+    "source_member",
+    "migration"
+  ],
+  "properties": {
+    "schema_version": {"const": "catalog-family-companion-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "family_id": {"$ref": "#/$defs/familyId"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "source_member": {"$ref": "#/$defs/sourceMember"},
+    "migration": {"$ref": "#/$defs/migration"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "familyId": {
+      "type": "string",
+      "pattern": "^schuss-family-[0-9]{6}$"
+    },
+    "contentHash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "rawSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sourceMember": {
+      "type": "object",
+      "required": [
+        "overlay_id",
+        "overlay_schema_version",
+        "overlay_sha256",
+        "family_schema_version",
+        "family_id",
+        "canonical_member_sha256",
+        "legacy_manifest_sha256"
+      ],
+      "properties": {
+        "overlay_id": {"const": "phase-4a-semantic-catalog-v0"},
+        "overlay_schema_version": {"const": "semantic-catalog-overlay-v0"},
+        "overlay_sha256": {"$ref": "#/$defs/rawSha256"},
+        "family_schema_version": {"const": "semantic-catalog-family-v0"},
+        "family_id": {"$ref": "#/$defs/familyId"},
+        "canonical_member_sha256": {"$ref": "#/$defs/rawSha256"},
+        "legacy_manifest_sha256": {"$ref": "#/$defs/rawSha256"}
+      },
+      "additionalProperties": false
+    },
+    "migration": {
+      "type": "object",
+      "required": ["semantics_changed", "projection", "rationale"],
+      "properties": {
+        "semantics_changed": {"const": false},
+        "projection": {"const": "identity-only"},
+        "rationale": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

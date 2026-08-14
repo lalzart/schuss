@@ -86,10 +86,11 @@ performance mappings, and presentation. It references a device profile and a
 DSP graph but remains distinguishable from both. Multiple device mappings may
 eventually present one instrument, and multiple targets may execute it.
 
-Until Task 006 supplies an authoritative graph schema and resolver, the v0
-instrument contract uses a closed deferred graph-reference branch without a
-fabricated content hash. Its declared graph targets prove only internal
-mapping consistency, never graph existence or resolution.
+The Task 005 instrument revision 1 retains its closed deferred graph-reference
+branch without a fabricated content hash. Task 006 instrument revision 2 uses
+the same `instrument-v0` schema to reference the authoritative graph by exact
+ID, revision, and content hash. Resolution passes only through the accepted
+graph registry and exact public target kind/domain checks.
 
 ### DSP graph
 

@@ -11,9 +11,9 @@ into transparent, typed Schuss models.
 | 3 review gate | Deterministic inventory review and impact packet | Complete; accepted frozen evidence |
 | 4A | Versioned semantic overlay and 20-30-family pilot | Complete |
 | 4 contract gate | Schema ownership, compiler stages, and evidence separation | Complete; accepted Task 004 architecture |
-| 5 | Minimal Gills device-profile and instrument schemas | Complete; current Task 005 contract gate |
-| 6 | Component-contract, implementation-binding, and DSP-graph schemas | Next bounded task |
-| 7 | Compute-target, backend-capability, build, artifact, and evidence schemas | Planned |
+| 5 | Minimal Gills device-profile and instrument schemas | Complete |
+| 6 | Component-contract, implementation-binding, and DSP-graph schemas | Complete; current Task 006 contract gate |
+| 7 | Compute-target, backend-capability, build, artifact, and evidence schemas | Next bounded task |
 | 8 | Shared headless validation and typed operation layer | Planned |
 | 9 | One minimal graph through the legacy `.axp` adapter and ARM compiler/linker | Planned |
 | 10 | Deterministic structured CLI over shared operations | Planned |
@@ -37,14 +37,16 @@ define the family/contract/binding boundary, one-way references, compiler
 stages, and build-evidence separation without implementing schemas or code
 generation.
 
-Task 005 is complete. It adds only minimal Gills device-profile and instrument
-schemas, fixtures, canonical hashing, and a read-only validator, including one
-knob-to-`blend` mapping and one `blend`-to-deferred-graph-target mapping. It
-does not define graph nodes, component contracts, bindings, targets, backends,
-operations, firmware, GUI/CLI, or compilation. Task 006 is next: it should add
-the component-contract, implementation-binding, and DSP-graph schemas needed
-to resolve that deferred target. The completed boundary is in
-`docs/DEVICE_INSTRUMENT_CONTRACTS.md`.
+Tasks 005 and 006 are complete. Task 005 adds the minimal Gills device-profile
+and instrument boundary. Task 006 adds the exact Crossfader family companion,
+three component signatures and legacy seam maps, the authoritative one-node
+`blend` graph, transparent-compound validation, and exactly resolved
+instrument revision 2 while retaining revision 1. It does not define targets,
+backends, builds, operations, firmware, GUI/CLI, or compilation. Task 007 is
+next and is limited to compute-target, backend-capability, build, artifact,
+resource, and evidence contracts. The completed boundaries are in
+`docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
+`docs/COMPONENT_GRAPH_CONTRACTS.md`.
 
 ## Contract sequence constraints
 

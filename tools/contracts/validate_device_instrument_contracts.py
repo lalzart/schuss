@@ -655,6 +655,10 @@ def _validate_instrument_semantics(
     instrument: dict[str, Any],
     devices_by_exact_ref: dict[tuple[str, int, str], dict[str, Any]],
     diagnostics: list[Diagnostic],
+    graph_targets_by_exact_ref: dict[
+        tuple[str, int, str], dict[str, dict[str, Any]]
+    ]
+    | None = None,
 ) -> None:
     subject = _record_subject(instrument)
     facets = _instrument_facet_maps(instrument)
@@ -701,13 +705,26 @@ def _validate_instrument_semantics(
     graph_reference = instrument["graph_reference"]
     graph_targets: dict[str, dict[str, Any]] = {}
     if graph_reference["status"] == "resolved":
-        _diagnostic(
-            diagnostics,
-            "GRAPH_RESOLUTION_UNAVAILABLE",
-            subject,
-            "$.graph_reference.status",
-            "instrument-v0 has no accepted Task 006 graph resolver",
+        graph_key = (
+            graph_reference["graph_id"],
+            graph_reference["revision"],
+            graph_reference["content_hash"],
         )
+        resolved_targets = (
+            graph_targets_by_exact_ref.get(graph_key)
+            if graph_targets_by_exact_ref is not None
+            else None
+        )
+        if resolved_targets is None:
+            _diagnostic(
+                diagnostics,
+                "GRAPH_RESOLUTION_UNAVAILABLE",
+                subject,
+                "$.graph_reference",
+                "the exact graph tuple did not resolve through an accepted graph registry",
+            )
+        else:
+            graph_targets = resolved_targets
     else:
         for target in graph_reference["declared_targets"]:
             if target["facet_id"] in graph_targets:
@@ -874,6 +891,18 @@ def _validate_instrument_semantics(
                 f"{location}.destination",
                 "graph target facet kind disagrees with the deferred declaration",
             )
+        elif (
+            mapping["mapping_kind"] != "action-to-action"
+            and "domain" in target
+            and mapping["destination_domain"] != target["domain"]
+        ):
+            _diagnostic(
+                diagnostics,
+                "MAPPING_DOMAIN_REDEFINITION",
+                subject,
+                f"{location}.destination_domain",
+                "graph mapping destination domain differs from the resolved graph facet domain",
+            )
         expected_destination_kind = {
             "parameter-to-parameter": "parameter",
             "parameter-to-port": "port",
@@ -955,6 +984,10 @@ def validate_contract_values(
     instrument_records: list[dict[str, Any]],
     device_schema: dict[str, Any],
     instrument_schema: dict[str, Any],
+    graph_targets_by_exact_ref: dict[
+        tuple[str, int, str], dict[str, dict[str, Any]]
+    ]
+    | None = None,
 ) -> dict[str, Any]:
     """Validate records and return one deterministic structured summary."""
 
@@ -1015,7 +1048,12 @@ def validate_contract_values(
         if record["content_hash"] == record_content_hash(record, device_schema)
     }
     for instrument in structurally_valid_instruments:
-        _validate_instrument_semantics(instrument, devices_by_exact_ref, diagnostics)
+        _validate_instrument_semantics(
+            instrument,
+            devices_by_exact_ref,
+            diagnostics,
+            graph_targets_by_exact_ref,
+        )
 
     diagnostics = sorted(
         set(diagnostics),
@@ -1025,6 +1063,16 @@ def validate_contract_values(
     deferred_graph_count = sum(
         record.get("graph_reference", {}).get("status") == "deferred"
         for record in structurally_valid_instruments
+    )
+    resolved_graph_count = sum(
+        (
+            record["graph_reference"]["graph_id"],
+            record["graph_reference"]["revision"],
+            record["graph_reference"]["content_hash"],
+        )
+        in (graph_targets_by_exact_ref or {})
+        for record in structurally_valid_instruments
+        if record.get("graph_reference", {}).get("status") == "resolved"
     )
     resolved_device_count = sum(
         (
@@ -1051,11 +1099,22 @@ def validate_contract_values(
         "reference_resolution": {
             "device_profiles_resolved": resolved_device_count,
             "graphs_deferred": deferred_graph_count,
-            "graphs_resolved": 0,
+            "graphs_resolved": resolved_graph_count,
         },
         "evidence_levels": [
             {"level": "structural-schema", "status": "failed" if error_count else "passed"},
-            {"level": "component-graph-resolution", "status": graph_resolution_status},
+            {
+                "level": "component-graph-resolution",
+                "status": (
+                    "failed"
+                    if error_count
+                    else "deferred"
+                    if deferred_graph_count
+                    else "passed"
+                    if resolved_graph_count
+                    else graph_resolution_status
+                ),
+            },
             {"level": "backend-lowering", "status": "not-run"},
             {"level": "artifact-generation", "status": "not-run"},
             {"level": "arm-compile-link", "status": "not-run"},
@@ -1077,7 +1136,26 @@ def validate_contract_directory(contract_root: Path, schema_root: Path) -> dict[
     instrument_schema = load_json(schema_root / INSTRUMENT_SCHEMA_NAME)
     devices = [load_json(path) for path in _record_files(contract_root, "device-profiles")]
     instruments = [load_json(path) for path in _record_files(contract_root, "instruments")]
-    return validate_contract_values(devices, instruments, device_schema, instrument_schema)
+    graph_targets = None
+    if (contract_root / "graphs").is_dir():
+        # Task 006 extends this entry point without changing the Task 005 value API:
+        # resolved graph references are checked through the accepted graph registry,
+        # while historical deferred references keep their closed local declarations.
+        import validate_component_graph_contracts as component_graphs
+
+        repository_root = Path(__file__).resolve().parents[2]
+        graph_targets = component_graphs.get_validated_graph_target_registry(
+            contract_root,
+            schema_root,
+            repository_root,
+        )
+    return validate_contract_values(
+        devices,
+        instruments,
+        device_schema,
+        instrument_schema,
+        graph_targets,
+    )
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:

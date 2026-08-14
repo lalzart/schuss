@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "implementation-binding-v0.schema.json",
+  "title": "Schuss implementation binding v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "implementation_id",
+    "revision",
+    "content_hash",
+    "contract_reference",
+    "realization",
+    "facet_mappings",
+    "observed_dependencies",
+    "private_state",
+    "selection_state",
+    "evidence_refs"
+  ],
+  "properties": {
+    "schema_version": {"const": "implementation-binding-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "implementation_id": {"$ref": "#/$defs/implementationId"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "contract_reference": {"$ref": "#/$defs/componentContractReference"},
+    "realization": {"$ref": "#/$defs/realization"},
+    "facet_mappings": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/facetMapping"}
+    },
+    "observed_dependencies": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/dependency"}
+    },
+    "private_state": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/privateState"}
+    },
+    "selection_state": {"$ref": "#/$defs/selectionState"},
+    "evidence_refs": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/evidenceRef"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "implementationId": {
+      "type": "string",
+      "pattern": "^schuss-implementation-[0-9]{6}$"
+    },
+    "componentContractId": {
+      "type": "string",
+      "pattern": "^schuss-component-contract-[0-9]{6}$"
+    },
+    "graphId": {
+      "type": "string",
+      "pattern": "^schuss-graph-[0-9]{6}$"
+    },
+    "contentHash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "rawSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "evidenceRef": {
+      "type": "string",
+      "pattern": "^(?:legacy-resolved-catalog-v0:(?:object|graph):[0-9]+|fixture:[a-z][a-z0-9-]*)$"
+    },
+    "componentContractReference": {
+      "type": "object",
+      "required": ["component_contract_id", "revision", "content_hash"],
+      "properties": {
+        "component_contract_id": {"$ref": "#/$defs/componentContractId"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "graphReference": {
+      "type": "object",
+      "required": ["graph_id", "revision", "content_hash"],
+      "properties": {
+        "graph_id": {"$ref": "#/$defs/graphId"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "legacyObservation": {
+      "type": "object",
+      "required": [
+        "snapshot_schema_version",
+        "manifest_sha256",
+        "evidence_ref",
+        "variant_index",
+        "legacy_uuid",
+        "source_id",
+        "source_sha256"
+      ],
+      "properties": {
+        "snapshot_schema_version": {"const": "legacy-resolved-catalog-v0"},
+        "manifest_sha256": {"$ref": "#/$defs/rawSha256"},
+        "evidence_ref": {"$ref": "#/$defs/evidenceRef"},
+        "variant_index": {"type": "integer", "minimum": 0},
+        "legacy_uuid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "source_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "source_sha256": {"$ref": "#/$defs/rawSha256"}
+      },
+      "additionalProperties": false
+    },
+    "legacyRealization": {
+      "type": "object",
+      "required": ["form", "observation"],
+      "properties": {
+        "form": {"enum": ["generated-legacy-object", "legacy-native-object", "legacy-subpatch"]},
+        "observation": {"$ref": "#/$defs/legacyObservation"}
+      },
+      "additionalProperties": false
+    },
+    "transparentCompoundRealization": {
+      "type": "object",
+      "required": ["form", "graph_reference"],
+      "properties": {
+        "form": {"const": "transparent-compound"},
+        "graph_reference": {"$ref": "#/$defs/graphReference"}
+      },
+      "additionalProperties": false
+    },
+    "nativeRealization": {
+      "type": "object",
+      "required": ["form", "portable_symbol"],
+      "properties": {
+        "form": {"const": "native-cpp"},
+        "portable_symbol": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_:]*$"}
+      },
+      "additionalProperties": false
+    },
+    "serviceRealization": {
+      "type": "object",
+      "required": ["form", "service_key"],
+      "properties": {
+        "form": {"const": "target-service"},
+        "service_key": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
+      },
+      "additionalProperties": false
+    },
+    "realization": {
+      "oneOf": [
+        {"$ref": "#/$defs/legacyRealization"},
+        {"$ref": "#/$defs/transparentCompoundRealization"},
+        {"$ref": "#/$defs/nativeRealization"},
+        {"$ref": "#/$defs/serviceRealization"}
+      ]
+    },
+    "contractFacet": {
+      "type": "object",
+      "required": ["facet_kind", "facet_id"],
+      "properties": {
+        "facet_kind": {"enum": ["port", "parameter", "attribute", "action", "display"]},
+        "facet_id": {
+          "type": "string",
+          "pattern": "^component-(port|parameter|attribute|action|display)-[0-9]{6}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "legacySeam": {
+      "type": "object",
+      "required": ["seam_kind", "index", "name", "legacy_type", "data_type"],
+      "properties": {
+        "seam_kind": {
+          "enum": [
+            "legacy-inlet",
+            "legacy-outlet",
+            "legacy-parameter",
+            "legacy-attribute",
+            "legacy-action",
+            "legacy-display"
+          ]
+        },
+        "index": {"type": "integer", "minimum": 0},
+        "name": {"type": "string", "minLength": 1},
+        "legacy_type": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_.]*$"},
+        "data_type": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_.]*$"}
+      },
+      "additionalProperties": false
+    },
+    "graphMappingKeySeam": {
+      "type": "object",
+      "required": ["seam_kind", "mapping_key"],
+      "properties": {
+        "seam_kind": {"const": "graph-mapping-key"},
+        "mapping_key": {"type": "string", "pattern": "^compound-mapping-key-[0-9]{6}$"}
+      },
+      "additionalProperties": false
+    },
+    "portableSymbolSeam": {
+      "type": "object",
+      "required": ["seam_kind", "symbol"],
+      "properties": {
+        "seam_kind": {"enum": ["native-symbol", "service-endpoint"]},
+        "symbol": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_:.-]*$"}
+      },
+      "additionalProperties": false
+    },
+    "implementationSeam": {
+      "oneOf": [
+        {"$ref": "#/$defs/legacySeam"},
+        {"$ref": "#/$defs/graphMappingKeySeam"},
+        {"$ref": "#/$defs/portableSymbolSeam"}
+      ]
+    },
+    "facetMapping": {
+      "type": "object",
+      "required": ["mapping_id", "contract_facet", "implementation_seam"],
+      "properties": {
+        "mapping_id": {"type": "string", "pattern": "^binding-map-[0-9]{6}$"},
+        "contract_facet": {"$ref": "#/$defs/contractFacet"},
+        "implementation_seam": {"$ref": "#/$defs/implementationSeam"}
+      },
+      "additionalProperties": false
+    },
+    "dependency": {
+      "type": "object",
+      "required": ["dependency_id", "evidence_ref"],
+      "properties": {
+        "dependency_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "evidence_ref": {"$ref": "#/$defs/evidenceRef"}
+      },
+      "additionalProperties": false
+    },
+    "privateState": {
+      "type": "object",
+      "required": ["state_key", "value_kind"],
+      "properties": {
+        "state_key": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "value_kind": {"enum": ["integer", "fixed-point", "bytes", "structured"]}
+      },
+      "additionalProperties": false
+    },
+    "selectionState": {
+      "type": "object",
+      "required": ["status", "owner", "reason", "rationale"],
+      "properties": {
+        "status": {"const": "not-evaluated"},
+        "owner": {"const": "task-007"},
+        "reason": {"const": "target-backend-contracts-not-yet-implemented"},
+        "rationale": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

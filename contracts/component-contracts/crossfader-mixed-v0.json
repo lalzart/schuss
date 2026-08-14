@@ -1,0 +1,97 @@
+{
+  "schema_version": "component-contract-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "component_contract_id": "schuss-component-contract-000003",
+  "revision": 1,
+  "content_hash": "sha256:96a29faf58769be5f2ac52de07aa80cae3dcdff28f0f3c158fb1fd12cc234a8d",
+  "family_reference": {
+    "family_id": "schuss-family-000018",
+    "revision": 1,
+    "content_hash": "sha256:710afad6b087d18fb949b9749c9e9dc63d4fd26e94800369d437d90d956eed8d"
+  },
+  "display_name": "Audio-rate crossfader with control-rate fade",
+  "ports": [
+    {
+      "facet_id": "component-port-000001",
+      "semantic_key": "a",
+      "display_label": "A",
+      "direction": "inlet",
+      "port_type": {
+        "domain": "stream",
+        "rate": "audio",
+        "channel_shape": {"kind": "fixed", "count": 1},
+        "cardinality": {"minimum_connections": 1, "maximum_connections": 1},
+        "semantic_role": "audio",
+        "representation": {"kind": "fixed-point", "signed": true, "width_bits": 32, "fractional_bits": 27, "encoding": "twos-complement-binary"},
+        "unit": "normalized",
+        "valid_range": {"status": "known", "minimum": "-1", "maximum": "1", "minimum_inclusive": true, "maximum_inclusive": true, "overflow_policy": "reject"},
+        "optionality": {"status": "required", "absence_behavior": "invalid"},
+        "ownership": {"status": "defined", "owner": "scheduler", "mutability": "immutable-to-consumer", "borrowing": "borrowed", "lifetime": "audio-block", "capacity": "rate-defined", "synchronization": "single-scheduler", "aliasing": "read-only-aliases-allowed"}
+      }
+    },
+    {
+      "facet_id": "component-port-000002",
+      "semantic_key": "b",
+      "display_label": "B",
+      "direction": "inlet",
+      "port_type": {
+        "domain": "stream",
+        "rate": "audio",
+        "channel_shape": {"kind": "fixed", "count": 1},
+        "cardinality": {"minimum_connections": 1, "maximum_connections": 1},
+        "semantic_role": "audio",
+        "representation": {"kind": "fixed-point", "signed": true, "width_bits": 32, "fractional_bits": 27, "encoding": "twos-complement-binary"},
+        "unit": "normalized",
+        "valid_range": {"status": "known", "minimum": "-1", "maximum": "1", "minimum_inclusive": true, "maximum_inclusive": true, "overflow_policy": "reject"},
+        "optionality": {"status": "required", "absence_behavior": "invalid"},
+        "ownership": {"status": "defined", "owner": "scheduler", "mutability": "immutable-to-consumer", "borrowing": "borrowed", "lifetime": "audio-block", "capacity": "rate-defined", "synchronization": "single-scheduler", "aliasing": "read-only-aliases-allowed"}
+      }
+    },
+    {
+      "facet_id": "component-port-000003",
+      "semantic_key": "fade",
+      "display_label": "Fade",
+      "direction": "inlet",
+      "port_type": {
+        "domain": "stream",
+        "rate": "control",
+        "channel_shape": {"kind": "fixed", "count": 1},
+        "cardinality": {"minimum_connections": 1, "maximum_connections": 1},
+        "semantic_role": "crossfade-position",
+        "representation": {"kind": "fixed-point", "signed": true, "width_bits": 32, "fractional_bits": 27, "encoding": "twos-complement-binary"},
+        "unit": "normalized",
+        "valid_range": {"status": "known", "minimum": "0", "maximum": "1", "minimum_inclusive": true, "maximum_inclusive": true, "overflow_policy": "reject"},
+        "optionality": {"status": "required", "absence_behavior": "invalid"},
+        "ownership": {"status": "defined", "owner": "scheduler", "mutability": "immutable-to-consumer", "borrowing": "borrowed", "lifetime": "control-cycle", "capacity": "single-value", "synchronization": "single-scheduler", "aliasing": "read-only-aliases-allowed"}
+      }
+    },
+    {
+      "facet_id": "component-port-000004",
+      "semantic_key": "out",
+      "display_label": "Out",
+      "direction": "outlet",
+      "port_type": {
+        "domain": "stream",
+        "rate": "audio",
+        "channel_shape": {"kind": "fixed", "count": 1},
+        "cardinality": {"minimum_connections": 0, "maximum_connections": "unbounded"},
+        "semantic_role": "audio",
+        "representation": {"kind": "fixed-point", "signed": true, "width_bits": 32, "fractional_bits": 27, "encoding": "twos-complement-binary"},
+        "unit": "normalized",
+        "valid_range": {"status": "known", "minimum": "-1", "maximum": "1", "minimum_inclusive": true, "maximum_inclusive": true, "overflow_policy": "reject"},
+        "optionality": {"status": "not-applicable"},
+        "ownership": {"status": "defined", "owner": "scheduler", "mutability": "immutable-to-consumer", "borrowing": "borrowed", "lifetime": "audio-block", "capacity": "rate-defined", "synchronization": "single-scheduler", "aliasing": "read-only-aliases-allowed"}
+      }
+    }
+  ],
+  "parameters": [],
+  "attributes": [],
+  "actions": [],
+  "displays": [],
+  "state_declarations": [],
+  "lifecycle": {"state_model": "stateless", "initialization": "none", "reset_behavior": "not-applicable", "disposal": "none"},
+  "binding_capabilities": {"parameter_input_ports": ["component-port-000003"], "action_inputs": []},
+  "capability_requirements": [],
+  "compound_interface": {"kind": "primitive", "mapping_keys": []},
+  "compatibility_claims": []
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": "implementation-binding-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "implementation_id": "schuss-implementation-000027",
+  "revision": 1,
+  "content_hash": "sha256:9ac532281d1e7dd666877019bb12b622c989bee4b17ec93653a499a8c20a363c",
+  "contract_reference": {
+    "component_contract_id": "schuss-component-contract-000002",
+    "revision": 1,
+    "content_hash": "sha256:5de75541ca60b19b63846fff4f74279f0aa67466999371fb35b223745be917b4"
+  },
+  "realization": {
+    "form": "generated-legacy-object",
+    "observation": {
+      "snapshot_schema_version": "legacy-resolved-catalog-v0",
+      "manifest_sha256": "0e3f3cb763f634ce490195e2cd4665c2e1a41764cd54c6526e6e219f18e1e959",
+      "evidence_ref": "legacy-resolved-catalog-v0:object:459",
+      "variant_index": 459,
+      "legacy_uuid": "cfac82d503dc55fd2e3f90d8d05283610532b8c4",
+      "source_id": "axoloti-factory",
+      "source_sha256": "8169f5ec39eabe8f76bf5025ab2c68df0bed531c0c8aeb8c51bba3307859e361"
+    }
+  },
+  "facet_mappings": [
+    {
+      "mapping_id": "binding-map-000001",
+      "contract_facet": {"facet_kind": "port", "facet_id": "component-port-000001"},
+      "implementation_seam": {"seam_kind": "legacy-inlet", "index": 0, "name": "i1", "legacy_type": "axoloti.inlets.InletFrac32Buffer", "data_type": "axoloti.datatypes.Frac32buffer"}
+    },
+    {
+      "mapping_id": "binding-map-000002",
+      "contract_facet": {"facet_kind": "port", "facet_id": "component-port-000002"},
+      "implementation_seam": {"seam_kind": "legacy-inlet", "index": 1, "name": "i2", "legacy_type": "axoloti.inlets.InletFrac32Buffer", "data_type": "axoloti.datatypes.Frac32buffer"}
+    },
+    {
+      "mapping_id": "binding-map-000003",
+      "contract_facet": {"facet_kind": "port", "facet_id": "component-port-000003"},
+      "implementation_seam": {"seam_kind": "legacy-inlet", "index": 2, "name": "c", "legacy_type": "axoloti.inlets.InletFrac32BufferPos", "data_type": "axoloti.datatypes.Frac32buffer"}
+    },
+    {
+      "mapping_id": "binding-map-000004",
+      "contract_facet": {"facet_kind": "port", "facet_id": "component-port-000004"},
+      "implementation_seam": {"seam_kind": "legacy-outlet", "index": 0, "name": "o", "legacy_type": "axoloti.outlets.OutletFrac32Buffer", "data_type": "axoloti.datatypes.Frac32buffer"}
+    }
+  ],
+  "observed_dependencies": [],
+  "private_state": [],
+  "selection_state": {
+    "status": "not-evaluated",
+    "owner": "task-007",
+    "reason": "target-backend-contracts-not-yet-implemented",
+    "rationale": "The companion proves only exact contract and legacy seam correspondence; target and backend eligibility require Task 007 records and evidence."
+  },
+  "evidence_refs": ["legacy-resolved-catalog-v0:object:459"]
+}

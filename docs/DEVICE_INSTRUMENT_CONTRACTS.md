@@ -4,7 +4,9 @@ This document is normative for the Task 005 `device-profile-v0` and
 `instrument-v0` records. It implements only the physical-device and musical-
 instrument boundary accepted by Task 004. Component contracts, DSP graphs,
 implementation bindings, targets, backends, builds, compiler behavior, GUI
-models, firmware, and hardware access remain outside these contracts.
+models, firmware, and hardware access remain outside these two schemas. Task
+006 graph and component ownership is defined separately in
+`docs/COMPONENT_GRAPH_CONTRACTS.md`.
 
 ## Ownership and reference direction
 
@@ -12,7 +14,7 @@ The dependency direction is:
 
 ```text
 instrument -> exact device-profile revision
-instrument -> deferred graph identity and public-target intention
+instrument -> historical deferred graph intention or exact graph revision
 ```
 
 A device profile owns physical input controls, gestures, feedback outputs,
@@ -153,9 +155,9 @@ Both mappings are direct linear `0` to `1` mappings. The device mapping assigns
 soft pickup to the instrument and assigns smoothing to the graph. Those are
 musical mapping policies, not claims about physical scan timing or firmware.
 
-## Deferred graph reference
+## Historical deferred and exact graph references
 
-No authoritative graph schema or graph record exists in Task 005, so inserting
+No authoritative graph schema or graph record existed in Task 005, so inserting
 a graph content hash would fabricate exact-resolution evidence. The reference
 instrument therefore uses the closed deferred branch:
 
@@ -167,13 +169,14 @@ instrument therefore uses the closed deferred branch:
   and
 - a closed set of intended public graph targets used by this instrument.
 
-The validator checks that every graph mapping names a target in that deferred
+The validator checks that every revision-1 graph mapping names a target in that deferred
 set and agrees with its facet kind. This proves internal Task 005 consistency
-only. It does not prove that the target or graph exists. A `resolved` graph
-reference is structurally expressible as an exact ID/revision/hash tuple but
-always fails semantic validation until an accepted Task 006 resolver proves
-it. No graph stub, placeholder hash, legacy `.axp`, or implementation identity
-is manufactured.
+only. It does not prove that the target or graph exists. Task 006 retains that
+record byte-for-byte and adds revision 2 with the exact `schuss-graph-000001`
+revision/hash tuple. A `resolved` reference passes only when the accepted graph
+registry resolves the exact tuple and the mapped public target kind/domain.
+No graph stub, placeholder hash, legacy `.axp`, or implementation identity is
+manufactured.
 
 ## Read-only validation
 
@@ -201,9 +204,10 @@ compilation, preference update, or cache update. Its diagnostic codes include:
 - `UNRESOLVED_FACT_UNKNOWN`, `UNRESOLVED_FACT_SCOPE_MISMATCH`,
   `CONTROL_SHAPE_INCOMPATIBLE`, `RANGE_INVALID`.
 
-A valid Task 005 summary reports structural/schema evidence as passed, the
-device-profile reference as resolved, and component/graph resolution as
-deferred. Backend lowering, artifact generation, ARM compile/link,
+A valid aggregate Task 006 summary reports structural/schema evidence as
+passed, the device-profile and revision-2 graph references as resolved, and
+revision 1 as historical deferred evidence. Backend lowering, artifact
+generation, ARM compile/link,
 connected-device execution, real-time/resource validation, and audible
 listening remain `not-run`.
 
@@ -212,13 +216,11 @@ listening remain `not-run`.
 | Question | Owner | Earliest task |
 | --- | --- | --- |
 | Exact Gills physical control range, resolution, complete slot census, gesture recognition, feedback/display capabilities, and I/O | Device-profile owner | Task 014 or a separate bounded Gills evidence task |
-| Authoritative graph ID/revision/hash and existence/type of public `blend` | Component-contract and graph owner | Task 006 |
-| Graph port/rate/channel/unit typing and target resolution | Component-contract and graph owner | Task 006 |
-| Runtime smoothing implementation, timing, target behavior, and compiler lowering | Graph/backend owners | Tasks 006-009 |
+| Runtime smoothing implementation, timing, target behavior, and compiler lowering | Graph/backend owners | Tasks 007-009 |
 | Connected hardware, real-time safety, and audible behavior | Device and evidence owners | Later explicit hardware tasks |
 
-Task 006 should next add only the component-contract,
-implementation-binding, and DSP-graph schemas needed to replace the deferred
-graph branch with an exact resolved graph reference and to prove the declared
-`blend` public target. It should not yet add compute-target, backend, build,
-GUI/CLI, firmware, or hardware behavior.
+Task 006 completed the component-contract, implementation-binding, DSP-graph,
+and exact `blend` target boundary documented in
+`docs/COMPONENT_GRAPH_CONTRACTS.md`. Task 007 is next; it should add only
+compute-target, backend-capability, build, artifact, resource, and evidence
+contracts, not GUI/CLI, firmware, or hardware behavior.

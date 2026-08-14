@@ -1,0 +1,130 @@
+{
+  "schema_version": "dsp-graph-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "graph_id": "schuss-graph-000001",
+  "revision": 1,
+  "content_hash": "sha256:b38562dc2dcf80036e8fc1d78fe8ee425de01f4943495a23375bfb4e7f346e6e",
+  "display_name": "Blend crossfader reference graph",
+  "public_ports": [
+    {
+      "facet_id": "graph-facet-000002",
+      "semantic_key": "a",
+      "display_label": "A",
+      "direction": "input"
+    },
+    {
+      "facet_id": "graph-facet-000003",
+      "semantic_key": "b",
+      "display_label": "B",
+      "direction": "input"
+    },
+    {
+      "facet_id": "graph-facet-000004",
+      "semantic_key": "out",
+      "display_label": "Out",
+      "direction": "output"
+    }
+  ],
+  "public_parameters": [
+    {
+      "facet_id": "graph-facet-000001",
+      "semantic_key": "blend",
+      "display_label": "Blend",
+      "value_type": "exact-decimal",
+      "domain": {
+        "status": "known",
+        "minimum": "0",
+        "maximum": "1",
+        "minimum_inclusive": true,
+        "maximum_inclusive": true,
+        "overflow_policy": "reject",
+        "unit": "normalized"
+      },
+      "default": "0.5",
+      "update_behavior": {
+        "update_kind": "runtime",
+        "stateful": true
+      }
+    }
+  ],
+  "public_actions": [],
+  "public_displays": [],
+  "nodes": [
+    {
+      "node_id": "graph-node-000001",
+      "contract_reference": {
+        "component_contract_id": "schuss-component-contract-000003",
+        "revision": 1,
+        "content_hash": "sha256:96a29faf58769be5f2ac52de07aa80cae3dcdff28f0f3c158fb1fd12cc234a8d"
+      },
+      "parameter_values": [],
+      "attribute_values": []
+    }
+  ],
+  "connections": [],
+  "public_port_exposures": [
+    {
+      "exposure_id": "graph-exposure-000001",
+      "graph_facet_id": "graph-facet-000002",
+      "node_port": {"node_id": "graph-node-000001", "facet_id": "component-port-000001"}
+    },
+    {
+      "exposure_id": "graph-exposure-000002",
+      "graph_facet_id": "graph-facet-000003",
+      "node_port": {"node_id": "graph-node-000001", "facet_id": "component-port-000002"}
+    },
+    {
+      "exposure_id": "graph-exposure-000003",
+      "graph_facet_id": "graph-facet-000004",
+      "node_port": {"node_id": "graph-node-000001", "facet_id": "component-port-000004"}
+    }
+  ],
+  "public_facet_exposures": [],
+  "parameter_bindings": [
+    {
+      "binding_id": "graph-binding-000001",
+      "binding_kind": "parameter-to-port",
+      "source_graph_parameter_id": "graph-facet-000001",
+      "destination": {
+        "node_id": "graph-node-000001",
+        "facet_kind": "port",
+        "facet_id": "component-port-000003"
+      },
+      "source_domain": {
+        "status": "known",
+        "minimum": "0",
+        "maximum": "1",
+        "minimum_inclusive": true,
+        "maximum_inclusive": true,
+        "overflow_policy": "reject",
+        "unit": "normalized"
+      },
+      "destination_domain": {
+        "status": "known",
+        "minimum": "0",
+        "maximum": "1",
+        "minimum_inclusive": true,
+        "maximum_inclusive": true,
+        "overflow_policy": "reject",
+        "unit": "normalized"
+      },
+      "transform": {
+        "curve": "linear",
+        "polarity": "direct",
+        "points": [
+          {"source": "0", "destination": "0"},
+          {"source": "1", "destination": "1"}
+        ]
+      },
+      "update_boundary": "control-cycle",
+      "smoothing": {
+        "kind": "linear",
+        "responsibility": "graph",
+        "completion": "next-control-cycle"
+      },
+      "driver_policy": "exclusive"
+    }
+  ],
+  "compound_interface_mappings": [],
+  "hierarchy_edges": []
+}

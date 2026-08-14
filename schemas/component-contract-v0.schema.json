@@ -1,0 +1,509 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "component-contract-v0.schema.json",
+  "title": "Schuss component contract v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "component_contract_id",
+    "revision",
+    "content_hash",
+    "family_reference",
+    "display_name",
+    "ports",
+    "parameters",
+    "attributes",
+    "actions",
+    "displays",
+    "state_declarations",
+    "lifecycle",
+    "binding_capabilities",
+    "capability_requirements",
+    "compound_interface",
+    "compatibility_claims"
+  ],
+  "properties": {
+    "schema_version": {"const": "component-contract-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "component_contract_id": {"$ref": "#/$defs/componentContractId"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "family_reference": {"$ref": "#/$defs/catalogFamilyReference"},
+    "display_name": {"$ref": "#/$defs/label"},
+    "ports": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/port"}
+    },
+    "parameters": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/parameter"}
+    },
+    "attributes": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/attribute"}
+    },
+    "actions": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/action"}
+    },
+    "displays": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/display"}
+    },
+    "state_declarations": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/stateDeclaration"}
+    },
+    "lifecycle": {"$ref": "#/$defs/lifecycle"},
+    "binding_capabilities": {"$ref": "#/$defs/bindingCapabilities"},
+    "capability_requirements": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "maxItems": 0,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
+    },
+    "compound_interface": {"$ref": "#/$defs/compoundInterface"},
+    "compatibility_claims": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "maxItems": 0,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/compatibilityClaim"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "componentContractId": {
+      "type": "string",
+      "pattern": "^schuss-component-contract-[0-9]{6}$"
+    },
+    "familyId": {
+      "type": "string",
+      "pattern": "^schuss-family-[0-9]{6}$"
+    },
+    "contentHash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "label": {"type": "string", "minLength": 1},
+    "semanticKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "exactDecimal": {
+      "type": "string",
+      "pattern": "^(?:0|-?(?:0\\.[0-9]*[1-9]|[1-9][0-9]*(?:\\.[0-9]*[1-9])?))$"
+    },
+    "catalogFamilyReference": {
+      "type": "object",
+      "required": ["family_id", "revision", "content_hash"],
+      "properties": {
+        "family_id": {"$ref": "#/$defs/familyId"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "componentContractReference": {
+      "type": "object",
+      "required": ["component_contract_id", "revision", "content_hash"],
+      "properties": {
+        "component_contract_id": {"$ref": "#/$defs/componentContractId"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "channelShape": {
+      "type": "object",
+      "required": ["kind", "count"],
+      "properties": {
+        "kind": {"const": "fixed"},
+        "count": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "maximumConnections": {
+      "oneOf": [
+        {"type": "integer", "minimum": 1},
+        {"const": "unbounded"}
+      ]
+    },
+    "connectionCardinality": {
+      "type": "object",
+      "required": ["minimum_connections", "maximum_connections"],
+      "properties": {
+        "minimum_connections": {"type": "integer", "minimum": 0},
+        "maximum_connections": {"$ref": "#/$defs/maximumConnections"}
+      },
+      "additionalProperties": false
+    },
+    "fixedPointRepresentation": {
+      "type": "object",
+      "required": ["kind", "signed", "width_bits", "fractional_bits", "encoding"],
+      "properties": {
+        "kind": {"const": "fixed-point"},
+        "signed": {"type": "boolean"},
+        "width_bits": {"type": "integer", "minimum": 1},
+        "fractional_bits": {"type": "integer", "minimum": 0},
+        "encoding": {"const": "twos-complement-binary"}
+      },
+      "additionalProperties": false
+    },
+    "integerRepresentation": {
+      "type": "object",
+      "required": ["kind", "signed", "width_bits", "encoding"],
+      "properties": {
+        "kind": {"const": "integer"},
+        "signed": {"type": "boolean"},
+        "width_bits": {"type": "integer", "minimum": 1},
+        "encoding": {"const": "twos-complement-binary"}
+      },
+      "additionalProperties": false
+    },
+    "floatRepresentation": {
+      "type": "object",
+      "required": ["kind", "width_bits", "encoding"],
+      "properties": {
+        "kind": {"const": "float"},
+        "width_bits": {"enum": [32, 64]},
+        "encoding": {"const": "ieee-754"}
+      },
+      "additionalProperties": false
+    },
+    "booleanRepresentation": {
+      "type": "object",
+      "required": ["kind", "width_bits", "encoding"],
+      "properties": {
+        "kind": {"const": "boolean"},
+        "width_bits": {"type": "integer", "minimum": 1},
+        "encoding": {"const": "zero-false-nonzero-true"}
+      },
+      "additionalProperties": false
+    },
+    "representation": {
+      "oneOf": [
+        {"$ref": "#/$defs/fixedPointRepresentation"},
+        {"$ref": "#/$defs/integerRepresentation"},
+        {"$ref": "#/$defs/floatRepresentation"},
+        {"$ref": "#/$defs/booleanRepresentation"}
+      ]
+    },
+    "knownRange": {
+      "type": "object",
+      "required": [
+        "status",
+        "minimum",
+        "maximum",
+        "minimum_inclusive",
+        "maximum_inclusive",
+        "overflow_policy"
+      ],
+      "properties": {
+        "status": {"const": "known"},
+        "minimum": {"$ref": "#/$defs/exactDecimal"},
+        "maximum": {"$ref": "#/$defs/exactDecimal"},
+        "minimum_inclusive": {"type": "boolean"},
+        "maximum_inclusive": {"type": "boolean"},
+        "overflow_policy": {"enum": ["reject", "clamp", "wrap"]}
+      },
+      "additionalProperties": false
+    },
+    "unresolvedRange": {
+      "type": "object",
+      "required": ["status", "code", "owner", "rationale", "question", "evidence_refs"],
+      "properties": {
+        "status": {"const": "unresolved"},
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "owner": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "rationale": {"type": "string", "minLength": 1},
+        "question": {"type": "string", "minLength": 1},
+        "evidence_refs": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9:._/-]*$"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "range": {
+      "oneOf": [
+        {"$ref": "#/$defs/knownRange"},
+        {"$ref": "#/$defs/unresolvedRange"}
+      ]
+    },
+    "requiredOptionality": {
+      "type": "object",
+      "required": ["status", "absence_behavior"],
+      "properties": {
+        "status": {"const": "required"},
+        "absence_behavior": {"const": "invalid"}
+      },
+      "additionalProperties": false
+    },
+    "optionalOptionality": {
+      "type": "object",
+      "required": ["status", "absence_behavior", "default_value"],
+      "properties": {
+        "status": {"const": "optional"},
+        "absence_behavior": {"enum": ["use-default", "silence", "no-event"]},
+        "default_value": {"$ref": "#/$defs/exactDecimal"}
+      },
+      "additionalProperties": false
+    },
+    "notApplicableOptionality": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {"status": {"const": "not-applicable"}},
+      "additionalProperties": false
+    },
+    "optionality": {
+      "oneOf": [
+        {"$ref": "#/$defs/requiredOptionality"},
+        {"$ref": "#/$defs/optionalOptionality"},
+        {"$ref": "#/$defs/notApplicableOptionality"}
+      ]
+    },
+    "streamOwnership": {
+      "type": "object",
+      "required": [
+        "status",
+        "owner",
+        "mutability",
+        "borrowing",
+        "lifetime",
+        "capacity",
+        "synchronization",
+        "aliasing"
+      ],
+      "properties": {
+        "status": {"const": "defined"},
+        "owner": {"const": "scheduler"},
+        "mutability": {"const": "immutable-to-consumer"},
+        "borrowing": {"const": "borrowed"},
+        "lifetime": {"enum": ["audio-block", "control-cycle", "event-delivery"]},
+        "capacity": {"enum": ["rate-defined", "single-value"]},
+        "synchronization": {"const": "single-scheduler"},
+        "aliasing": {"const": "read-only-aliases-allowed"}
+      },
+      "additionalProperties": false
+    },
+    "notApplicableOwnership": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {"status": {"const": "not-applicable"}},
+      "additionalProperties": false
+    },
+    "ownership": {
+      "oneOf": [
+        {"$ref": "#/$defs/streamOwnership"},
+        {"$ref": "#/$defs/notApplicableOwnership"}
+      ]
+    },
+    "portType": {
+      "type": "object",
+      "required": [
+        "domain",
+        "rate",
+        "channel_shape",
+        "cardinality",
+        "semantic_role",
+        "representation",
+        "unit",
+        "valid_range",
+        "optionality",
+        "ownership"
+      ],
+      "properties": {
+        "domain": {"enum": ["stream", "event", "buffer-reference", "message-data"]},
+        "rate": {"enum": ["audio", "control", "event", "compile-time", "not-applicable"]},
+        "channel_shape": {"$ref": "#/$defs/channelShape"},
+        "cardinality": {"$ref": "#/$defs/connectionCardinality"},
+        "semantic_role": {
+          "enum": [
+            "audio",
+            "generic-signal",
+            "modulation",
+            "crossfade-position",
+            "gate",
+            "trigger",
+            "clock",
+            "note",
+            "midi",
+            "generic-data"
+          ]
+        },
+        "representation": {"$ref": "#/$defs/representation"},
+        "unit": {"enum": ["normalized", "unitless", "boolean", "samples", "hertz", "midi-note", "bytes"]},
+        "valid_range": {"$ref": "#/$defs/range"},
+        "optionality": {"$ref": "#/$defs/optionality"},
+        "ownership": {"$ref": "#/$defs/ownership"}
+      },
+      "additionalProperties": false
+    },
+    "port": {
+      "type": "object",
+      "required": ["facet_id", "semantic_key", "display_label", "direction", "port_type"],
+      "properties": {
+        "facet_id": {"type": "string", "pattern": "^component-port-[0-9]{6}$"},
+        "semantic_key": {"$ref": "#/$defs/semanticKey"},
+        "display_label": {"$ref": "#/$defs/label"},
+        "direction": {"enum": ["inlet", "outlet"]},
+        "port_type": {"$ref": "#/$defs/portType"}
+      },
+      "additionalProperties": false
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["facet_id", "semantic_key", "display_label", "representation", "unit", "domain", "default", "update_behavior"],
+      "properties": {
+        "facet_id": {"type": "string", "pattern": "^component-parameter-[0-9]{6}$"},
+        "semantic_key": {"$ref": "#/$defs/semanticKey"},
+        "display_label": {"$ref": "#/$defs/label"},
+        "representation": {"$ref": "#/$defs/representation"},
+        "unit": {"enum": ["normalized", "unitless", "boolean", "samples", "hertz", "midi-note"]},
+        "domain": {"$ref": "#/$defs/range"},
+        "default": {"$ref": "#/$defs/exactDecimal"},
+        "update_behavior": {
+          "type": "object",
+          "required": ["update_kind", "stateful"],
+          "properties": {
+            "update_kind": {"const": "runtime"},
+            "stateful": {"type": "boolean"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "attribute": {
+      "type": "object",
+      "required": ["facet_id", "semantic_key", "display_label", "value_kind", "default"],
+      "properties": {
+        "facet_id": {"type": "string", "pattern": "^component-attribute-[0-9]{6}$"},
+        "semantic_key": {"$ref": "#/$defs/semanticKey"},
+        "display_label": {"$ref": "#/$defs/label"},
+        "value_kind": {"enum": ["exact-decimal", "integer", "boolean", "enum"]},
+        "default": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "action": {
+      "type": "object",
+      "required": ["facet_id", "semantic_key", "display_label", "payload_kind"],
+      "properties": {
+        "facet_id": {"type": "string", "pattern": "^component-action-[0-9]{6}$"},
+        "semantic_key": {"$ref": "#/$defs/semanticKey"},
+        "display_label": {"$ref": "#/$defs/label"},
+        "payload_kind": {"enum": ["none", "exact-decimal", "integer", "boolean", "structured"]}
+      },
+      "additionalProperties": false
+    },
+    "display": {
+      "type": "object",
+      "required": ["facet_id", "semantic_key", "display_label", "value_kind", "access"],
+      "properties": {
+        "facet_id": {"type": "string", "pattern": "^component-display-[0-9]{6}$"},
+        "semantic_key": {"$ref": "#/$defs/semanticKey"},
+        "display_label": {"$ref": "#/$defs/label"},
+        "value_kind": {"enum": ["text", "exact-decimal", "integer", "boolean"]},
+        "access": {"const": "read-only"}
+      },
+      "additionalProperties": false
+    },
+    "stateDeclaration": {
+      "type": "object",
+      "required": ["state_id", "semantic_key", "value_kind", "ownership", "persistence", "reset_policy"],
+      "properties": {
+        "state_id": {"type": "string", "pattern": "^component-state-[0-9]{6}$"},
+        "semantic_key": {"$ref": "#/$defs/semanticKey"},
+        "value_kind": {"enum": ["exact-decimal", "integer", "boolean", "bytes", "structured"]},
+        "ownership": {"const": "component-instance"},
+        "persistence": {"enum": ["volatile", "persistent"]},
+        "reset_policy": {"enum": ["none", "default-on-start", "explicit-action"]}
+      },
+      "additionalProperties": false
+    },
+    "lifecycle": {
+      "type": "object",
+      "required": ["state_model", "initialization", "reset_behavior", "disposal"],
+      "properties": {
+        "state_model": {"enum": ["stateless", "declared-state"]},
+        "initialization": {"enum": ["none", "initialize-declared-state"]},
+        "reset_behavior": {"enum": ["not-applicable", "declared-per-state"]},
+        "disposal": {"enum": ["none", "release-owned-state"]}
+      },
+      "additionalProperties": false
+    },
+    "bindingCapabilities": {
+      "type": "object",
+      "required": ["parameter_input_ports", "action_inputs"],
+      "properties": {
+        "parameter_input_ports": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^component-port-[0-9]{6}$"}
+        },
+        "action_inputs": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^component-action-[0-9]{6}$"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "compoundMappingKey": {
+      "type": "object",
+      "required": ["mapping_key", "facet_kind", "facet_id"],
+      "properties": {
+        "mapping_key": {"type": "string", "pattern": "^compound-mapping-key-[0-9]{6}$"},
+        "facet_kind": {"enum": ["port", "parameter", "action", "display"]},
+        "facet_id": {"type": "string", "pattern": "^component-(port|parameter|action|display)-[0-9]{6}$"}
+      },
+      "additionalProperties": false
+    },
+    "compoundInterface": {
+      "type": "object",
+      "required": ["kind", "mapping_keys"],
+      "properties": {
+        "kind": {"enum": ["primitive", "transparent-compound"]},
+        "mapping_keys": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/compoundMappingKey"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "compatibilityClaim": {
+      "type": "object",
+      "required": ["direction", "other_contract", "rule", "rationale"],
+      "properties": {
+        "direction": {"enum": ["accepts-from", "can-migrate-to"]},
+        "other_contract": {"$ref": "#/$defs/componentContractReference"},
+        "rule": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "rationale": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

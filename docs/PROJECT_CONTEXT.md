@@ -87,13 +87,16 @@ separate versioned family/implementation overlay, draft functional taxonomy,
 and manually reviewed 26-family pilot pass their validation gates. Phase 4B is
 gated so catalog expansion cannot outrun typed component contracts. Task 004
 remains the accepted architecture for schema ownership, reference direction,
-compiler stages, and evidence separation. Task 005 now implements the first
-production device-profile and instrument contracts, one exact Gills-profile
-reference, and one explicitly deferred graph reference. Structural/schema
-evidence passes, while graph resolution and every compiler, target, device,
-real-time, and audible level remain deferred or not-run. Task 006 is next. See
-`docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
-`docs/tasks/005-minimal-gills-device-profile-and-instrument-contracts.md`.
+compiler stages, and evidence separation. Task 005 implements the first
+production device-profile and instrument contracts. Task 006 now adds the
+exact Crossfader family companion, three non-interchangeable component
+contracts and implementation seam maps, one authoritative typed graph, and an
+exactly resolved instrument revision 2 while retaining deferred revision 1.
+Structural, exact-reference, target-independent type, legacy seam-map, and
+graph-target evidence pass. Target/backend, compiler, artifact, device,
+real-time, and audible levels remain `not-run`; Task 007 is next. See
+`docs/COMPONENT_GRAPH_CONTRACTS.md` and
+`docs/tasks/006-component-contract-binding-and-dsp-graph-contracts.md`.
 
 ## Terminology
 

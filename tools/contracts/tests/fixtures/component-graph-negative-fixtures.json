@@ -1,0 +1,263 @@
+{
+  "schema_version": "component-graph-negative-fixtures-v0",
+  "cases": [
+    {
+      "case_id": "family-overlay-hash-stale",
+      "target": "family",
+      "pointer": "/source_member/overlay_sha256",
+      "value": "0000000000000000000000000000000000000000000000000000000000000000",
+      "rehash": true,
+      "expected_code": "FAMILY_SOURCE_HASH_MISMATCH"
+    },
+    {
+      "case_id": "family-member-hash-stale",
+      "target": "family",
+      "pointer": "/source_member/canonical_member_sha256",
+      "value": "0000000000000000000000000000000000000000000000000000000000000000",
+      "rehash": true,
+      "expected_code": "FAMILY_MEMBER_HASH_MISMATCH"
+    },
+    {
+      "case_id": "contract-family-reference-stale",
+      "target": "contract",
+      "pointer": "/family_reference/content_hash",
+      "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "rehash": true,
+      "expected_code": "FAMILY_REFERENCE_UNRESOLVED"
+    },
+    {
+      "case_id": "contract-collapses-port-into-parameter",
+      "target": "contract",
+      "pointer": "/ports/0/facet_id",
+      "value": "component-parameter-000001",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "contract-unknown-rate",
+      "target": "contract",
+      "pointer": "/ports/0/port_type/rate",
+      "value": "sample-rate",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "contract-premature-capability-claim",
+      "target": "contract",
+      "pointer": "/capability_requirements",
+      "value": ["audio-rate"],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "contract-premature-compatibility-claim",
+      "target": "contract",
+      "pointer": "/compatibility_claims",
+      "value": [
+        {
+          "direction": "accepts-from",
+          "other_contract": {
+            "component_contract_id": "schuss-component-contract-000001",
+            "revision": 1,
+            "content_hash": "sha256:4db27f00dde3c2a577a2817aec04f8a43997de1e47661ad2b005a75db90577a4"
+          },
+          "rule": "same-public-type",
+          "rationale": "Fixture must fail until a compatibility vocabulary is accepted."
+        }
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "binding-wrong-observation",
+      "target": "binding",
+      "pointer": "/realization/observation/evidence_ref",
+      "value": "legacy-resolved-catalog-v0:object:459",
+      "rehash": true,
+      "expected_code": "LEGACY_OBSERVATION_MISMATCH"
+    },
+    {
+      "case_id": "binding-wrong-contract",
+      "target": "binding",
+      "pointer": "/contract_reference/component_contract_id",
+      "value": "schuss-component-contract-000002",
+      "rehash": true,
+      "expected_code": "CONTRACT_REFERENCE_UNRESOLVED"
+    },
+    {
+      "case_id": "binding-redefines-public-facet",
+      "target": "binding",
+      "pointer": "/facet_mappings/0/contract_facet/facet_id",
+      "value": "component-port-999999",
+      "rehash": true,
+      "expected_code": "BINDING_FACET_UNKNOWN"
+    },
+    {
+      "case_id": "binding-claims-target-compatibility",
+      "target": "binding",
+      "pointer": "/target_compatibility",
+      "value": [],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "binding-claims-preference",
+      "target": "binding",
+      "pointer": "/preferred",
+      "value": true,
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-node-family-reference",
+      "target": "graph",
+      "pointer": "/nodes/0/family_id",
+      "value": "schuss-family-000018",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-node-implementation-reference",
+      "target": "graph",
+      "pointer": "/nodes/0/implementation_id",
+      "value": "schuss-implementation-000028",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-node-legacy-path",
+      "target": "graph",
+      "pointer": "/nodes/0/source_path",
+      "value": "objects/crossfader.axo",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-node-legacy-observation",
+      "target": "graph",
+      "pointer": "/nodes/0/observation_ref",
+      "value": "legacy-resolved-catalog-v0:object:460",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-node-display-label",
+      "target": "graph",
+      "pointer": "/nodes/0/display_label",
+      "value": "Crossfader node",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-embeds-backend",
+      "target": "graph",
+      "pointer": "/backend",
+      "value": "legacy-ksoloti",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-embeds-compute-target",
+      "target": "graph",
+      "pointer": "/compute_target",
+      "value": "ksoloti-core",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-embeds-build-selection",
+      "target": "graph",
+      "pointer": "/selected_binding_id",
+      "value": "schuss-implementation-000028",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-embeds-device-mapping",
+      "target": "graph",
+      "pointer": "/device_input_mappings",
+      "value": [],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-embeds-gills-slot",
+      "target": "graph",
+      "pointer": "/gills_slots",
+      "value": [],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-embeds-canvas-state",
+      "target": "graph",
+      "pointer": "/canvas",
+      "value": {"x": 1, "y": 2},
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-embeds-compiler-artifact",
+      "target": "graph",
+      "pointer": "/artifact_path",
+      "value": "generated/reference.axp",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-parameter-missing-update-policy",
+      "target": "graph-remove",
+      "pointer": "/parameter_bindings/0/update_boundary",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "graph-parameter-domain-redefinition",
+      "target": "graph",
+      "pointer": "/parameter_bindings/0/destination_domain/maximum",
+      "value": "2",
+      "rehash": true,
+      "expected_code": "GRAPH_PARAMETER_DOMAIN_MISMATCH"
+    },
+    {
+      "case_id": "absolute-path",
+      "target": "graph",
+      "pointer": "/display_name",
+      "value": "/Users/example/graph.axp",
+      "rehash": true,
+      "expected_code": "NONPORTABLE_ABSOLUTE_PATH"
+    },
+    {
+      "case_id": "timestamp-field",
+      "target": "graph",
+      "pointer": "/created_at",
+      "value": "2026-08-15T00:00:00Z",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "random-identifier",
+      "target": "graph",
+      "pointer": "/graph_id",
+      "value": "450e8400-e29b-41d4-a716-446655440000",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "mutable-label-in-stable-id",
+      "target": "graph",
+      "pointer": "/graph_id",
+      "value": "schuss-graph-blend-crossfader",
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "unknown-top-level-field",
+      "target": "contract",
+      "pointer": "/surprise",
+      "value": true,
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    }
+  ]
+}

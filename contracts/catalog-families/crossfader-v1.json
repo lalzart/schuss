@@ -1,0 +1,21 @@
+{
+  "schema_version": "catalog-family-companion-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "family_id": "schuss-family-000018",
+  "revision": 1,
+  "content_hash": "sha256:710afad6b087d18fb949b9749c9e9dc63d4fd26e94800369d437d90d956eed8d",
+  "source_member": {
+    "overlay_id": "phase-4a-semantic-catalog-v0",
+    "overlay_schema_version": "semantic-catalog-overlay-v0",
+    "overlay_sha256": "497a27d295d0ccda799848ac6fcba245139ca29156f509431b7cb7522d791858",
+    "family_schema_version": "semantic-catalog-family-v0",
+    "family_id": "schuss-family-000018",
+    "canonical_member_sha256": "5141692aac29da13c1344e6938538a3aa87de640702c0746eee8d54eab61f388",
+    "legacy_manifest_sha256": "0e3f3cb763f634ce490195e2cd4665c2e1a41764cd54c6526e6e219f18e1e959"
+  },
+  "migration": {
+    "semantics_changed": false,
+    "projection": "identity-only",
+    "rationale": "This companion adds the Task 004 exact revision and hash envelope to the retained Crossfader identity while the exact Phase 4A member remains the sole owner of catalog presentation and classification semantics."
+  }
+}

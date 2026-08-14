@@ -111,16 +111,16 @@ target service.
 The binding MUST provide an explicit mapping from each contract facet to its
 implementation seam and MUST fail validation if the mapping is incomplete,
 duplicated, directionally invalid, or type-incompatible. It may add private
-state, dependencies, and resource requirements. It MUST NOT add, remove,
-rename, retype, or change the meaning of the public contract.
+state and observed dependencies. Resource requirements require the separate
+Task 007 contract. A binding MUST NOT add, remove, rename, retype, or change
+the meaning of the public contract.
 
 Phase 4A `schuss-implementation-*` IDs remain the stable identities of the
-concrete realizations already curated. The Phase 4A records are not yet
-compiler-ready bindings because they lack component-contract references.
-Task 006 will add companion binding records keyed by those same implementation
-IDs. The old overlay remains preserved evidence; it is not rewritten in place.
-The new validator MUST require the binding's contract to reference the same
-family recorded by Phase 4A during migration.
+concrete realizations already curated. Task 006 companion bindings for the
+Crossfader slice use those same IDs and add exact component-contract
+references; the Phase 4A overlay remains preserved evidence and is not
+rewritten in place. The validator requires each binding's contract to
+reference the same family recorded by Phase 4A.
 
 ### DSP graph
 
@@ -280,7 +280,7 @@ shape, `.axo`, `.axs`, or `.axp` becomes a Schuss domain schema.
 
 ## Component contract shape
 
-A future component contract MUST be able to declare:
+The Task 006 component contract declares:
 
 - stable contract identity, revision, hash, and family reference;
 - typed inlets and outlets;
@@ -289,7 +289,7 @@ A future component contract MUST be able to declare:
 - discrete actions and typed payloads;
 - read-only displays;
 - state ownership, persistence, reset, and lifecycle where required;
-- target-independent capability requirements;
+- a closed capability-requirement collection, empty in v0 until Task 007;
 - explicit parameter/port/action binding capabilities; and
 - compound public-interface mapping declarations where applicable.
 
@@ -312,9 +312,10 @@ A port type MUST keep at least these independent dimensions:
 | Optionality | Required, optional with an explicit default/absence behavior, or conditionally present under an attribute |
 | Ownership and lifetime | For buffers/references: owner, mutability, borrowing, lifetime, capacity, synchronization, and alias rules |
 
-Exact controlled vocabularies are Task 006 work. A legacy datatype string is
-evidence to translate; it MUST NOT collapse domain, rate, role, representation,
-or ownership into one permanent field.
+Task 006 implements the bounded Crossfader vocabularies documented in
+`docs/COMPONENT_GRAPH_CONTRACTS.md`. A legacy datatype string is evidence to
+translate; it MUST NOT collapse domain, rate, role, representation, or
+ownership into one permanent field.
 
 ### Connection and conversion policy
 
@@ -345,9 +346,10 @@ implicit conversions:
 - parameter, attribute, action, or display conversion into a port merely
   because a legacy widget or datatype made them look similar.
 
-Task 006 may admit a narrowly proved lossless rule only by versioning the type
-contract and adding positive and negative fixtures. Convenience wiring belongs
-in explicit authoring operations that add visible adapter nodes.
+Task 006 admits no additional direct-conversion rule. Any later lossless rule
+requires a versioned type contract and positive and negative fixtures.
+Convenience wiring belongs in explicit authoring operations that add visible
+adapter nodes.
 
 ## Facet exposure and mapping chain
 
@@ -435,21 +437,23 @@ The following are invalid architecture:
 - Task 005 `device-profile-v0` and `instrument-v0` schemas, their restricted
   `schuss-canonical-json-v1` profile, and the read-only ownership/mapping checks
   documented in `docs/DEVICE_INSTRUMENT_CONTRACTS.md`.
+- Task 006 `catalog-family-companion-v0`, `component-contract-v0`,
+  `implementation-binding-v0`, and `dsp-graph-v0` schemas, exact Crossfader
+  closure, and read-only validators documented in
+  `docs/COMPONENT_GRAPH_CONTRACTS.md`.
 
 ### Planned next
 
-1. **Task 006:** component-contract, implementation-binding, and DSP-graph
-   schemas plus the typed reference slice.
-2. **Task 007:** compute-target, backend-capability, build-request,
+1. **Task 007:** compute-target, backend-capability, build-request,
    build-result, artifact, and evidence schemas.
-3. **Task 008:** shared headless validation and typed operation layer.
-4. **Task 009:** one minimal graph lowered through a deterministic legacy
+2. **Task 008:** shared headless validation and typed operation layer.
+3. **Task 009:** one minimal graph lowered through a deterministic legacy
    `.axp` adapter and existing ARM compiler/linker.
-5. **Task 010:** deterministic CLI over the same operations.
-6. **Task 011:** incremental catalog expansion with actual component contracts
+4. **Task 010:** deterministic CLI over the same operations.
+5. **Task 011:** incremental catalog expansion with actual component contracts
    and bindings; Phase 4B must not outrun Task 006.
-7. **Task 012:** basic object drawer and transparent graph canvas.
-8. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
+6. **Task 012:** basic object drawer and transparent graph canvas.
+7. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
    contract.
 
 ### Deliberately deferred
@@ -462,6 +466,7 @@ The following are invalid architecture:
   replacement ABI design.
 - Additional targets/devices, asset pipelines, and complete Phase 4B curation.
 
-Task 005's remaining device and graph questions have named owners and earliest
-tasks in `docs/DEVICE_INSTRUMENT_CONTRACTS.md`; the wider deferred decision set
+The remaining device questions and Task 006's target/backend/build deferrals
+have named owners and earliest tasks in `docs/DEVICE_INSTRUMENT_CONTRACTS.md`
+and `docs/COMPONENT_GRAPH_CONTRACTS.md`; the wider deferred decision set
 remains in `docs/tasks/004-schema-and-compiler-contract-strategy.md`.

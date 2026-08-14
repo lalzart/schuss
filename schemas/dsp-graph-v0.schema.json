@@ -1,0 +1,405 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dsp-graph-v0.schema.json",
+  "title": "Schuss DSP graph v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "graph_id",
+    "revision",
+    "content_hash",
+    "display_name",
+    "public_ports",
+    "public_parameters",
+    "public_actions",
+    "public_displays",
+    "nodes",
+    "connections",
+    "public_port_exposures",
+    "public_facet_exposures",
+    "parameter_bindings",
+    "compound_interface_mappings",
+    "hierarchy_edges"
+  ],
+  "properties": {
+    "schema_version": {"const": "dsp-graph-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "graph_id": {"$ref": "#/$defs/graphId"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "display_name": {"$ref": "#/$defs/label"},
+    "public_ports": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/publicPort"}
+    },
+    "public_parameters": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/publicParameter"}
+    },
+    "public_actions": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/publicAction"}
+    },
+    "public_displays": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/publicDisplay"}
+    },
+    "nodes": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/node"}
+    },
+    "connections": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/connection"}
+    },
+    "public_port_exposures": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/publicPortExposure"}
+    },
+    "public_facet_exposures": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/publicFacetExposure"}
+    },
+    "parameter_bindings": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/parameterBinding"}
+    },
+    "compound_interface_mappings": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/compoundInterfaceMapping"}
+    },
+    "hierarchy_edges": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/hierarchyEdge"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "graphId": {
+      "type": "string",
+      "pattern": "^schuss-graph-[0-9]{6}$"
+    },
+    "componentContractId": {
+      "type": "string",
+      "pattern": "^schuss-component-contract-[0-9]{6}$"
+    },
+    "contentHash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "label": {"type": "string", "minLength": 1},
+    "semanticKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "exactDecimal": {
+      "type": "string",
+      "pattern": "^(?:0|-?(?:0\\.[0-9]*[1-9]|[1-9][0-9]*(?:\\.[0-9]*[1-9])?))$"
+    },
+    "componentContractReference": {
+      "type": "object",
+      "required": ["component_contract_id", "revision", "content_hash"],
+      "properties": {
+        "component_contract_id": {"$ref": "#/$defs/componentContractId"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "knownRange": {
+      "type": "object",
+      "required": [
+        "status",
+        "minimum",
+        "maximum",
+        "minimum_inclusive",
+        "maximum_inclusive",
+        "overflow_policy",
+        "unit"
+      ],
+      "properties": {
+        "status": {"const": "known"},
+        "minimum": {"$ref": "#/$defs/exactDecimal"},
+        "maximum": {"$ref": "#/$defs/exactDecimal"},
+        "minimum_inclusive": {"type": "boolean"},
+        "maximum_inclusive": {"type": "boolean"},
+        "overflow_policy": {"enum": ["reject", "clamp", "wrap"]},
+        "unit": {"enum": ["normalized", "unitless", "boolean", "samples", "hertz", "midi-note"]}
+      },
+      "additionalProperties": false
+    },
+    "publicPort": {
+      "type": "object",
+      "required": ["facet_id", "semantic_key", "display_label", "direction"],
+      "properties": {
+        "facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"},
+        "semantic_key": {"$ref": "#/$defs/semanticKey"},
+        "display_label": {"$ref": "#/$defs/label"},
+        "direction": {"enum": ["input", "output"]}
+      },
+      "additionalProperties": false
+    },
+    "publicParameter": {
+      "type": "object",
+      "required": ["facet_id", "semantic_key", "display_label", "value_type", "domain", "default", "update_behavior"],
+      "properties": {
+        "facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"},
+        "semantic_key": {"$ref": "#/$defs/semanticKey"},
+        "display_label": {"$ref": "#/$defs/label"},
+        "value_type": {"const": "exact-decimal"},
+        "domain": {"$ref": "#/$defs/knownRange"},
+        "default": {"$ref": "#/$defs/exactDecimal"},
+        "update_behavior": {
+          "type": "object",
+          "required": ["update_kind", "stateful"],
+          "properties": {
+            "update_kind": {"const": "runtime"},
+            "stateful": {"type": "boolean"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "publicAction": {
+      "type": "object",
+      "required": ["facet_id", "semantic_key", "display_label", "payload_kind"],
+      "properties": {
+        "facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"},
+        "semantic_key": {"$ref": "#/$defs/semanticKey"},
+        "display_label": {"$ref": "#/$defs/label"},
+        "payload_kind": {"enum": ["none", "exact-decimal", "integer", "boolean", "structured"]}
+      },
+      "additionalProperties": false
+    },
+    "publicDisplay": {
+      "type": "object",
+      "required": ["facet_id", "semantic_key", "display_label", "value_kind", "access"],
+      "properties": {
+        "facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"},
+        "semantic_key": {"$ref": "#/$defs/semanticKey"},
+        "display_label": {"$ref": "#/$defs/label"},
+        "value_kind": {"enum": ["text", "exact-decimal", "integer", "boolean"]},
+        "access": {"const": "read-only"}
+      },
+      "additionalProperties": false
+    },
+    "facetValue": {
+      "type": "object",
+      "required": ["facet_id", "value"],
+      "properties": {
+        "facet_id": {
+          "type": "string",
+          "pattern": "^component-(parameter|attribute)-[0-9]{6}$"
+        },
+        "value": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "node": {
+      "type": "object",
+      "required": ["node_id", "contract_reference", "parameter_values", "attribute_values"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "contract_reference": {"$ref": "#/$defs/componentContractReference"},
+        "parameter_values": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/facetValue"}
+        },
+        "attribute_values": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/facetValue"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "portEndpoint": {
+      "type": "object",
+      "required": ["node_id", "facet_id"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "facet_id": {"type": "string", "pattern": "^component-port-[0-9]{6}$"}
+      },
+      "additionalProperties": false
+    },
+    "connection": {
+      "type": "object",
+      "required": ["connection_id", "source", "destination"],
+      "properties": {
+        "connection_id": {"type": "string", "pattern": "^graph-connection-[0-9]{6}$"},
+        "source": {"$ref": "#/$defs/portEndpoint"},
+        "destination": {"$ref": "#/$defs/portEndpoint"}
+      },
+      "additionalProperties": false
+    },
+    "publicPortExposure": {
+      "type": "object",
+      "required": ["exposure_id", "graph_facet_id", "node_port"],
+      "properties": {
+        "exposure_id": {"type": "string", "pattern": "^graph-exposure-[0-9]{6}$"},
+        "graph_facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"},
+        "node_port": {"$ref": "#/$defs/portEndpoint"}
+      },
+      "additionalProperties": false
+    },
+    "publicFacetTarget": {
+      "type": "object",
+      "required": ["node_id", "facet_kind", "facet_id"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "facet_kind": {"enum": ["action", "display"]},
+        "facet_id": {
+          "type": "string",
+          "pattern": "^component-(action|display)-[0-9]{6}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "publicFacetExposure": {
+      "type": "object",
+      "required": ["exposure_id", "graph_facet_kind", "graph_facet_id", "target"],
+      "properties": {
+        "exposure_id": {"type": "string", "pattern": "^graph-exposure-[0-9]{6}$"},
+        "graph_facet_kind": {"enum": ["action", "display"]},
+        "graph_facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"},
+        "target": {"$ref": "#/$defs/publicFacetTarget"}
+      },
+      "additionalProperties": false
+    },
+    "mappingPoint": {
+      "type": "object",
+      "required": ["source", "destination"],
+      "properties": {
+        "source": {"$ref": "#/$defs/exactDecimal"},
+        "destination": {"$ref": "#/$defs/exactDecimal"}
+      },
+      "additionalProperties": false
+    },
+    "rangeTransform": {
+      "type": "object",
+      "required": ["curve", "polarity", "points"],
+      "properties": {
+        "curve": {"const": "linear"},
+        "polarity": {"enum": ["direct", "inverted"]},
+        "points": {
+          "type": "array",
+          "x-schuss-array-kind": "sequence",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/mappingPoint"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "parameterDestination": {
+      "type": "object",
+      "required": ["node_id", "facet_kind", "facet_id"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "facet_kind": {"enum": ["port", "parameter"]},
+        "facet_id": {
+          "type": "string",
+          "pattern": "^component-(port|parameter)-[0-9]{6}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "parameterBinding": {
+      "type": "object",
+      "required": [
+        "binding_id",
+        "binding_kind",
+        "source_graph_parameter_id",
+        "destination",
+        "source_domain",
+        "destination_domain",
+        "transform",
+        "update_boundary",
+        "smoothing",
+        "driver_policy"
+      ],
+      "properties": {
+        "binding_id": {"type": "string", "pattern": "^graph-binding-[0-9]{6}$"},
+        "binding_kind": {"enum": ["parameter-to-port", "parameter-to-parameter"]},
+        "source_graph_parameter_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"},
+        "destination": {"$ref": "#/$defs/parameterDestination"},
+        "source_domain": {"$ref": "#/$defs/knownRange"},
+        "destination_domain": {"$ref": "#/$defs/knownRange"},
+        "transform": {"$ref": "#/$defs/rangeTransform"},
+        "update_boundary": {"const": "control-cycle"},
+        "smoothing": {
+          "type": "object",
+          "required": ["kind", "responsibility", "completion"],
+          "properties": {
+            "kind": {"const": "linear"},
+            "responsibility": {"const": "graph"},
+            "completion": {"const": "next-control-cycle"}
+          },
+          "additionalProperties": false
+        },
+        "driver_policy": {"const": "exclusive"}
+      },
+      "additionalProperties": false
+    },
+    "compoundTarget": {
+      "type": "object",
+      "required": ["node_id", "facet_kind", "facet_id"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "facet_kind": {"enum": ["port", "parameter", "action", "display"]},
+        "facet_id": {
+          "type": "string",
+          "pattern": "^component-(port|parameter|action|display)-[0-9]{6}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "compoundInterfaceMapping": {
+      "type": "object",
+      "required": ["mapping_key", "target"],
+      "properties": {
+        "mapping_key": {"type": "string", "pattern": "^compound-mapping-key-[0-9]{6}$"},
+        "target": {"$ref": "#/$defs/compoundTarget"}
+      },
+      "additionalProperties": false
+    },
+    "hierarchyEdge": {
+      "type": "object",
+      "required": ["parent_node_id", "child_node_id"],
+      "properties": {
+        "parent_node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "child_node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"}
+      },
+      "additionalProperties": false
+    }
+  }
+}
