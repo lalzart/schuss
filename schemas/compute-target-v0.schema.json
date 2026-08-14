@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "compute-target-v0.schema.json",
+  "title": "Schuss compute target v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "compute_target_id", "revision", "content_hash", "target_kind", "display_name", "processor", "abi_constraints", "runtime_assumptions", "memory_regions", "asset_storage_limits", "firmware_runtime_reference", "capability_vocabulary_reference", "capability_declarations", "unresolved_facts"],
+  "properties": {
+    "schema_version": {"const": "compute-target-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "compute_target_id": {"type": "string", "pattern": "^schuss-compute-target-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "target_kind": {"const": "embedded-audio-processor"},
+    "display_name": {"type": "string", "minLength": 1},
+    "processor": {"$ref": "#/$defs/processor"},
+    "abi_constraints": {"$ref": "#/$defs/abiConstraints"},
+    "runtime_assumptions": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/runtimeAssumption"}},
+    "memory_regions": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/memoryRegion"}},
+    "asset_storage_limits": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/assetStorageLimit"}},
+    "firmware_runtime_reference": {"$ref": "#/$defs/environmentReference"},
+    "capability_vocabulary_reference": {"$ref": "#/$defs/capabilityVocabularyReference"},
+    "capability_declarations": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/capabilityDeclaration"}},
+    "unresolved_facts": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/unresolvedFact"}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "portablePath": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"},
+    "sourceEvidence": {
+      "type": "object",
+      "required": ["source_id", "commit", "path", "byte_sha256", "claim_kind"],
+      "properties": {
+        "source_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "path": {"$ref": "#/$defs/portablePath"},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"},
+        "claim_kind": {"enum": ["source-declared", "build-declared", "linker-declared", "limitation-declared"]}
+      },
+      "additionalProperties": false
+    },
+    "environmentReference": {
+      "type": "object",
+      "required": ["build_environment_id", "revision", "content_hash"],
+      "properties": {
+        "build_environment_id": {"type": "string", "pattern": "^schuss-build-environment-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "capabilityVocabularyReference": {
+      "type": "object",
+      "required": ["capability_vocabulary_id", "revision", "content_hash"],
+      "properties": {
+        "capability_vocabulary_id": {"type": "string", "pattern": "^schuss-capability-vocabulary-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "processor": {
+      "type": "object",
+      "required": ["family", "core", "instruction_set", "fpu", "evidence_refs"],
+      "properties": {
+        "family": {"const": "stm32f427"},
+        "core": {"const": "cortex-m4"},
+        "instruction_set": {"const": "thumb-2"},
+        "fpu": {"const": "fpv4-sp-d16"},
+        "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+      },
+      "additionalProperties": false
+    },
+    "abiConstraints": {
+      "type": "object",
+      "required": ["target_triple", "float_abi", "endianness", "evidence_refs"],
+      "properties": {
+        "target_triple": {"const": "arm-none-eabi"},
+        "float_abi": {"const": "hard"},
+        "endianness": {"const": "little"},
+        "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+      },
+      "additionalProperties": false
+    },
+    "runtimeAssumption": {
+      "type": "object",
+      "required": ["key", "value", "unit", "fact_kind", "evidence_refs"],
+      "properties": {
+        "key": {"enum": ["audio-sample-rate", "audio-block-frames"]},
+        "value": {"type": "integer", "minimum": 1},
+        "unit": {"enum": ["hertz", "frames"]},
+        "fact_kind": {"const": "source-declared-maximum"},
+        "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+      },
+      "additionalProperties": false
+    },
+    "memoryRegion": {
+      "type": "object",
+      "required": ["region_id", "address_start", "length_bytes", "alignment_bytes", "budget_kind", "resource_kinds", "evidence_refs"],
+      "properties": {
+        "region_id": {"type": "string", "pattern": "^target-memory-region-[0-9]{6}$"},
+        "address_start": {"type": "string", "pattern": "^0x[0-9A-F]{8}$"},
+        "length_bytes": {"type": "integer", "minimum": 1},
+        "alignment_bytes": {"type": "integer", "minimum": 1},
+        "budget_kind": {"const": "linker-region-budget"},
+        "resource_kinds": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"enum": ["code", "read-only-data", "data", "stack", "heap", "asset"]}},
+        "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+      },
+      "additionalProperties": false
+    },
+    "assetStorageLimit": {
+      "type": "object",
+      "required": ["limit_id", "asset_kind", "region_id", "maximum_bytes", "evidence_refs"],
+      "properties": {
+        "limit_id": {"type": "string", "pattern": "^target-asset-limit-[0-9]{6}$"},
+        "asset_kind": {"enum": ["runtime-sample-bytes", "packaged-asset-bytes"]},
+        "region_id": {"type": "string", "pattern": "^target-memory-region-[0-9]{6}$"},
+        "maximum_bytes": {"type": "integer", "minimum": 0},
+        "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+      },
+      "additionalProperties": false
+    },
+    "knownCapability": {
+      "type": "object",
+      "required": ["status", "value", "evidence_level", "evidence_refs"],
+      "properties": {
+        "status": {"enum": ["supported", "unsupported"]},
+        "value": {"oneOf": [{"type": "boolean"}, {"type": "integer"}]},
+        "evidence_level": {"type": "integer", "minimum": 1, "maximum": 8},
+        "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+      },
+      "additionalProperties": false
+    },
+    "unknownCapability": {
+      "type": "object",
+      "required": ["status", "code", "owner", "earliest_task", "rationale", "question", "evidence_refs"],
+      "properties": {
+        "status": {"enum": ["unresolved", "not-evaluated"]},
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "owner": {"const": "target-owner"},
+        "earliest_task": {"type": "string", "pattern": "^task-[0-9]{3}$"},
+        "rationale": {"type": "string", "minLength": 1},
+        "question": {"type": "string", "minLength": 1},
+        "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+      },
+      "additionalProperties": false
+    },
+    "capabilityDeclaration": {
+      "type": "object",
+      "required": ["capability_key", "state"],
+      "properties": {
+        "capability_key": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "state": {"oneOf": [{"$ref": "#/$defs/knownCapability"}, {"$ref": "#/$defs/unknownCapability"}]}
+      },
+      "additionalProperties": false
+    },
+    "unresolvedFact": {
+      "type": "object",
+      "required": ["fact_id", "status", "code", "owner", "earliest_task", "rationale", "question", "evidence_refs"],
+      "properties": {
+        "fact_id": {"type": "string", "pattern": "^target-unresolved-fact-[0-9]{6}$"},
+        "status": {"const": "unresolved"},
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "owner": {"const": "target-owner"},
+        "earliest_task": {"type": "string", "pattern": "^task-[0-9]{3}$"},
+        "rationale": {"type": "string", "minLength": 1},
+        "question": {"type": "string", "minLength": 1},
+        "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+      },
+      "additionalProperties": false
+    }
+  }
+}

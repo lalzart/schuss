@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "build-environment-v0.schema.json",
+  "title": "Schuss build environment identity v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "build_environment_id", "revision", "content_hash", "environment_kind", "identity"],
+  "properties": {
+    "schema_version": {"const": "build-environment-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "build_environment_id": {"type": "string", "pattern": "^schuss-build-environment-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "environment_kind": {"enum": ["toolchain", "firmware-runtime-abi"]},
+    "identity": {"$ref": "#/$defs/identity"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "portablePath": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"},
+    "sourceEvidence": {
+      "type": "object",
+      "required": ["source_id", "commit", "path", "byte_sha256", "claim_kind"],
+      "properties": {
+        "source_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "path": {"$ref": "#/$defs/portablePath"},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"},
+        "claim_kind": {"enum": ["source-declared", "build-declared", "linker-declared", "limitation-declared"]}
+      },
+      "additionalProperties": false
+    },
+    "componentHash": {
+      "type": "object",
+      "required": ["component", "sha256"],
+      "properties": {
+        "component": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "sha256": {"$ref": "#/$defs/rawSha256"}
+      },
+      "additionalProperties": false
+    },
+    "knownIdentity": {
+      "type": "object",
+      "required": ["status", "identity_kind", "version", "target_triple", "component_hashes", "compatibility_boundary", "portable_locator", "evidence_refs"],
+      "properties": {
+        "status": {"const": "supported"},
+        "identity_kind": {"enum": ["gnu-arm-embedded", "ksoloti-firmware-runtime"]},
+        "version": {"type": "string", "minLength": 1},
+        "target_triple": {"type": "string", "pattern": "^[a-z0-9_+-]+$"},
+        "component_hashes": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/componentHash"}},
+        "compatibility_boundary": {"type": "string", "minLength": 1},
+        "portable_locator": {"type": "string", "pattern": "^sha256/[0-9a-f]{64}$"},
+        "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+      },
+      "additionalProperties": false
+    },
+    "unresolvedIdentity": {
+      "type": "object",
+      "required": ["status", "required_identity_kind", "target_triple", "known_constraints", "code", "owner", "earliest_task", "rationale", "question", "evidence_refs"],
+      "properties": {
+        "status": {"enum": ["unresolved", "not-evaluated"]},
+        "required_identity_kind": {"enum": ["gnu-arm-embedded", "ksoloti-firmware-runtime"]},
+        "target_triple": {"type": "string", "pattern": "^[a-z0-9_+-]+$"},
+        "known_constraints": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "owner": {"enum": ["target-owner", "backend-owner"]},
+        "earliest_task": {"type": "string", "pattern": "^task-[0-9]{3}$"},
+        "rationale": {"type": "string", "minLength": 1},
+        "question": {"type": "string", "minLength": 1},
+        "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+      },
+      "additionalProperties": false
+    },
+    "identity": {"oneOf": [{"$ref": "#/$defs/knownIdentity"}, {"$ref": "#/$defs/unresolvedIdentity"}]}
+  }
+}

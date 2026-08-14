@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capability-vocabulary-v0.schema.json",
+  "title": "Schuss capability vocabulary v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "capability_vocabulary_id", "revision", "content_hash", "definitions"],
+  "properties": {
+    "schema_version": {"const": "capability-vocabulary-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "capability_vocabulary_id": {"type": "string", "pattern": "^schuss-capability-vocabulary-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "definitions": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/capabilityDefinition"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "capabilityDefinition": {
+      "type": "object",
+      "required": ["key", "owner", "meaning", "declaration_subject_kinds", "requirement_subject_kinds", "value_kind", "unit", "comparison_rule", "unknown_blocks_eligibility", "required_evidence_level"],
+      "properties": {
+        "key": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "owner": {"enum": ["target-runtime-owner", "backend-contract-owner", "build-selection-owner"]},
+        "meaning": {"type": "string", "minLength": 1},
+        "declaration_subject_kinds": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["compute-target", "backend"]}
+        },
+        "requirement_subject_kinds": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["backend", "binding-eligibility"]}
+        },
+        "value_kind": {"enum": ["boolean", "integer"]},
+        "unit": {"enum": ["none", "bytes", "frames", "hertz"]},
+        "comparison_rule": {"enum": ["exact", "at-least", "at-most"]},
+        "unknown_blocks_eligibility": {"type": "boolean"},
+        "required_evidence_level": {"type": "integer", "minimum": 1, "maximum": 8}
+      },
+      "additionalProperties": false
+    }
+  }
+}
