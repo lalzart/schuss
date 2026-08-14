@@ -10,9 +10,9 @@ into transparent, typed Schuss models.
 | 3 | Java-resolved object and graph inventory | Established; resolved snapshot frozen |
 | 3 review gate | Deterministic inventory review and impact packet | Complete; accepted frozen evidence |
 | 4A | Versioned semantic overlay and 20-30-family pilot | Complete |
-| 4 contract gate | Schema ownership, compiler stages, and evidence separation | Complete; current accepted Task 004 gate |
-| 5 | Minimal Gills device-profile and instrument schemas | Next bounded task after Task 004 |
-| 6 | Component-contract, implementation-binding, and DSP-graph schemas | Planned |
+| 4 contract gate | Schema ownership, compiler stages, and evidence separation | Complete; accepted Task 004 architecture |
+| 5 | Minimal Gills device-profile and instrument schemas | Complete; current Task 005 contract gate |
+| 6 | Component-contract, implementation-binding, and DSP-graph schemas | Next bounded task |
 | 7 | Compute-target, backend-capability, build, artifact, and evidence schemas | Planned |
 | 8 | Shared headless validation and typed operation layer | Planned |
 | 9 | One minimal graph through the legacy `.axp` adapter and ARM compiler/linker | Planned |
@@ -31,18 +31,20 @@ raw snapshot with two explicit source parse issues. Phase 3 retains the loaded
 and post-construction legacy model, including partial, failed, ambiguous,
 zombie, and unresolved outcomes. ADR 0004 accepts that evidence with known
 limitations. Phase 4A is complete with a separate semantic overlay and a
-validated 26-family manual pilot. Task 004 is the current architectural gate:
+validated 26-family manual pilot. Task 004 remains the accepted architecture:
 `docs/SCHEMA_STRATEGY.md`, `docs/COMPILER_STRATEGY.md`, and ADRs 0005-0007
 define the family/contract/binding boundary, one-way references, compiler
 stages, and build-evidence separation without implementing schemas or code
 generation.
 
-Task 005 is next. It is limited to minimal Gills device-profile and instrument
-schemas, fixtures, and a read-only validator, including one knob-to-`blend`
-mapping and one opaque exact graph target. It does not define graph nodes,
-ports, bindings, targets, backends, operations, firmware, GUI/CLI, or
-compilation. The exact scope is in
-`docs/tasks/004-schema-and-compiler-contract-strategy.md`.
+Task 005 is complete. It adds only minimal Gills device-profile and instrument
+schemas, fixtures, canonical hashing, and a read-only validator, including one
+knob-to-`blend` mapping and one `blend`-to-deferred-graph-target mapping. It
+does not define graph nodes, component contracts, bindings, targets, backends,
+operations, firmware, GUI/CLI, or compilation. Task 006 is next: it should add
+the component-contract, implementation-binding, and DSP-graph schemas needed
+to resolve that deferred target. The completed boundary is in
+`docs/DEVICE_INSTRUMENT_CONTRACTS.md`.
 
 ## Contract sequence constraints
 

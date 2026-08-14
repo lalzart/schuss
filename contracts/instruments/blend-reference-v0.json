@@ -1,0 +1,141 @@
+{
+  "schema_version": "instrument-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "instrument_id": "schuss-instrument-000001",
+  "revision": 1,
+  "content_hash": "sha256:3543d631ceb32b17be95c84eccc07d38ad29f1dc71c5a267b40306f69711bc53",
+  "display_name": "Blend reference instrument",
+  "device_profile_reference": {
+    "device_profile_id": "schuss-device-profile-000001",
+    "revision": 1,
+    "content_hash": "sha256:d6ad487f5444b1e39667ed8b4e43dde32ce7f06accac0be4fd5930c9b7eb82fe"
+  },
+  "graph_reference": {
+    "status": "deferred",
+    "graph_id": "schuss-graph-000001",
+    "intended_revision": 1,
+    "code": "GRAPH_REFERENCE_DEFERRED",
+    "owner": "task-006",
+    "reason": "graph-schema-not-yet-implemented",
+    "rationale": "Task 005 can preserve graph identity and public-target intention but cannot truthfully provide or resolve an exact graph content hash before Task 006 defines the authoritative graph schema.",
+    "question": "Which authoritative Task 006 graph revision and content hash realize the declared blend public parameter target?",
+    "evidence_refs": [
+      "docs/reference/CROSSFADER_DOMAIN_SLICE.md"
+    ],
+    "declared_targets": [
+      {
+        "facet_id": "graph-facet-000001",
+        "facet_kind": "parameter",
+        "semantic_key": "blend"
+      }
+    ]
+  },
+  "parameters": [
+    {
+      "facet_id": "instrument-parameter-000001",
+      "display_label": "Blend",
+      "value_type": "exact-decimal",
+      "domain": {
+        "minimum": "0",
+        "maximum": "1",
+        "unit": "normalized"
+      },
+      "default": "0.5",
+      "update_behavior": {
+        "update_kind": "runtime",
+        "smoothing_responsibility": "graph",
+        "stateful": true
+      }
+    }
+  ],
+  "actions": [],
+  "displays": [],
+  "state_declarations": [],
+  "device_input_mappings": [
+    {
+      "mapping_id": "device-mapping-000001",
+      "mapping_kind": "parameter-control",
+      "direction": "device-to-instrument",
+      "source": {
+        "facet_kind": "input-control",
+        "slot_id": "device-input-000001"
+      },
+      "destination": {
+        "facet_kind": "parameter",
+        "facet_id": "instrument-parameter-000001"
+      },
+      "source_domain": {
+        "minimum": "0",
+        "maximum": "1",
+        "unit": "normalized"
+      },
+      "destination_domain": {
+        "minimum": "0",
+        "maximum": "1",
+        "unit": "normalized"
+      },
+      "transform": {
+        "curve": "linear",
+        "polarity": "direct",
+        "points": [
+          {
+            "source": "0",
+            "destination": "0"
+          },
+          {
+            "source": "1",
+            "destination": "1"
+          }
+        ]
+      },
+      "response": {
+        "response_time": "control-update",
+        "smoothing_responsibility": "graph"
+      },
+      "pickup": {
+        "mode": "soft",
+        "responsibility": "instrument"
+      }
+    }
+  ],
+  "device_feedback_mappings": [],
+  "graph_mappings": [
+    {
+      "mapping_id": "graph-mapping-000001",
+      "mapping_kind": "parameter-to-parameter",
+      "direction": "instrument-to-graph",
+      "source": {
+        "facet_kind": "parameter",
+        "facet_id": "instrument-parameter-000001"
+      },
+      "destination": {
+        "facet_kind": "parameter",
+        "facet_id": "graph-facet-000001"
+      },
+      "source_domain": {
+        "minimum": "0",
+        "maximum": "1",
+        "unit": "normalized"
+      },
+      "destination_domain": {
+        "minimum": "0",
+        "maximum": "1",
+        "unit": "normalized"
+      },
+      "transform": {
+        "curve": "linear",
+        "polarity": "direct",
+        "points": [
+          {
+            "source": "0",
+            "destination": "0"
+          },
+          {
+            "source": "1",
+            "destination": "1"
+          }
+        ]
+      }
+    }
+  ]
+}

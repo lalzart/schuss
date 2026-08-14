@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "device-profile-v0.schema.json",
+  "title": "Schuss device profile v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "device_profile_id",
+    "revision",
+    "content_hash",
+    "display_name",
+    "input_controls",
+    "gestures",
+    "feedback_outputs",
+    "displays",
+    "physical_io",
+    "unresolved_facts"
+  ],
+  "properties": {
+    "schema_version": {"const": "device-profile-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "device_profile_id": {"$ref": "#/$defs/deviceProfileId"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "display_name": {"$ref": "#/$defs/label"},
+    "input_controls": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/inputControl"}
+    },
+    "gestures": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/gesture"}
+    },
+    "feedback_outputs": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/feedbackOutput"}
+    },
+    "displays": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/display"}
+    },
+    "physical_io": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/physicalIo"}
+    },
+    "unresolved_facts": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/unresolvedFact"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "deviceProfileId": {
+      "type": "string",
+      "pattern": "^schuss-device-profile-[0-9]{6}$"
+    },
+    "contentHash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "label": {"type": "string", "minLength": 1},
+    "exactDecimal": {
+      "type": "string",
+      "pattern": "^(?:0|-?(?:0\\.[0-9]*[1-9]|[1-9][0-9]*(?:\\.[0-9]*[1-9])?))$"
+    },
+    "exactRange": {
+      "type": "object",
+      "required": ["minimum", "maximum", "unit"],
+      "properties": {
+        "minimum": {"$ref": "#/$defs/exactDecimal"},
+        "maximum": {"$ref": "#/$defs/exactDecimal"},
+        "unit": {
+          "enum": ["normalized", "steps", "boolean", "raw-count", "volts", "midi-value"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "unresolvedLink": {
+      "type": "object",
+      "required": ["status", "unresolved_fact_id"],
+      "properties": {
+        "status": {"const": "unresolved"},
+        "unresolved_fact_id": {
+          "type": "string",
+          "pattern": "^unresolved-fact-[0-9]{6}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "rangeFact": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "range"],
+          "properties": {
+            "status": {"const": "known"},
+            "range": {"$ref": "#/$defs/exactRange"}
+          },
+          "additionalProperties": false
+        },
+        {"$ref": "#/$defs/unresolvedLink"}
+      ]
+    },
+    "resolutionFact": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "steps"],
+          "properties": {
+            "status": {"const": "known"},
+            "steps": {"type": "integer", "minimum": 1}
+          },
+          "additionalProperties": false
+        },
+        {"$ref": "#/$defs/unresolvedLink"}
+      ]
+    },
+    "capabilityFact": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "capability"],
+          "properties": {
+            "status": {"const": "known"},
+            "capability": {
+              "enum": [
+                "edge-detected-gesture",
+                "hold-duration-gesture",
+                "relative-turn-gesture",
+                "binary-indicator-output",
+                "haptic-output",
+                "text-output",
+                "graphics-output",
+                "audio-signal",
+                "midi-messages",
+                "cv-voltage",
+                "generic-io"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {"$ref": "#/$defs/unresolvedLink"}
+      ]
+    },
+    "inputControl": {
+      "type": "object",
+      "required": [
+        "slot_id",
+        "display_label",
+        "control_kind",
+        "physical_form",
+        "output_domain",
+        "logical_range",
+        "physical_range",
+        "resolution"
+      ],
+      "properties": {
+        "slot_id": {
+          "type": "string",
+          "pattern": "^device-input-[0-9]{6}$"
+        },
+        "display_label": {"$ref": "#/$defs/label"},
+        "control_kind": {"enum": ["absolute", "relative", "discrete"]},
+        "physical_form": {"enum": ["knob", "encoder", "button", "switch"]},
+        "output_domain": {"enum": ["normalized-position", "relative-step", "binary-state"]},
+        "logical_range": {"$ref": "#/$defs/exactRange"},
+        "physical_range": {"$ref": "#/$defs/rangeFact"},
+        "resolution": {"$ref": "#/$defs/resolutionFact"}
+      },
+      "additionalProperties": false
+    },
+    "gesture": {
+      "type": "object",
+      "required": ["gesture_id", "display_label", "gesture_kind", "source_control_ids", "recognition"],
+      "properties": {
+        "gesture_id": {
+          "type": "string",
+          "pattern": "^device-gesture-[0-9]{6}$"
+        },
+        "display_label": {"$ref": "#/$defs/label"},
+        "gesture_kind": {"enum": ["press", "release", "hold", "turn"]},
+        "source_control_ids": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^device-input-[0-9]{6}$"}
+        },
+        "recognition": {"$ref": "#/$defs/capabilityFact"}
+      },
+      "additionalProperties": false
+    },
+    "feedbackOutput": {
+      "type": "object",
+      "required": ["slot_id", "display_label", "feedback_kind", "direction", "capability"],
+      "properties": {
+        "slot_id": {
+          "type": "string",
+          "pattern": "^device-feedback-[0-9]{6}$"
+        },
+        "display_label": {"$ref": "#/$defs/label"},
+        "feedback_kind": {"enum": ["indicator", "haptic"]},
+        "direction": {"const": "instrument-to-device"},
+        "capability": {"$ref": "#/$defs/capabilityFact"}
+      },
+      "additionalProperties": false
+    },
+    "display": {
+      "type": "object",
+      "required": ["slot_id", "display_label", "display_kind", "direction", "capability"],
+      "properties": {
+        "slot_id": {
+          "type": "string",
+          "pattern": "^device-display-[0-9]{6}$"
+        },
+        "display_label": {"$ref": "#/$defs/label"},
+        "display_kind": {"enum": ["text", "graphics"]},
+        "direction": {"const": "instrument-to-device"},
+        "capability": {"$ref": "#/$defs/capabilityFact"}
+      },
+      "additionalProperties": false
+    },
+    "physicalIo": {
+      "type": "object",
+      "required": ["slot_id", "display_label", "io_kind", "direction", "capability"],
+      "properties": {
+        "slot_id": {
+          "type": "string",
+          "pattern": "^device-physical-io-[0-9]{6}$"
+        },
+        "display_label": {"$ref": "#/$defs/label"},
+        "io_kind": {"enum": ["audio", "midi", "cv", "generic"]},
+        "direction": {"enum": ["input", "output", "bidirectional"]},
+        "capability": {"$ref": "#/$defs/capabilityFact"}
+      },
+      "additionalProperties": false
+    },
+    "unresolvedFact": {
+      "type": "object",
+      "required": [
+        "fact_id",
+        "status",
+        "code",
+        "affected_subjects",
+        "owner",
+        "earliest_task",
+        "rationale",
+        "question",
+        "evidence_status",
+        "evidence_refs"
+      ],
+      "properties": {
+        "fact_id": {
+          "type": "string",
+          "pattern": "^unresolved-fact-[0-9]{6}$"
+        },
+        "status": {"const": "unresolved"},
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "affected_subjects": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^(input-control|gesture|feedback-output|display|physical-io):[a-z0-9-]+$"
+          }
+        },
+        "owner": {"const": "device-profile-owner"},
+        "earliest_task": {"type": "string", "pattern": "^task-[0-9]{3}$"},
+        "rationale": {"type": "string", "minLength": 1},
+        "question": {"type": "string", "minLength": 1},
+        "evidence_status": {"enum": ["no-accepted-portable-evidence", "partial-portable-evidence"]},
+        "evidence_refs": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,485 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "instrument-v0.schema.json",
+  "title": "Schuss instrument v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "instrument_id",
+    "revision",
+    "content_hash",
+    "display_name",
+    "device_profile_reference",
+    "graph_reference",
+    "parameters",
+    "actions",
+    "displays",
+    "state_declarations",
+    "device_input_mappings",
+    "device_feedback_mappings",
+    "graph_mappings"
+  ],
+  "properties": {
+    "schema_version": {"const": "instrument-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "instrument_id": {"$ref": "#/$defs/instrumentId"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "display_name": {"$ref": "#/$defs/label"},
+    "device_profile_reference": {"$ref": "#/$defs/deviceProfileReference"},
+    "graph_reference": {"$ref": "#/$defs/graphReference"},
+    "parameters": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/parameter"}
+    },
+    "actions": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/action"}
+    },
+    "displays": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/instrumentDisplay"}
+    },
+    "state_declarations": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/stateDeclaration"}
+    },
+    "device_input_mappings": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/deviceInputMapping"}
+    },
+    "device_feedback_mappings": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/deviceFeedbackMapping"}
+    },
+    "graph_mappings": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/graphMapping"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "instrumentId": {
+      "type": "string",
+      "pattern": "^schuss-instrument-[0-9]{6}$"
+    },
+    "deviceProfileId": {
+      "type": "string",
+      "pattern": "^schuss-device-profile-[0-9]{6}$"
+    },
+    "graphId": {
+      "type": "string",
+      "pattern": "^schuss-graph-[0-9]{6}$"
+    },
+    "contentHash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "label": {"type": "string", "minLength": 1},
+    "exactDecimal": {
+      "type": "string",
+      "pattern": "^(?:0|-?(?:0\\.[0-9]*[1-9]|[1-9][0-9]*(?:\\.[0-9]*[1-9])?))$"
+    },
+    "exactRange": {
+      "type": "object",
+      "required": ["minimum", "maximum", "unit"],
+      "properties": {
+        "minimum": {"$ref": "#/$defs/exactDecimal"},
+        "maximum": {"$ref": "#/$defs/exactDecimal"},
+        "unit": {"enum": ["normalized", "steps", "boolean"]}
+      },
+      "additionalProperties": false
+    },
+    "deviceProfileReference": {
+      "type": "object",
+      "required": ["device_profile_id", "revision", "content_hash"],
+      "properties": {
+        "device_profile_id": {"$ref": "#/$defs/deviceProfileId"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "deferredGraphTarget": {
+      "type": "object",
+      "required": ["facet_id", "facet_kind", "semantic_key"],
+      "properties": {
+        "facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"},
+        "facet_kind": {"enum": ["parameter", "port", "action"]},
+        "semantic_key": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
+      },
+      "additionalProperties": false
+    },
+    "graphReference": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "graph_id", "revision", "content_hash"],
+          "properties": {
+            "status": {"const": "resolved"},
+            "graph_id": {"$ref": "#/$defs/graphId"},
+            "revision": {"type": "integer", "minimum": 1},
+            "content_hash": {"$ref": "#/$defs/contentHash"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "graph_id",
+            "intended_revision",
+            "code",
+            "owner",
+            "reason",
+            "rationale",
+            "question",
+            "evidence_refs",
+            "declared_targets"
+          ],
+          "properties": {
+            "status": {"const": "deferred"},
+            "graph_id": {"$ref": "#/$defs/graphId"},
+            "intended_revision": {"type": "integer", "minimum": 1},
+            "code": {"const": "GRAPH_REFERENCE_DEFERRED"},
+            "owner": {"const": "task-006"},
+            "reason": {"const": "graph-schema-not-yet-implemented"},
+            "rationale": {"type": "string", "minLength": 1},
+            "question": {"type": "string", "minLength": 1},
+            "evidence_refs": {
+              "type": "array",
+              "x-schuss-array-kind": "set",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"
+              }
+            },
+            "declared_targets": {
+              "type": "array",
+              "x-schuss-array-kind": "set",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/deferredGraphTarget"}
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["facet_id", "display_label", "value_type", "domain", "default", "update_behavior"],
+      "properties": {
+        "facet_id": {
+          "type": "string",
+          "pattern": "^instrument-parameter-[0-9]{6}$"
+        },
+        "display_label": {"$ref": "#/$defs/label"},
+        "value_type": {"const": "exact-decimal"},
+        "domain": {"$ref": "#/$defs/exactRange"},
+        "default": {"$ref": "#/$defs/exactDecimal"},
+        "update_behavior": {
+          "type": "object",
+          "required": ["update_kind", "smoothing_responsibility", "stateful"],
+          "properties": {
+            "update_kind": {"const": "runtime"},
+            "smoothing_responsibility": {"enum": ["instrument", "graph", "none"]},
+            "stateful": {"type": "boolean"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "action": {
+      "type": "object",
+      "required": ["facet_id", "display_label", "payload_kind"],
+      "properties": {
+        "facet_id": {
+          "type": "string",
+          "pattern": "^instrument-action-[0-9]{6}$"
+        },
+        "display_label": {"$ref": "#/$defs/label"},
+        "payload_kind": {"enum": ["none", "exact-decimal"]}
+      },
+      "additionalProperties": false
+    },
+    "instrumentDisplay": {
+      "type": "object",
+      "required": ["facet_id", "display_label", "value_kind", "access"],
+      "properties": {
+        "facet_id": {
+          "type": "string",
+          "pattern": "^instrument-display-[0-9]{6}$"
+        },
+        "display_label": {"$ref": "#/$defs/label"},
+        "value_kind": {"enum": ["text", "exact-decimal", "boolean"]},
+        "access": {"const": "read-only"}
+      },
+      "additionalProperties": false
+    },
+    "stateDeclaration": {
+      "type": "object",
+      "required": ["state_id", "display_label", "value_kind", "persistence", "reset_policy"],
+      "properties": {
+        "state_id": {
+          "type": "string",
+          "pattern": "^instrument-state-[0-9]{6}$"
+        },
+        "display_label": {"$ref": "#/$defs/label"},
+        "value_kind": {"enum": ["exact-decimal", "boolean", "text"]},
+        "persistence": {"enum": ["volatile", "persistent"]},
+        "reset_policy": {"enum": ["none", "default-on-start", "explicit-action"]}
+      },
+      "additionalProperties": false
+    },
+    "mappingPoint": {
+      "type": "object",
+      "required": ["source", "destination"],
+      "properties": {
+        "source": {"$ref": "#/$defs/exactDecimal"},
+        "destination": {"$ref": "#/$defs/exactDecimal"}
+      },
+      "additionalProperties": false
+    },
+    "rangeTransform": {
+      "type": "object",
+      "required": ["curve", "polarity", "points"],
+      "properties": {
+        "curve": {"const": "linear"},
+        "polarity": {"enum": ["direct", "inverted"]},
+        "points": {
+          "type": "array",
+          "x-schuss-array-kind": "sequence",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/mappingPoint"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "parameterControlMapping": {
+      "type": "object",
+      "required": [
+        "mapping_id",
+        "mapping_kind",
+        "direction",
+        "source",
+        "destination",
+        "source_domain",
+        "destination_domain",
+        "transform",
+        "response",
+        "pickup"
+      ],
+      "properties": {
+        "mapping_id": {"type": "string", "pattern": "^device-mapping-[0-9]{6}$"},
+        "mapping_kind": {"const": "parameter-control"},
+        "direction": {"const": "device-to-instrument"},
+        "source": {
+          "type": "object",
+          "required": ["facet_kind", "slot_id"],
+          "properties": {
+            "facet_kind": {"const": "input-control"},
+            "slot_id": {"type": "string", "pattern": "^device-input-[0-9]{6}$"}
+          },
+          "additionalProperties": false
+        },
+        "destination": {
+          "type": "object",
+          "required": ["facet_kind", "facet_id"],
+          "properties": {
+            "facet_kind": {"enum": ["parameter", "action", "display"]},
+            "facet_id": {
+              "type": "string",
+              "pattern": "^instrument-(parameter|action|display)-[0-9]{6}$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "source_domain": {"$ref": "#/$defs/exactRange"},
+        "destination_domain": {"$ref": "#/$defs/exactRange"},
+        "transform": {"$ref": "#/$defs/rangeTransform"},
+        "response": {
+          "type": "object",
+          "required": ["response_time", "smoothing_responsibility"],
+          "properties": {
+            "response_time": {"const": "control-update"},
+            "smoothing_responsibility": {"enum": ["instrument", "graph", "none"]}
+          },
+          "additionalProperties": false
+        },
+        "pickup": {
+          "type": "object",
+          "required": ["mode", "responsibility"],
+          "properties": {
+            "mode": {"enum": ["none", "soft", "takeover"]},
+            "responsibility": {"enum": ["instrument", "device-client"]}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "actionTriggerMapping": {
+      "type": "object",
+      "required": ["mapping_id", "mapping_kind", "direction", "source", "destination"],
+      "properties": {
+        "mapping_id": {"type": "string", "pattern": "^device-mapping-[0-9]{6}$"},
+        "mapping_kind": {"const": "action-trigger"},
+        "direction": {"const": "device-to-instrument"},
+        "source": {
+          "type": "object",
+          "required": ["facet_kind", "gesture_id"],
+          "properties": {
+            "facet_kind": {"const": "gesture"},
+            "gesture_id": {"type": "string", "pattern": "^device-gesture-[0-9]{6}$"}
+          },
+          "additionalProperties": false
+        },
+        "destination": {
+          "type": "object",
+          "required": ["facet_kind", "facet_id"],
+          "properties": {
+            "facet_kind": {"const": "action"},
+            "facet_id": {"type": "string", "pattern": "^instrument-action-[0-9]{6}$"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "deviceInputMapping": {
+      "oneOf": [
+        {"$ref": "#/$defs/parameterControlMapping"},
+        {"$ref": "#/$defs/actionTriggerMapping"}
+      ]
+    },
+    "deviceFeedbackMapping": {
+      "type": "object",
+      "required": ["mapping_id", "direction", "source", "destination", "update_responsibility"],
+      "properties": {
+        "mapping_id": {"type": "string", "pattern": "^feedback-mapping-[0-9]{6}$"},
+        "direction": {"const": "instrument-to-device"},
+        "source": {
+          "type": "object",
+          "required": ["facet_kind", "facet_id"],
+          "properties": {
+            "facet_kind": {"enum": ["parameter", "display", "state"]},
+            "facet_id": {
+              "type": "string",
+              "pattern": "^instrument-(parameter|display|state)-[0-9]{6}$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "destination": {
+          "type": "object",
+          "required": ["slot_kind", "slot_id"],
+          "properties": {
+            "slot_kind": {"enum": ["feedback-output", "display"]},
+            "slot_id": {
+              "type": "string",
+              "pattern": "^device-(feedback|display)-[0-9]{6}$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "update_responsibility": {"const": "instrument"}
+      },
+      "additionalProperties": false
+    },
+    "graphMapping": {
+      "oneOf": [
+        {"$ref": "#/$defs/parameterGraphMapping"},
+        {"$ref": "#/$defs/actionGraphMapping"}
+      ]
+    },
+    "parameterGraphMapping": {
+      "type": "object",
+      "required": [
+        "mapping_id",
+        "mapping_kind",
+        "direction",
+        "source",
+        "destination",
+        "source_domain",
+        "destination_domain",
+        "transform"
+      ],
+      "properties": {
+        "mapping_id": {"type": "string", "pattern": "^graph-mapping-[0-9]{6}$"},
+        "mapping_kind": {"enum": ["parameter-to-parameter", "parameter-to-port"]},
+        "direction": {"const": "instrument-to-graph"},
+        "source": {
+          "type": "object",
+          "required": ["facet_kind", "facet_id"],
+          "properties": {
+            "facet_kind": {"const": "parameter"},
+            "facet_id": {"type": "string", "pattern": "^instrument-parameter-[0-9]{6}$"}
+          },
+          "additionalProperties": false
+        },
+        "destination": {
+          "type": "object",
+          "required": ["facet_kind", "facet_id"],
+          "properties": {
+            "facet_kind": {"enum": ["parameter", "port"]},
+            "facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"}
+          },
+          "additionalProperties": false
+        },
+        "source_domain": {"$ref": "#/$defs/exactRange"},
+        "destination_domain": {"$ref": "#/$defs/exactRange"},
+        "transform": {"$ref": "#/$defs/rangeTransform"}
+      },
+      "additionalProperties": false
+    },
+    "actionGraphMapping": {
+      "type": "object",
+      "required": ["mapping_id", "mapping_kind", "direction", "source", "destination"],
+      "properties": {
+        "mapping_id": {"type": "string", "pattern": "^graph-mapping-[0-9]{6}$"},
+        "mapping_kind": {"const": "action-to-action"},
+        "direction": {"const": "instrument-to-graph"},
+        "source": {
+          "type": "object",
+          "required": ["facet_kind", "facet_id"],
+          "properties": {
+            "facet_kind": {"const": "action"},
+            "facet_id": {"type": "string", "pattern": "^instrument-action-[0-9]{6}$"}
+          },
+          "additionalProperties": false
+        },
+        "destination": {
+          "type": "object",
+          "required": ["facet_kind", "facet_id"],
+          "properties": {
+            "facet_kind": {"const": "action"},
+            "facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

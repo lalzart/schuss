@@ -1,7 +1,7 @@
 # Task 004: Schema and compiler contract strategy
 
-Status: complete. This task is the current accepted architectural gate after
-the completed Phase 4A semantic-catalog foundation; Task 005 is next.
+Status: complete. This remains the accepted architectural foundation. Task 005
+has since completed the device/instrument contract gate; Task 006 is next.
 
 Read `AGENTS.md`, `README.md`, `docs/PROJECT_CONTEXT.md`,
 `docs/ARCHITECTURE.md`, `docs/SEMANTIC_CATALOG.md`, `docs/TAXONOMY.md`,

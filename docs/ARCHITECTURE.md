@@ -75,12 +75,21 @@ may map, without embedding DSP implementation.
 Gills is the first device profile. Its existing panel contracts can inform this
 layer, but importing them is separate from the legacy inventory task.
 
+Task 005's production v0 contract declares only the reference knob needed by
+the `blend` slice and leaves unsupported physical range/resolution facts
+explicitly unresolved. See `docs/DEVICE_INSTRUMENT_CONTRACTS.md`.
+
 ### Instrument
 
 An instrument owns musical identity, public parameters, actions, state,
 performance mappings, and presentation. It references a device profile and a
 DSP graph but remains distinguishable from both. Multiple device mappings may
 eventually present one instrument, and multiple targets may execute it.
+
+Until Task 006 supplies an authoritative graph schema and resolver, the v0
+instrument contract uses a closed deferred graph-reference branch without a
+fabricated content hash. Its declared graph targets prove only internal
+mapping consistency, never graph existence or resolution.
 
 ### DSP graph
 

@@ -85,12 +85,15 @@ The raw and Java-resolved inventories and the Phase 3 review packet are
 accepted frozen evidence with documented limitations. Phase 4A is complete: a
 separate versioned family/implementation overlay, draft functional taxonomy,
 and manually reviewed 26-family pilot pass their validation gates. Phase 4B is
-gated so catalog expansion cannot outrun typed component contracts. Task 004 is
-the current accepted architectural gate: it defines schema ownership,
-reference direction, compiler stages, and evidence separation without adding
-production schemas or code generation. Task 005 is the next implementation
-task and is limited to minimal Gills device-profile and instrument schemas.
-See `docs/tasks/004-schema-and-compiler-contract-strategy.md`.
+gated so catalog expansion cannot outrun typed component contracts. Task 004
+remains the accepted architecture for schema ownership, reference direction,
+compiler stages, and evidence separation. Task 005 now implements the first
+production device-profile and instrument contracts, one exact Gills-profile
+reference, and one explicitly deferred graph reference. Structural/schema
+evidence passes, while graph resolution and every compiler, target, device,
+real-time, and audible level remain deferred or not-run. Task 006 is next. See
+`docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
+`docs/tasks/005-minimal-gills-device-profile-and-instrument-contracts.md`.
 
 ## Terminology
 

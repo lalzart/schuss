@@ -432,23 +432,24 @@ The following are invalid architecture:
 - ADRs 0005-0007.
 - Existing source-lock, inventory, review, and Phase 4A overlay schemas for the
   artifacts they already validate.
+- Task 005 `device-profile-v0` and `instrument-v0` schemas, their restricted
+  `schuss-canonical-json-v1` profile, and the read-only ownership/mapping checks
+  documented in `docs/DEVICE_INSTRUMENT_CONTRACTS.md`.
 
 ### Planned next
 
-1. **Task 005:** minimal Gills device-profile and instrument schemas, fixtures,
-   and read-only validation.
-2. **Task 006:** component-contract, implementation-binding, and DSP-graph
+1. **Task 006:** component-contract, implementation-binding, and DSP-graph
    schemas plus the typed reference slice.
-3. **Task 007:** compute-target, backend-capability, build-request,
+2. **Task 007:** compute-target, backend-capability, build-request,
    build-result, artifact, and evidence schemas.
-4. **Task 008:** shared headless validation and typed operation layer.
-5. **Task 009:** one minimal graph lowered through a deterministic legacy
+3. **Task 008:** shared headless validation and typed operation layer.
+4. **Task 009:** one minimal graph lowered through a deterministic legacy
    `.axp` adapter and existing ARM compiler/linker.
-6. **Task 010:** deterministic CLI over the same operations.
-7. **Task 011:** incremental catalog expansion with actual component contracts
+5. **Task 010:** deterministic CLI over the same operations.
+6. **Task 011:** incremental catalog expansion with actual component contracts
    and bindings; Phase 4B must not outrun Task 006.
-8. **Task 012:** basic object drawer and transparent graph canvas.
-9. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
+7. **Task 012:** basic object drawer and transparent graph canvas.
+8. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
    contract.
 
 ### Deliberately deferred
@@ -461,5 +462,6 @@ The following are invalid architecture:
   replacement ABI design.
 - Additional targets/devices, asset pipelines, and complete Phase 4B curation.
 
-Every deferred decision has an owner and earliest task in
-`docs/tasks/004-schema-and-compiler-contract-strategy.md`.
+Task 005's remaining device and graph questions have named owners and earliest
+tasks in `docs/DEVICE_INSTRUMENT_CONTRACTS.md`; the wider deferred decision set
+remains in `docs/tasks/004-schema-and-compiler-contract-strategy.md`.

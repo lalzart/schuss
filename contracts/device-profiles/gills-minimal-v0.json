@@ -1,0 +1,50 @@
+{
+  "schema_version": "device-profile-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "device_profile_id": "schuss-device-profile-000001",
+  "revision": 1,
+  "content_hash": "sha256:d6ad487f5444b1e39667ed8b4e43dde32ce7f06accac0be4fd5930c9b7eb82fe",
+  "display_name": "Gills minimal reference profile",
+  "input_controls": [
+    {
+      "slot_id": "device-input-000001",
+      "display_label": "Reference knob",
+      "control_kind": "absolute",
+      "physical_form": "knob",
+      "output_domain": "normalized-position",
+      "logical_range": {
+        "minimum": "0",
+        "maximum": "1",
+        "unit": "normalized"
+      },
+      "physical_range": {
+        "status": "unresolved",
+        "unresolved_fact_id": "unresolved-fact-000001"
+      },
+      "resolution": {
+        "status": "unresolved",
+        "unresolved_fact_id": "unresolved-fact-000001"
+      }
+    }
+  ],
+  "gestures": [],
+  "feedback_outputs": [],
+  "displays": [],
+  "physical_io": [],
+  "unresolved_facts": [
+    {
+      "fact_id": "unresolved-fact-000001",
+      "status": "unresolved",
+      "code": "GILLS_REFERENCE_KNOB_PHYSICAL_RANGE_UNVERIFIED",
+      "affected_subjects": [
+        "input-control:device-input-000001"
+      ],
+      "owner": "device-profile-owner",
+      "earliest_task": "task-014",
+      "rationale": "Task 005 has no accepted portable hardware evidence for this control's electrical range or physical resolution; only its normalized authoring contract is declared here.",
+      "question": "What measured physical range and resolution should the Gills reference knob record use?",
+      "evidence_status": "no-accepted-portable-evidence",
+      "evidence_refs": []
+    }
+  ]
+}

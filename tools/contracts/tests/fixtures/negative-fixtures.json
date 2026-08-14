@@ -1,0 +1,330 @@
+{
+  "schema_version": "device-instrument-negative-fixtures-v0",
+  "cases": [
+    {
+      "case_id": "stale-content-hash",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/content_hash", "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"}
+      ],
+      "rehash": false,
+      "expected_code": "CONTENT_HASH_MISMATCH"
+    },
+    {
+      "case_id": "device-embeds-graph",
+      "target": "device",
+      "mutations": [
+        {"operation": "add", "pointer": "/graph_reference", "value": {}}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "device-embeds-instrument",
+      "target": "device",
+      "mutations": [
+        {"operation": "add", "pointer": "/instrument", "value": {}}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "device-embeds-target",
+      "target": "device",
+      "mutations": [
+        {"operation": "add", "pointer": "/compute_target", "value": {}}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "device-embeds-backend",
+      "target": "device",
+      "mutations": [
+        {"operation": "add", "pointer": "/backend", "value": {}}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "device-embeds-legacy-patch",
+      "target": "device",
+      "mutations": [
+        {"operation": "add", "pointer": "/legacy_axp", "value": "reference.axp"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "instrument-embeds-dsp-nodes",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "add", "pointer": "/nodes", "value": []}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "instrument-embeds-implementation",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "add", "pointer": "/implementation_binding", "value": {}}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "instrument-embeds-target",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "add", "pointer": "/compute_target", "value": {}}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "instrument-embeds-backend",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "add", "pointer": "/backend", "value": {}}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "instrument-copies-physical-slots",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "add", "pointer": "/input_controls", "value": []}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "instrument-embeds-gui-coordinates",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "add", "pointer": "/coordinates", "value": {"x": 1, "y": 2}}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "direct-device-to-graph-mapping",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/device_input_mappings/0/destination/facet_kind", "value": "graph-parameter"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "unknown-device-control",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/device_input_mappings/0/source/slot_id", "value": "device-input-999999"}
+      ],
+      "rehash": true,
+      "expected_code": "MAPPING_SOURCE_UNKNOWN"
+    },
+    {
+      "case_id": "unknown-instrument-parameter",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/device_input_mappings/0/destination/facet_id", "value": "instrument-parameter-999999"}
+      ],
+      "rehash": true,
+      "expected_code": "MAPPING_DESTINATION_UNKNOWN"
+    },
+    {
+      "case_id": "unknown-deferred-graph-target",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/graph_mappings/0/destination/facet_id", "value": "graph-facet-999999"}
+      ],
+      "rehash": true,
+      "expected_code": "GRAPH_TARGET_NOT_DECLARED"
+    },
+    {
+      "case_id": "parameter-mapping-targets-action",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/device_input_mappings/0/destination/facet_kind", "value": "action"},
+        {"operation": "replace", "pointer": "/device_input_mappings/0/destination/facet_id", "value": "instrument-action-000001"}
+      ],
+      "rehash": true,
+      "expected_code": "MAPPING_FACET_KIND_MISMATCH"
+    },
+    {
+      "case_id": "missing-transform-range",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "remove", "pointer": "/device_input_mappings/0/source_domain"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "incompatible-transform-range",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/device_input_mappings/0/destination_domain/maximum", "value": "2"}
+      ],
+      "rehash": true,
+      "expected_code": "MAPPING_TRANSFORM_INCOMPATIBLE"
+    },
+    {
+      "case_id": "missing-polarity",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "remove", "pointer": "/device_input_mappings/0/transform/polarity"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "reversed-device-mapping-direction",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/device_input_mappings/0/direction", "value": "instrument-to-device"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "duplicate-device-driver",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "duplicate-item", "pointer": "/device_input_mappings/0", "id_pointer": "/mapping_id", "id_value": "device-mapping-000002"}
+      ],
+      "rehash": true,
+      "expected_code": "DUPLICATE_DRIVER"
+    },
+    {
+      "case_id": "graph-claims-resolved-without-resolver",
+      "target": "instrument",
+      "mutations": [
+        {
+          "operation": "replace",
+          "pointer": "/graph_reference",
+          "value": {
+            "status": "resolved",
+            "graph_id": "schuss-graph-000001",
+            "revision": 1,
+            "content_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        }
+      ],
+      "rehash": true,
+      "expected_code": "GRAPH_RESOLUTION_UNAVAILABLE"
+    },
+    {
+      "case_id": "deferred-graph-missing-owner",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "remove", "pointer": "/graph_reference/owner"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "unresolved-fact-missing-code",
+      "target": "device",
+      "mutations": [
+        {"operation": "remove", "pointer": "/unresolved_facts/0/code"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "unresolved-fact-missing-evidence-shape",
+      "target": "device",
+      "mutations": [
+        {"operation": "remove", "pointer": "/unresolved_facts/0/evidence_status"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "absolute-local-path",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/display_name", "value": "/Users/example/Blend"}
+      ],
+      "rehash": true,
+      "expected_code": "NONPORTABLE_ABSOLUTE_PATH"
+    },
+    {
+      "case_id": "timestamp-in-semantic-content",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/graph_reference/rationale", "value": "Reviewed at 2026-08-15T12:00:00Z"}
+      ],
+      "rehash": true,
+      "expected_code": "NONPORTABLE_TIMESTAMP"
+    },
+    {
+      "case_id": "random-uuid-identifier",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/instrument_id", "value": "123e4567-e89b-12d3-a456-426614174000"}
+      ],
+      "rehash": false,
+      "expected_code": "NONPORTABLE_RANDOM_ID"
+    },
+    {
+      "case_id": "mutable-label-in-stable-id",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "replace", "pointer": "/instrument_id", "value": "schuss-instrument-blend"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "missing-pickup-policy",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "remove", "pointer": "/device_input_mappings/0/pickup"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "deferred-graph-missing-rationale",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "remove", "pointer": "/graph_reference/rationale"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "deferred-graph-missing-question",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "remove", "pointer": "/graph_reference/question"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "unknown-field",
+      "target": "instrument",
+      "mutations": [
+        {"operation": "add", "pointer": "/mystery", "value": true}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "unknown-controlled-value",
+      "target": "device",
+      "mutations": [
+        {"operation": "replace", "pointer": "/input_controls/0/control_kind", "value": "magic"}
+      ],
+      "rehash": false,
+      "expected_code": "SCHEMA_STRUCTURE_INVALID"
+    }
+  ]
+}

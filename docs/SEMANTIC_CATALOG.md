@@ -126,9 +126,11 @@ passing structural export.
 
 Overlay v0 still does not define public ports or parameters, the authoritative
 Schuss graph, device profiles, instruments, shared graph operations, target
-capability negotiation, or compiler lowering. Task 004 now defines their
-normative ownership and reference direction in `docs/SCHEMA_STRATEGY.md` and
-the compiler stages in `docs/COMPILER_STRATEGY.md`; production schemas remain
-future bounded work. Phase 4B must not expand compiler-facing variants faster
-than actual component contracts and bindings are reviewed. No later contract
-may infer a stable identity from the legacy `.axp` boundary artifact.
+capability negotiation, or compiler lowering. Task 004 defines their normative
+ownership and reference direction in `docs/SCHEMA_STRATEGY.md` and the compiler
+stages in `docs/COMPILER_STRATEGY.md`. Task 005 now supplies separate minimal
+production device-profile and instrument schemas; graph, component, binding,
+target, backend, build, and operation schemas remain bounded future work.
+Phase 4B must not expand compiler-facing variants faster than actual component
+contracts and bindings are reviewed. No later contract may infer a stable
+identity from the legacy `.axp` boundary artifact.

@@ -19,14 +19,18 @@ This directory contains only contracts that current Schuss artifacts use:
 - `phase3-review-summary-v0.schema.json` validates the review gate's aggregate
   impact and sample census; and
 - `semantic-catalog-overlay-v0.schema.json` validates the separate Phase 4A
-  family/implementation classification overlay and its evidence references.
+  family/implementation classification overlay and its evidence references;
+- `device-profile-v0.schema.json` validates closed physical control, gesture,
+  feedback/display, physical-I/O, and unresolved-fact records; and
+- `instrument-v0.schema.json` validates closed musical facets, exact device
+  references, deferred graph intent, and device/graph mappings.
 
 The resolved schemas describe factual compatibility-bridge evidence only. The
 semantic overlay is a versioned curation foundation and pilot, not a complete
 catalog census or a final graph, object-facet, instrument, device, or operation
 contract.
 
-Task 004 deliberately adds no production schema. Planned component, binding,
-graph, device, instrument, target, backend, build, evidence, presentation, and
-asset contract families and their dependency direction are defined in
+Task 005 adds only the device-profile and instrument schemas. Component,
+binding, graph, target, backend, build, evidence, presentation, and asset
+contract families remain planned in the dependency order defined by
 `docs/SCHEMA_STRATEGY.md`.
