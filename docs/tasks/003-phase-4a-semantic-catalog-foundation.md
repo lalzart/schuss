@@ -124,8 +124,9 @@ manually reviewed pilot rather than classifying the entire census.
    then proves the complete family/implementation ID projection is unchanged.
 8. All 38 distinct object references and both graph references resolve to the
    frozen snapshot, and each provenance source agrees with its observation.
-9. The granular family's classification and the provider-only RFFT
-   implementation's membership remain low-confidence written questions.
+9. The granular family is confirmed under Sampling & Buffers. The provider-only
+   RFFT implementation remains the sole low-confidence membership question,
+   flagged as `PROVIDER_FILE_IDENTITY_UNPROVEN`.
 10. Derived pilot gates confirm native primitives, two complete `.axs`
     compounds, generated/provider-backed and provider-only observations, three
     overloaded families, eight multi-implementation families, dense parameter

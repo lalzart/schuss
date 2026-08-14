@@ -141,13 +141,11 @@
       "primary_category": "sampling-buffers",
       "secondary_function_tags": ["granular-processing", "time-processing"],
       "abstraction_level": "primitive",
-      "review_status": "needs-review",
-      "classification_confidence": "low",
-      "classification_rationale": "Granular buffer manipulation is the clearest drawer role, but the same processor also spans delay, reverb, and spectral-style transformations.",
-      "selection_status": {"pilot": true, "core_status": "deferred"},
-      "unresolved_questions": [
-        {"code": "PRIMARY_BOUNDARY_GRANULAR_EFFECT", "affects": "classification", "question": "Should a multimode granular processor remain under Sampling & Buffers or move to Delay & Reverb after drawer testing?"}
-      ]
+      "review_status": "pilot-reviewed",
+      "classification_confidence": "high",
+      "classification_rationale": "Granular buffer capture and manipulation define the primary drawer role; delay, pitch, feedback, and reverb remain secondary processing functions.",
+      "selection_status": {"pilot": true, "core_status": "not-evaluated"},
+      "unresolved_questions": []
     },
     {
       "schema_version": "semantic-catalog-family-v0",

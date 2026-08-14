@@ -39,6 +39,11 @@ class SemanticCatalogTest(unittest.TestCase):
         self.assertEqual(38, summary["implementation_count"])
         self.assertEqual(13, len(summary["category_coverage"]))
         self.assertTrue(all(summary["required_cases"].values()))
+        self.assertEqual([], summary["uncertain_family_ids"])
+        self.assertEqual(
+            ["schuss-implementation-000023"],
+            summary["uncertain_implementation_ids"],
+        )
 
     def test_validation_summary_is_deterministic(self):
         first = VALIDATOR.canonical_json(self.validate(copy.deepcopy(self.overlay)))

@@ -58,13 +58,13 @@ functional category.
   observation remains a separate implementation rather than being silently
   merged with the file-backed RFFT definition.
 
-## Ambiguous and deferred cases
+## Resolved and deferred cases
 
-- `schuss-family-000006` is canonically placed in Sampling & Buffers for the
-  pilot, but its classification confidence is low. Drawer testing must decide
-  whether a multimode granular processor is easier to find there or under
-  Delay & Reverb.
-- `schuss-implementation-000023` has low membership confidence. Its provider
+- `schuss-family-000006` is confirmed under Sampling & Buffers. Granular
+  buffer capture and manipulation define its primary drawer role; delay,
+  pitch, feedback, and reverb remain secondary functions.
+- `schuss-implementation-000023` remains explicitly deferred under
+  `PROVIDER_FILE_IDENTITY_UNPROVEN`. Its provider
   class, name, and facets match the file-backed RFFT family, but Phase 3 could
   not prove whether it is a duplicate observation or a distinct emitted
   component.
@@ -76,8 +76,8 @@ functional category.
 
 ## Recommended next scope
 
-First validate the pilot with drawer/query exercises and review the granular
-and provider-membership questions. Then Phase 4B may expand the same model
+First validate the pilot with drawer/query exercises and retain the flagged
+provider-membership question until stronger identity evidence exists. Then Phase 4B may expand the same model
 toward roughly 150-250 manually reviewed families, while preserving explicit
 unresolved membership. In parallel roadmap order, define only the minimal
 Gills device-profile/instrument reference contract needed before the Schuss
