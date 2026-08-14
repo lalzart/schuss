@@ -38,15 +38,22 @@ Schuss should provide:
 
 ## Independent layers
 
-1. **Compute target** describes the processor, memory, audio runtime, and
+1. **Catalog family** describes the musician-facing discovery item, not a node
+   type or compiler input.
+2. **Component contract** describes one target-independent typed public node
+   interface.
+3. **Implementation binding** realizes one exact component-contract revision
+   for named backend and target requirements.
+4. **Compute target** describes the processor, memory, audio runtime, and
    compiler constraints.
-2. **Device profile** describes physical pots, buttons, encoders, displays,
+5. **Device profile** describes physical pots, buttons, encoders, displays,
    I/O, and gestures.
-3. **Instrument** describes musical identity, public controls, state, and
+6. **Instrument** describes musical identity, public controls, state, and
    behavior.
-4. **DSP graph** describes the complete signal and control implementation.
-5. **Backend** resolves and lowers the graph into an executable form for a
-   compute target.
+7. **DSP graph** describes the complete signal and control implementation by
+   referencing exact component-contract revisions.
+8. **Backend** resolves implementation bindings and lowers the graph into an
+   executable form for a compute target.
 
 No layer may silently borrow identity from another. A Gills instrument can
 target Ksoloti Core initially without making Gills synonymous with that board,
@@ -75,14 +82,15 @@ musical category.
 ## Present boundary
 
 The raw and Java-resolved inventories and the Phase 3 review packet are
-accepted frozen evidence with documented limitations. The current task is
-Phase 4A: define a separate versioned family/implementation overlay, an actual
-draft functional taxonomy, and a manually reviewed 20-30-family pilot. It does
-not classify the full census, select the complete reviewed core, define the
-final Schuss graph or Gills contracts, implement a GUI or CLI, replace
-firmware, or create a compiler frontend. See
-`docs/tasks/003-phase-4a-semantic-catalog-foundation.md` for the exact
-contract.
+accepted frozen evidence with documented limitations. Phase 4A is complete: a
+separate versioned family/implementation overlay, draft functional taxonomy,
+and manually reviewed 26-family pilot pass their validation gates. Phase 4B is
+gated so catalog expansion cannot outrun typed component contracts. Task 004 is
+the current accepted architectural gate: it defines schema ownership,
+reference direction, compiler stages, and evidence separation without adding
+production schemas or code generation. Task 005 is the next implementation
+task and is limited to minimal Gills device-profile and instrument schemas.
+See `docs/tasks/004-schema-and-compiler-contract-strategy.md`.
 
 ## Terminology
 
@@ -94,7 +102,9 @@ contract.
 | Legacy bridge | The isolated adapter around the Ksoloti Java model and tools |
 | Object | A graph node type with a stable identity and explicit facets |
 | Family | The category-independent item a musician discovers in the catalog |
-| Implementation | A backend-selectable component belonging to a family |
+| Component contract | One target-independent typed public node interface belonging to a family |
+| Implementation binding | A concrete realization of one exact component-contract revision for named backend/target requirements |
 | Legacy observation | A snapshot-scoped evidence record, not a Schuss ID |
 | Compound | A reusable graph presented as one object without hiding internals |
 | Instrument | A musical contract that maps a device profile onto behavior and a DSP graph |
+| Build evidence | An immutable, level-specific observation about exact build inputs or runtime validation; never catalog truth by side effect |

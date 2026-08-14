@@ -48,6 +48,14 @@ That means the pinned Java model observed the definition. It does not prove
 legacy code generation, ARM compile/link, real-time headroom, connected-device
 behavior, or audible quality.
 
+Phase 4A implementation records are not yet compiler-facing implementation
+bindings because no typed component contract existed when overlay v0 was
+defined. Task 004 preserves every `schuss-implementation-*` ID and defines a
+future companion binding record keyed by that same identity. The binding will
+reference one exact component-contract revision and map its public facets to
+the concrete realization. During migration, its contract's family MUST agree
+with the overlay `family_id`; the overlay is not rewritten in place.
+
 ### User-facing family
 
 A family is the item a musician normally discovers in the object drawer. It
@@ -116,8 +124,11 @@ passing structural export.
 
 ## Deferred design
 
-Overlay v0 does not define public ports or parameters, the authoritative
+Overlay v0 still does not define public ports or parameters, the authoritative
 Schuss graph, device profiles, instruments, shared graph operations, target
-capability negotiation, or compiler lowering. It does not decide the complete
-150-250-family reviewed core. Those contracts may reference these stable IDs,
-but must not infer them from the legacy `.axp` boundary artifact.
+capability negotiation, or compiler lowering. Task 004 now defines their
+normative ownership and reference direction in `docs/SCHEMA_STRATEGY.md` and
+the compiler stages in `docs/COMPILER_STRATEGY.md`; production schemas remain
+future bounded work. Phase 4B must not expand compiler-facing variants faster
+than actual component contracts and bindings are reviewed. No later contract
+may infer a stable identity from the legacy `.axp` boundary artifact.

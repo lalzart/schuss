@@ -595,7 +595,7 @@
       "compatibility_evidence": [{"target_id": "ksoloti-core", "backend_id": "legacy-ksoloti", "status": "not-evaluated", "evidence_level": "legacy-resolved-export", "evidence_refs": ["legacy-resolved-catalog-v0:object:164"], "rationale": "Resolver observation only; target support, resource fit, and audible behavior are not evaluated."}],
       "review_status": "pilot-reviewed",
       "membership_confidence": "high",
-      "membership_rationale": "The single complete definition is the reviewed implementation despite uncertain drawer placement.",
+      "membership_rationale": "The single complete definition implements the reviewed Granular Buffer Processor family under Sampling & Buffers.",
       "preferred_status": "not-evaluated",
       "unresolved_questions": []
     },

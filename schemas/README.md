@@ -25,3 +25,8 @@ The resolved schemas describe factual compatibility-bridge evidence only. The
 semantic overlay is a versioned curation foundation and pilot, not a complete
 catalog census or a final graph, object-facet, instrument, device, or operation
 contract.
+
+Task 004 deliberately adds no production schema. Planned component, binding,
+graph, device, instrument, target, backend, build, evidence, presentation, and
+asset contract families and their dependency direction are defined in
+`docs/SCHEMA_STRATEGY.md`.

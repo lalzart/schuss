@@ -33,7 +33,9 @@ extracted; that dependency must remain named and testable.
 3. Export post-construction compound graphs and resolution outcomes.
 4. Introduce an ordered object-registry seam with working-directory-aware name
    and UUID resolution.
-5. Make legacy `.axp` generation and compilation an explicit backend adapter.
+5. Add component contracts and exact legacy implementation bindings, then make
+   deterministic `.axp` generation and compilation an explicit backend
+   adapter.
 6. Replace legacy resolution components incrementally only when Schuss fixtures
    prove compatible behavior.
 7. Introduce a new graph-to-C++ frontend behind the same backend contract.
@@ -52,6 +54,23 @@ Compatibility claims must identify the tested layer:
 - listening tests are required for audible claims.
 
 These levels are reported separately.
+
+The complete eight-level build evidence model, including structural,
+resolution, lowering, generation, ARM, connected-device, real-time/resource,
+and audible claims, is normative in `docs/COMPILER_STRATEGY.md`. No level
+implies another.
+
+## `.axp` boundary
+
+The transitional backend emits `.axp` only after validating an authoritative
+Schuss graph, resolving exact contracts and legacy bindings, elaborating
+transparent compounds, and planning dependencies/resources. The emitted bytes
+and trace manifest prove only deterministic serialization of the supported
+legacy subset. Java resolution/code generation, ARM link, device execution,
+real-time behavior, and listening require separate stage results and evidence.
+
+The future direct frontend consumes the same graph without Java or `.axp`.
+See `docs/COMPILER_STRATEGY.md`.
 
 ## Known legacy hazards
 

@@ -10,21 +10,51 @@ GUI / CLI / AI clients
           |
     graph operations
           v
-catalog + graph + instrument models
-       /                    \
-device profiles          compute targets
-       \                    /
-              backend
-                 |
-       legacy Ksoloti bridge
-                 |
-  Java resolver -> .axp -> ARM compiler
+instrument -> device profile
+instrument -> DSP graph -> component contract -> catalog family
+                          ^
+                          |
+              implementation binding -> legacy/source evidence
+
+build request -> graph/instrument + compute target + backend
+build result  -> request + selected bindings + artifacts
+evidence      -> build result / stage / artifact
+
+legacy backend -> .axp -> Ksoloti Java resolver/codegen -> ARM compiler
 ```
 
 The initial backend passes through the Ksoloti Java resolver and existing ARM
 compiler. Later backends may lower the same semantic graph without that bridge.
 
+Exact ownership and permitted references are normative in
+`docs/SCHEMA_STRATEGY.md`. Compiler stages and derived artifacts are normative
+in `docs/COMPILER_STRATEGY.md`.
+
 ## Layer contracts
+
+### Catalog family
+
+A family owns musician-facing discovery, documentation, aliases, and canonical
+drawer placement. It does not own a complete node signature, target/backend
+choice, or source path and is never directly compiled. Several distinct
+component contracts may reference one family.
+
+### Component contract
+
+A component contract is the target-independent nominal public type of a graph
+node. It owns exact typed ports, runtime parameters, build-time attributes,
+actions, displays, lifecycle/state requirements, capabilities, and compound
+public mapping declarations. A graph pins an exact contract ID, revision, and
+content hash.
+
+### Implementation binding
+
+An implementation binding realizes one exact contract revision as a legacy
+definition, generated object, transparent graph, native implementation, or
+target service. It owns dependencies, resources, backend/target constraints,
+facet realization mappings, evidence, and only explicitly curated priority.
+It cannot alter the contract it realizes. Selection happens after
+target-independent graph validation and explicit target/backend validation.
 
 ### Compute target
 
@@ -59,11 +89,25 @@ and compound structure. Compound nodes never make their internal graph
 uninspectable. Editor coordinates and visual grouping are optional presentation
 data, not node identity.
 
+Every node references an exact component-contract revision. A graph never uses
+a family, category, display name, implementation binding, legacy observation,
+legacy path, or `.axp` as node identity.
+
 ### Backend
 
-A backend resolves object implementations for a compute target, checks target
-capabilities and resources, lowers the graph, and emits build diagnostics and
-artifacts. It must not mutate the authoritative graph to hide ambiguity.
+A backend resolves eligible implementation bindings for a compute target,
+checks target capabilities and resources, lowers the graph, and emits build
+diagnostics and artifacts. It must not mutate the authoritative graph to hide
+ambiguity.
+
+### Build request, result, and evidence
+
+A build request pins graph/instrument, target, backend, options, and resources.
+A result records selected bindings, toolchain/runtime ABI, stage outcomes,
+artifact hashes, and diagnostics. Separate evidence claims reference immutable
+results, stages, and artifacts; results do not point back to those claims.
+Build records do not feed back automatically into families, contract semantics,
+implementation priority, or compatibility curation.
 
 ## Catalog architecture
 
@@ -93,13 +137,27 @@ display name. Families own drawer presentation; implementations own legacy
 membership, backend/target compatibility evidence, and preferred selection.
 See `docs/SEMANTIC_CATALOG.md`.
 
+Task 004 extends the compiler-facing progression without changing those IDs:
+
+```text
+catalog family -> typed component contract -> implementation binding -> evidence
+```
+
+This is the user-to-realization selection progression, not semantic reference
+direction; the one-way references are shown at the top of this document.
+
+Phase 4A implementation records are curation precursors. Later companion
+binding records retain their `schuss-implementation-*` identity and add exact
+contract references and realization details.
+
 ## Operation boundary
 
 The future headless model will expose the same typed operations to GUI, CLI,
 and AI clients. Expected operation families include catalog query, graph
 inspection, node/connection mutation, validation, explanation, and build.
 Exact command names and protocol shapes are intentionally deferred until the
-catalog and graph schemas exist.
+catalog and graph schemas exist. Task 004 fixes the shared domain boundary but
+does not implement operations.
 
 ## Legacy boundary
 

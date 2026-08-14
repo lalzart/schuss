@@ -84,8 +84,8 @@ manually reviewed pilot rather than classifying the entire census.
     IDs, or machine-specific values.
 12. No Java dependency exists outside `legacy/ksoloti-bridge/`.
 13. No out-of-scope implementation or external mutation occurs.
-14. Project documentation consistently calls Phase 4A current and Phase 3
-    frozen evidence rather than the Schuss catalog.
+14. Project documentation consistently identifies Phase 4A as complete and
+    Phase 3 as frozen evidence rather than the Schuss catalog.
 
 ## Decisions this task may make
 
@@ -139,4 +139,4 @@ manually reviewed pilot rather than classifying the entire census.
     firmware change, upstream mutation, staging, commit, or push occurred.
 14. `README.md`, project context, architecture, taxonomy, roadmap, ADR index,
     Task 002, and this task consistently identify Phase 3 as frozen evidence
-    and Phase 4A as current.
+    and Phase 4A as complete.

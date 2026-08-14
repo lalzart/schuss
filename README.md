@@ -12,7 +12,7 @@ one compatibility backend.
 
 ## Current status
 
-Schuss is at the Phase 4A semantic-catalog foundation stage:
+Schuss has completed the Phase 4A semantic-catalog foundation:
 
 - the project boundaries and terminology are documented;
 - upstream sources are pinned without committing machine-local paths;
@@ -26,14 +26,20 @@ Schuss is at the Phase 4A semantic-catalog foundation stage:
   documented limitations;
 - a separate versioned overlay now defines family and implementation identity,
   the draft functional taxonomy, and a manually reviewed 26-family pilot;
-- Phase 4A validation is the current task; complete-census classification and
-  the 150-250-family reviewed core are later work;
+- Phase 4A validation is complete; complete-census classification and the
+  150-250-family reviewed core remain planned Phase 4B work;
+- Task 004 is the current architectural gate: it separates catalog family,
+  typed component contract, implementation binding, graph, device, instrument,
+  target, backend, and build evidence before production schemas are added;
 - no Schuss graph editor, compiler frontend, device runtime, or desktop app is
   implemented yet.
 
 Start with [the project context](docs/PROJECT_CONTEXT.md), then read
-[the architecture](docs/ARCHITECTURE.md) and [the roadmap](docs/ROADMAP.md).
-Active implementation work is bounded by task files under `docs/tasks/`.
+[the architecture](docs/ARCHITECTURE.md),
+[the schema strategy](docs/SCHEMA_STRATEGY.md),
+[the compiler strategy](docs/COMPILER_STRATEGY.md), and
+[the roadmap](docs/ROADMAP.md). Active implementation work is bounded by task
+files under `docs/tasks/`.
 
 ## Inventory checks
 

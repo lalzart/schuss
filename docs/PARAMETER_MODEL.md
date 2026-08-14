@@ -21,6 +21,14 @@ cardinality. A connection joins compatible ports. A UI control is not a port,
 and a parameter becomes graph-connectable only through an explicit binding or
 modulation contract.
 
+Future component contracts also keep domain, channel shape, semantic role,
+value representation, range, optionality, and buffer/reference ownership
+independent. Direct cables require compatible dimensions. Rate conversion,
+channel reshaping, unit/range conversion, event latching, and
+parameter-to-stream promotion use explicit nodes or bindings; a backend never
+inserts them silently. The normative minimum type shape and illegal implicit
+conversions are in `docs/SCHEMA_STRATEGY.md`.
+
 ### Parameters
 
 Parameters define a stable semantic ID, value type, domain, default, units,
@@ -63,6 +71,21 @@ Mappings are explicit records between:
 
 Mappings carry transforms, range shaping, polarity, response time, and feedback
 behavior. They do not rewrite the underlying parameter definition.
+
+The full exposure chain remains explicit:
+
+```text
+implementation seam
+    -> component-contract facet
+    -> compound public facet
+    -> instrument public parameter/action/display
+    -> device control/gesture/feedback slot
+```
+
+An implementation binding owns the first realization map. A component
+contract owns stable public facet IDs and compound mapping keys. A transparent
+graph owns the concrete internal exposure targets. An instrument owns graph
+and device mappings. No layer copies or redefines the target facet.
 
 ## Legacy import rule
 

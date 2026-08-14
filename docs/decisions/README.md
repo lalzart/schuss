@@ -7,3 +7,6 @@ details remain in task files unless they change a durable boundary.
 - `0002-isolate-the-ksoloti-legacy-bridge.md`
 - `0003-inventory-before-semantics.md`
 - `0004-accept-and-freeze-phase-3-evidence.md`
+- `0005-separate-family-contract-and-binding-identity.md`
+- `0006-graph-contract-references-and-binding-selection.md`
+- `0007-separate-build-evidence-from-catalog-curation.md`
