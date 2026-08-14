@@ -1,0 +1,8 @@
+# Copy this file to sources.local.yml and replace each value with an absolute
+# local checkout path. sources.local.yml is ignored and must not be committed.
+sources:
+  patcher: /path/to/ksoloti
+  axoloti-factory: /path/to/ksoloti-libraries/axoloti-factory
+  ksoloti-objects: /path/to/ksoloti-libraries/ksoloti-objects
+  ksoloti-contrib: /path/to/ksoloti-libraries/ksoloti-contrib
+  axoloti-contrib: /path/to/ksoloti-libraries/axoloti-contrib

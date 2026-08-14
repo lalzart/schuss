@@ -1,0 +1,15 @@
+<patch-1.0 appVersion="1.1.0">
+  <obj type="fixture/source" uuid="fixture-source-uuid" name="source" x="14" y="14"><params/><attribs/></obj>
+  <obj type="fixture/sink" uuid="fixture-sink-uuid" name="sink" x="154" y="14"><params/><attribs/></obj>
+  <obj type="fixture/not present" name="soft-zombie" x="294" y="14"><params/><attribs/></obj>
+  <zombie type="fixture/removed" uuid="zombie" name="hard-zombie" x="434" y="14"><params/><attribs/></zombie>
+  <nets>
+    <net><source obj="source" outlet="out"/><dest obj="sink" inlet="in"/></net>
+    <net><source obj="missing-instance" outlet="out"/><dest obj="sink" inlet="in"/></net>
+    <net><source obj="source" outlet="missing-outlet"/><dest obj="sink" inlet="in"/></net>
+    <net><source obj="source" outlet="out"/><dest obj="missing-instance" inlet="in"/></net>
+    <net><source obj="source" outlet="out"/><dest obj="sink" inlet="missing-inlet"/></net>
+  </nets>
+  <settings><subpatchmode>no</subpatchmode></settings>
+</patch-1.0>
+

@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "legacy-resolved-summary-v0.schema.json",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "raw_candidates",
+    "object_files",
+    "catalog_subpatch_files",
+    "objects",
+    "graphs",
+    "issues"
+  ],
+  "properties": {
+    "schema_version": {"const": "legacy-resolved-summary-v0"},
+    "raw_candidates": {
+      "type": "object",
+      "required": ["total", "by_type", "by_source_and_type"],
+      "properties": {
+        "total": {"$ref": "#/$defs/count"},
+        "by_type": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/typeCount"}
+        },
+        "by_source_and_type": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/sourceTypeCount"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "object_files": {
+      "type": "object",
+      "required": [
+        "raw_candidates",
+        "attempted",
+        "not_enabled",
+        "not_in_raw_baseline",
+        "strict_loaded",
+        "relaxed_loaded",
+        "failed",
+        "zero_definition"
+      ],
+      "properties": {
+        "raw_candidates": {"$ref": "#/$defs/count"},
+        "attempted": {"$ref": "#/$defs/count"},
+        "not_enabled": {"$ref": "#/$defs/count"},
+        "not_in_raw_baseline": {"$ref": "#/$defs/count"},
+        "strict_loaded": {"$ref": "#/$defs/count"},
+        "relaxed_loaded": {"$ref": "#/$defs/count"},
+        "failed": {"$ref": "#/$defs/count"},
+        "zero_definition": {"$ref": "#/$defs/count"}
+      },
+      "additionalProperties": false
+    },
+    "catalog_subpatch_files": {
+      "type": "object",
+      "required": [
+        "raw_candidates",
+        "registered",
+        "not_enabled",
+        "not_in_raw_baseline"
+      ],
+      "properties": {
+        "raw_candidates": {"$ref": "#/$defs/count"},
+        "registered": {"$ref": "#/$defs/count"},
+        "not_enabled": {"$ref": "#/$defs/count"},
+        "not_in_raw_baseline": {"$ref": "#/$defs/count"}
+      },
+      "additionalProperties": false
+    },
+    "objects": {
+      "type": "object",
+      "required": [
+        "definition_occurrences",
+        "records",
+        "complete",
+        "partial",
+        "retained_in_legacy_object_list",
+        "collapsed_by_legacy_equality",
+        "by_legacy_class",
+        "by_origin_kind",
+        "by_uuid_runtime_kind",
+        "overloaded_name_groups",
+        "duplicate_uuid_groups"
+      ],
+      "properties": {
+        "definition_occurrences": {"$ref": "#/$defs/count"},
+        "records": {"$ref": "#/$defs/count"},
+        "complete": {"$ref": "#/$defs/count"},
+        "partial": {"$ref": "#/$defs/count"},
+        "retained_in_legacy_object_list": {"$ref": "#/$defs/count"},
+        "collapsed_by_legacy_equality": {"$ref": "#/$defs/count"},
+        "by_legacy_class": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/namedCount"}
+        },
+        "by_origin_kind": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind", "count"],
+            "properties": {
+              "kind": {"enum": ["file", "provider", "unresolved"]},
+              "count": {"$ref": "#/$defs/count"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "by_uuid_runtime_kind": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind", "count"],
+            "properties": {
+              "kind": {"enum": ["explicit", "generated-nondeterministic", "sentinel", "unavailable"]},
+              "count": {"$ref": "#/$defs/count"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "overloaded_name_groups": {"$ref": "#/$defs/count"},
+        "duplicate_uuid_groups": {"$ref": "#/$defs/count"}
+      },
+      "additionalProperties": false
+    },
+    "graphs": {
+      "type": "object",
+      "required": [
+        "raw_candidates",
+        "candidates",
+        "not_in_raw_baseline",
+        "attempted",
+        "complete",
+        "partial",
+        "failed",
+        "instances",
+        "resolved_instances",
+        "ambiguous_instances",
+        "hard_zombies",
+        "created_zombies",
+        "source_nets",
+        "resolved_nets",
+        "removed_nets",
+        "endpoint_status_counts"
+      ],
+      "properties": {
+        "raw_candidates": {"$ref": "#/$defs/count"},
+        "candidates": {"$ref": "#/$defs/count"},
+        "not_in_raw_baseline": {"$ref": "#/$defs/count"},
+        "attempted": {"$ref": "#/$defs/count"},
+        "complete": {"$ref": "#/$defs/count"},
+        "partial": {"$ref": "#/$defs/count"},
+        "failed": {"$ref": "#/$defs/count"},
+        "instances": {"$ref": "#/$defs/count"},
+        "resolved_instances": {"$ref": "#/$defs/count"},
+        "ambiguous_instances": {"$ref": "#/$defs/count"},
+        "hard_zombies": {"$ref": "#/$defs/count"},
+        "created_zombies": {"$ref": "#/$defs/count"},
+        "source_nets": {"$ref": "#/$defs/count"},
+        "resolved_nets": {"$ref": "#/$defs/count"},
+        "removed_nets": {"$ref": "#/$defs/count"},
+        "endpoint_status_counts": {
+          "type": "object",
+          "required": ["resolved", "missing_instance", "missing_port", "not_evaluated"],
+          "properties": {
+            "resolved": {"$ref": "#/$defs/count"},
+            "missing_instance": {"$ref": "#/$defs/count"},
+            "missing_port": {"$ref": "#/$defs/count"},
+            "not_evaluated": {"$ref": "#/$defs/count"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "issues": {
+      "type": "object",
+      "required": ["total", "by_severity", "by_stage", "by_code"],
+      "properties": {
+        "total": {"$ref": "#/$defs/count"},
+        "by_severity": {
+          "type": "object",
+          "required": ["info", "warning", "error"],
+          "properties": {
+            "info": {"$ref": "#/$defs/count"},
+            "warning": {"$ref": "#/$defs/count"},
+            "error": {"$ref": "#/$defs/count"}
+          },
+          "additionalProperties": false
+        },
+        "by_stage": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/namedCount"}
+        },
+        "by_code": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/namedCount"}
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "count": {"type": "integer", "minimum": 0},
+    "sourceId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "typeCount": {
+      "type": "object",
+      "required": ["file_type", "count"],
+      "properties": {
+        "file_type": {"enum": ["axo", "axs", "axp", "java"]},
+        "count": {"$ref": "#/$defs/count"}
+      },
+      "additionalProperties": false
+    },
+    "sourceTypeCount": {
+      "type": "object",
+      "required": ["source_id", "file_type", "count"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/sourceId"},
+        "file_type": {"enum": ["axo", "axs", "axp", "java"]},
+        "count": {"$ref": "#/$defs/count"}
+      },
+      "additionalProperties": false
+    },
+    "namedCount": {
+      "type": "object",
+      "required": ["name", "count"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "count": {"$ref": "#/$defs/count"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

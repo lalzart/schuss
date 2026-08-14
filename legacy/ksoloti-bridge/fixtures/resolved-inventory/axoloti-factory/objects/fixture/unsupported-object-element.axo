@@ -1,0 +1,6 @@
+<objdefs appVersion="1.1.0">
+  <obj.future id="unsupported future object" uuid="fixture-future-uuid">
+    <sDescription>This element is intentionally unknown to the pinned model.</sDescription>
+  </obj.future>
+</objdefs>
+

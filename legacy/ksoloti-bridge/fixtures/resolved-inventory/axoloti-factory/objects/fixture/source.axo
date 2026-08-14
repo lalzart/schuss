@@ -1,0 +1,11 @@
+<objdefs appVersion="1.1.0">
+  <obj.normal id="source" uuid="fixture-source-uuid">
+    <sDescription>Fixture net source</sDescription>
+    <author>Schuss fixture</author><license>CC0</license>
+    <inlets/>
+    <outlets><frac32 name="out" description="fixture output"/></outlets>
+    <displays/><params/><attribs/>
+    <code.krate><![CDATA[outlet_out = 0;]]></code.krate>
+  </obj.normal>
+</objdefs>
+

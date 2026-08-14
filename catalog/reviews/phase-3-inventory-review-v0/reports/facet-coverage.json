@@ -1,0 +1,368 @@
+{
+  "by_legacy_class": [
+    {
+      "coverage": {
+        "attributes": {
+          "object_count": 3462,
+          "objects_with": 1165,
+          "total_entries": 2304
+        },
+        "displays": {
+          "object_count": 3462,
+          "objects_with": 237,
+          "total_entries": 886
+        },
+        "inlets": {
+          "object_count": 3462,
+          "objects_with": 2985,
+          "total_entries": 11326
+        },
+        "outlets": {
+          "object_count": 3462,
+          "objects_with": 2918,
+          "total_entries": 6531
+        },
+        "parameters": {
+          "object_count": 3462,
+          "objects_with": 1783,
+          "total_entries": 8882
+        },
+        "ports": {
+          "object_count": 3462,
+          "objects_with": 3318,
+          "total_entries": 17857
+        }
+      },
+      "legacy_class": "axoloti.object.AxoObject",
+      "object_count": 3462
+    },
+    {
+      "coverage": {
+        "attributes": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "displays": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "inlets": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "outlets": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "parameters": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "ports": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        }
+      },
+      "legacy_class": "axoloti.object.AxoObjectComment",
+      "object_count": 1
+    },
+    {
+      "coverage": {
+        "attributes": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "displays": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "inlets": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "outlets": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "parameters": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "ports": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        }
+      },
+      "legacy_class": "axoloti.object.AxoObjectHyperlink",
+      "object_count": 1
+    },
+    {
+      "coverage": {
+        "attributes": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "displays": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "inlets": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "outlets": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "parameters": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "ports": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        }
+      },
+      "legacy_class": "axoloti.object.AxoObjectPatcher",
+      "object_count": 2
+    },
+    {
+      "coverage": {
+        "attributes": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "displays": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "inlets": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "outlets": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "parameters": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "ports": {
+          "object_count": 2,
+          "objects_with": 0,
+          "total_entries": 0
+        }
+      },
+      "legacy_class": "axoloti.object.AxoObjectPatcherObject",
+      "object_count": 2
+    },
+    {
+      "coverage": {
+        "attributes": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "displays": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "inlets": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "outlets": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "parameters": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "ports": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        }
+      },
+      "legacy_class": "axoloti.object.AxoObjectUnloaded",
+      "object_count": 134
+    }
+  ],
+  "by_legacy_kind": [
+    {
+      "coverage": {
+        "attributes": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "displays": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "inlets": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "outlets": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "parameters": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "ports": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        }
+      },
+      "legacy_kind": "comment",
+      "object_count": 1
+    },
+    {
+      "coverage": {
+        "attributes": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "displays": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "inlets": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "outlets": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "parameters": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "ports": {
+          "object_count": 1,
+          "objects_with": 0,
+          "total_entries": 0
+        }
+      },
+      "legacy_kind": "hyperlink",
+      "object_count": 1
+    },
+    {
+      "coverage": {
+        "attributes": {
+          "object_count": 3466,
+          "objects_with": 1165,
+          "total_entries": 2304
+        },
+        "displays": {
+          "object_count": 3466,
+          "objects_with": 237,
+          "total_entries": 886
+        },
+        "inlets": {
+          "object_count": 3466,
+          "objects_with": 2985,
+          "total_entries": 11326
+        },
+        "outlets": {
+          "object_count": 3466,
+          "objects_with": 2918,
+          "total_entries": 6531
+        },
+        "parameters": {
+          "object_count": 3466,
+          "objects_with": 1783,
+          "total_entries": 8882
+        },
+        "ports": {
+          "object_count": 3466,
+          "objects_with": 3318,
+          "total_entries": 17857
+        }
+      },
+      "legacy_kind": "native_definition",
+      "object_count": 3466
+    },
+    {
+      "coverage": {
+        "attributes": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "displays": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "inlets": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "outlets": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "parameters": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        },
+        "ports": {
+          "object_count": 134,
+          "objects_with": 0,
+          "total_entries": 0
+        }
+      },
+      "legacy_kind": "subpatch_catalog_placeholder",
+      "object_count": 134
+    }
+  ],
+  "object_count": 3602,
+  "schema_version": "phase3-review-facet-coverage-v0"
+}

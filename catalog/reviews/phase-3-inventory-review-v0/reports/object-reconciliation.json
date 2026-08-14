@@ -1,0 +1,30 @@
+{
+  "catalog_subpatch_placeholders": 134,
+  "definition_occurrences": 3417,
+  "equations": [
+    {
+      "expression": "definition_occurrences + catalog_subpatch_placeholders + provider_only_records",
+      "left": 3602,
+      "name": "exported_records",
+      "right": 3602
+    },
+    {
+      "expression": "definition_occurrences - legacy_equality_collapsed_occurrences + catalog_subpatch_placeholders",
+      "left": 3548,
+      "name": "legacy_object_list",
+      "right": 3548
+    },
+    {
+      "expression": "legacy_equality_collapsed_occurrences + provider_only_records",
+      "left": 54,
+      "name": "not_retained_records",
+      "right": 54
+    }
+  ],
+  "exported_object_records": 3602,
+  "legacy_equality_collapsed_occurrences": 3,
+  "not_retained_in_legacy_object_list": 54,
+  "provider_only_records": 51,
+  "retained_in_legacy_object_list": 3548,
+  "schema_version": "phase3-review-object-reconciliation-v0"
+}

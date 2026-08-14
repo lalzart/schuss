@@ -1,0 +1,9 @@
+<objdefs appVersion="1.1.0">
+  <obj.normal id="sink" uuid="fixture-sink-uuid">
+    <sDescription>Fixture net sink</sDescription>
+    <author>Schuss fixture</author><license>CC0</license>
+    <inlets><frac32 name="in" description="fixture input"/></inlets>
+    <outlets/><displays/><params/><attribs/>
+  </obj.normal>
+</objdefs>
+

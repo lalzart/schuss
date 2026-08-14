@@ -1,0 +1,346 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "legacy-resolved-graph-v0.schema.json",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "graph_index",
+    "source",
+    "export_status",
+    "instances",
+    "nets"
+  ],
+  "properties": {
+    "schema_version": {"const": "legacy-resolved-graph-v0"},
+    "graph_index": {"type": "integer", "minimum": 0},
+    "source": {"$ref": "#/$defs/source"},
+    "export_status": {"enum": ["complete", "partial", "failed"]},
+    "instances": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/instance"}
+    },
+    "nets": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/net"}
+    }
+  },
+  "$defs": {
+    "sourceId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "portablePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "source": {
+      "type": "object",
+      "required": ["source_id", "path", "sha256", "file_type"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/sourceId"},
+        "path": {"$ref": "#/$defs/portablePath"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "file_type": {"enum": ["axs", "axp"]}
+      },
+      "additionalProperties": false
+    },
+    "instance": {
+      "type": "object",
+      "required": [
+        "serialized_index",
+        "post_resolution_index",
+        "legacy_element_kind",
+        "instance_name",
+        "requested_type",
+        "resolution",
+        "zombie_kind",
+        "parameter_values",
+        "attribute_values"
+      ],
+      "properties": {
+        "serialized_index": {"type": "integer", "minimum": 0},
+        "post_resolution_index": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "legacy_element_kind": {
+          "enum": ["obj", "patcher", "patchobj", "comment", "hyperlink", "zombie", "unsupported"]
+        },
+        "instance_name": {"type": ["string", "null"]},
+        "requested_type": {
+          "type": "object",
+          "required": ["name", "uuid", "sha"],
+          "properties": {
+            "name": {"type": ["string", "null"]},
+            "uuid": {"type": ["string", "null"]},
+            "sha": {"type": ["string", "null"]}
+          },
+          "additionalProperties": false
+        },
+        "resolution": {
+          "type": "object",
+          "required": ["status", "method", "candidates", "legacy_selected"],
+          "properties": {
+            "status": {
+              "enum": ["resolved", "ambiguous", "zombie", "unresolved", "not_applicable", "unsupported"]
+            },
+            "method": {"enum": ["uuid", "name", "relative-axo", "relative-axs", "none"]},
+            "candidates": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/targetReference"}
+            },
+            "legacy_selected": {
+              "oneOf": [
+                {"$ref": "#/$defs/targetReference"},
+                {"type": "null"}
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "zombie_kind": {"enum": ["none", "serialized-hard", "created-by-resolution"]},
+        "parameter_values": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/parameterValue"}
+        },
+        "attribute_values": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/attributeValue"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "targetReference": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "variant_index"],
+          "properties": {
+            "kind": {"const": "catalog"},
+            "variant_index": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "source_id", "path", "sha256", "definition_index"],
+          "properties": {
+            "kind": {"const": "graph-local-file"},
+            "source_id": {"$ref": "#/$defs/sourceId"},
+            "path": {"$ref": "#/$defs/portablePath"},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "definition_index": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "parameterValue": {
+      "type": "object",
+      "required": [
+        "index",
+        "name",
+        "legacy_type",
+        "value_status",
+        "effective_value",
+        "on_parent",
+        "frozen",
+        "midi_cc",
+        "presets",
+        "modulations"
+      ],
+      "properties": {
+        "index": {"type": "integer", "minimum": 0},
+        "name": {"type": "string"},
+        "legacy_type": {"type": "string", "minLength": 1},
+        "value_status": {
+          "enum": ["serialized", "defaulted", "preserved-zombie", "unavailable", "unsupported"]
+        },
+        "effective_value": {
+          "oneOf": [
+            {"$ref": "#/$defs/numericValue"},
+            {"type": "null"}
+          ]
+        },
+        "on_parent": {"type": ["boolean", "null"]},
+        "frozen": {"type": ["boolean", "null"]},
+        "midi_cc": {"type": ["integer", "null"]},
+        "presets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["index", "value"],
+            "properties": {
+              "index": {"type": "integer", "minimum": 0},
+              "value": {"$ref": "#/$defs/numericValue"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "modulations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["index", "source_instance_name", "modulator_name", "amount_raw"],
+            "properties": {
+              "index": {"type": "integer", "minimum": 0},
+              "source_instance_name": {"type": "string"},
+              "modulator_name": {"type": ["string", "null"]},
+              "amount_raw": {
+                "type": "integer",
+                "minimum": -2147483648,
+                "maximum": 2147483647
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "numericValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "raw"],
+          "properties": {
+            "kind": {"const": "int32"},
+            "raw": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "raw"],
+          "properties": {
+            "kind": {"const": "frac32"},
+            "raw": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "attributeValue": {
+      "type": "object",
+      "required": ["index", "name", "legacy_type", "value_status", "value"],
+      "properties": {
+        "index": {"type": "integer", "minimum": 0},
+        "name": {"type": "string"},
+        "legacy_type": {"type": "string", "minLength": 1},
+        "value_status": {
+          "enum": ["serialized", "defaulted", "preserved-zombie", "unavailable", "unsupported"]
+        },
+        "value": {
+          "oneOf": [
+            {"$ref": "#/$defs/attributeValuePayload"},
+            {"type": "null"}
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "attributeValuePayload": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "value"],
+          "properties": {
+            "kind": {"const": "int32"},
+            "value": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "value"],
+          "properties": {
+            "kind": {"const": "string"},
+            "value": {"type": "string"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "net": {
+      "type": "object",
+      "required": [
+        "serialized_index",
+        "post_resolution_index",
+        "status",
+        "sources",
+        "destinations",
+        "resolved_data_type"
+      ],
+      "properties": {
+        "serialized_index": {"type": "integer", "minimum": 0},
+        "post_resolution_index": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "status": {"enum": ["resolved", "removed", "partial", "unsupported"]},
+        "sources": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/endpoint"}
+        },
+        "destinations": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/endpoint"}
+        },
+        "resolved_data_type": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "endpoint": {
+      "type": "object",
+      "required": [
+        "serialized_index",
+        "requested",
+        "resolution_status",
+        "resolved_instance_index",
+        "resolved_port_index"
+      ],
+      "properties": {
+        "serialized_index": {"type": "integer", "minimum": 0},
+        "requested": {
+          "type": "object",
+          "required": ["instance_name", "port_name"],
+          "properties": {
+            "instance_name": {"type": ["string", "null"]},
+            "port_name": {"type": ["string", "null"]}
+          },
+          "additionalProperties": false
+        },
+        "resolution_status": {
+          "enum": ["resolved", "missing_instance", "missing_port", "not_evaluated"]
+        },
+        "resolved_instance_index": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "resolved_port_index": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

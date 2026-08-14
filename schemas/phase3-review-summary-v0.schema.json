@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schuss.local/schemas/phase3-review-summary-v0.schema.json",
+  "title": "Schuss Phase 3 inventory review summary v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "input_counts",
+    "issue_classes",
+    "direct_unique_affected_records",
+    "implicated_unique_objects",
+    "material_impact",
+    "samples",
+    "portability",
+    "evidence_boundary"
+  ],
+  "properties": {
+    "schema_version": {"const": "phase3-review-summary-v0"},
+    "input_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "objects",
+        "graphs",
+        "issues",
+        "definition_occurrences",
+        "retained_in_legacy_object_list",
+        "overloaded_name_groups",
+        "resolution_created_zombies",
+        "partial_graphs"
+      ],
+      "properties": {
+        "objects": {"$ref": "#/$defs/count"},
+        "graphs": {"$ref": "#/$defs/count"},
+        "issues": {"$ref": "#/$defs/count"},
+        "definition_occurrences": {"$ref": "#/$defs/count"},
+        "retained_in_legacy_object_list": {"$ref": "#/$defs/count"},
+        "overloaded_name_groups": {"$ref": "#/$defs/count"},
+        "resolution_created_zombies": {"$ref": "#/$defs/count"},
+        "partial_graphs": {"$ref": "#/$defs/count"}
+      }
+    },
+    "issue_classes": {"$ref": "#/$defs/count"},
+    "direct_unique_affected_records": {"$ref": "#/$defs/count"},
+    "implicated_unique_objects": {"$ref": "#/$defs/count"},
+    "material_impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["taxonomy", "migration", "compilation"],
+      "properties": {
+        "taxonomy": {"$ref": "#/$defs/impact"},
+        "migration": {"$ref": "#/$defs/impact"},
+        "compilation": {"$ref": "#/$defs/impact"}
+      }
+    },
+    "samples": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "seed",
+        "sample_size",
+        "complete_graphs",
+        "partial_graphs",
+        "overloaded_selections",
+        "representative_objects"
+      ],
+      "properties": {
+        "method": {"const": "sha256-rank-v1"},
+        "seed": {"const": "schuss-phase3-inventory-review-v0"},
+        "sample_size": {"const": 25},
+        "complete_graphs": {"const": 25},
+        "partial_graphs": {"const": 25},
+        "overloaded_selections": {"const": 25},
+        "representative_objects": {"const": 25}
+      }
+    },
+    "portability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["snapshot_machine_path_hits", "packet_machine_path_hits"],
+      "properties": {
+        "snapshot_machine_path_hits": {"const": 0},
+        "packet_machine_path_hits": {"const": 0}
+      }
+    },
+    "evidence_boundary": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "count": {"type": "integer", "minimum": 0},
+    "impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "material_issue_class_count",
+        "unique_affected_record_count",
+        "affected_by_kind",
+        "issue_codes"
+      ],
+      "properties": {
+        "material_issue_class_count": {"$ref": "#/$defs/count"},
+        "unique_affected_record_count": {"$ref": "#/$defs/count"},
+        "affected_by_kind": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "count"],
+            "properties": {
+              "kind": {"enum": ["global", "graph", "object", "source"]},
+              "count": {"$ref": "#/$defs/count"}
+            }
+          }
+        },
+        "issue_codes": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

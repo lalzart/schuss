@@ -1,0 +1,232 @@
+{
+  "by_file_type": [
+    {
+      "count": 162,
+      "file_type": "axs"
+    },
+    {
+      "count": 995,
+      "file_type": "axp"
+    }
+  ],
+  "by_source": [
+    {
+      "count": 1044,
+      "source_id": "axoloti-contrib"
+    },
+    {
+      "count": 99,
+      "source_id": "axoloti-factory"
+    },
+    {
+      "count": 1,
+      "source_id": "ksoloti-contrib"
+    },
+    {
+      "count": 11,
+      "source_id": "ksoloti-objects"
+    },
+    {
+      "count": 2,
+      "source_id": "patcher"
+    }
+  ],
+  "by_status": [
+    {
+      "count": 348,
+      "status": "complete"
+    },
+    {
+      "count": 805,
+      "status": "partial"
+    },
+    {
+      "count": 4,
+      "status": "failed"
+    }
+  ],
+  "graph_count": 1157,
+  "rows": [
+    {
+      "count": 103,
+      "file_type": "axs",
+      "source_id": "axoloti-contrib",
+      "status": "complete"
+    },
+    {
+      "count": 30,
+      "file_type": "axs",
+      "source_id": "axoloti-contrib",
+      "status": "partial"
+    },
+    {
+      "count": 0,
+      "file_type": "axs",
+      "source_id": "axoloti-contrib",
+      "status": "failed"
+    },
+    {
+      "count": 210,
+      "file_type": "axp",
+      "source_id": "axoloti-contrib",
+      "status": "complete"
+    },
+    {
+      "count": 697,
+      "file_type": "axp",
+      "source_id": "axoloti-contrib",
+      "status": "partial"
+    },
+    {
+      "count": 4,
+      "file_type": "axp",
+      "source_id": "axoloti-contrib",
+      "status": "failed"
+    },
+    {
+      "count": 8,
+      "file_type": "axs",
+      "source_id": "axoloti-factory",
+      "status": "complete"
+    },
+    {
+      "count": 18,
+      "file_type": "axs",
+      "source_id": "axoloti-factory",
+      "status": "partial"
+    },
+    {
+      "count": 0,
+      "file_type": "axs",
+      "source_id": "axoloti-factory",
+      "status": "failed"
+    },
+    {
+      "count": 24,
+      "file_type": "axp",
+      "source_id": "axoloti-factory",
+      "status": "complete"
+    },
+    {
+      "count": 49,
+      "file_type": "axp",
+      "source_id": "axoloti-factory",
+      "status": "partial"
+    },
+    {
+      "count": 0,
+      "file_type": "axp",
+      "source_id": "axoloti-factory",
+      "status": "failed"
+    },
+    {
+      "count": 0,
+      "file_type": "axs",
+      "source_id": "ksoloti-contrib",
+      "status": "complete"
+    },
+    {
+      "count": 0,
+      "file_type": "axs",
+      "source_id": "ksoloti-contrib",
+      "status": "partial"
+    },
+    {
+      "count": 0,
+      "file_type": "axs",
+      "source_id": "ksoloti-contrib",
+      "status": "failed"
+    },
+    {
+      "count": 1,
+      "file_type": "axp",
+      "source_id": "ksoloti-contrib",
+      "status": "complete"
+    },
+    {
+      "count": 0,
+      "file_type": "axp",
+      "source_id": "ksoloti-contrib",
+      "status": "partial"
+    },
+    {
+      "count": 0,
+      "file_type": "axp",
+      "source_id": "ksoloti-contrib",
+      "status": "failed"
+    },
+    {
+      "count": 1,
+      "file_type": "axs",
+      "source_id": "ksoloti-objects",
+      "status": "complete"
+    },
+    {
+      "count": 2,
+      "file_type": "axs",
+      "source_id": "ksoloti-objects",
+      "status": "partial"
+    },
+    {
+      "count": 0,
+      "file_type": "axs",
+      "source_id": "ksoloti-objects",
+      "status": "failed"
+    },
+    {
+      "count": 0,
+      "file_type": "axp",
+      "source_id": "ksoloti-objects",
+      "status": "complete"
+    },
+    {
+      "count": 8,
+      "file_type": "axp",
+      "source_id": "ksoloti-objects",
+      "status": "partial"
+    },
+    {
+      "count": 0,
+      "file_type": "axp",
+      "source_id": "ksoloti-objects",
+      "status": "failed"
+    },
+    {
+      "count": 0,
+      "file_type": "axs",
+      "source_id": "patcher",
+      "status": "complete"
+    },
+    {
+      "count": 0,
+      "file_type": "axs",
+      "source_id": "patcher",
+      "status": "partial"
+    },
+    {
+      "count": 0,
+      "file_type": "axs",
+      "source_id": "patcher",
+      "status": "failed"
+    },
+    {
+      "count": 1,
+      "file_type": "axp",
+      "source_id": "patcher",
+      "status": "complete"
+    },
+    {
+      "count": 1,
+      "file_type": "axp",
+      "source_id": "patcher",
+      "status": "partial"
+    },
+    {
+      "count": 0,
+      "file_type": "axp",
+      "source_id": "patcher",
+      "status": "failed"
+    }
+  ],
+  "schema_version": "phase3-review-graph-status-matrix-v0"
+}

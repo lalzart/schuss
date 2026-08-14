@@ -1,0 +1,425 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "legacy-resolved-object-v0.schema.json",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "variant_index",
+    "legacy_object_list_index",
+    "legacy_kind",
+    "legacy_class",
+    "legacy_id",
+    "legacy_short_id",
+    "export_status",
+    "origin",
+    "uuid",
+    "metadata",
+    "facets"
+  ],
+  "properties": {
+    "schema_version": {"const": "legacy-resolved-object-v0"},
+    "variant_index": {"type": "integer", "minimum": 0},
+    "legacy_object_list_index": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "legacy_kind": {
+      "enum": [
+        "native_definition",
+        "subpatch_catalog_placeholder",
+        "subpatch_interface_projection",
+        "comment",
+        "hyperlink",
+        "unsupported"
+      ]
+    },
+    "legacy_class": {"type": "string", "minLength": 1},
+    "legacy_id": {"type": "string"},
+    "legacy_short_id": {"type": ["string", "null"]},
+    "export_status": {"enum": ["complete", "partial"]},
+    "origin": {"$ref": "#/$defs/origin"},
+    "uuid": {"$ref": "#/$defs/uuidObservation"},
+    "metadata": {
+      "type": "object",
+      "required": ["description", "author", "license", "help_patch"],
+      "properties": {
+        "description": {"type": ["string", "null"]},
+        "author": {"type": ["string", "null"]},
+        "license": {"type": ["string", "null"]},
+        "help_patch": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "facets": {
+      "type": "object",
+      "required": [
+        "inlets",
+        "outlets",
+        "parameters",
+        "attributes",
+        "displays",
+        "modulators",
+        "includes",
+        "dependencies",
+        "file_dependencies",
+        "code_sections"
+      ],
+      "properties": {
+        "inlets": {"$ref": "#/$defs/facetList"},
+        "outlets": {"$ref": "#/$defs/facetList"},
+        "parameters": {"$ref": "#/$defs/facetList"},
+        "attributes": {"$ref": "#/$defs/facetList"},
+        "displays": {"$ref": "#/$defs/facetList"},
+        "modulators": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["index", "name"],
+            "properties": {
+              "index": {"type": "integer", "minimum": 0},
+              "name": {"type": ["string", "null"]}
+            },
+            "additionalProperties": false
+          }
+        },
+        "includes": {"$ref": "#/$defs/stringSet"},
+        "dependencies": {"$ref": "#/$defs/stringSet"},
+        "file_dependencies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["index", "local_filename", "target_path"],
+            "properties": {
+              "index": {"type": "integer", "minimum": 0},
+              "local_filename": {"type": ["string", "null"]},
+              "target_path": {"type": ["string", "null"]}
+            },
+            "additionalProperties": false
+          }
+        },
+        "code_sections": {"$ref": "#/$defs/codeSections"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "sourceId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "portablePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "provider": {
+      "type": "object",
+      "required": [
+        "source_id",
+        "path",
+        "sha256",
+        "provider_class",
+        "emission_index"
+      ],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/sourceId"},
+        "path": {"$ref": "#/$defs/portablePath"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "provider_class": {"type": "string", "minLength": 1},
+        "emission_index": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "origin": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "source_id",
+            "path",
+            "sha256",
+            "definition_index",
+            "generated_by"
+          ],
+          "properties": {
+            "kind": {"const": "file"},
+            "source_id": {"$ref": "#/$defs/sourceId"},
+            "path": {"$ref": "#/$defs/portablePath"},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "definition_index": {"type": "integer", "minimum": 0},
+            "generated_by": {
+              "oneOf": [
+                {"$ref": "#/$defs/provider"},
+                {"type": "null"}
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "provider"],
+          "properties": {
+            "kind": {"const": "provider"},
+            "provider": {"$ref": "#/$defs/provider"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "reason_code"],
+          "properties": {
+            "kind": {"const": "unresolved"},
+            "reason_code": {"$ref": "#/$defs/reasonCode"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "uuidObservation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["source_presence", "source_value", "runtime_kind", "durable_value"],
+          "properties": {
+            "source_presence": {"const": "present"},
+            "source_value": {"type": "string", "minLength": 1},
+            "runtime_kind": {"const": "explicit"},
+            "durable_value": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["source_presence", "source_value", "runtime_kind", "durable_value"],
+          "properties": {
+            "source_presence": {"const": "absent"},
+            "source_value": {"type": "null"},
+            "runtime_kind": {"const": "generated-nondeterministic"},
+            "durable_value": {"type": "null"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["source_presence", "source_value", "runtime_kind", "durable_value"],
+          "properties": {
+            "source_presence": {"const": "absent"},
+            "source_value": {"type": "null"},
+            "runtime_kind": {"const": "unavailable"},
+            "durable_value": {"type": "null"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["source_presence", "source_value", "runtime_kind", "durable_value"],
+          "properties": {
+            "source_presence": {"const": "absent"},
+            "source_value": {"type": "null"},
+            "runtime_kind": {"const": "sentinel"},
+            "durable_value": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["source_presence", "source_value", "runtime_kind", "durable_value"],
+          "properties": {
+            "source_presence": {"const": "unobservable"},
+            "source_value": {"type": "null"},
+            "runtime_kind": {"const": "unavailable"},
+            "durable_value": {"type": "null"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "facetList": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/facet"}
+    },
+    "facet": {
+      "type": "object",
+      "required": [
+        "index",
+        "name",
+        "legacy_type",
+        "description",
+        "no_label",
+        "data_type",
+        "length",
+        "legacy_properties"
+      ],
+      "properties": {
+        "index": {"type": "integer", "minimum": 0},
+        "name": {"type": "string"},
+        "legacy_type": {"type": "string", "minLength": 1},
+        "description": {"type": ["string", "null"]},
+        "no_label": {"type": ["boolean", "null"]},
+        "data_type": {"type": ["string", "null"]},
+        "length": {"type": ["integer", "null"], "minimum": 0},
+        "legacy_properties": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/legacyProperty"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "legacyProperty": {
+      "oneOf": [
+        {"$ref": "#/$defs/stringProperty"},
+        {"$ref": "#/$defs/integerProperty"},
+        {"$ref": "#/$defs/numberProperty"},
+        {"$ref": "#/$defs/booleanProperty"},
+        {"$ref": "#/$defs/stringListProperty"},
+        {"$ref": "#/$defs/integerListProperty"},
+        {"$ref": "#/$defs/numberListProperty"},
+        {"$ref": "#/$defs/int32RawProperty"},
+        {"$ref": "#/$defs/frac32RawProperty"}
+      ]
+    },
+    "stringProperty": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "string"},
+        "value": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "integerProperty": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "integer"},
+        "value": {"type": "integer"}
+      },
+      "additionalProperties": false
+    },
+    "numberProperty": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "number"},
+        "value": {"type": "number"}
+      },
+      "additionalProperties": false
+    },
+    "booleanProperty": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "boolean"},
+        "value": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "stringListProperty": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "string-list"},
+        "value": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "integerListProperty": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "integer-list"},
+        "value": {"type": "array", "items": {"type": "integer"}}
+      },
+      "additionalProperties": false
+    },
+    "numberListProperty": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "number-list"},
+        "value": {"type": "array", "items": {"type": "number"}}
+      },
+      "additionalProperties": false
+    },
+    "int32RawProperty": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "int32-raw"},
+        "value": {"type": "integer", "minimum": -2147483648, "maximum": 2147483647}
+      },
+      "additionalProperties": false
+    },
+    "frac32RawProperty": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "frac32-raw"},
+        "value": {"type": "integer", "minimum": -2147483648, "maximum": 2147483647}
+      },
+      "additionalProperties": false
+    },
+    "stringSet": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "codeSections": {
+      "type": "object",
+      "required": [
+        "declaration",
+        "init",
+        "dispose",
+        "control_rate",
+        "sample_rate",
+        "midi_handler",
+        "legacy_midi_cc",
+        "legacy_midi_note_on",
+        "legacy_midi_note_off",
+        "legacy_midi_pitch_bend",
+        "legacy_midi_channel_pressure",
+        "legacy_midi_all_notes_off",
+        "legacy_midi_reset_controllers"
+      ],
+      "properties": {
+        "declaration": {"$ref": "#/$defs/codePresence"},
+        "init": {"$ref": "#/$defs/codePresence"},
+        "dispose": {"$ref": "#/$defs/codePresence"},
+        "control_rate": {"$ref": "#/$defs/codePresence"},
+        "sample_rate": {"$ref": "#/$defs/codePresence"},
+        "midi_handler": {"$ref": "#/$defs/codePresence"},
+        "legacy_midi_cc": {"$ref": "#/$defs/codePresence"},
+        "legacy_midi_note_on": {"$ref": "#/$defs/codePresence"},
+        "legacy_midi_note_off": {"$ref": "#/$defs/codePresence"},
+        "legacy_midi_pitch_bend": {"$ref": "#/$defs/codePresence"},
+        "legacy_midi_channel_pressure": {"$ref": "#/$defs/codePresence"},
+        "legacy_midi_all_notes_off": {"$ref": "#/$defs/codePresence"},
+        "legacy_midi_reset_controllers": {"$ref": "#/$defs/codePresence"}
+      },
+      "additionalProperties": false
+    },
+    "codePresence": {
+      "enum": ["absent", "empty", "nonempty"]
+    },
+    "reasonCode": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    }
+  },
+  "additionalProperties": false
+}

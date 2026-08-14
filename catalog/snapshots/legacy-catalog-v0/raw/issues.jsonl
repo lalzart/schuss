@@ -1,0 +1,2 @@
+{"error_code":"E_XML_PARSE","message":"not well-formed (invalid token): line 44, column 90","processing_continued":true,"related_path":"patches/phi/Launchcontrol 8step sequencera.axp","severity":"error","source":"axoloti-contrib","stage":"raw-parse"}
+{"error_code":"E_XML_PARSE","message":"not well-formed (invalid token): line 44, column 91","processing_continued":true,"related_path":"patches/phi/Launchcontrolsequencer2.axp","severity":"error","source":"axoloti-contrib","stage":"raw-parse"}

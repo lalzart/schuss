@@ -1,0 +1,27 @@
+<objdefs appVersion="1.1.0">
+  <obj.normal id="overload" uuid="fixture-overload-frac32">
+    <sDescription>Fixture scalar overload</sDescription>
+    <author>Schuss fixture</author>
+    <license>CC0</license>
+    <inlets><frac32 name="in" description="scalar input"/></inlets>
+    <outlets><frac32 name="out" description="scalar output"/></outlets>
+    <displays/><params/><attribs/>
+    <code.krate><![CDATA[outlet_out = inlet_in;]]></code.krate>
+  </obj.normal>
+  <obj.normal id="overload" uuid="fixture-overload-buffer">
+    <sDescription>Fixture buffer overload</sDescription>
+    <author>Schuss fixture</author>
+    <license>CC0</license>
+    <inlets><frac32buffer name="in" description="buffer input"/></inlets>
+    <outlets><frac32buffer name="out" description="buffer output"/></outlets>
+    <displays/><params/><attribs/>
+    <code.srate><![CDATA[outlet_out = inlet_in;]]></code.srate>
+  </obj.normal>
+  <obj.normal id="source uuid absent">
+    <sDescription>Source UUID is deliberately absent</sDescription>
+    <author>Schuss fixture</author>
+    <license>CC0</license>
+    <inlets/><outlets/><displays/><params/><attribs/>
+  </obj.normal>
+</objdefs>
+

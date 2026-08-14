@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "legacy-catalog-file-v0.schema.json",
+  "type": "object",
+  "required": ["source_repository", "path", "file_type", "size_bytes", "sha256", "detected_legacy_roles", "parse_status"],
+  "properties": {
+    "source_repository": {"type": "string", "minLength": 1},
+    "source_commit": {"type": ["string", "null"]},
+    "library_name": {"type": ["string", "null"]},
+    "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+    "file_type": {"enum": ["axo", "axs", "axp", "java"]},
+    "size_bytes": {"type": ["integer", "null"], "minimum": 0},
+    "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "detected_legacy_roles": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "parse_status": {"enum": ["ok", "error", "not_applicable"]},
+    "root_element": {"type": ["string", "null"]},
+    "parse_warnings": {"type": "array", "items": {"type": "string"}},
+    "parse_errors": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

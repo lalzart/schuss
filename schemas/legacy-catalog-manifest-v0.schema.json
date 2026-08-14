@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "legacy-catalog-manifest-v0.schema.json",
+  "type": "object",
+  "required": ["schema_version", "exporter", "sources", "enabled_library_roots", "options"],
+  "properties": {
+    "schema_version": {"const": "legacy-catalog-v0"},
+    "exporter": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"const": "export_raw_inventory.py"},
+        "version": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "repository", "remote_url", "commit", "branch", "dirty", "license_files"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "repository": {"type": ["string", "null"]},
+          "remote_url": {"type": ["string", "null"]},
+          "commit": {"type": ["string", "null"]},
+          "branch": {"type": ["string", "null"]},
+          "dirty": {"type": ["boolean", "null"]},
+          "license_files": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+        },
+        "additionalProperties": false
+      }
+    },
+    "enabled_library_roots": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "options": {
+      "type": "object",
+      "required": ["phase", "timestamp_included"],
+      "properties": {
+        "phase": {"const": "raw-files"},
+        "timestamp_included": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

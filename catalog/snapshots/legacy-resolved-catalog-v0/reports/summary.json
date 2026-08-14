@@ -1,0 +1,307 @@
+{
+  "catalog_subpatch_files": {
+    "not_enabled": 28,
+    "not_in_raw_baseline": 2,
+    "raw_candidates": 160,
+    "registered": 134
+  },
+  "graphs": {
+    "ambiguous_instances": 265,
+    "attempted": 1157,
+    "candidates": 1157,
+    "complete": 348,
+    "created_zombies": 364,
+    "endpoint_status_counts": {
+      "missing_instance": 0,
+      "missing_port": 33,
+      "not_evaluated": 30,
+      "resolved": 114629
+    },
+    "failed": 4,
+    "hard_zombies": 1,
+    "instances": 52518,
+    "not_in_raw_baseline": 3,
+    "partial": 805,
+    "raw_candidates": 1154,
+    "removed_nets": 33,
+    "resolved_instances": 46901,
+    "resolved_nets": 49361,
+    "source_nets": 49422
+  },
+  "issues": {
+    "by_code": [
+      {
+        "count": 265,
+        "name": "AMBIGUOUS_INSTANCE_RESOLUTION"
+      },
+      {
+        "count": 3,
+        "name": "GENERATED_DEFINITION_COUNT_MISMATCH"
+      },
+      {
+        "count": 51,
+        "name": "GENERATED_EMISSION_UNMATCHED"
+      },
+      {
+        "count": 1,
+        "name": "GENERATED_OUTPUT_REDEFINED"
+      },
+      {
+        "count": 1,
+        "name": "GENERATED_OUTPUT_REPEATED_IDENTICAL"
+      },
+      {
+        "count": 2,
+        "name": "GRAPH_POST_CONSTRUCTION_FAILED"
+      },
+      {
+        "count": 2,
+        "name": "GRAPH_XML_SCAN_FAILED"
+      },
+      {
+        "count": 364,
+        "name": "INSTANCE_BECAME_ZOMBIE"
+      },
+      {
+        "count": 1945,
+        "name": "INSTANCE_RESOLUTION_UNPROVEN"
+      },
+      {
+        "count": 3,
+        "name": "LEGACY_OBJECT_LIST_COLLAPSE"
+      },
+      {
+        "count": 33,
+        "name": "NET_ENDPOINT_PORT_MISSING"
+      },
+      {
+        "count": 33,
+        "name": "NET_REMOVED_DURING_RESOLUTION"
+      },
+      {
+        "count": 19,
+        "name": "NET_STRUCTURALLY_INCOMPLETE"
+      },
+      {
+        "count": 125,
+        "name": "NONPORTABLE_GRAPH_VALUE_REDACTED"
+      },
+      {
+        "count": 157,
+        "name": "OVERLOADED_NAME_CANDIDATES"
+      },
+      {
+        "count": 146,
+        "name": "RAW_BASELINE_OMISSION"
+      },
+      {
+        "count": 7,
+        "name": "SERIALIZED_ATTRIBUTE_NOT_PROJECTED"
+      },
+      {
+        "count": 1,
+        "name": "SERIALIZED_HARD_ZOMBIE"
+      },
+      {
+        "count": 21,
+        "name": "SERIALIZED_PARAMETER_NOT_PROJECTED"
+      },
+      {
+        "count": 1,
+        "name": "UNSUPPORTED_ATTRIBUTE_VALUE"
+      }
+    ],
+    "by_severity": {
+      "error": 2003,
+      "info": 157,
+      "warning": 1020
+    },
+    "by_stage": [
+      {
+        "count": 157,
+        "name": "catalog-load"
+      },
+      {
+        "count": 127,
+        "name": "graph-load"
+      },
+      {
+        "count": 2691,
+        "name": "graph-resolve"
+      },
+      {
+        "count": 205,
+        "name": "reconcile"
+      }
+    ],
+    "total": 3180
+  },
+  "object_files": {
+    "attempted": 3139,
+    "failed": 0,
+    "not_enabled": 21,
+    "not_in_raw_baseline": 143,
+    "raw_candidates": 3017,
+    "relaxed_loaded": 0,
+    "strict_loaded": 3139,
+    "zero_definition": 0
+  },
+  "objects": {
+    "by_legacy_class": [
+      {
+        "count": 3462,
+        "name": "axoloti.object.AxoObject"
+      },
+      {
+        "count": 1,
+        "name": "axoloti.object.AxoObjectComment"
+      },
+      {
+        "count": 1,
+        "name": "axoloti.object.AxoObjectHyperlink"
+      },
+      {
+        "count": 2,
+        "name": "axoloti.object.AxoObjectPatcher"
+      },
+      {
+        "count": 2,
+        "name": "axoloti.object.AxoObjectPatcherObject"
+      },
+      {
+        "count": 134,
+        "name": "axoloti.object.AxoObjectUnloaded"
+      }
+    ],
+    "by_origin_kind": [
+      {
+        "count": 3551,
+        "kind": "file"
+      },
+      {
+        "count": 51,
+        "kind": "provider"
+      }
+    ],
+    "by_uuid_runtime_kind": [
+      {
+        "count": 3408,
+        "kind": "explicit"
+      },
+      {
+        "count": 58,
+        "kind": "generated-nondeterministic"
+      },
+      {
+        "count": 134,
+        "kind": "sentinel"
+      },
+      {
+        "count": 2,
+        "kind": "unavailable"
+      }
+    ],
+    "collapsed_by_legacy_equality": 3,
+    "complete": 3551,
+    "definition_occurrences": 3417,
+    "duplicate_uuid_groups": 0,
+    "overloaded_name_groups": 157,
+    "partial": 51,
+    "records": 3602,
+    "retained_in_legacy_object_list": 3548
+  },
+  "raw_candidates": {
+    "by_source_and_type": [
+      {
+        "count": 2362,
+        "file_type": "axo",
+        "source_id": "axoloti-contrib"
+      },
+      {
+        "count": 910,
+        "file_type": "axp",
+        "source_id": "axoloti-contrib"
+      },
+      {
+        "count": 132,
+        "file_type": "axs",
+        "source_id": "axoloti-contrib"
+      },
+      {
+        "count": 492,
+        "file_type": "axo",
+        "source_id": "axoloti-factory"
+      },
+      {
+        "count": 73,
+        "file_type": "axp",
+        "source_id": "axoloti-factory"
+      },
+      {
+        "count": 25,
+        "file_type": "axs",
+        "source_id": "axoloti-factory"
+      },
+      {
+        "count": 3,
+        "file_type": "axo",
+        "source_id": "ksoloti-contrib"
+      },
+      {
+        "count": 1,
+        "file_type": "axp",
+        "source_id": "ksoloti-contrib"
+      },
+      {
+        "count": 140,
+        "file_type": "axo",
+        "source_id": "ksoloti-objects"
+      },
+      {
+        "count": 8,
+        "file_type": "axp",
+        "source_id": "ksoloti-objects"
+      },
+      {
+        "count": 3,
+        "file_type": "axs",
+        "source_id": "ksoloti-objects"
+      },
+      {
+        "count": 20,
+        "file_type": "axo",
+        "source_id": "patcher"
+      },
+      {
+        "count": 2,
+        "file_type": "axp",
+        "source_id": "patcher"
+      },
+      {
+        "count": 38,
+        "file_type": "java",
+        "source_id": "patcher"
+      }
+    ],
+    "by_type": [
+      {
+        "count": 3017,
+        "file_type": "axo"
+      },
+      {
+        "count": 994,
+        "file_type": "axp"
+      },
+      {
+        "count": 160,
+        "file_type": "axs"
+      },
+      {
+        "count": 38,
+        "file_type": "java"
+      }
+    ],
+    "total": 4209
+  },
+  "schema_version": "legacy-resolved-summary-v0"
+}

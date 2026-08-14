@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "legacy-catalog-issue-v0.schema.json",
+  "type": "object",
+  "required": ["source", "severity", "stage", "error_code", "message", "related_path", "processing_continued"],
+  "properties": {
+    "source": {"type": "string"},
+    "severity": {"enum": ["info", "warning", "error"]},
+    "stage": {"type": "string"},
+    "error_code": {"type": "string"},
+    "message": {"type": "string"},
+    "related_path": {"type": "string"},
+    "processing_continued": {"type": "boolean"}
+  },
+  "additionalProperties": false
+}

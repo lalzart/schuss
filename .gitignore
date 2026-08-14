@@ -1,0 +1,11 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+
+# Machine-local upstream checkout paths.
+/catalog/sources.local.yml
+
+# Local build and scratch output.
+/build/
+/dist/
+/tmp/

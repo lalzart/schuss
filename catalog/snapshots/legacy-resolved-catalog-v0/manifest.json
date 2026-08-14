@@ -1,0 +1,85 @@
+{
+  "exporter": {
+    "name": "export_resolved_inventory.py",
+    "version": 1
+  },
+  "graph_input_types": [
+    "axs",
+    "axp"
+  ],
+  "legacy_runtime": {
+    "classpath_fingerprint_sha256": "5ebd2f2b7f2aa6dc1d3d10a04edb5f2bbedd97cfb4372dab56dc22c778b17710",
+    "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c",
+    "java_version": "openjdk version \"21.0.7\" 2025-04-15 LTS",
+    "source_id": "patcher"
+  },
+  "object_roots": [
+    {
+      "order": 0,
+      "relative_path": "objects",
+      "source_id": "axoloti-factory"
+    },
+    {
+      "order": 1,
+      "relative_path": "objects",
+      "source_id": "axoloti-contrib"
+    },
+    {
+      "order": 2,
+      "relative_path": "objects",
+      "source_id": "ksoloti-objects"
+    },
+    {
+      "order": 3,
+      "relative_path": "objects",
+      "source_id": "ksoloti-contrib"
+    }
+  ],
+  "options": {
+    "device_access": false,
+    "phase": "java-resolved",
+    "preference_writes": false,
+    "subpatch_interface_projection": true,
+    "target_artifact_generation": false,
+    "target_compilation": false,
+    "timestamp_included": false
+  },
+  "raw_snapshot": {
+    "files_jsonl_sha256": "a55f6aed045916c8df873f16bc205e687c40035b0f45e6368bf5c82730090ccf",
+    "manifest_sha256": "7c0a8497f4f5506d5330cd83add0ff60152be93f79de6a211aebaa8fdb2a350a",
+    "schema_version": "legacy-catalog-v0"
+  },
+  "schema_version": "legacy-resolved-catalog-v0",
+  "sources": [
+    {
+      "commit": "2e994478c0ab15fb1daa3bb4b86c88e22952d99c",
+      "id": "axoloti-contrib",
+      "observed_dirty": false,
+      "url": "https://github.com/ksoloti/axoloti-contrib.git"
+    },
+    {
+      "commit": "25d2615ed5233546d617017666a4ab1e60a8c506",
+      "id": "axoloti-factory",
+      "observed_dirty": false,
+      "url": "https://github.com/ksoloti/axoloti-factory.git"
+    },
+    {
+      "commit": "7998a6b62906dcf8e851d32d04f041f4bcabc71d",
+      "id": "ksoloti-contrib",
+      "observed_dirty": false,
+      "url": "https://github.com/ksoloti/ksoloti-contrib.git"
+    },
+    {
+      "commit": "7000fde4cf60d2d79a36d95098418c4a654dc056",
+      "id": "ksoloti-objects",
+      "observed_dirty": false,
+      "url": "https://github.com/ksoloti/ksoloti-objects.git"
+    },
+    {
+      "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c",
+      "id": "patcher",
+      "observed_dirty": true,
+      "url": "https://github.com/lalzart/ksoloti.git"
+    }
+  ]
+}

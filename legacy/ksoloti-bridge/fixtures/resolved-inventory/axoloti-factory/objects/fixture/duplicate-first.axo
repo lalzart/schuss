@@ -1,0 +1,8 @@
+<objdefs appVersion="1.1.0">
+  <obj.normal id="duplicate first" uuid="fixture-shared-explicit-uuid">
+    <sDescription>First explicit UUID occurrence</sDescription>
+    <author>Schuss fixture</author><license>CC0</license>
+    <inlets/><outlets/><displays/><params/><attribs/>
+  </obj.normal>
+</objdefs>
+

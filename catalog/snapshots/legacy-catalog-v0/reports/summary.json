@@ -1,0 +1,43 @@
+{
+  "candidate_file_count": 4209,
+  "candidate_files_by_source_and_type": {
+    "axoloti-contrib": {
+      "axo": 2362,
+      "axp": 910,
+      "axs": 132
+    },
+    "axoloti-factory": {
+      "axo": 492,
+      "axp": 73,
+      "axs": 25
+    },
+    "ksoloti-contrib": {
+      "axo": 3,
+      "axp": 1
+    },
+    "ksoloti-objects": {
+      "axo": 140,
+      "axp": 8,
+      "axs": 3
+    },
+    "patcher": {
+      "axo": 20,
+      "axp": 2,
+      "java": 38
+    }
+  },
+  "candidate_files_by_type": {
+    "axo": 3017,
+    "axp": 994,
+    "axs": 160,
+    "java": 38
+  },
+  "duplicate_source_relative_paths": [],
+  "issue_count": 2,
+  "parse_status_counts": {
+    "error": 2,
+    "not_applicable": 38,
+    "ok": 4169
+  },
+  "schema_version": "legacy-catalog-v0"
+}

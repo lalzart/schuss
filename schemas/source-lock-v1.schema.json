@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "source-lock-v1.schema.json",
+  "type": "object",
+  "required": ["schema_version", "sources"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema_version": {"const": "schuss-source-lock-v1"},
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "url", "commit"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+          "url": {"type": "string", "minLength": 1},
+          "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

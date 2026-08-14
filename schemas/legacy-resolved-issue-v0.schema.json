@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "legacy-resolved-issue-v0.schema.json",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "issue_index",
+    "severity",
+    "stage",
+    "code",
+    "location",
+    "message",
+    "processing_continued",
+    "facts",
+    "candidate_variant_indexes"
+  ],
+  "properties": {
+    "schema_version": {"const": "legacy-resolved-issue-v0"},
+    "issue_index": {"type": "integer", "minimum": 0},
+    "severity": {"enum": ["info", "warning", "error"]},
+    "stage": {
+      "enum": [
+        "source-config",
+        "catalog-load",
+        "subpatch-interface-projection",
+        "object-export",
+        "graph-load",
+        "graph-resolve",
+        "reconcile"
+      ]
+    },
+    "code": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    },
+    "location": {"$ref": "#/$defs/location"},
+    "message": {"type": "string", "minLength": 1},
+    "processing_continued": {"type": "boolean"},
+    "facts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/fact"}
+    },
+    "candidate_variant_indexes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 0}
+    }
+  },
+  "$defs": {
+    "sourceId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "portablePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "location": {
+      "type": "object",
+      "required": [
+        "kind",
+        "source_id",
+        "path",
+        "variant_index",
+        "graph_index",
+        "instance_index",
+        "net_index",
+        "endpoint_role",
+        "endpoint_index"
+      ],
+      "properties": {
+        "kind": {"enum": ["global", "object", "graph", "instance", "net", "endpoint"]},
+        "source_id": {
+          "oneOf": [
+            {"$ref": "#/$defs/sourceId"},
+            {"type": "null"}
+          ]
+        },
+        "path": {
+          "oneOf": [
+            {"$ref": "#/$defs/portablePath"},
+            {"type": "null"}
+          ]
+        },
+        "variant_index": {"type": ["integer", "null"], "minimum": 0},
+        "graph_index": {"type": ["integer", "null"], "minimum": 0},
+        "instance_index": {"type": ["integer", "null"], "minimum": 0},
+        "net_index": {"type": ["integer", "null"], "minimum": 0},
+        "endpoint_role": {
+          "oneOf": [
+            {"enum": ["source", "destination"]},
+            {"type": "null"}
+          ]
+        },
+        "endpoint_index": {"type": ["integer", "null"], "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "fact": {
+      "oneOf": [
+        {"$ref": "#/$defs/stringFact"},
+        {"$ref": "#/$defs/integerFact"},
+        {"$ref": "#/$defs/booleanFact"},
+        {"$ref": "#/$defs/stringListFact"},
+        {"$ref": "#/$defs/integerListFact"}
+      ]
+    },
+    "stringFact": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "string"},
+        "value": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "integerFact": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "integer"},
+        "value": {"type": "integer"}
+      },
+      "additionalProperties": false
+    },
+    "booleanFact": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "boolean"},
+        "value": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "stringListFact": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "string-list"},
+        "value": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "integerListFact": {
+      "type": "object",
+      "required": ["name", "value_type", "value"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value_type": {"const": "integer-list"},
+        "value": {"type": "array", "items": {"type": "integer"}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

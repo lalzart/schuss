@@ -1,0 +1,8 @@
+<patch-1.0 appVersion="1.1.0">
+  <obj type="fixture/overload" uuid="fixture-overload-buffer" name="buffer-source" x="14" y="14"><params/><attribs/></obj>
+  <obj type="fixture/overload" name="promoted" x="154" y="14"><params/><attribs/></obj>
+  <nets>
+    <net><source obj="buffer-source" outlet="out"/><dest obj="promoted" inlet="in"/></net>
+  </nets>
+  <settings><subpatchmode>no</subpatchmode></settings>
+</patch-1.0>

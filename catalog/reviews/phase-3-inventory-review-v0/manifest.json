@@ -1,0 +1,105 @@
+{
+  "generated_files": [
+    {
+      "path": "reports/facet-coverage.json",
+      "sha256": "f6fdfbed7f30581e822efec8b3840604a87a9d14d70513c01aa8e5e5533d6b03"
+    },
+    {
+      "path": "reports/graph-status-matrix.json",
+      "sha256": "f4cd3655280cf2e12366ea6ba29968eca998421d1ff789aa10ee1aca3b4db84a"
+    },
+    {
+      "path": "reports/issue-impact.jsonl",
+      "sha256": "9f2732e7327f8199ab519c3d2f74f6f6854b6c03d94f74ed66f950af87aaaefe"
+    },
+    {
+      "path": "reports/issues-by-code.jsonl",
+      "sha256": "0757a23694411108fffdf0d380794b7e4773474b204564974c7a93f9adab6b33"
+    },
+    {
+      "path": "reports/object-reconciliation.json",
+      "sha256": "61dd6c5a0b0b5ece3cfed78166800d199a4e1c97a903fba99f416e48f3de68b7"
+    },
+    {
+      "path": "reports/overloaded-name-groups.jsonl",
+      "sha256": "d67e296af7236493c93a4578cec33fb532e2bfd128beb4c753d4dd4f30848538"
+    },
+    {
+      "path": "reports/partial-graphs.json",
+      "sha256": "11081689e6136494631586aad5ffe8a28609b989b6d1d406b00695b033af7ae9"
+    },
+    {
+      "path": "reports/resolution-created-zombies.jsonl",
+      "sha256": "e783164ae8164e6e00ea10db968255e1d3897321f2a20c4ebc8d38590a9ae626"
+    },
+    {
+      "path": "reports/summary.json",
+      "sha256": "bc4bb52dcbe8fc4da0bdcc8a1a98b615d6dae98047aff4d30544ac8bbaf35374"
+    },
+    {
+      "path": "reports/summary.md",
+      "sha256": "867dd51d2f7be4afd1faff68b392f0501595485cc889893a16ff66c69674a46c"
+    },
+    {
+      "path": "samples/complete-graphs.jsonl",
+      "sha256": "dd2837fea18a848f1f9ed6e453a71c308f541754b4966bdccf7fb67bce5da970"
+    },
+    {
+      "path": "samples/overloaded-selections.jsonl",
+      "sha256": "a7596cd17fe68cdb626f803455dd06751746f10a4656dbdd889f74281a75d05e"
+    },
+    {
+      "path": "samples/partial-graphs.jsonl",
+      "sha256": "3511d0a3b0fafc91bd6ae87f71c895f5cb97f6d66e381958f7230f4d3b2216b9"
+    },
+    {
+      "path": "samples/representative-objects.jsonl",
+      "sha256": "ade5aa23728742ae0d71153d0633609831ff36e227ec2b4db493f2376693cf59"
+    }
+  ],
+  "generator": {
+    "name": "build_phase3_review_packet.py",
+    "version": 1
+  },
+  "impact_policy_version": "phase3-review-impact-v0",
+  "input_snapshot": {
+    "files": [
+      {
+        "path": "manifest.json",
+        "sha256": "0e3f3cb763f634ce490195e2cd4665c2e1a41764cd54c6526e6e219f18e1e959"
+      },
+      {
+        "path": "reports/summary.json",
+        "sha256": "1312fbcce48bc52a854009d3026c2088d9c1107a1eedd867a6abf061e33367a7"
+      },
+      {
+        "path": "reports/summary.md",
+        "sha256": "d854ec60226a3ac4c2859cf07041c3a9391e15197bf109de8474ffb90c01c9c4"
+      },
+      {
+        "path": "resolved/graphs.jsonl",
+        "sha256": "e621774968c0bc9326c177f33752569fa473c0494bfd91f991c7a8bace62bf66"
+      },
+      {
+        "path": "resolved/issues.jsonl",
+        "sha256": "05b3f8f5ab7d2d4d0ac000350deec6dd3cb47011cc7c2cc9c2e3cdc942eb33a7"
+      },
+      {
+        "path": "resolved/objects.jsonl",
+        "sha256": "d1cb6810a6364b4c8b21f432605a0048a1913b2fc0bb68d42f14c0f8ec9e0316"
+      }
+    ],
+    "schema_version": "legacy-resolved-catalog-v0"
+  },
+  "options": {
+    "random_runtime_values": false,
+    "snapshot_mutation": false,
+    "timestamp_included": false
+  },
+  "sample_selection": {
+    "method": "sha256-rank-v1",
+    "sample_size": 25,
+    "seed": "schuss-phase3-inventory-review-v0"
+  },
+  "schema_version": "phase3-inventory-review-v0"
+}

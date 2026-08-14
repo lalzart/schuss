@@ -1,0 +1,31 @@
+{
+  "$schema": "../schemas/source-lock-v1.schema.json",
+  "schema_version": "schuss-source-lock-v1",
+  "sources": [
+    {
+      "id": "axoloti-contrib",
+      "url": "https://github.com/ksoloti/axoloti-contrib.git",
+      "commit": "2e994478c0ab15fb1daa3bb4b86c88e22952d99c"
+    },
+    {
+      "id": "axoloti-factory",
+      "url": "https://github.com/ksoloti/axoloti-factory.git",
+      "commit": "25d2615ed5233546d617017666a4ab1e60a8c506"
+    },
+    {
+      "id": "ksoloti-contrib",
+      "url": "https://github.com/ksoloti/ksoloti-contrib.git",
+      "commit": "7998a6b62906dcf8e851d32d04f041f4bcabc71d"
+    },
+    {
+      "id": "ksoloti-objects",
+      "url": "https://github.com/ksoloti/ksoloti-objects.git",
+      "commit": "7000fde4cf60d2d79a36d95098418c4a654dc056"
+    },
+    {
+      "id": "patcher",
+      "url": "https://github.com/lalzart/ksoloti.git",
+      "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c"
+    }
+  ]
+}

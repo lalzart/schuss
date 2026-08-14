@@ -1,0 +1,128 @@
+{
+  "direct_unique_affected_records": 1167,
+  "evidence_boundary": "Observed counts come from the frozen resolved snapshot. Impact levels are engineering review routing and do not prove taxonomy invalidity, ARM compile/link failure, connected-board behavior, or audible behavior.",
+  "implicated_unique_objects": 437,
+  "input_counts": {
+    "definition_occurrences": 3417,
+    "graphs": 1157,
+    "issues": 3180,
+    "objects": 3602,
+    "overloaded_name_groups": 157,
+    "partial_graphs": 805,
+    "resolution_created_zombies": 364,
+    "retained_in_legacy_object_list": 3548
+  },
+  "issue_classes": 20,
+  "material_impact": {
+    "compilation": {
+      "affected_by_kind": [
+        {
+          "count": 809,
+          "kind": "graph"
+        },
+        {
+          "count": 95,
+          "kind": "object"
+        }
+      ],
+      "issue_codes": [
+        "AMBIGUOUS_INSTANCE_RESOLUTION",
+        "GRAPH_POST_CONSTRUCTION_FAILED",
+        "GRAPH_XML_SCAN_FAILED",
+        "INSTANCE_BECAME_ZOMBIE",
+        "INSTANCE_RESOLUTION_UNPROVEN",
+        "NET_ENDPOINT_PORT_MISSING",
+        "NET_REMOVED_DURING_RESOLUTION",
+        "NET_STRUCTURALLY_INCOMPLETE",
+        "NONPORTABLE_GRAPH_VALUE_REDACTED",
+        "SERIALIZED_ATTRIBUTE_NOT_PROJECTED",
+        "SERIALIZED_HARD_ZOMBIE",
+        "SERIALIZED_PARAMETER_NOT_PROJECTED",
+        "UNSUPPORTED_ATTRIBUTE_VALUE"
+      ],
+      "material_issue_class_count": 13,
+      "unique_affected_record_count": 904
+    },
+    "migration": {
+      "affected_by_kind": [
+        {
+          "count": 809,
+          "kind": "graph"
+        },
+        {
+          "count": 488,
+          "kind": "object"
+        },
+        {
+          "count": 4,
+          "kind": "source"
+        }
+      ],
+      "issue_codes": [
+        "AMBIGUOUS_INSTANCE_RESOLUTION",
+        "GENERATED_DEFINITION_COUNT_MISMATCH",
+        "GENERATED_EMISSION_UNMATCHED",
+        "GENERATED_OUTPUT_REDEFINED",
+        "GENERATED_OUTPUT_REPEATED_IDENTICAL",
+        "GRAPH_POST_CONSTRUCTION_FAILED",
+        "GRAPH_XML_SCAN_FAILED",
+        "INSTANCE_BECAME_ZOMBIE",
+        "INSTANCE_RESOLUTION_UNPROVEN",
+        "LEGACY_OBJECT_LIST_COLLAPSE",
+        "NET_ENDPOINT_PORT_MISSING",
+        "NET_REMOVED_DURING_RESOLUTION",
+        "NET_STRUCTURALLY_INCOMPLETE",
+        "NONPORTABLE_GRAPH_VALUE_REDACTED",
+        "OVERLOADED_NAME_CANDIDATES",
+        "SERIALIZED_ATTRIBUTE_NOT_PROJECTED",
+        "SERIALIZED_HARD_ZOMBIE",
+        "SERIALIZED_PARAMETER_NOT_PROJECTED",
+        "UNSUPPORTED_ATTRIBUTE_VALUE"
+      ],
+      "material_issue_class_count": 19,
+      "unique_affected_record_count": 1301
+    },
+    "taxonomy": {
+      "affected_by_kind": [
+        {
+          "count": 5,
+          "kind": "graph"
+        },
+        {
+          "count": 487,
+          "kind": "object"
+        },
+        {
+          "count": 3,
+          "kind": "source"
+        }
+      ],
+      "issue_codes": [
+        "GENERATED_DEFINITION_COUNT_MISMATCH",
+        "GENERATED_EMISSION_UNMATCHED",
+        "GENERATED_OUTPUT_REDEFINED",
+        "GRAPH_POST_CONSTRUCTION_FAILED",
+        "GRAPH_XML_SCAN_FAILED",
+        "LEGACY_OBJECT_LIST_COLLAPSE",
+        "OVERLOADED_NAME_CANDIDATES",
+        "UNSUPPORTED_ATTRIBUTE_VALUE"
+      ],
+      "material_issue_class_count": 8,
+      "unique_affected_record_count": 495
+    }
+  },
+  "portability": {
+    "packet_machine_path_hits": 0,
+    "snapshot_machine_path_hits": 0
+  },
+  "samples": {
+    "complete_graphs": 25,
+    "method": "sha256-rank-v1",
+    "overloaded_selections": 25,
+    "partial_graphs": 25,
+    "representative_objects": 25,
+    "sample_size": 25,
+    "seed": "schuss-phase3-inventory-review-v0"
+  },
+  "schema_version": "phase3-review-summary-v0"
+}

@@ -1,0 +1,73 @@
+{
+  "enabled_library_roots": [
+    "axoloti-contrib",
+    "axoloti-factory",
+    "ksoloti-contrib",
+    "ksoloti-objects",
+    "patcher"
+  ],
+  "exporter": {
+    "name": "export_raw_inventory.py",
+    "version": 1
+  },
+  "options": {
+    "phase": "raw-files",
+    "timestamp_included": false
+  },
+  "schema_version": "legacy-catalog-v0",
+  "sources": [
+    {
+      "branch": "1.1.0",
+      "commit": "2e994478c0ab15fb1daa3bb4b86c88e22952d99c",
+      "dirty": false,
+      "license_files": [],
+      "name": "axoloti-contrib",
+      "remote_url": "https://github.com/ksoloti/axoloti-contrib.git",
+      "repository": "axoloti-contrib"
+    },
+    {
+      "branch": "1.1.0",
+      "commit": "25d2615ed5233546d617017666a4ab1e60a8c506",
+      "dirty": false,
+      "license_files": [
+        "LICENSE"
+      ],
+      "name": "axoloti-factory",
+      "remote_url": "https://github.com/ksoloti/axoloti-factory.git",
+      "repository": "axoloti-factory"
+    },
+    {
+      "branch": "1.1.0",
+      "commit": "7998a6b62906dcf8e851d32d04f041f4bcabc71d",
+      "dirty": false,
+      "license_files": [
+        "LICENSE"
+      ],
+      "name": "ksoloti-contrib",
+      "remote_url": "https://github.com/ksoloti/ksoloti-contrib.git",
+      "repository": "ksoloti-contrib"
+    },
+    {
+      "branch": "1.1.0",
+      "commit": "7000fde4cf60d2d79a36d95098418c4a654dc056",
+      "dirty": false,
+      "license_files": [
+        "LICENSE"
+      ],
+      "name": "ksoloti-objects",
+      "remote_url": "https://github.com/ksoloti/ksoloti-objects.git",
+      "repository": "ksoloti-objects"
+    },
+    {
+      "branch": "local-patcher-1.1",
+      "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c",
+      "dirty": true,
+      "license_files": [
+        "license.txt"
+      ],
+      "name": "patcher",
+      "remote_url": "https://github.com/lalzart/ksoloti.git",
+      "repository": "ksoloti"
+    }
+  ]
+}
