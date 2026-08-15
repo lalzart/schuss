@@ -226,11 +226,12 @@ Task 011C is now complete at level 5 for that exact slice. The revised
 headless-backbone roadmap does not generalize its handler by implication. Task
 012A can retain an exact accepted build-request member in a portable project,
 but it does not resolve or execute that request, revise backend or target
-contracts, or create evidence. Task
-013A is the next compiler owner and stops after reusable implementation
-resolution, compound elaboration, and dependency/resource planning. Task 013B
-separately owns shared executable-backend dispatch and product-CLI execution;
-Tasks 013C-013D own bounded direct frontend work. None may rewrite the accepted
+contracts, or create evidence. Task 013 now consumes that exact closure and
+stops after reusable implementation resolution, compound elaboration, and
+dependency/resource planning. It emits no invocation or build result. Task 014
+now completes shared exact-handler dispatch and product-CLI execution without
+generalizing the retained legacy path; Tasks 015-016 own bounded direct
+frontend work. None may rewrite the accepted
 Task 011C result/evidence chain or infer device, real-time, or audible support.
 
 ## Task 011C executed successor closure

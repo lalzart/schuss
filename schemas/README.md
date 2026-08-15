@@ -64,7 +64,23 @@ This directory contains only contracts that current Schuss artifacts use:
   `workspace-recovery-v0.schema.json` keep local coordination outside project
   identity; `operation-request-v3.schema.json` and
   `operation-result-v3.schema.json` add Task 012A project operations without
-  changing v1/v2 bytes.
+  changing v1/v2 bytes; and
+- `compiler-plan-result-v0.schema.json` plus the resolution, elaborated-graph,
+  dependency, resource, origin-map, and artifact-descriptor schemas define the
+  closed Task 013 derived planning bundle;
+  `compiler-dependency-facts-v0.schema.json` defines optional exact provider
+  facts for compiler-input closures without creating production semantic
+  truth; and `operation-request-v4.schema.json`/
+  `operation-result-v4.schema.json` add `build.plan` without changing v1-v3.
+- `build-handler-descriptor-v0.schema.json` and
+  `build-execution-result-v0.schema.json` define the exact registered-handler
+  and portable execution-result boundary; `operation-request-v5.schema.json`/
+  `operation-result-v5.schema.json` add `build.execute` without changing v1-v4;
+  and
+- `normalized-dsp-module-v0.schema.json` defines Task 015's closed one-operation
+  normalized Q27 module, while `direct-frontend-result-v0.schema.json` binds
+  its exact plan/graph/contract inputs to deterministic IR, C++, source-map,
+  diagnostics, artifact identities, and evidence-level results.
 
 The resolved schemas describe factual compatibility-bridge evidence only. The
 semantic overlay is a versioned curation foundation and pilot, not a complete
@@ -87,3 +103,12 @@ support or executable evidence.
 Task 012A does not revise `dsp-graph-v0`. Project-owned member entries retain
 the exact graph parent while the graph bytes remain authoritative semantic
 records. See `docs/PROJECT_WORKSPACE_CONTRACTS.md`.
+
+Task 013 does not revise `dsp-graph-v0`, build results, bindings,
+eligibilities, targets, backends, or evidence. Its elaborated graph is closed,
+derived, non-authoritative planning data. See `docs/COMPILER_FRONT_HALF.md`.
+
+Task 015 likewise does not promote a production direct backend, binding, or
+eligibility. Its normalized module and direct result are derived proof
+artifacts for one exact graph closure; Task 016 owns any complete-graph direct
+runtime path.

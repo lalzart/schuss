@@ -12,3 +12,4 @@ details remain in task files unless they change a durable boundary.
 - `0007-separate-build-evidence-from-catalog-curation.md`
 - `0008-defer-ui-until-the-headless-backbone-is-ready.md`
 - `0009-resume-task-012b-after-durable-project-authoring.md`
+- `0010-restore-backend-first-sequence-and-retire-task-012b.md`

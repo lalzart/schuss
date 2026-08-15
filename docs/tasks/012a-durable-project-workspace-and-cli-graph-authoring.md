@@ -23,8 +23,8 @@ safe persistence protocol before they can work on user projects without
 inventing their own filesystem truth.
 
 Task 012A is non-UI. It separates the project/persistence dependency formerly
-combined with Phase 12 from deferred Task 012B's object drawer and graph
-canvas.
+combined with Phase 12 from the deferred, now unnumbered object-drawer and
+graph-canvas milestone.
 
 ## Accepted inputs and frozen boundaries
 
@@ -151,9 +151,9 @@ schuss graph transact ... --project ... [--write]
 
 ## Out of scope
 
-- Task 012B object drawer, graph canvas, desktop/web GUI, presentation overlay,
+- Object drawer, graph canvas, desktop/web GUI, presentation overlay,
   keyboard/mouse interaction, or visual layout.
-- Task 013A compiler-front-half implementation, build planning, compound
+- Task 013 compiler-front-half implementation, build planning, compound
   elaboration, dependency/resource planning, backend lowering, `.axp`, Java,
   generated C++, compiler/linker invocation, artifact execution, or new build
   evidence.
@@ -186,7 +186,7 @@ schuss graph transact ... --project ... [--write]
   and roadmap documentation.
 - A completion report naming exact schemas, commands, fixtures, hashes,
   atomicity results, preservation evidence, test counts, and remaining Task
-  013A/012B gaps.
+  013 and deferred UI gaps.
 
 ## Acceptance tests
 
@@ -283,7 +283,7 @@ revisions, and hashes; the durable/local file classification; operation and CLI
 surface; write acceptance boundary; lock and recovery model; every failure
 injection result; portability and determinism evidence; pre-existing and final
 test counts; accepted-byte preservation; scope confirmation; and the exact
-remaining Task 013A, Task 013B, and deferred Task 012B proof gaps.
+remaining Task 013, Task 014, and deferred UI proof gaps.
 
 ## Completion report
 
@@ -443,9 +443,10 @@ device connection, upload, SD-card write, flash, firmware mutation, real-time
 measurement, listening, upstream-checkout mutation, stage, commit, or push
 occurred.
 
-Task 013A still must prove reusable implementation resolution, compound
+Task 013 still must prove reusable implementation resolution, compound
 elaboration, dependency/resource planning, and deterministic compiler-front-
-half artifacts without lowering. Task 013B still must define and prove the
-shared executable-backend boundary and product build command. Deferred Task
-012B still owns the object drawer, graph canvas, presentation overlay, and all
-visual interaction behavior. Task 012A makes none of those claims.
+half artifacts without lowering. Task 014 still must define and prove the
+shared executable-backend boundary and product build command. The unnumbered
+future UI milestone still owns the object drawer, graph canvas, presentation
+overlay, and all visual interaction behavior. Task 012A makes none of those
+claims.

@@ -10,6 +10,14 @@ python3 tools/contracts/run_task009.py --check
 python3 tools/contracts/validate_task011b.py
 python3 tools/contracts/validate_task011c.py
 python3 tools/contracts/validate_task012a.py
+python3 tools/contracts/generate_task013_record_set.py --check
+python3 tools/contracts/validate_task013.py
+python3 tools/contracts/generate_task014_record_set.py --check
+python3 tools/contracts/validate_task014.py
+python3 tools/contracts/generate_task015_record_set.py --check
+python3 tools/contracts/validate_task015.py
+python3 tools/contracts/validate_task016_contract.py
+python3 tools/contracts/validate_task017_contract.py
 python3 -m unittest discover -s tools/contracts/tests
 ```
 
@@ -68,3 +76,30 @@ compile/link. It does not access hardware or generalize the backend.
 It refuses local state requiring recovery, verifies the exact Task 011C base,
 portable project fixture, governed bytes, semantic closure, and schema hashes,
 and confirms the target workspace bytes are unchanged.
+
+`generate_task013_record_set.py --check` verifies the exact additive schema
+closure in record set `schuss-record-set-000007` without writing. Running it
+without `--check` deterministically refreshes only that Task 013 manifest.
+`validate_task013.py` is read only: it plans the exact Task 011C eight-node
+request through stage 6, compares every resolution trace with accepted
+`build.resolve`, authenticates artifact bytes and origins, proves the semantic
+record members equal parent record set `000006`, checks compiler import
+isolation, and confirms stages 7-10 and evidence levels 3-8 remain `not-run`.
+
+`generate_task014_record_set.py --check` verifies exact additive record set
+`schuss-record-set-000008`. `validate_task014.py` is read only: it validates
+the exact handler descriptor, successful stage-6 plan, retained two-root
+execution equality, seven artifact identities, levels 1-5, and core/legacy
+import isolation. Focused tests exercise intent, cancellation, registry
+ambiguity, failure cleanup, atomic publication, operation parity, and CLI.
+
+`generate_task015_record_set.py --check` verifies exact additive record set
+`schuss-record-set-000009`. `validate_task015.py` is read only: it authenticates
+the exact Blend plan/graph/contract closure, normalized Q27 module, standalone
+C++17 and source map, compiled arithmetic vectors, and evidence levels 1-4.
+
+`validate_task016_contract.py` and `validate_task017_contract.py` validate the
+two later task contracts and their dependency/stop conditions. They claim no
+implementation or evidence: Task 016's pinned-source brief characterizes all
+eight prerequisites conditionally but awaits one compatibility-mode choice,
+and Task 017 awaits Task 016.

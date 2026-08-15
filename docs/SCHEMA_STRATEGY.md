@@ -464,7 +464,7 @@ The following are invalid architecture:
   exact revision parentage; it does not revise accepted records or make
   workspace paths semantic identity.
 
-### Planned next
+### Current compiler sequence
 
 Tasks 008-012A are complete: the Task 005-007 mechanisms are consolidated
 beneath three sibling rule modules; versioned headless validation, inspection,
@@ -473,24 +473,20 @@ legacy-backend slices reach ARM compile/link; and the product CLI projects the
 shared operations; Task 012A now adds project persistence without general build
 execution.
 
-The current planned sequence is:
+Tasks 013-015 are complete. The remaining gated sequence is:
 
-1. **Task 012B:** the first object drawer, transparent graph canvas, and
-   separate presentation overlay over accepted shared operations.
-2. **Task 013A:** the reusable compiler front half through deterministic
-   implementation resolution, compound elaboration, and dependency/resource
-   planning.
-3. **Task 013B:** shared build execution and its product-CLI projection.
-4. **Task 013C:** a normalized DSP representation and minimal direct Schuss
-   graph-to-C++ frontend.
-5. **Task 013D:** direct-frontend expansion through the complete Task 011C
-   graph.
-6. **Backbone B6:** a bounded reviewed-core expansion and richer non-UI
-   reference instruments; its task number remains unassigned.
+1. **Task 016:** direct-frontend expansion through the complete Task 011C
+   graph after legacy-equivalent versus Schuss-native behavior is selected.
+2. **Task 017:** a bounded reviewed-core expansion and richer non-UI reference
+   instruments after Task 016 completes.
 
-Task 012B may define presentation-only state, but it may not make that state
-part of graph identity or introduce client-specific catalog, graph, project,
-build, or compiler semantics.
+Task 016 and Task 017 have validated contracts. Neither implementation has
+started: Task 016 has a complete conditional pinned-source specification but is
+stopped on the one compatibility-mode choice, and Task 017 depends on Task 016.
+
+Task 012B is retired. UI and presentation work remain an unnumbered future
+milestone and cannot introduce client-specific catalog, graph, project, build,
+or compiler semantics.
 
 ### Deliberately deferred
 
@@ -499,7 +495,7 @@ build, or compiler semantics.
 - Complete Ksoloti target budgets and measured resource envelopes.
 - Remote protocol transport, queues, cancellation, and progress events.
 - General optimizer, instruction-level IR, and replacement ABI design beyond
-  the bounded Task 013 compiler stages.
+  the bounded Tasks 013-016 compiler stages.
 - Additional targets/devices, asset pipelines, and complete Phase 4B curation.
 
 The remaining device questions and Task 006's target/backend/build deferrals

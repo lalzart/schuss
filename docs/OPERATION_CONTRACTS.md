@@ -210,14 +210,20 @@ Ergonomic project commands use the same results. Static project completion is
 additive, preserving the accepted Task 010 completion bytes. Details are in
 `docs/PROJECT_WORKSPACE_CONTRACTS.md`.
 
-Task 013A then adds only a reusable, deterministic compiler-planning boundary
-through dependency/resource planning. Task 013B separately owns executable
-backend dispatch and its CLI projection. Existing v1/v2 requests, results,
+Task 013 now additively supplies operation v4 `build.plan`: one exact build
+request reference produces the same pure deterministic compiler plan through
+dependency/resource planning for explicit record-set and project contexts.
+Existing v1-v3 bytes remain accepted. Task 014 additively supplies operation
+v5 `build.execute`: one exact request and handler reference feed the same
+front-half plan once, then an injected execution service may publish one fresh
+output root. Without a service the operation returns `unavailable` and performs
+no effect. The product CLI exposes `build plan` and explicit `build execute`;
+portable results omit host roots, timestamps, and ambient state. Existing
+v1-v4 requests, results,
 defaults, canonical bytes, `build.resolve`, and non-persisted transactions stay
 accepted; successor operations are additive and must not infer `latest`, scan
 ambient records, invoke hardware, or make client-specific results authoritative.
 
-Task 012B is the next GUI client and must consume these same project, graph,
-catalog, and diagnostic operations. Build and compiler behavior that does not
-yet exist remains visibly unavailable; the UI may not define a parallel
-persistence, build, or compiler path.
+Task 012B is retired. A future explicitly authorized UI client must consume
+these same project, graph, catalog, build, compiler, and diagnostic operations;
+it may not define a parallel persistence, build, or compiler path.

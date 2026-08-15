@@ -215,7 +215,7 @@ listening remain `not-run`.
 
 | Question | Owner | Earliest task |
 | --- | --- | --- |
-| Exact Gills physical control range, resolution, complete slot census, gesture recognition, feedback/display capabilities, and I/O | Device-profile owner | Task 014 or a separate bounded Gills evidence task |
+| Exact Gills physical control range, resolution, complete slot census, gesture recognition, feedback/display capabilities, and I/O | Device-profile owner | Task 018 or a separate bounded Gills evidence task |
 | Runtime smoothing implementation, timing, target behavior, and compiler lowering | Graph/backend owners | Tasks 007-009 |
 | Connected hardware, real-time safety, and audible behavior | Device and evidence owners | Later explicit hardware tasks |
 

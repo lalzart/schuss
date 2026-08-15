@@ -62,3 +62,9 @@ controller, device, upload, flash, or firmware action is reachable.
 `.axp`, source map, and generated C++, then reuses the authenticated Task 009
 ARM/runtime closure with a task-specific artifact stem. This is still an exact
 slice adapter, not arbitrary graph, object, `.axp`, or backend support.
+
+Task 014 adds `task011c_adapter.py`, a product-facing conforming registration
+for only `schuss-build-request-000002@2`. It reconstructs the accepted handler
+invocation from the successful Task 013 resolution plan and invokes the
+unchanged Task 011C backend behind the shared execution service. It adds no
+general legacy support, ambient discovery, fallback, or hardware authority.

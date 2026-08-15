@@ -277,14 +277,17 @@ handler execution; ARM compile/link establishes level 5 only. The generated
 do not become graph truth or establish device, timing, real-time, audible, or
 release behavior.
 
-ADR 0009 supersedes ADR 0008's UI-readiness gate now that Task 012A owns the
-completed durable project/workspace and persistent graph-authoring boundary.
-Task 012B is the next client slice: an object drawer and transparent graph
-canvas that consume the accepted catalog, graph, and project operations. It
-does not own compiler or build semantics. Task 013A and later Task 013 stages
-still add the reusable compiler front half, shared build execution, normalized
-DSP representation, and direct C++ lowering without moving any of those
-semantics into the GUI or legacy Java bridge.
+ADR 0010 supersedes ADR 0009, retires Task 012B, and restores the backend-first
+sequence. Task 013 now supplies the reusable compiler front half through
+deterministic stage-6 planning without running a backend. Task 014 now supplies
+shared exact-handler build execution and its product CLI. Task 015 now supplies
+the first normalized DSP representation and deterministic direct C++ lowering
+for the one-node Blend graph. Task 016 owns complete-graph direct lowering but
+cannot begin until its audited legacy-equivalent route is selected or a
+Schuss-native musical-DSP specification is requested. Task 017 then
+expands the reviewed core through richer headless reference instruments. UI
+remains an unnumbered future client and cannot move these semantics into a GUI
+or the legacy Java bridge.
 
 The projection reference direction remains one way:
 

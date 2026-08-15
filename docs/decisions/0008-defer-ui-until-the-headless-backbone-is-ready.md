@@ -1,11 +1,12 @@
 # ADR 0008: Defer UI until the headless backbone is ready
 
-- Status: superseded by ADR 0009
+- Status: accepted; reaffirmed by ADR 0010
 - Date: 2026-08-15
 
-ADR 0009 removes this document's compiler/backbone readiness gate after Task
-012A established the durable shared project boundary. This decision remains as
-historical context only and no longer blocks Task 012B.
+ADR 0009 temporarily removed this document's readiness gate after a task-label
+misinterpretation. ADR 0010 supersedes ADR 0009, retires the Task 012B label,
+and restores the backend-first direction. The future UI milestone is now
+unnumbered and requires new explicit user authorization before activation.
 
 ## Context
 
@@ -27,8 +28,9 @@ Split the old Phase 12 plan:
 
 - Task 012A owns the non-UI durable project/workspace format and persistent
   CLI graph-authoring boundary.
-- Task 012B retains the object drawer and transparent graph canvas but is
-  deferred until the roadmap's headless-backbone readiness gate passes.
+- The object drawer and transparent graph canvas remain deferred until the
+  roadmap's headless-backbone readiness gate passes. They have no active task
+  number.
 
 Stage the old Phase 13 compiler jump as a sequence: reusable compiler front
 half, shared build execution, normalized DSP representation and minimal direct
@@ -42,11 +44,11 @@ current planning documents use the split labels.
 
 ## Consequences
 
-Near-term work is CLI-first and headless. The next two proposed tasks are Task
-012A and Task 013A. UI implementation has no active target date and cannot be
-used to repair missing project or compiler behavior.
+Near-term work is CLI-first and headless. Task 012A is complete and Task 013 is
+next. UI implementation has no active target date and cannot be used to repair
+missing project or compiler behavior.
 
 Deferral does not remove the intended object drawer or graph canvas from
-Schuss. Once the readiness gate passes, Task 012B can consume the same exact
-project, catalog, graph, build, diagnostic, and compiler operations already
-proved through the CLI.
+Schuss. Once the readiness gate passes and the user explicitly authorizes UI
+work, a newly numbered task can consume the same exact project, catalog, graph,
+build, diagnostic, and compiler operations already proved through the CLI.

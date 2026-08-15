@@ -183,13 +183,18 @@ immutably, and one atomic workspace-head marker separates prior from successor
 acceptance. Additive v3 project operations share the headless dispatcher;
 local locks, recovery plans, and temporary files do not enter project identity.
 
-Task 012A satisfies the project and persistence prerequisite for a real client.
-Task 012B is therefore the immediate proposed task: the first object drawer,
-transparent graph canvas, and separate presentation overlay over the accepted
-shared operations. It does not wait for build execution or the direct compiler
-frontend, and it may expose those capabilities only as unavailable where they
-do not yet exist. Tasks 013A-013D and a bounded reviewed-core expansion remain
-the subsequent compiler/backbone sequence.
+Task 012A satisfies the durable project and persistence boundary. Task 013 now
+consumes either that exact project closure or an explicit record set through
+one immutable compiler context, and completes deterministic planning through
+stage 6 without executing a backend. ADR 0010 retires the misinterpreted Task
+012B UI contract. Task 014 now supplies the exact shared execution/CLI
+boundary through the retained Task 011C handler. Task 015 now proves the
+minimal normalized-DSP/direct-C++ path for the one-node Blend graph. Task 016's
+contract and pinned-source prerequisite audit are complete, but implementation
+is stopped until legacy-equivalent versus Schuss-native direct behavior is
+chosen; Task 017 waits for that dependency.
+The object drawer and transparent graph canvas remain an unnumbered future
+milestone requiring new explicit authorization.
 
 ## Terminology
 

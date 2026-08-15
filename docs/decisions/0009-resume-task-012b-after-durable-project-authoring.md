@@ -1,8 +1,12 @@
 # ADR 0009: Resume Task 012B after durable project authoring
 
-- Status: accepted
+- Status: superseded by ADR 0010
 - Date: 2026-08-15
 - Supersedes: ADR 0008's UI-readiness gate
+
+ADR 0010 records that this decision resulted from a task-label
+misinterpretation. Task 012B is retired, ADR 0008's backend-first direction is
+reaffirmed, and this document has no current scheduling force.
 
 ## Context
 

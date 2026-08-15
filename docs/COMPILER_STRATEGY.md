@@ -382,16 +382,27 @@ authority.
 ADR 0008 defers the UI and stages the compiler work rather than treating the
 old Phase 13 frontend as one jump:
 
-1. Task 013A implements the reusable common front half through stage 6. It
+1. Task 013 implements the reusable common front half through stage 6. It
    emits deterministic resolution, elaboration, dependency, resource, and
    source-map artifacts, but performs no backend lowering or code generation.
-2. Task 013B adds a client-neutral build-execution boundary and product CLI,
-   initially invoking only a conforming transitional legacy handler.
-3. Task 013C defines the first bounded normalized DSP representation and
-   direct graph-to-C++ frontend for the smallest accepted graph.
-4. Task 013D expands that direct path to the complete Task 011C graph and only
+   This task is complete through the pure `plan_build` API and additive
+   `build.plan` operation v4; see `docs/COMPILER_FRONT_HALF.md`.
+2. Task 014 completes a client-neutral build-execution boundary and product
+   CLI, initially invoking only the exact conforming Task 011C transitional
+   handler. It plans once, selects an exact descriptor, reports portable
+   progress/cancellation/cache state, and atomically publishes only a fresh
+   successful output root.
+3. Task 015 defines the first bounded normalized DSP representation and
+   direct graph-to-C++ frontend for the smallest accepted graph. This task is
+   complete for the exact one-node Blend closure with host-compiled arithmetic
+   vectors through evidence level 4.
+4. Task 016 expands that direct path to the complete Task 011C graph and only
    the scheduling, state, control, and native-realization semantics required by
-   that exact closure.
+   that exact closure. Its contract is complete, but implementation is stopped
+   on one compatibility-mode decision. A pinned-source audit supplies all eight
+   prerequisite specifications conditionally for the recommended
+   legacy-equivalent route; Schuss-native behavior requires a separate musical
+   specification.
 
 Each stage preserves the authoritative graph and exact semantic-record closure.
 The direct path must coexist with the legacy backend and must fail explicitly

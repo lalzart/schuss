@@ -1,17 +1,16 @@
-# Task 013A: Reusable compiler front half and deterministic planning artifacts
+# Task 013: Reusable compiler front half and deterministic planning artifacts
 
-Status: proposed prompt; not started; sequenced after Task 012B by ADR 0009.
-The user authorized creation of this task contract on 2026-08-15 but did not
-authorize implementation, staging, commit, publication, push,
-compiler/toolchain invocation, or device action.
+Status: complete on 2026-08-16; accepted locally through compiler stage 6.
+The user authorized implementation by asking to run Task 013 on 2026-08-16.
+No staging, commit, publication, push, compiler/toolchain invocation, or device
+action was authorized or performed.
 
 Work in the Schuss repository. Before implementation, read `AGENTS.md`,
 `docs/PROJECT_CONTEXT.md`, `docs/ARCHITECTURE.md`,
 `docs/SCHEMA_STRATEGY.md`, `docs/COMPILER_STRATEGY.md`,
 `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`, `docs/OPERATION_CONTRACTS.md`, ADRs
-0005-0009, the completed Task 011C contract, the accepted Task 012A completion
-report, the accepted Task 012B completion report when it exists, and this
-complete task. Work only on Task 013A.
+0005-0010, the completed Task 011C contract, the accepted Task 012A completion
+report, and this complete task. Work only on Task 013.
 
 ## Goal and why it exists
 
@@ -34,13 +33,13 @@ general compiler by gradual special cases. Both the transitional legacy backend
 and future direct frontend need the same deterministic plans, diagnostics, and
 source trace before either performs lowering.
 
-Task 013A stops before backend lowering. It strengthens the compiler backbone
+Task 013 stops before backend lowering. It strengthens the compiler backbone
 without generating `.axp`, normalized DSP IR, C++, ARM artifacts, or runtime
 evidence.
 
 ## Dependencies and accepted inputs
 
-Task 013A may start only after Task 012A is accepted. Treat these as immutable
+Task 013 may start only after Task 012A is accepted. Treat these as immutable
 inputs:
 
 - all accepted Tasks 001-012A schemas, records, fixtures, artifacts, evidence,
@@ -138,8 +137,8 @@ and semantic closure and must also remain testable entirely in memory.
   filesystem-order selection.
 - Existing operation envelope versions and current request/result bytes remain
   valid and unchanged.
-- Task 013A may expose the new operation through `schuss op`; the ergonomic
-  product `schuss build` execution/inspection surface belongs to Task 013B.
+- Task 013 may expose the new operation through `schuss op`; the ergonomic
+  product `schuss build` execution/inspection surface belongs to Task 014.
 
 ### Fixtures and preservation
 
@@ -157,11 +156,11 @@ and semantic closure and must also remain testable entirely in memory.
 
 ## Out of scope
 
-- Task 013B executable backend dispatch, handler registry, product build CLI,
+- Task 014 executable backend dispatch, handler registry, product build CLI,
   progress, cancellation, output-root publication, or build cache.
-- Task 013C normalized DSP representation, scheduling IR, optimizer,
+- Task 015 normalized DSP representation, scheduling IR, optimizer,
   graph-to-C++ frontend, Ksoloti runtime/ABI lowering, or direct backend.
-- Task 013D full-slice direct compilation.
+- Task 016 full-slice direct compilation.
 - Backend lowering of any kind, deterministic `.axp` generation, Java
   resolution/code generation, generated C++, ARM compiler/linker invocation,
   executable packaging, or new level-3-through-8 evidence.
@@ -189,17 +188,17 @@ and semantic closure and must also remain testable entirely in memory.
   entry point.
 - Additive shared control-plane support for the accepted planning operation.
 - Positive, negative, preservation, determinism, and failure-stage fixtures.
-- A read-only Task 013A validator and focused test suite.
+- A read-only Task 013 validator and focused test suite.
 - Necessary updates to active compiler, target/backend/build, operation,
   package, schema, project, and roadmap documentation.
 - A completion report with exact stage outputs, schemas, hashes, diagnostics,
-  preservation evidence, test counts, and remaining Task 013B-013D gaps.
+  preservation evidence, test counts, and remaining Tasks 014-016 gaps.
 
 ## Acceptance tests
 
-Task 013A is accepted only if all of the following pass:
+Task 013 is accepted only if all of the following pass:
 
-1. Every pre-existing test and validator passes before counting Task 013A
+1. Every pre-existing test and validator passes before counting Task 013
    tests; accepted operation, CLI, Task 009, Task 011C, and Task 012A governed
    bytes remain unchanged.
 2. The public compiler entry point accepts only an exact validated build
@@ -240,7 +239,7 @@ Task 013A is accepted only if all of the following pass:
     all earlier operation envelopes and defaults.
 15. A failed stage records all later stages `not-run`, creates no build result,
     executes no backend, and promotes no semantic or evidence record.
-16. A successful Task 013A plan reaches at most evidence level 2. It creates no
+16. A successful Task 013 plan reaches at most evidence level 2. It creates no
     claim of backend lowering, source generation, ARM compile/link, device,
     real-time, or audible behavior.
 17. Core compiler packages import no Ksoloti Java/bridge implementation,
@@ -249,7 +248,7 @@ Task 013A is accepted only if all of the following pass:
     artifact, or evidence record is rewritten to make planning succeed.
 19. `git diff --check` and the complete local ordinary-CI-equivalent gate pass.
 
-## Decisions Task 013A may make
+## Decisions Task 013 may make
 
 - Compiler-front-half package/module layout and its one public planning API.
 - Exact closed schema names, derived artifact kinds, opaque IDs, filenames,
@@ -262,7 +261,7 @@ Task 013A is accepted only if all of the following pass:
 - Internal pure-data structures and algorithms, provided their serialized
   results and failure boundaries satisfy this contract.
 
-## Decisions Task 013A must not make
+## Decisions Task 013 must not make
 
 - Authoritative graph rewrites, implicit adapter insertion, type weakening,
   inferred implementation support, first-match selection, or silent fallback.
@@ -286,7 +285,7 @@ elaboration requires an unowned graph/type decision; if dependency or resource
 facts required for safe planning are absent; if plan identity would depend on
 host paths or process state; if a direct or legacy backend must execute to make
 the planning gate pass; if the operation boundary cannot remain additive; or
-if completion requires Task 013B/013C work, UI, hardware, staging, commit, or
+if completion requires Task 014/015 work, UI, hardware, staging, commit, or
 push.
 
 ## Completion report requirements
@@ -297,5 +296,211 @@ stage outcomes; Task 011C selection comparison; compound expansion and source
 map results; dependency/resource-plan facts; every negative/failure-stage
 diagnostic; determinism and preservation evidence; pre-existing and final test
 counts; evidence levels reached and not reached; scope confirmation; and the
-exact remaining Task 013B, Task 013C, Task 013D, device, real-time, audible, and
-UI proof gaps.
+exact remaining Task 014, Task 015, Task 016, Task 017, device, real-time,
+audible, and UI proof gaps.
+
+## Completion report
+
+Task 013 is complete within its declared front-half boundary. It implements one
+pure backend-neutral planning API, an additive operation, five derived artifact
+kinds, exact stage/failure outcomes, transparent-compound elaboration,
+dependency/resource planning, and retained read-only validation. It does not
+implement or execute stages 7-10.
+
+### Delivered files
+
+The Task 013 implementation delivers these files:
+
+- control plane and package:
+  `packages/schuss_core/compiler_front_half.py`,
+  `packages/schuss_core/control_plane.py`,
+  `packages/schuss_core/project_service.py`,
+  `packages/schuss_core/__init__.py`, and `packages/README.md`;
+- exact record/evidence closure:
+  `contracts/record-sets/task013-compiler-front-half-v1.json` and
+  `evidence/task013-completion-v1/validation-summary.json`;
+- schemas: `schemas/compiler-artifact-descriptor-v0.schema.json`,
+  `schemas/compiler-dependency-facts-v0.schema.json`,
+  `schemas/compiler-dependency-plan-v0.schema.json`,
+  `schemas/compiler-elaborated-graph-v0.schema.json`,
+  `schemas/compiler-origin-map-v0.schema.json`,
+  `schemas/compiler-plan-result-v0.schema.json`,
+  `schemas/compiler-resolution-plan-v0.schema.json`,
+  `schemas/compiler-resource-plan-v0.schema.json`,
+  `schemas/operation-request-v4.schema.json`,
+  `schemas/operation-result-v4.schema.json`, and `schemas/README.md`;
+- focused tooling: `tools/contracts/generate_task013_record_set.py`,
+  `tools/contracts/validate_task013.py`,
+  `tools/contracts/tests/test_task013_compiler_front_half.py`, and
+  `tools/contracts/README.md`;
+- normative/status documentation: `docs/COMPILER_FRONT_HALF.md`, this task
+  file, `README.md`, `docs/PROJECT_CONTEXT.md`, `docs/ARCHITECTURE.md`,
+  `docs/SCHEMA_STRATEGY.md`, `docs/COMPILER_STRATEGY.md`,
+  `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`,
+  `docs/OPERATION_CONTRACTS.md`, and `docs/ROADMAP.md`.
+
+The generic `bin/schuss op` adapter already carries versioned operation
+envelopes, so no product-CLI grammar or executable build command changed.
+
+### Exact API, schemas, and closure
+
+The public API is the immutable
+`CompilationContext.from_values(...)` constructor plus the sole public
+`plan_build(compilation_context)` planning entry point. The module accepts only
+canonical in-memory exact references, records, schemas, closure source, and
+policy versions. It imports the accepted shared validator/resolver modules and
+no legacy bridge, Ksoloti Java model, executable handler, project filesystem
+service, product CLI, UI, or device transport.
+
+The additive operation is `build.plan` in request/result envelope v4. Direct,
+process, and explicit Task 012A project contexts call `plan_build` once and
+produce the same canonical plan semantics. Operation v1-v3 contracts and bytes
+remain unchanged.
+
+Record set `schuss-record-set-000007` revision 1 has content hash
+`sha256:0b5b8567f6924e86dbe5f41569f55112999e9c140b5cf07069ecf64f3c419011`
+and file-byte SHA-256
+`8bd05860485932bade374cc5b989ea2eb4409989ab0549291b617427192d7efd`.
+It binds exact parent `schuss-record-set-000006` revision 1 content hash
+`sha256:fcf8f43d4139a16796b17bf2bdb95e5cd03ac279c60c55f8218349ef8a7cc842`,
+retains all 144 parent record members byte-for-byte, and adds only ten schema
+members for a total of 42 schemas. No compiler-dependency-facts production
+record is admitted.
+
+Exact new schema file hashes are:
+
+| Schema | File-byte SHA-256 |
+| --- | --- |
+| `compiler-artifact-descriptor-v0` | `2aeb4973f4ae1f8e8f4d403a00e2287d2a42079e827707bca0db75bb63b90e8b` |
+| `compiler-dependency-facts-v0` | `c653372de27e63a009f938fd09871bc9a3f47f0c5634df2dc707e42f31e5ac5d` |
+| `compiler-dependency-plan-v0` | `d7a24d6b0a4460f8db1a19cd68ab370e4a7a880d54538f55271e11c292742854` |
+| `compiler-elaborated-graph-v0` | `3ac20c71577b505ce39b801a866243335c7236ad8e0ec1d6b1c5c1c1acce3f03` |
+| `compiler-origin-map-v0` | `74a76b3b05cda62f263bc116b7c541e4f1a2c18549ba2520b8f42b133420268a` |
+| `compiler-plan-result-v0` | `51465ff3d5582bf56eae5fcbf507aa40fd575cceeb27103ef06b6eabf8062167` |
+| `compiler-resolution-plan-v0` | `400d001b4a6346d921ad023b2b50b21bf2f0dd1165b14607b98b9265c1d20088` |
+| `compiler-resource-plan-v0` | `323cc2395b7d6b37ed746f19d1881bf1177e9333e49c4859f246dccb4e18e2f4` |
+| `operation-request-v4` | `4a5159895d4c07b85d7a9739729823be0a5845f1b364fef6ec0bc4f299719469` |
+| `operation-result-v4` | `1ff814fe8f107f3295471f41791ae50af284882da16487f946cf27074451e99c` |
+
+All are closed, annotated, portable, backend-neutral schemas. The dependency
+facts schema is compiler-input planning data for focused fixtures, not new
+component, binding, eligibility, target, backend, or catalog truth.
+
+### Exact successful plan
+
+The retained Task 011C build request produces input-closure hash
+`sha256:2f951d56240d0bea533b47eb36973ec0d3c96510b94554e380f4c6f490c1becb`.
+The closure description names 78 relevant record members, 34 exact schemas,
+and all planner policy versions. Its canonical top-level plan is 95,210 bytes
+with SHA-256
+`d0fa1cc5375317cce3fec77fc91642d2ff28820897b1be2585b5c2e9ad1022b5`.
+The six ordered outcomes are:
+
+1. `schema-identity-validation`: `success`;
+2. `target-independent-graph-validation`: `success`;
+3. `target-backend-validation`: `success`;
+4. `implementation-resolution`: `success`;
+5. `compound-elaboration`: `success`;
+6. `dependency-resource-planning`: `success`.
+
+The exact artifacts are:
+
+| Kind / ID | Producer | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| `resolution-plan` / `schuss-compiler-artifact-f53bd96b3f26f210` | stage 4 v1 | 13,431 | `f53bd96b3f26f210fafda08ede956756f7afb0656ecdd64b019c0b76c34c36ab` |
+| `elaborated-graph` / `schuss-compiler-artifact-a6c28e3b06a17906` | stage 5 v1 | 17,479 | `a6c28e3b06a179068ce3f83139ce0182da878755de52272883b35167c49d2009` |
+| `dependency-plan` / `schuss-compiler-artifact-5adae32531fd1244` | stage 6 v1 | 406 | `5adae32531fd124487fbe6316f5fba1f00290115e58756c6d52a38f9bab78776` |
+| `resource-plan` / `schuss-compiler-artifact-02588c060250c7da` | stage 6 v1 | 1,906 | `02588c060250c7da9dbdd1b641c22e2afe8cc5a400639250ae269273b5005320` |
+| `origin-source-map` / `schuss-compiler-artifact-39886674b0658c3e` | stage 6 v1 | 38,821 | `39886674b0658c3e24f2e8a36d4c8dbbf90a39442fd6cdfa77c2d91a45880f93` |
+
+Every descriptor repeats the exact input-closure hash, producer stage/version,
+media type, canonical byte length, byte SHA-256, and a
+`compiler-plans/sha256/<digest>.json` portable locator.
+
+The resolution artifact is byte-for-byte equal in trace content and ordering
+to accepted `build.resolve`. It selects these exact binding revisions:
+
+- node `000001` -> implementation `000039` revision 2;
+- node `000002` -> implementation `000040` revision 2;
+- node `000003` -> implementation `000041` revision 2;
+- nodes `000004` and `000005` -> the same Sine implementation `000007`
+  revision 2;
+- node `000006` -> implementation `000028` revision 2;
+- node `000007` -> implementation `000015` revision 2; and
+- node `000008` -> implementation `000004` revision 2.
+
+The retained elaborated graph has eight derived nodes and nine connections,
+preserves the exposed `blend` parameter and its remapped destination, state
+ownership, and hierarchy, and is marked `derived: true` and
+`authoritative: false`. Its origin map has 61 stable subject entries. The
+transparent-compound fixture expands to namespaced derived node
+`derived-node:graph-node-000001/graph-node-000001`, retains its compound
+ancestor, and remaps public facets through total mapping keys.
+
+The accepted Task 011C closure has no dependency or selected-binding resource
+requirements. Its dependency plan therefore contains zero dependencies. Its
+resource plan retains five target-region declarations and five within-budget
+decisions, with zero requirements, unknowns, estimates, or measurements.
+Focused fixtures separately prove topological provider-before-consumer order,
+hard alignment/budget accounting, and repeated-binding requirements. An
+unresolved eligibility resource fact remains unresolved at accepted binding
+resolution stage 4; it is not guessed or relabeled as an estimate.
+
+### Failure and determinism evidence
+
+The focused matrix verifies deterministic structured failures for:
+
+- stage 1: `COMPILER_SCHEMA_STRUCTURE_INVALID`,
+  `COMPILER_CONTENT_HASH_MISMATCH`, `COMPILER_ID_REVISION_DUPLICATE`,
+  `COMPILER_BUILD_REQUEST_REFERENCE_INVALID`, and
+  `COMPILER_INPUT_NONPORTABLE`;
+- stage 2: `GRAPH_CONNECTION_TYPE_INCOMPATIBLE`;
+- stage 3: `BUILD_REQUEST_TARGET_BACKEND_PAIR_UNDECLARED`;
+- stage 4: unsupported zero-candidate, unresolved eligibility/resource
+  evidence, equal-priority ambiguity, and exact override behavior from the
+  accepted resolver;
+- stage 5: `COMPILER_COMPOUND_RECURSION`,
+  `COMPILER_COMPOUND_MAPPING_INCOMPLETE`, and
+  `COMPILER_COMPOUND_MAPPING_INCOMPATIBLE`; and
+- stage 6: `COMPILER_DEPENDENCY_MISSING`,
+  `COMPILER_DEPENDENCY_PROVIDER_AMBIGUOUS`,
+  `COMPILER_DEPENDENCY_HASH_CONFLICT`,
+  `COMPILER_DEPENDENCY_VERSION_HASH_CONFLICT`,
+  `COMPILER_DEPENDENCY_CYCLE_PROHIBITED`,
+  `COMPILER_DEPENDENCY_EXCLUSIVE_SERVICE_CONFLICT`, required resource
+  hard-budget accounting, and `COMPILER_RESOURCE_HARD_BUDGET_EXCEEDED`.
+
+Every failed stage marks all later stages `not-run`, creates no build result,
+executes no backend, and promotes no record. Stage-6 diagnostics are themselves
+present in the origin map. Enumeration shuffling and fresh processes with
+different working inputs, `PYTHONHASHSEED`, and locale produce identical
+canonical plan bytes. Direct/process operation results are byte-identical.
+
+### Validation, preservation, and scope
+
+The pre-Task-013 ordinary baseline was 197 passing tests: 14 inventory, 6
+catalog, and 177 contract tests. The final ordinary gate is 221 passing tests:
+14 inventory, 6 catalog, and 201 contract tests, including 24 focused Task 013
+tests. `git diff --check` passes.
+
+All read-only validators pass: component/graph, target/backend/build, Task 009
+prerequisite, retained Task 009, Task 011B, Task 011C, Task 012A, the Task 013
+record-set freshness check, and Task 013. The retained Task 013 summary exactly
+matches live read-only validation. Task 013 record members equal parent `000006`
+and every accepted Task 009/011C artifact, result, evidence member, operation
+default, CLI golden, and Task 012A project byte remains unchanged. Pre-existing
+unrelated and untracked workspace changes were preserved.
+
+Evidence levels 1 and 2 pass. Levels 3-8 are `not-run`. Stages 7-10 are
+`not-run`; `build_result_status` is `not-created`; backend execution is
+`not-run`; authoritative records are not mutated. No Java, `.axp`, generated
+C++, ARM compiler/linker, network, USB, SD-card, device, upload, flash,
+real-time, listening, stage, commit, or push action occurred.
+
+The remaining gaps are explicit. Task 014 owns executable handler dispatch,
+progress/cancellation/output/cache policy, and the product build CLI. Task 015
+owns normalized DSP representation, scheduling, and the first bounded direct
+graph-to-C++ frontend. Task 016 owns direct compilation of the complete Task
+011C graph. Task 017 owns reviewed-core expansion. Connected-device execution,
+real-time validation, audible validation, full Gills implementation, and UI
+remain separately unauthorized and unproved.

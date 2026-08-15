@@ -21,15 +21,15 @@ into transparent, typed Schuss models.
 | 11B | Six component contracts/bindings, authoritative slice graph, minimal Gills instrument, and unresolved build closure | [Complete](tasks/011b-component-contracts-gills-slice-graph-and-unresolved-build-closure.md) |
 | 11C | Bounded legacy backend expansion and ARM compile/link for the slice | [Complete](tasks/011c-bounded-legacy-backend-expansion-and-arm-evidence.md) |
 | 12A | Durable project/workspace format and persistent CLI graph authoring | [Complete](tasks/012a-durable-project-workspace-and-cli-graph-authoring.md) |
-| 12B | Basic object drawer and transparent graph canvas | [Proposed; immediate next task](tasks/012b-object-drawer-and-transparent-graph-canvas.md) |
-| 13A | Reusable compiler front half through dependency/resource planning | [Proposed; sequenced after Task 012B](tasks/013a-reusable-compiler-front-half.md) |
-| 13B | Shared build-execution operation and product CLI | Planned |
-| 13C | Normalized DSP representation and minimal direct graph-to-C++ frontend | Planned |
-| 13D | Direct-frontend expansion through the complete Task 011C graph | Planned |
-| B6 | Curated core expansion and richer headless reference instruments | Planned after Task 013D; task number not yet assigned |
-| 14 | Full Gills implementation and parameter/control mapping | Deferred behind the backbone sequence |
-| 15 | Sampling and asset management | Deferred behind the backbone sequence |
-| 16 | Additional compute targets and devices | Deferred behind the backbone sequence |
+| 13 | Reusable compiler front half through dependency/resource planning | [Complete](tasks/013-reusable-compiler-front-half.md) |
+| 14 | Shared build-execution operation and product CLI | [Complete](tasks/014-shared-build-execution-and-product-cli.md) |
+| 15 | Normalized DSP representation and minimal direct graph-to-C++ frontend | [Complete](tasks/015-normalized-dsp-and-minimal-direct-frontend.md) |
+| 16 | Direct-frontend expansion through the complete Task 011C graph | Contract and evidence audit complete; awaits one compatibility-mode choice |
+| 17 | Curated core expansion and richer headless reference instruments | Contract complete; waits for Task 016 |
+| 18 | Full Gills implementation and parameter/control mapping | Deferred behind the backbone sequence |
+| 19 | Sampling and asset management | Deferred behind the backbone sequence |
+| 20 | Additional compute targets and devices | Deferred behind the backbone sequence |
+| Deferred UI | Object drawer and transparent graph canvas | Unnumbered; requires new explicit user authorization |
 
 ## Current architectural gate and next task
 
@@ -94,40 +94,47 @@ Task 012A now completes the durable project/workspace and persistent
 graph-authoring dependency formerly combined with Phase 12 UI work. It adds an
 exact portable overlay, immutable graph/project revisions, prior-or-successor
 atomic recovery, shared v3 operations, and explicit persistent CLI commands.
-Task 012B is the immediate proposed task and owns the object drawer,
-transparent graph canvas, and a separate presentation overlay as clients of
-accepted operations. It owns no independent catalog, graph, project, build, or
-compiler semantics. Task 013A follows with the reusable compiler front half
-through deterministic dependency and resource planning.
+ADR 0010 retires the misinterpreted Task 012B UI contract. Task 013 now
+completes the reusable compiler front half through deterministic dependency
+and resource planning, operation v4, and five derived artifact kinds without
+executing a backend. Task 014 now adds the exact handler registry, plan-once
+execution service, atomic fresh-root publication, portable
+progress/cancellation/cache policy, operation v5, and product `build plan` and
+`build execute` commands. The retained Task 011C adapter succeeds through
+local ARM compile/link with byte-identical portable results across fresh
+roots. Task 015 now defines the first normalized Q27 DSP module and lowers the
+one-node Blend graph directly to deterministic standalone C++ with source-map
+and compiled arithmetic-vector evidence through level 4. Task 016's pinned
+source audit now supplies a complete conditional legacy-equivalent
+specification; implementation awaits the explicit legacy-equivalent versus
+Schuss-native choice. UI work remains unnumbered and deferred.
 The completed boundaries are in
 `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and
 `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`, and
 `docs/OPERATION_CONTRACTS.md`.
 
-## Immediate UI slice and subsequent backbone sequence
+## Active backbone sequence and deferred UI
 
 The active sequence is:
 
 ```text
 Task 012A durable project/workspace + persistent CLI graph authoring
-  -> Task 012B object drawer + transparent graph canvas
-  -> Task 013A reusable compiler front half and deterministic plans
-  -> Task 013B shared build execution and product CLI
-  -> Task 013C normalized DSP representation + minimal direct frontend
-  -> Task 013D direct frontend for the complete Task 011C graph
-  -> B6 curated core expansion + richer headless reference instruments
+  -> Task 013 reusable compiler front half and deterministic plans
+  -> Task 014 shared build execution and product CLI
+  -> Task 015 normalized DSP representation + minimal direct frontend
+  -> Task 016 direct frontend for the complete Task 011C graph
+  -> Task 017 curated core expansion + richer headless reference instruments
 ```
 
-Task 012A has satisfied the only hard prerequisite for the first UI slice: a
-portable, exact, recoverable project and shared persistent graph operation.
-Task 012B can therefore implement useful authoring now. Missing compiler and
-build-execution capabilities remain absent or explicitly unavailable in the
-client; the UI cannot fill those gaps with private semantics. Tasks 013A-013D
-and B6 remain separately accepted work after the bounded Task 012B client.
+Task 012B is retired and must not be run. The object drawer and transparent
+graph canvas remain a future client milestone, but they receive no task number
+until the user explicitly resumes UI work. Tasks 013-015 are complete. Task 016
+is the active compiler gate, with implementation stopped on one explicit
+compatibility-mode choice; Task 017 waits for it.
 
 VS-07 connected-device execution remains an optional, separately authorized
-evidence track. It is not a prerequisite for Tasks 012A-013D or B6 and cannot
+evidence track. It is not a prerequisite for Tasks 014-017 and cannot
 substitute for their structural, persistence, compiler, or CLI acceptance
 gates.
 

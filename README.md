@@ -77,16 +77,26 @@ of the first non-UI Gills vertical slice:
 - Task 012A adds a portable exact project manifest, immutable project/graph
   revision history, deterministic write plans, exclusive local coordination,
   prior-or-successor recovery, additive v3 project operations, and persistent
-  CLI graph transactions without changing accepted v1/v2 operation bytes; and
-- no general compiler frontend, graphical editor, device runtime, or
+  CLI graph transactions without changing accepted v1/v2 operation bytes;
+- Task 013 adds one immutable, backend-neutral compiler context and pure
+  `plan_build` entry point through stage 6, five content-addressed planning
+  artifacts, origin maps, and additive `build.plan` operation v4 without
+  backend execution; and
+- Task 014 adds one exact handler registry, plan-once execution service,
+  operation v5, atomic fresh-root publication, and deterministic product
+  `build plan`/`build execute` commands;
+- Task 015 adds the first closed normalized Q27 DSP module and directly lowers
+  the exact one-node Blend graph to deterministic standalone C++17, with source
+  mapping and compiled arithmetic-vector evidence through level 4; and
+- no complete multi-node direct frontend, graphical editor, device runtime, or
   desktop app is implemented yet.
 
-Task 012A is complete, so Task 012B is now the immediate proposed task: the
-first object drawer and transparent graph canvas over the accepted catalog,
-graph, and project operations. It does not wait for compiler or build-execution
-maturity and may not implement those missing semantics in the UI. Tasks
-013A-013D and the bounded reviewed-core expansion remain the subsequent
-compiler/backbone sequence.
+Tasks 013-015 are complete. ADR 0010 retires the misinterpreted Task 012B UI
+contract. The Task 016 contract and pinned-source prerequisite audit are
+complete, but implementation awaits one explicit choice between recommended
+legacy-equivalent behavior and a separately designed Schuss-native sound. Task
+017 has a concrete contract and waits for Task 016. UI remains an unnumbered
+later milestone requiring new explicit authorization.
 
 Start with [the project context](docs/PROJECT_CONTEXT.md), then read
 [the architecture](docs/ARCHITECTURE.md),
@@ -102,13 +112,16 @@ Task 007 boundary in
 011A projection, matching, filters, inspection chain, and evidence limits.
 [The project/workspace contracts](docs/PROJECT_WORKSPACE_CONTRACTS.md) document
 the Task 012A portable closure, persistence, lock, recovery, operation, and CLI
-boundaries. [The Task 012B contract](docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md)
-defines the first GUI client slice.
+boundaries. [The compiler-front-half contract](docs/COMPILER_FRONT_HALF.md)
+documents the completed Task 013 planning boundary, and
+[the Task 013 completion report](docs/tasks/013-reusable-compiler-front-half.md)
+records its exact evidence. The Task 012B file is a
+retirement notice, not an implementation contract.
 The Task 011B component, graph, and unresolved build closure is documented in
 [the component and graph contracts](docs/COMPONENT_GRAPH_CONTRACTS.md) and
 [the target/build contracts](docs/TARGET_BACKEND_BUILD_CONTRACTS.md). The
-completed Task 011C and the proposed next tasks are bounded by their task files
-under `docs/tasks/`.
+completed Task 011C-015 work and the gated Task 016-017 contracts are bounded
+by their task files under `docs/tasks/`.
 
 ## Command-line interface
 
@@ -121,6 +134,9 @@ bin/schuss catalog inspect FAMILY_ID@REVISION [--record-set MANIFEST] [--json]
 bin/schuss graph inspect GRAPH_ID@REVISION [--record-set MANIFEST] [--json]
 bin/schuss graph transact GRAPH_ID@REVISION --edits FILE_OR_STDIN [--record-set MANIFEST] [--json]
 bin/schuss build resolve REQUEST_ID@REVISION [--record-set MANIFEST] [--json]
+bin/schuss build plan REQUEST_ID@REVISION [--record-set MANIFEST] [--json]
+bin/schuss build execute REQUEST_ID@REVISION --output-root DIRECTORY --execute [--record-set MANIFEST] [--json]
+bin/schuss build completion {bash|zsh|fish}
 bin/schuss project init --project WORKSPACE --project-id ID --record-set MANIFEST --graph GRAPH_ID@REVISION [--json]
 bin/schuss project inspect --project WORKSPACE [--json]
 bin/schuss project validate --project WORKSPACE [--json]
@@ -135,8 +151,11 @@ Human output is deterministic plain text. `--json` emits the exact canonical
 shared-operation result plus one LF. Catalog commands default to exact successor
 record set `schuss-record-set-000004` revision 1. Every pre-existing command
 keeps accepted record set `schuss-record-set-000001` revision 1 as its default;
-other later sets are explicit opt-ins. `build resolve` stops before backend
-lowering. The original `graph transact` remains a non-persisted proposal;
+other later sets are explicit opt-ins. Task 014 `build plan` and `build
+execute` default to exact record set `schuss-record-set-000008` revision 1;
+`build resolve` stops before backend lowering, while `build execute` requires
+an exact handler, fresh output root, and explicit `--execute`. The original
+`graph transact` remains a non-persisted proposal;
 `project transact` writes only with explicit exact project/graph expectations
 and `--write`. No progress protocol is exposed.
 
@@ -155,6 +174,8 @@ python3 tools/catalog/validate_semantic_catalog.py \
 python3 tools/catalog/validate_task011a_catalog.py
 python3 tools/contracts/validate_task011b.py
 python3 tools/contracts/validate_task012a.py
+python3 tools/contracts/validate_task013.py
+python3 tools/contracts/validate_task014.py
 ```
 
 The raw snapshot records 4,209 candidate files and two retained XML parse
