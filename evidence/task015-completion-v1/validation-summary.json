@@ -1,0 +1,13 @@
+{
+  "schema_version":"task015-validation-summary-v1","status":"valid",
+  "record_set_reference":{"record_set_id":"schuss-record-set-000009","revision":1,"content_hash":"sha256:fb8e351335d623195e902ab464a3f79b30afe24391798e4792fcbc4107795b0b"},
+  "build_request_reference":{"build_request_id":"schuss-build-request-000001","revision":2,"content_hash":"sha256:7093aa5ce9c1752360a05eec855331b0781ba8fc6c0969c45e3220d24e9ce1ae"},
+  "input_plan_sha256":"4cd60e8eee35f3009062d3167268f9608b162c52b8a6401de3e9dcf2ef109e08",
+  "normalized_module":{"byte_length":1483,"byte_sha256":"60aa4a2dc07ba64bb65c37d36841505e361f15245f39126b37cf7e9ddf3bdfdd"},
+  "generated_cpp":{"byte_length":991,"byte_sha256":"a14f0733cf7e724e347e2edbafc8337bb26b18a6a16b6109aefd894cd540023d","syntax_check":"passed"},
+  "source_map":{"byte_length":653,"byte_sha256":"7a06c1a8c3fb6d06a26929728d4ed86b157c09a91c8d0bca6534f6766296ef0f"},
+  "canonical_result":{"byte_length":4056,"byte_sha256":"caa40eb4e8f170c19ecb5c2a6d5356abe37ae34cb84e3bfcc27360e08d1c66e4"},
+  "arithmetic_vectors":40,"arithmetic_status":"passed",
+  "evidence_levels":[{"level":1,"status":"passed"},{"level":2,"status":"passed"},{"level":3,"status":"passed"},{"level":4,"status":"passed"},{"level":5,"status":"not-run"},{"level":6,"status":"not-run"},{"level":7,"status":"not-run"},{"level":8,"status":"not-run"}],
+  "legacy_bridge_used":false,"arm_toolchain_used":false,"device_actions_performed":false,"stage_commit_push_performed":false
+}
