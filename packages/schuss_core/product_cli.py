@@ -722,7 +722,9 @@ def render_human_result(
         "catalog.search": lambda: _append_catalog_search(lines, result),
         "catalog.inspect": lambda: _append_catalog_inspect(lines, result),
     }
-    appenders[result["operation"]]()
+    appender = appenders.get(result["operation"])
+    if appender is not None:
+        appender()
     _append_diagnostics(lines, result)
     return ("\n".join(lines) + "\n").encode("utf-8")
 
@@ -861,9 +863,56 @@ COMPLETION_SCRIPTS = {
 
 
 BUILD_COMPLETION_SCRIPTS = {
-    "bash": "# Schuss Task 014 build completion for Bash\ncomplete -W 'resolve plan execute completion --help' schuss\n",
-    "zsh": "#compdef schuss\n# Schuss Task 014 build completion for Zsh\n_arguments '2:build command:(resolve plan execute completion)'\n",
-    "fish": "# Schuss Task 014 build completion for Fish\ncomplete -c schuss -n '__fish_seen_subcommand_from build' -a 'resolve plan execute completion'\n",
+    "bash": """# Schuss Task 014 build completion for Bash
+_schuss_build_complete() {
+  local current="${COMP_WORDS[COMP_CWORD]}"
+  local choices=""
+  if [[ ${COMP_CWORD} -eq 1 ]]; then
+    choices="build"
+  elif [[ ${COMP_CWORD} -eq 2 ]]; then
+    choices="resolve plan execute completion --help"
+  else
+    case "${COMP_WORDS[2]}" in
+      resolve|plan) choices="--record-set --json --help" ;;
+      execute) choices="--handler --output-root --execute --record-set --json --help" ;;
+      completion) choices="bash zsh fish --help" ;;
+    esac
+  fi
+  COMPREPLY=( $(compgen -W "${choices}" -- "${current}") )
+}
+complete -F _schuss_build_complete schuss
+""",
+    "zsh": """#compdef schuss
+# Schuss Task 014 build completion for Zsh
+_schuss_build() {
+  local -a build_commands shells
+  build_commands=(resolve plan execute completion)
+  shells=(bash zsh fish)
+  if (( CURRENT == 2 )); then
+    _values 'command' build
+  elif (( CURRENT == 3 )); then
+    _describe 'build command' build_commands
+  else
+    case ${words[3]} in
+      resolve|plan) _values 'option' --record-set --json --help ;;
+      execute) _values 'option' --handler --output-root --execute --record-set --json --help ;;
+      completion) _describe 'shell' shells ;;
+    esac
+  fi
+}
+_schuss_build "$@"
+""",
+    "fish": """# Schuss Task 014 build completion for Fish
+complete -c schuss -n '__fish_use_subcommand' -a build
+complete -c schuss -n '__fish_seen_subcommand_from build' -a 'resolve plan execute completion'
+complete -c schuss -n '__fish_seen_subcommand_from build; and __fish_seen_subcommand_from resolve plan execute' -l record-set -r
+complete -c schuss -n '__fish_seen_subcommand_from build; and __fish_seen_subcommand_from resolve plan execute' -l json
+complete -c schuss -n '__fish_seen_subcommand_from build; and __fish_seen_subcommand_from execute' -l handler -r
+complete -c schuss -n '__fish_seen_subcommand_from build; and __fish_seen_subcommand_from execute' -l output-root -r
+complete -c schuss -n '__fish_seen_subcommand_from build; and __fish_seen_subcommand_from execute' -l execute
+complete -c schuss -n '__fish_seen_subcommand_from build; and __fish_seen_subcommand_from completion' -a 'bash zsh fish'
+complete -c schuss -l help
+""",
 }
 
 

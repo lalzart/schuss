@@ -873,12 +873,17 @@ def _dispatch_execution_operation(
     else:
         errors.append("$: operation request must be an object")
     if errors:
+        result_version = 5 if "operation_result_v5" in context.schemas else 1
         result = _result(
-            "build.execute" if operation == "build.execute" else "invalid-request",
+            (
+                operation
+                if result_version == 5 and operation == "build.execute"
+                else "invalid-request"
+            ),
             "invalid",
             None,
             [_diagnostic("OPERATION_REQUEST_INVALID", operation if isinstance(operation, str) else "invalid-request", "$", error) for error in sorted(set(errors))],
-            version=5,
+            version=result_version,
         )
         canonical_result_bytes(result, context)
         return result

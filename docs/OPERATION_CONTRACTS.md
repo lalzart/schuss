@@ -224,6 +224,14 @@ defaults, canonical bytes, `build.resolve`, and non-persisted transactions stay
 accepted; successor operations are additive and must not infer `latest`, scan
 ambient records, invoke hardware, or make client-specific results authoritative.
 
+The product adapter retains a canonical v1 `invalid-request` fallback when a
+v4 or v5 machine request selects an older context that does not contain that
+operation schema. Human rendering must preserve that dispatched result and its
+diagnostics instead of treating the version mismatch as an internal failure.
+The separate Task 014 build-completion scripts enumerate the complete fixed
+`resolve`, `plan`, and `execute` option grammar; the accepted Task 011A root
+completion and Task 012A project-completion bytes remain unchanged.
+
 Task 012B is retired. A future explicitly authorized UI client must consume
 these same project, graph, catalog, build, compiler, and diagnostic operations;
 it may not define a parallel persistence, build, or compiler path.
