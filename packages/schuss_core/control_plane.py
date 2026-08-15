@@ -161,6 +161,18 @@ def load_repository_context(
             for kind, specification in target.SCHEMA_SPECS.items()
         },
     }
+    contract_versions = {
+        version: selected.schemas[version]
+        for version in component.CONTRACT_SCHEMA_VERSIONS
+        if version in selected.schemas
+    }
+    schemas["contract_versions"] = contract_versions
+    binding_versions = {
+        version: selected.schemas[version]
+        for version in component.BINDING_SCHEMA_VERSIONS
+        if version in selected.schemas
+    }
+    schemas["binding_versions"] = binding_versions
     for version, name in (
         ("operation-request-v2", "operation_request_v2"),
         ("operation-result-v2", "operation_result_v2"),
@@ -172,16 +184,80 @@ def load_repository_context(
 
     overlay = core.load_json(overlay_path)
     observations = component._observations(snapshot_root)
+
+    derived_catalog = None
+    catalog_family_references: list[dict[str, Any]] = []
+    catalog_implementations: list[dict[str, Any]] = []
+    if records["catalog"]:
+        if len(records["catalog"]) != 1:
+            raise ValueError("selected record set must contain exactly one catalog corpus")
+        required_catalog_schemas = {
+            "catalog_corpus",
+            "catalog_projection",
+            "operation_request_v2",
+            "operation_result_v2",
+        }
+        missing = sorted(required_catalog_schemas - set(schemas))
+        if missing:
+            raise ValueError(f"catalog record set is missing schemas {missing}")
+        corpus = records["catalog"][0]
+        derived_catalog = catalog.build_catalog_projection(
+            corpus=copy.deepcopy(corpus),
+            corpus_schema=schemas["catalog_corpus"],
+            projection_schema=schemas["catalog_projection"],
+            overlay=copy.deepcopy(overlay),
+            overlay_sha256=core.sha256_file(overlay_path),
+            observations=copy.deepcopy(observations),
+            records=records,
+            record_set_reference=copy.deepcopy(selected.reference),
+            core=core,
+        )
+        exact_family_ids = {family["family_id"] for family in records["families"]}
+        referenced_family_ids = {
+            contract["family_reference"]["family_id"]
+            for contract in records["contracts"]
+        }
+        catalog_family_references = [
+            copy.deepcopy(entry["family_reference"])
+            for entry in derived_catalog["families"]
+            if entry["family_reference"]["family_id"] in referenced_family_ids
+            and entry["family_reference"]["family_id"] not in exact_family_ids
+        ]
+        overlay_implementation_ids = {
+            item["implementation_id"] for item in overlay["implementations"]
+        }
+        bound_implementation_ids = {
+            binding["implementation_id"] for binding in records["bindings"]
+        }
+        catalog_implementations = [
+            copy.deepcopy(item)
+            for item in corpus["implementation_additions"]
+            if item["implementation_id"] in bound_implementation_ids
+            and item["implementation_id"] not in overlay_implementation_ids
+        ]
+
     component_result = component.validate_component_graph_values(
         list(records["families"]),
         list(records["contracts"]),
         list(records["bindings"]),
         list(records["graphs"]),
-        {kind: schemas[kind] for kind in ("family", "contract", "binding", "graph")},
+        {
+            kind: schemas[kind]
+            for kind in (
+                "family",
+                "contract",
+                "contract_versions",
+                "binding",
+                "binding_versions",
+                "graph",
+            )
+        },
         overlay,
         core.sha256_file(overlay_path),
         core.sha256_file(manifest_path),
         observations,
+        additional_family_references=catalog_family_references,
+        additional_implementations=catalog_implementations,
     )
     device_summary = device.validate_contract_values(
         list(records["devices"]),
@@ -221,31 +297,6 @@ def load_repository_context(
             for record in selected.records.get(kind, ())
         ],
     )
-    derived_catalog = None
-    if records["catalog"]:
-        if len(records["catalog"]) != 1:
-            raise ValueError("selected record set must contain exactly one catalog corpus")
-        required_catalog_schemas = {
-            "catalog_corpus",
-            "catalog_projection",
-            "operation_request_v2",
-            "operation_result_v2",
-        }
-        missing = sorted(required_catalog_schemas - set(schemas))
-        if missing:
-            raise ValueError(f"catalog record set is missing schemas {missing}")
-        derived_catalog = catalog.build_catalog_projection(
-            corpus=copy.deepcopy(records["catalog"][0]),
-            corpus_schema=schemas["catalog_corpus"],
-            projection_schema=schemas["catalog_projection"],
-            overlay=copy.deepcopy(overlay),
-            overlay_sha256=core.sha256_file(overlay_path),
-            observations=copy.deepcopy(observations),
-            records=records,
-            record_set_reference=copy.deepcopy(selected.reference),
-            core=core,
-        )
-
     return OperationContext(
         records=records,
         schemas=schemas,
@@ -746,7 +797,9 @@ def _validate_transacted_graph(
         {
             "family": context.schemas["family"],
             "contract": context.schemas["contract"],
+            "contract_versions": context.schemas["contract_versions"],
             "binding": context.schemas["binding"],
+            "binding_versions": context.schemas["binding_versions"],
             "graph": context.schemas["graph"],
         },
         copy.deepcopy(context.overlay),

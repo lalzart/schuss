@@ -8,7 +8,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable, Mapping
 
 import validator_core as core
 
@@ -23,7 +23,15 @@ GRAPH_SCHEMA_NAME = "dsp-graph-v0.schema.json"
 
 FAMILY_SCHEMA_VERSION = "catalog-family-companion-v0"
 CONTRACT_SCHEMA_VERSION = "component-contract-v0"
+CONTRACT_SCHEMA_VERSIONS = (
+    "component-contract-v0",
+    "component-contract-v1",
+)
 BINDING_SCHEMA_VERSION = "implementation-binding-v0"
+BINDING_SCHEMA_VERSIONS = (
+    "implementation-binding-v0",
+    "implementation-binding-v1",
+)
 GRAPH_SCHEMA_VERSION = "dsp-graph-v0"
 
 OVERLAY_RELATIVE_PATH = Path("catalog/overlays/phase-4a-semantic-catalog-v0/catalog.json")
@@ -168,7 +176,183 @@ def _public_signature(contract: dict[str, Any]) -> str:
             {key: value for key, value in facet.items() if key != "display_label"}
             for facet in contract[collection]
         ]
+    if "behavior_rules" in contract:
+        public["behavior_rules"] = contract["behavior_rules"]
     return base.canonical_json(public)
+
+
+def _validate_structural_record_versions(
+    records: list[dict[str, Any]],
+    schemas: Mapping[str, dict[str, Any]],
+    id_field: str,
+    diagnostics: list[base.Diagnostic],
+) -> list[dict[str, Any]]:
+    """Validate one additive record family without weakening historic schemas."""
+
+    valid: list[dict[str, Any]] = []
+    for version in sorted(schemas):
+        members = [record for record in records if record.get("schema_version") == version]
+        if not members:
+            continue
+        valid.extend(
+            _validate_structural_records(
+                members,
+                schemas[version],
+                f"{version}.schema.json",
+                version,
+                id_field,
+                diagnostics,
+            )
+        )
+    unknown = [record for record in records if record.get("schema_version") not in schemas]
+    for record in unknown:
+        _diagnostic(
+            diagnostics,
+            "SCHEMA_VERSION_UNSUPPORTED",
+            _subject(record),
+            "$.schema_version",
+            "the additive component registry does not support this schema version",
+        )
+    exact_revisions: dict[tuple[str, int], str] = {}
+    for record in valid:
+        key = (record[id_field], record["revision"])
+        prior = exact_revisions.setdefault(key, record["content_hash"])
+        if prior != record["content_hash"]:
+            _diagnostic(
+                diagnostics,
+                "ID_REVISION_COLLISION",
+                _subject(record),
+                "$",
+                "one stable ID/revision resolves to more than one content hash",
+            )
+    return valid
+
+
+def _validate_behavior_rules(
+    contract: dict[str, Any],
+    diagnostics: list[base.Diagnostic],
+) -> None:
+    rules = contract.get("behavior_rules")
+    if rules is None:
+        return
+    subject = _subject(contract)
+    facets = _facet_maps(contract)
+    rule_ids = [rule["rule_id"] for rule in rules]
+    if len(rule_ids) != len(set(rule_ids)):
+        _diagnostic(
+            diagnostics,
+            "CONTRACT_BEHAVIOR_DUPLICATE",
+            subject,
+            "$.behavior_rules",
+            "component behavior-rule IDs must be unique",
+        )
+    for index, rule in enumerate(rules):
+        location = f"$.behavior_rules[{index}]"
+        kind = rule["kind"]
+        if kind == "edge-triggered-transition":
+            port = facets["port"].get(rule["input_port_id"])
+            if (
+                port is None
+                or port["direction"] != "inlet"
+                or port["port_type"]["domain"] != "stream"
+                or port["port_type"]["rate"] != "control"
+                or port["port_type"]["representation"]["kind"] != "boolean"
+            ):
+                _diagnostic(
+                    diagnostics,
+                    "CONTRACT_EDGE_BEHAVIOR_INVALID",
+                    subject,
+                    location,
+                    "edge-triggered behavior must name a Boolean control-stream inlet",
+                )
+        elif kind == "parameter-input-sum":
+            parameter = facets["parameter"].get(rule["parameter_id"])
+            port = facets["port"].get(rule["input_port_id"])
+            if parameter is None or port is None or port["direction"] != "inlet":
+                _diagnostic(
+                    diagnostics,
+                    "CONTRACT_SUM_BEHAVIOR_INVALID",
+                    subject,
+                    location,
+                    "summation behavior must name one public parameter and inlet",
+                )
+                continue
+            port_type = port["port_type"]
+            if (
+                parameter["representation"] != port_type["representation"]
+                or parameter["unit"] != port_type["unit"]
+                or rule["result_unit"] != parameter["unit"]
+            ):
+                _diagnostic(
+                    diagnostics,
+                    "CONTRACT_SUM_BEHAVIOR_INVALID",
+                    subject,
+                    location,
+                    "summed facets and result must share representation and unit",
+                )
+        elif kind == "indexed-parameter-selection":
+            input_port = facets["port"].get(rule["input_port_id"])
+            output_port = facets["port"].get(rule["output_port_id"])
+            parameters = [facets["parameter"].get(item) for item in rule["parameter_ids"]]
+            if (
+                input_port is None
+                or input_port["direction"] != "inlet"
+                or input_port["port_type"]["representation"]["kind"] != "integer"
+                or output_port is None
+                or output_port["direction"] != "outlet"
+                or not parameters
+                or any(item is None for item in parameters)
+            ):
+                _diagnostic(
+                    diagnostics,
+                    "CONTRACT_INDEX_BEHAVIOR_INVALID",
+                    subject,
+                    location,
+                    "indexed selection must name an integer inlet, ordered parameters, and an outlet",
+                )
+                continue
+            if any(
+                item["representation"] != output_port["port_type"]["representation"]
+                or item["unit"] != output_port["port_type"]["unit"]
+                for item in parameters
+                if item is not None
+            ):
+                _diagnostic(
+                    diagnostics,
+                    "CONTRACT_INDEX_BEHAVIOR_INVALID",
+                    subject,
+                    location,
+                    "selected parameters must match the output representation and unit",
+                )
+        elif kind == "bounded-cyclic-counter":
+            trigger = facets["port"].get(rule["trigger_port_id"])
+            reset = facets["port"].get(rule["reset_port_id"])
+            output = facets["port"].get(rule["output_port_id"])
+            carry = facets["port"].get(rule["carry_port_id"])
+            maximum = facets["parameter"].get(rule["maximum_parameter_id"])
+            if (
+                trigger is None
+                or reset is None
+                or output is None
+                or carry is None
+                or maximum is None
+                or trigger["direction"] != "inlet"
+                or reset["direction"] != "inlet"
+                or output["direction"] != "outlet"
+                or carry["direction"] != "outlet"
+                or trigger["port_type"]["representation"]["kind"] != "boolean"
+                or reset["port_type"]["representation"]["kind"] != "boolean"
+                or output["port_type"]["representation"]["kind"] != "integer"
+                or carry["port_type"]["representation"]["kind"] != "boolean"
+                or maximum["representation"]["kind"] != "integer"
+            ):
+                _diagnostic(
+                    diagnostics,
+                    "CONTRACT_COUNTER_BEHAVIOR_INVALID",
+                    subject,
+                    location,
+                    "cyclic counter behavior must name Boolean trigger/reset, integer maximum/output, and Boolean carry facets",
+                )
 
 
 def _range_decimal(value: dict[str, Any]) -> tuple[Decimal, Decimal]:
@@ -365,6 +549,8 @@ def _validate_contracts(
                 "stateless lifecycle and state declarations disagree",
             )
 
+        _validate_behavior_rules(contract, diagnostics)
+
         compound = contract["compound_interface"]
         mapping_keys = compound["mapping_keys"]
         mapping_key_ids = [item["mapping_key"] for item in mapping_keys]
@@ -515,7 +701,8 @@ def _validate_graphs(
                         "node facet values must be unique",
                     )
                 for value in values:
-                    if value["facet_id"] not in facets[facet_kind]:
+                    facet = facets[facet_kind].get(value["facet_id"])
+                    if facet is None:
                         _diagnostic(
                             diagnostics,
                             "GRAPH_FACET_UNKNOWN",
@@ -523,6 +710,37 @@ def _validate_graphs(
                             f"$.nodes[{index}].{collection}",
                             f"{value['facet_id']!r} is not a contract {facet_kind}",
                         )
+                        continue
+                    if facet_kind == "parameter":
+                        try:
+                            fixed_value = Decimal(value["value"])
+                            minimum, maximum = _range_decimal(facet["domain"])
+                        except Exception:
+                            _diagnostic(
+                                diagnostics,
+                                "GRAPH_FIXED_VALUE_INVALID",
+                                subject,
+                                f"$.nodes[{index}].{collection}",
+                                "fixed parameter value must use the contract's exact-decimal domain",
+                            )
+                            continue
+                        representation = facet["representation"]
+                        if representation["kind"] == "integer" and fixed_value != fixed_value.to_integral_value():
+                            _diagnostic(
+                                diagnostics,
+                                "GRAPH_FIXED_VALUE_INVALID",
+                                subject,
+                                f"$.nodes[{index}].{collection}",
+                                "integer parameter value must be integral",
+                            )
+                        if not minimum <= fixed_value <= maximum:
+                            _diagnostic(
+                                diagnostics,
+                                "GRAPH_FIXED_VALUE_OUT_OF_RANGE",
+                                subject,
+                                f"$.nodes[{index}].{collection}",
+                                "fixed parameter value lies outside the exact contract domain",
+                            )
 
         graph_facets: dict[str, tuple[str, dict[str, Any]]] = {}
         for collection, kind in (
@@ -553,6 +771,7 @@ def _validate_graphs(
             )
 
         driver_counts: Counter[tuple[str, str]] = Counter()
+        source_counts: Counter[tuple[str, str]] = Counter()
         signal_edges: dict[str, set[str]] = defaultdict(set)
         connection_ids: set[str] = set()
         for index, connection in enumerate(graph["connections"]):
@@ -604,6 +823,7 @@ def _validate_graphs(
                 )
             destination_key = (destination["node_id"], destination["facet_id"])
             driver_counts[destination_key] += 1
+            source_counts[(source["node_id"], source["facet_id"])] += 1
             if source["node_id"] == destination["node_id"]:
                 _diagnostic(
                     diagnostics,
@@ -657,6 +877,8 @@ def _validate_graphs(
             resolved_public_port_types[exposure["graph_facet_id"]] = node_port
             if public_port["direction"] == "input":
                 driver_counts[(endpoint["node_id"], endpoint["facet_id"])] += 1
+            else:
+                source_counts[(endpoint["node_id"], endpoint["facet_id"])] += 1
         for facet_id in public_ports:
             if exposure_counts[facet_id] != 1:
                 _diagnostic(
@@ -809,14 +1031,16 @@ def _validate_graphs(
 
         for node_id, contract in node_contracts.items():
             for port in contract["ports"]:
-                if port["direction"] != "inlet":
-                    continue
                 key = (node_id, port["facet_id"])
-                count = driver_counts[key]
+                count = (
+                    driver_counts[key]
+                    if port["direction"] == "inlet"
+                    else source_counts[key]
+                )
                 minimum = port["port_type"]["cardinality"]["minimum_connections"]
                 maximum = port["port_type"]["cardinality"]["maximum_connections"]
                 optional = port["port_type"]["optionality"]["status"] == "optional"
-                if count < minimum and not optional:
+                if count < minimum and not optional and port["direction"] == "inlet":
                     _diagnostic(
                         diagnostics,
                         "GRAPH_REQUIRED_INLET_UNDRIVEN",
@@ -827,10 +1051,10 @@ def _validate_graphs(
                 if isinstance(maximum, int) and count > maximum:
                     _diagnostic(
                         diagnostics,
-                        "DUPLICATE_DRIVER",
+                        "DUPLICATE_DRIVER" if port["direction"] == "inlet" else "GRAPH_OUTPUT_CARDINALITY_EXCEEDED",
                         subject,
                         "$.nodes",
-                        f"inlet {node_id}:{port['facet_id']} exceeds its driver cardinality",
+                        f"{port['direction']} {node_id}:{port['facet_id']} exceeds its connection cardinality",
                     )
 
         hierarchy_edges: dict[str, set[str]] = defaultdict(set)
@@ -908,10 +1132,13 @@ def _validate_bindings(
     manifest_sha256: str,
     observations: dict[str, dict[str, Any]],
     diagnostics: list[base.Diagnostic],
+    additional_implementations: Iterable[dict[str, Any]] = (),
 ) -> None:
     overlay_implementations = {
         item["implementation_id"]: item for item in overlay["implementations"]
     }
+    for item in additional_implementations:
+        overlay_implementations[item["implementation_id"]] = item
     transparent_edges: dict[tuple[str, int, str], set[tuple[str, int, str]]] = defaultdict(set)
     transparent_subjects: dict[tuple[str, int, str], str] = {}
     for binding in records:
@@ -945,7 +1172,7 @@ def _validate_bindings(
             overlay_entry = overlay_implementations.get(binding["implementation_id"])
             if overlay_entry is None:
                 _diagnostic(diagnostics, "IMPLEMENTATION_MEMBERSHIP_UNRESOLVED", subject, "$.implementation_id", "legacy companion identity is absent from Phase 4A")
-            elif overlay_entry["family_id"] != contract["family_reference"]["family_id"]:
+            elif overlay_entry.get("family_id", overlay_entry.get("family_reference", {}).get("family_id")) != contract["family_reference"]["family_id"]:
                 _diagnostic(diagnostics, "IMPLEMENTATION_FAMILY_MISMATCH", subject, "$.contract_reference", "contract family disagrees with Phase 4A implementation membership")
             expected_form = {
                 "generated-object": "generated-legacy-object",
@@ -989,9 +1216,12 @@ def _validate_bindings(
                     continue
                 candidates = observation["facets"].get(collection_name, [])
                 observed = next((item for item in candidates if item["index"] == seam["index"]), None)
-                if observed is None or any(
-                    seam[field] != observed[field]
-                    for field in ("name", "legacy_type", "data_type")
+                seam_data_type = seam["data_type"]
+                if (
+                    observed is None
+                    or seam["name"] != observed["name"]
+                    or seam["legacy_type"] != observed["legacy_type"]
+                    or seam_data_type != observed.get("data_type")
                 ):
                     _diagnostic(diagnostics, "BINDING_SEAM_MISMATCH", subject, f"$.facet_mappings[{index}].implementation_seam", "seam locator disagrees with the frozen observation")
                     continue
@@ -1005,14 +1235,84 @@ def _validate_bindings(
                     continue
                 if facet["facet_kind"] == "port":
                     expected_seam_kind = "legacy-inlet" if contract_facet["direction"] == "inlet" else "legacy-outlet"
-                    expected_data_type = "axoloti.datatypes.Frac32buffer" if contract_facet["port_type"]["rate"] == "audio" else "axoloti.datatypes.Frac32"
                     representation = contract_facet["port_type"]["representation"]
+                    if representation["kind"] == "fixed-point":
+                        expected_data_type = "axoloti.datatypes.Frac32buffer" if contract_facet["port_type"]["rate"] == "audio" else "axoloti.datatypes.Frac32"
+                    elif representation["kind"] == "boolean":
+                        expected_data_type = "axoloti.datatypes.Bool32"
+                    elif representation["kind"] == "integer":
+                        expected_data_type = "axoloti.datatypes.Int32"
+                    else:
+                        expected_data_type = seam["data_type"]
                     if seam["seam_kind"] != expected_seam_kind or seam["data_type"] != expected_data_type:
                         _diagnostic(diagnostics, "BINDING_TYPE_INCOMPATIBLE", subject, f"$.facet_mappings[{index}]", "contract direction/rate disagrees with the observed legacy seam")
-                    if representation != {"kind": "fixed-point", "signed": True, "width_bits": 32, "fractional_bits": 27, "encoding": "twos-complement-binary"}:
-                        _diagnostic(diagnostics, "BINDING_TYPE_INCOMPATIBLE", subject, f"$.facet_mappings[{index}]", "Frac32 seam requires the curated signed 32-bit Q27 representation")
+                    expected_representation = {
+                        "kind": "fixed-point",
+                        "signed": True,
+                        "width_bits": 32,
+                        "fractional_bits": (
+                            21
+                            if contract_facet["port_type"]["unit"] == "semitone-offset"
+                            else 27
+                        ),
+                        "encoding": "twos-complement-binary",
+                    }
+                    if (
+                        representation["kind"] == "fixed-point"
+                        and representation != expected_representation
+                    ):
+                        _diagnostic(
+                            diagnostics,
+                            "BINDING_TYPE_INCOMPATIBLE",
+                            subject,
+                            f"$.facet_mappings[{index}]",
+                            "Frac32 seam requires Q21 for semitone offsets and Q27 otherwise",
+                        )
                     if contract_facet["semantic_key"] == "fade" and "Pos" not in seam["legacy_type"]:
                         _diagnostic(diagnostics, "BINDING_TYPE_INCOMPATIBLE", subject, f"$.facet_mappings[{index}]", "normalized fade mapping requires the positive legacy inlet seam")
+                elif facet["facet_kind"] == "parameter":
+                    representation = contract_facet["representation"]
+                    expected_fractional_bits = (
+                        21 if contract_facet["unit"] == "semitone-offset" else 27
+                    )
+                    expected_fixed = {
+                        "kind": "fixed-point",
+                        "signed": True,
+                        "width_bits": 32,
+                        "fractional_bits": expected_fractional_bits,
+                        "encoding": "twos-complement-binary",
+                    }
+                    expected_integer = {
+                        "kind": "integer",
+                        "signed": True,
+                        "width_bits": 32,
+                        "encoding": "twos-complement-binary",
+                    }
+                    incompatible = seam["seam_kind"] != "legacy-parameter"
+                    if representation["kind"] == "fixed-point":
+                        incompatible = incompatible or representation != expected_fixed or "Frac32" not in seam["legacy_type"]
+                    elif representation["kind"] == "integer":
+                        incompatible = incompatible or representation != expected_integer or "Int32" not in seam["legacy_type"]
+                    if incompatible:
+                        _diagnostic(
+                            diagnostics,
+                            "BINDING_TYPE_INCOMPATIBLE",
+                            subject,
+                            f"$.facet_mappings[{index}]",
+                            "contract parameter representation disagrees with the exact legacy parameter seam",
+                        )
+                elif facet["facet_kind"] == "display" and (
+                    seam["seam_kind"] != "legacy-display"
+                    or contract_facet["value_kind"] != "integer"
+                    or seam["data_type"] != "axoloti.datatypes.Int32"
+                ):
+                    _diagnostic(
+                        diagnostics,
+                        "BINDING_TYPE_INCOMPATIBLE",
+                        subject,
+                        f"$.facet_mappings[{index}]",
+                        "contract display type disagrees with the exact legacy display seam",
+                    )
         elif realization["form"] == "transparent-compound":
             graph_key = _reference_key(realization["graph_reference"], "graph_id")
             graph = graphs_by_ref.get(graph_key)
@@ -1089,17 +1389,48 @@ def validate_component_graph_values(
     overlay_sha256: str,
     manifest_sha256: str,
     observations: dict[str, dict[str, Any]],
+    additional_family_references: Iterable[dict[str, Any]] = (),
+    additional_implementations: Iterable[dict[str, Any]] = (),
 ) -> CoreValidation:
     diagnostics: list[base.Diagnostic] = []
     valid_families = _validate_structural_records(family_records, schemas["family"], FAMILY_SCHEMA_NAME, FAMILY_SCHEMA_VERSION, "family_id", diagnostics)
-    valid_contracts = _validate_structural_records(contract_records, schemas["contract"], CONTRACT_SCHEMA_NAME, CONTRACT_SCHEMA_VERSION, "component_contract_id", diagnostics)
-    valid_bindings = _validate_structural_records(binding_records, schemas["binding"], BINDING_SCHEMA_NAME, BINDING_SCHEMA_VERSION, "implementation_id", diagnostics)
+    contract_schemas = schemas.get("contract_versions")
+    if contract_schemas is None:
+        contract_schemas = {CONTRACT_SCHEMA_VERSION: schemas["contract"]}
+    valid_contracts = _validate_structural_record_versions(
+        contract_records,
+        contract_schemas,
+        "component_contract_id",
+        diagnostics,
+    )
+    binding_schemas = schemas.get("binding_versions")
+    if binding_schemas is None:
+        binding_schemas = {BINDING_SCHEMA_VERSION: schemas["binding"]}
+    valid_bindings = _validate_structural_record_versions(
+        binding_records,
+        binding_schemas,
+        "implementation_id",
+        diagnostics,
+    )
     valid_graphs = _validate_structural_records(graph_records, schemas["graph"], GRAPH_SCHEMA_NAME, GRAPH_SCHEMA_VERSION, "graph_id", diagnostics)
 
     families_by_ref = _validate_family_companions(valid_families, overlay, overlay_sha256, manifest_sha256, diagnostics)
+    for reference in additional_family_references:
+        key = _reference_key(reference, "family_id")
+        families_by_ref.setdefault(key, reference)
     contracts_by_ref = _validate_contracts(valid_contracts, families_by_ref, diagnostics)
     graphs_by_ref, graph_targets, graph_runtime = _validate_graphs(valid_graphs, contracts_by_ref, diagnostics)
-    _validate_bindings(valid_bindings, contracts_by_ref, graphs_by_ref, graph_runtime, overlay, manifest_sha256, observations, diagnostics)
+    _validate_bindings(
+        valid_bindings,
+        contracts_by_ref,
+        graphs_by_ref,
+        graph_runtime,
+        overlay,
+        manifest_sha256,
+        observations,
+        diagnostics,
+        additional_implementations,
+    )
 
     diagnostics = sorted(set(diagnostics), key=lambda item: (item.severity, item.code, item.subject, item.location, item.message))
     status = "invalid" if diagnostics else "valid"
@@ -1172,4 +1503,3 @@ def get_validated_graph_target_registry(
         codes = sorted({item.code for item in result.diagnostics})
         raise ValueError(f"Task 006 graph registry is invalid: {codes}")
     return result.graph_targets
-

@@ -167,6 +167,44 @@ authenticated runtime boundary, but it was not executed. Levels 6-8 remain
 `not-run`: no connected device, real-time measurement, or listening procedure
 occurred.
 
+## Task 011B unresolved successor closure
+
+Successor record set `schuss-record-set-000005` revision 1 retains exact parent
+`000004` and adds only the Task 011B target-independent graph/build candidate
+set. Its exact request `schuss-build-request-000002` revision 1 names graph
+`000002`, instrument `000002`, promoted Ksoloti Core target revision 2, and
+promoted legacy backend revision 2, and stops at `artifact-generation`.
+
+Each of the six new binding revisions has one exact eligibility companion.
+Every pair state is `not-evaluated`, cites no compatibility evidence, preserves
+the backend's complete target-capability requirements, and names Task 011C as
+the earliest evidence owner. A realization form absent from the backend's
+supported forms is a valid fail-closed candidate when its pair state is
+explicitly `not-evaluated` or `unsupported`; resolution still excludes it as
+`REALIZATION_FORM_UNSUPPORTED`. This permits the native four-step sequencer to
+remain visible without pretending it is eligible.
+
+The deterministic resolution trace is:
+
+| Node | Role | Status |
+| --- | --- | --- |
+| `graph-node-000001` | Square LFO | unresolved |
+| `graph-node-000002` | Cyclic Counter | unresolved |
+| `graph-node-000003` | four-step Pitch Sequencer | unsupported form |
+| `graph-node-000004` | Sine Oscillator A | unresolved |
+| `graph-node-000005` | Sine Oscillator B | unresolved |
+| `graph-node-000006` | promoted mixed Crossfader | selected |
+| `graph-node-000007` | State-variable Filter | unresolved |
+| `graph-node-000008` | stereo Audio Output | unresolved |
+
+Overall `build.resolve` is `unresolved` and `backend_invocation` is `null`.
+Procedure `schuss-procedure-000002` and probe inputs `000003` through `000008`
+are immutable `candidate-under-test` records for only the six new bindings and
+graph. Every input is `not-authorized` and grants no production selection
+authority. No build result, artifact descriptor, resource report, evidence
+claim, backend execution, lowering, generation, compile/link, or device action
+is part of this closure.
+
 ## Validator boundary and next tasks
 
 `validate_target_backend_build_contracts.py` is read only. It imports the Task
@@ -180,3 +218,6 @@ operations. Task 009 consumes that boundary without changing accepted Task
 the explicit Task 009 successor view resolves only the promoted exact pair.
 Task 010 remains separate and now provides only deterministic product commands
 over those unchanged operations; it does not execute the Task 009 handler.
+Task 011B consumes the same pure dispatcher under explicit record set `000005`;
+Task 011C is the earliest owner of backend expansion and executable evidence
+for the eight-node slice.

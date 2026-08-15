@@ -1,6 +1,6 @@
 # Semantic and build-domain contracts
 
-This directory contains authoritative Task 005-011A records organized
+This directory contains authoritative Task 005-011B records organized
 by record family. The schemas are under `schemas/`, the normative boundaries
 are documented in `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and read-only validation is under
@@ -29,8 +29,17 @@ The current pair is deliberately minimal:
   26 Phase 4A pilot families and the bounded seven-role Gills-slice identity
   review without rewriting the overlay or creating missing DSP contracts.
 
+Task 011B records live under `task011b/` so every accepted default directory
+scan remains unchanged. They add six exact component contracts and bindings,
+six unresolved eligibility companions, one eight-node graph, one Gills
+instrument, one artifact-generation-stopping request, and six not-authorized
+probe inputs under one closed probe procedure. Record set
+`schuss-record-set-000005` revision 1 selects that explicit successor view and
+retains parent `000004` exactly.
+
 Task 009 successor records retain one bounded production build/evidence chain
 through compile/link level 5. Task 011A merely projects those exact records;
-it adds no build result or compatibility claim. No GUI, firmware, connected
+Task 011B adds no build result, artifact, or compatibility promotion. No GUI,
+firmware, connected
 hardware, real-time, or audible action is implied. See
 `docs/TARGET_BACKEND_BUILD_CONTRACTS.md` and `docs/CATALOG_OPERATIONS.md`.

@@ -13,8 +13,8 @@ one compatibility backend.
 ## Current status
 
 Schuss has completed the Phase 4A semantic-catalog foundation, the bounded
-Task 009 legacy-backend proof, the Task 010 product CLI, and the Task 011A
-browsable catalog control plane:
+Task 009 legacy-backend proof, the Task 010 product CLI, and Tasks 011A-011B
+of the first non-UI Gills vertical slice:
 
 - the project boundaries and terminology are documented;
 - upstream sources are pinned without committing machine-local paths;
@@ -64,7 +64,12 @@ browsable catalog control plane:
 - Task 011A derives a 28-family client-neutral projection from the frozen
   26-family pilot plus two reviewed Gills-slice families, adds `catalog.search`
   and `catalog.inspect` through additive operation v2 contracts, and exposes
-  them through the same dispatcher and product CLI; and
+  them through the same dispatcher and product CLI;
+- Task 011B adds six exact component contracts/bindings, one eight-node and
+  nine-connection authoritative graph, one exact Gills instrument mapping,
+  and successor record set `schuss-record-set-000005` revision 1; its build
+  request remains fail-closed with only the promoted Crossfader selected and
+  no backend invocation; and
 - no general compiler frontend, persistent graph editor, device runtime, or
   desktop app is implemented yet.
 
@@ -80,7 +85,9 @@ Task 007 boundary in
 008 dispatcher, atomic transaction, process, and Task 009 seam boundaries.
 [The catalog operation contract](docs/CATALOG_OPERATIONS.md) documents the Task
 011A projection, matching, filters, inspection chain, and evidence limits.
-Active
+The Task 011B component, graph, and unresolved build closure is documented in
+[the component and graph contracts](docs/COMPONENT_GRAPH_CONTRACTS.md) and
+[the target/build contracts](docs/TARGET_BACKEND_BUILD_CONTRACTS.md). Active
 implementation work is bounded by task files under `docs/tasks/`.
 
 ## Command-line interface
@@ -119,6 +126,7 @@ python3 tools/inventory/validate_phase3_review_packet.py \
 python3 tools/catalog/validate_semantic_catalog.py \
   catalog/overlays/phase-4a-semantic-catalog-v0
 python3 tools/catalog/validate_task011a_catalog.py
+python3 tools/contracts/validate_task011b.py
 ```
 
 The raw snapshot records 4,209 candidate files and two retained XML parse

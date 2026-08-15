@@ -1,10 +1,11 @@
 # Component, binding, and DSP-graph contracts
 
 This document is normative for the Task 006 `component-contract-v0`,
-`implementation-binding-v0`, and `dsp-graph-v0` boundaries. It also documents
-the narrow `catalog-family-companion-v0` exact-identity envelope used to bind
-the retained Phase 4A Crossfader family without inventing a legacy family
-revision or changing its classification.
+`implementation-binding-v0`, and `dsp-graph-v0` boundaries and the additive
+Task 011B `component-contract-v1` and `implementation-binding-v1` boundary. It
+also documents the narrow `catalog-family-companion-v0` exact-identity
+envelope used to bind the retained Phase 4A Crossfader family without
+inventing a legacy family revision or changing its classification.
 
 ## Ownership and reference direction
 
@@ -118,12 +119,76 @@ references, and an acyclic expansion graph. Non-production fixtures prove the
 positive case plus missing, duplicate, incompatible, hidden, direct-recursive,
 and indirect-recursive failures. No opaque legacy subpatch is introduced.
 
+## Task 011B additive contracts and bindings
+
+Task 011B preserves every v0 schema and record byte. `component-contract-v1`
+adds only the missing target-independent semantics required by the reviewed
+slice:
+
+- `semitone-offset` is a first-class port and parameter unit;
+- semitone legacy `Frac32` facets use signed 32-bit Q21, matching one semitone
+  to `1 << 21`; normalized control and audio values remain Q27;
+- `edge-triggered-transition` names the Boolean control inlet, edge, and
+  receiver-owned reset effect;
+- `parameter-input-sum` names the exact parameter, inlet, sum domain, unit,
+  range policy, and control-cycle boundary;
+- `indexed-parameter-selection` retains the ordered four-parameter sequence,
+  integer selector, output, and out-of-range value; and
+- `bounded-cyclic-counter` names rising trigger/reset edges, maximum
+  parameter, count/carry outputs, initial value, and wrap rule.
+
+`implementation-binding-v1` changes no selection or compatibility semantics.
+It admits the frozen observation's exact JSON `null` parameter datatype and
+the observed 39-through-42-hex durable legacy UUID values. All ports,
+parameters, attributes, actions, and displays remain total one-to-one public
+facet maps; private state remains a separate implementation detail.
+
+The six exact Task 011B pairs are:
+
+| Role | Contract | Binding | Observation |
+| --- | --- | --- | ---: |
+| Square LFO | `schuss-component-contract-000004` r1 | `schuss-implementation-000039` r1 | 209 |
+| Cyclic Counter | `schuss-component-contract-000005` r1 | `schuss-implementation-000040` r1 | 215 |
+| four-step Pitch Sequencer | `schuss-component-contract-000006` r1 | `schuss-implementation-000041` r1 | 918 |
+| Sine Oscillator | `schuss-component-contract-000007` r1 | `schuss-implementation-000007` r1 | 549 |
+| State-variable Filter | `schuss-component-contract-000008` r1 | `schuss-implementation-000015` r1 | 159 |
+| stereo Audio Output | `schuss-component-contract-000009` r1 | `schuss-implementation-000004` r1 | 9 |
+
+The retained mixed Crossfader remains contract `000003` and promoted binding
+`000028` revision 2. No successor record rewrites it.
+
+## Task 011B authoritative graph and instrument
+
+`schuss-graph-000002` revision 1 contains exactly eight nodes and nine explicit
+connections: Square LFO, Cyclic Counter, four-step Pitch Sequencer, two uses of
+the same Sine contract, the accepted mixed Crossfader, State-variable Filter,
+and stereo Audio Output. Its reviewed fixed values are LFO pitch `-48`, counter
+maximum `4`, steps `0/5/7/12`, oscillator pitches `-24/-23.875`, filter cutoff
+`24`, and resonance `0.125`. Public graph parameter `blend` alone targets the
+Crossfader fade inlet.
+
+Both mandatory adapter reviews close without an adapter:
+
+1. Square LFO `wave` and counter `trigger` are identical Boolean control-rate
+   clock transports. The counter contract owns rising-edge recognition, so no
+   event latch or transport conversion exists.
+2. The filter low-pass outlet and both audio-output inlets have identical
+   transport types. The outlet explicitly permits two consumers; the graph
+   contains two separate connections and no hidden mono duplication.
+
+Graph validation counts source consumers as well as destination drivers,
+checks fixed parameter values against exact representation/domain rules, and
+rejects every implicit conversion. `schuss-instrument-000002` revision 1 maps
+the existing minimal Gills knob to instrument `blend`, then graph `blend`,
+without adding a physical device fact or device-to-graph shortcut.
+
 ## Validation and evidence boundary
 
 Run the aggregate validator and all contract tests with:
 
 ```bash
 python3 tools/contracts/validate_component_graph_contracts.py
+python3 tools/contracts/validate_task011b.py
 python3 -m unittest discover -s tools/contracts/tests
 ```
 
@@ -149,6 +214,7 @@ or establish audible behavior. Those evidence levels remain `not-run`.
 | Shared graph mutation operations and client protocol | Domain-operation owner | Task 008 |
 | Legacy `.axp` lowering and ARM compile/link proof | Compiler/backend owner | Task 009 |
 | Broader reviewed-core contracts and bindings | Catalog and contract owners | Task 011 |
+| Task 011B slice lowering, generated source, and ARM compile/link | Compiler/backend owner | Task 011C |
 | Physical Gills facts, real-time validation, and listening evidence | Device/evidence owners | Later bounded hardware tasks |
 
 Task 007 should add only compute-target, backend-capability, build-request,

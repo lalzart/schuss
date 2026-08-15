@@ -18,7 +18,7 @@ into transparent, typed Schuss models.
 | 9 | One minimal graph through the legacy `.axp` adapter and ARM compiler/linker | Complete; exact Blend slice reaches level 5 |
 | 10 | Deterministic structured CLI over shared operations | [Complete](tasks/010-deterministic-product-cli-over-shared-operations.md) |
 | 11A | Browsable catalog control plane and exact seven-role Gills-slice catalog review | [Complete](tasks/011a-browsable-catalog-control-plane-and-exact-gills-slice-catalog-review.md) |
-| 11B | Six component contracts/bindings, authoritative slice graph, minimal Gills instrument, and unresolved build closure | Proposed; not started |
+| 11B | Six component contracts/bindings, authoritative slice graph, minimal Gills instrument, and unresolved build closure | [Complete](tasks/011b-component-contracts-gills-slice-graph-and-unresolved-build-closure.md) |
 | 11C | Bounded legacy backend expansion and ARM compile/link for the slice | Proposed; not started |
 | 12 | Basic object drawer and transparent graph canvas | Planned |
 | 13 | Direct Schuss graph-to-C++ frontend behind the backend contract | Planned |
@@ -67,8 +67,16 @@ operations, and product catalog commands. The seven-role review reuses the
 accepted Sine Oscillator, Crossfader, State-variable Filter, stereo Audio
 Output, and pitch-sequencer family identities; allocates only Square LFO,
 Cyclic Counter, and the distinct four-step implementation; and leaves all
-missing contracts, bindings, graph, instrument, and build work to proposed
-Task 011B.
+missing contracts, bindings, graph, instrument, and build work to Task 011B.
+Task 011B now closes that exact target-independent boundary with additive Q21
+pitch/behavior contracts, exact legacy seam maps, an eight-node and
+nine-connection graph, the minimal Gills blend mapping, and successor record
+set `000005`. Both mandatory joins need no adapter: the Boolean clock transport
+is exact and the counter owns rising-edge reception; the low-pass outlet has
+the same transport type as both endpoint inlets and cardinality two. The build
+closure is intentionally unresolved, selects only the already promoted mixed
+Crossfader, emits no backend invocation, and leaves lowering and ARM evidence
+to Task 011C.
 The completed boundaries are in
 `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and

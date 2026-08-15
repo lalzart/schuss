@@ -1,0 +1,47 @@
+{
+  "positive": {
+    "graph_id": "schuss-graph-000002",
+    "node_count": 8,
+    "connection_count": 9,
+    "contract_closure_count": 7,
+    "build_status": "unresolved",
+    "selected_nodes": [
+      "graph-node-000006"
+    ],
+    "backend_invocation": null
+  },
+  "negative": [
+    {
+      "fixture": "remove-required-connection",
+      "expected_code": "TASK011B_TOPOLOGY_CONNECTION_SET_MISMATCH"
+    },
+    {
+      "fixture": "change-reviewed-fixed-value",
+      "expected_code": "TASK011B_FIXED_VALUES_MISMATCH"
+    },
+    {
+      "fixture": "remove-rising-edge-rule",
+      "expected_code": "TASK011B_BEHAVIOR_RULE_SET_MISMATCH"
+    },
+    {
+      "fixture": "change-clock-semantic-role",
+      "expected_code": "TASK011B_CLOCK_ADAPTER_REQUIRED"
+    },
+    {
+      "fixture": "reduce-low-pass-cardinality",
+      "expected_code": "TASK011B_MONO_STEREO_ADAPTER_REQUIRED"
+    },
+    {
+      "fixture": "counter-fixed-value-out-of-range",
+      "expected_code": "GRAPH_FIXED_VALUE_OUT_OF_RANGE"
+    },
+    {
+      "fixture": "boolean-to-integer-implicit-conversion",
+      "expected_code": "GRAPH_CONNECTION_TYPE_INCOMPATIBLE"
+    },
+    {
+      "fixture": "third-low-pass-consumer",
+      "expected_code": "GRAPH_OUTPUT_CARDINALITY_EXCEEDED"
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 # Proposal: first non-UI Gills vertical slice after Task 010
 
-Status: proposed planning document; discussion only. No task in this proposal is
-active, and this document does not authorize implementation, compilation,
-device access, upload, flash, staging, commit, or push.
+Status: accepted roadmap. Tasks 011A and 011B are complete; Task 011C remains
+proposed and not started. This roadmap does not authorize compilation, device
+access, upload, flash, staging, commit, or push.
 
 This proposal turns the roadmap after Task 010 into a sequence of bounded
 follow-on tasks for one simple Gills instrument. Task 010 is complete. Its

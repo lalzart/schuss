@@ -31,6 +31,12 @@ This directory contains only contracts that current Schuss artifacts use:
   node interfaces and transparent-compound mapping keys;
 - `implementation-binding-v0.schema.json` validates exact realization and
   public-facet seam maps; and
+- `component-contract-v1.schema.json` additively validates semitone-offset
+  ports/parameters plus closed rising-edge, parameter-sum, indexed-selection,
+  and bounded-counter behavior rules without changing v0;
+- `implementation-binding-v1.schema.json` additively retains exact null legacy
+  parameter datatypes and the frozen 39-through-42-hex durable UUID widths
+  without changing v0; and
 - `dsp-graph-v0.schema.json` validates exact contract nodes, connections,
   exposures, parameter bindings, hierarchy, and compound mappings;
 - `capability-vocabulary-v0.schema.json`, `build-environment-v0.schema.json`,
@@ -64,3 +70,8 @@ toolchain/runtime, and backend identities are controlled stable values in the
 reusable schemas; the records under `contracts/` choose Ksoloti-specific
 values. See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md` and
 `docs/OPERATION_CONTRACTS.md`.
+
+Task 011B is the first selected mixed v0/v1 component-and-binding view. Q21 is
+used for semitone-offset legacy `Frac32` seams; Q27 remains the accepted
+normalized/audio representation. The successor schemas do not imply backend
+support or executable evidence.

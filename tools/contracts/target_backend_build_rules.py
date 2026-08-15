@@ -488,7 +488,11 @@ def _validate_eligibility_records(
             _diagnostic(diagnostics, "ELIGIBILITY_BACKEND_REFERENCE_UNRESOLVED", subject, "$.allowed_pair.backend_reference", "exact backend did not resolve")
         elif target_key not in {_ref(item["target_reference"], "compute_target_id") for item in backend["target_pairings"]}:
             _diagnostic(diagnostics, "ELIGIBILITY_TARGET_BACKEND_PAIR_UNDECLARED", subject, "$.allowed_pair", "eligibility pair is absent from the backend contract")
-        elif record["realization_form"] not in backend["supported_realization_forms"]:
+        elif (
+            record["realization_form"] not in backend["supported_realization_forms"]
+            and record["allowed_pair"]["state"]["status"]
+            not in {"unsupported", "not-evaluated"}
+        ):
             _diagnostic(diagnostics, "ELIGIBILITY_REALIZATION_FORM_UNSUPPORTED", subject, "$.realization_form", "backend does not accept the eligibility realization form")
 
         composite_key = binding_key, target_key, backend_key

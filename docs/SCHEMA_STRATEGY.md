@@ -441,6 +441,12 @@ The following are invalid architecture:
   `implementation-binding-v0`, and `dsp-graph-v0` schemas, exact Crossfader
   closure, and read-only validators documented in
   `docs/COMPONENT_GRAPH_CONTRACTS.md`.
+- Task 011B additive `component-contract-v1` and
+  `implementation-binding-v1` schemas, the exact seven-contract/eight-node
+  Gills-slice closure, and mixed-version read-only validation. Q21 semitone
+  offsets, Q27 normalized/audio values, public behavior rules, exact null
+  legacy parameter datatypes, and observed durable UUID widths remain bounded
+  successor semantics; no v0 byte changes.
 - Task 007 capability, environment, compute-target, backend, eligibility,
   build-request/result, artifact, resource, and evidence schemas; the
   Ksoloti-specific production closure; and the pure resolver documented in
@@ -450,14 +456,14 @@ The following are invalid architecture:
 
 ### Planned next
 
-Tasks 008-010 are complete: the Task 005-007 mechanisms are consolidated
+Tasks 008-011B are complete: the Task 005-007 mechanisms are consolidated
 beneath three sibling rule modules; versioned headless validation, inspection,
 resolution, and transaction operations are implemented; one exact Task 009
 slice reaches ARM compile/link; and the Task 010 product CLI projects the same
 operations without adding compiler or persistence semantics.
 
-1. **Task 011:** incremental catalog expansion with actual component contracts
-   and bindings; Phase 4B must not outrun Task 006.
+1. **Task 011C:** bounded legacy-backend expansion and compile/link evidence for
+   the exact Task 011B graph; Phase 4B must not outrun reviewed contracts.
 2. **Task 012:** basic object drawer and transparent graph canvas.
 3. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
    contract.

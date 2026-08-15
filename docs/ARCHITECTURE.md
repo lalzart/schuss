@@ -222,6 +222,17 @@ readiness derivation, and inspection are shared operation semantics. The CLI
 only constructs requests and renders results. Future GUI and AI clients must
 submit the same requests and consume the same canonical results.
 
+Task 011B consumes the projection's exact seven-role identity closure without
+putting catalog identity into the graph. Additive component and binding schema
+versions represent Q21 semitone offsets, receiver-owned rising-edge behavior,
+parameter/input summation, indexed selection, bounded counting, and frozen
+null legacy parameter datatypes. The authoritative graph still references only
+exact component contracts. Its explicit record-set view remains fail-closed:
+only the already promoted Crossfader resolves, all new bindings remain
+unresolved or unsupported, and no backend invocation exists. Task 011C may
+expand backend support but may not rewrite the graph or infer support from the
+legacy seam maps.
+
 The projection reference direction remains one way:
 
 ```text

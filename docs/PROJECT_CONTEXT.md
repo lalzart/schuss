@@ -135,6 +135,26 @@ owns the exact corpus and additive operation v2 schemas. `catalog.search` and
 GUI/AI clients. This task creates no new component contract, binding,
 eligibility, graph, instrument, build, or runtime evidence.
 
+Task 011B now closes the target-independent graph boundary for that exact
+seven-role catalog slice. Additive component-contract v1 records distinguish
+Q21 semitone offsets from Q27 normalized/audio values and declare rising-edge,
+parameter-plus-inlet, indexed-selection, and bounded-counter behavior.
+Implementation-binding v1 preserves exact null legacy parameter datatypes and
+the frozen durable UUID widths without changing v0. Six contracts and six
+exact bindings feed one authoritative eight-node, nine-connection graph; two
+oscillator nodes share one contract/binding. The existing Gills knob maps
+through instrument `blend` and graph `blend` to the accepted mixed
+Crossfader.
+
+Successor record set `schuss-record-set-000005` revision 1 is an exact superset
+of `000004`. Its six new eligibility companions remain not evaluated, its six
+probe inputs remain `not-authorized`, and its exact build request resolves to
+one selected Crossfader node, six unresolved new nodes, and one unsupported
+native-object sequencer node. No backend invocation, lowering, artifact,
+compile/link, device, real-time, or audible evidence is produced. Task 011C is
+the earliest owner of backend expansion and executable evidence for this
+slice.
+
 ## Terminology
 
 | Term | Meaning |
