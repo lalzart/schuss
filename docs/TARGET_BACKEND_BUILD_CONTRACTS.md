@@ -113,6 +113,60 @@ connected-device execution, real-time/resource validation, and
 audible/listening validation. Task 007 reaches levels 1 and 2 only; levels
 3-8 are `not-run`.
 
+## Task 009 prerequisite boundary
+
+The accepted Task 009 prerequisite does not promote any production record or
+perform levels 3-8. It establishes a separately selected record-set view and
+an authenticated local execution closure:
+
+- pinned source commit `08d3e6e1e2b61230308c20a15ded58ffdaf4656c`, tree
+  `75b75dba0c3734a8a53464ac93cdc20ec7203bb6`, and reproducible archive
+  SHA-256 `2f2d6c9e985e5b8609c847a0b21ad7611e614e7dd2a0cb3c51d9b50a77a36f32`;
+- exact Java/Javac, 896 compiled classes, 69 dependency JARs, and classpath
+  fingerprint `5ebd2f2b7f2aa6dc1d3d10a04edb5f2bbedd97cfb4372dab56dc22c778b17710`;
+- exact GNU Arm Embedded 9-2020-q2-update component bytes; and
+- a two-clean-root firmware reproduction whose retained bin SHA-256 is
+  `fd61a6a109a234d1c72e445a0542ab59c407a6896b9aafe2bfcbcadaf775e258`
+  and stripped link-ELF SHA-256 is
+  `df65f2153eb999386cc1bc30b382cafeac63aea8495bf8cb4cdad1c01fca944b`.
+
+`prerequisite-environment-v0` records those identities and their retained
+manifests without local absolute paths. This proves a reproducible execution
+environment and firmware/ABI source closure only. It is not Schuss graph
+lowering, generated patch source, patch compile/link, device, real-time, or
+audible evidence.
+
+The prerequisite also defines closed `conformance-probe-input-v0`,
+`conformance-probe-result-v0`, `conformance-probe-evidence-v0`, and
+`conformance-probe-procedure-v0` contracts. Their retained fixture names
+binding revision 1 as `candidate-under-test`, is `not-authorized` and `not-run`,
+and grants no production selection authority. Evidence points to an immutable
+probe result; results never point back to evidence. A later evidence claim can
+cite the probe-evidence companion as a semantic record, preserving the rule
+that a promoted eligibility revision cites evidence naming a strictly earlier
+binding revision.
+
+## Task 009 bounded executable proof
+
+Successor record set `schuss-record-set-000003` revision 1 is an exact superset
+of the prerequisite set. It retains every revision-1 record and adds:
+
+- an authorized immutable probe over mixed-Crossfader binding revision 1;
+- evidence claim `schuss-evidence-claim-000001` naming that earlier revision;
+- binding and eligibility revision 2, plus resolved environment, target,
+  backend, and request revision 2 records;
+- a successful ordinary `build.resolve` seam and production build result;
+- deterministic plan, `.axp`, source-map, C++, ARM object, ELF, and link-map
+  descriptors; and
+- a compiler/link-map resource report and separate evidence claims for levels
+  1 through 5.
+
+Two fresh probe roots and two fresh production-handler roots produced identical
+retained bytes. The exact ELF is little-endian ARM and linked against the
+authenticated runtime boundary, but it was not executed. Levels 6-8 remain
+`not-run`: no connected device, real-time measurement, or listening procedure
+occurred.
+
 ## Validator boundary and next tasks
 
 `validate_target_backend_build_contracts.py` is read only. It imports the Task
@@ -120,11 +174,8 @@ audible/listening validation. Task 007 reaches levels 1 and 2 only; levels
 validator imports upward, so the dependency remains acyclic. The three files
 now contain shared logic that should not be copied again.
 
-The first prerequisite of Task 008 is therefore a bounded validator-core
-consolidation: extract canonical JSON, schema traversal, portability,
-diagnostic, and exact-reference primitives into a lower-level module without
-changing record bytes or validation behavior. Task 008 can then define shared
-headless operations over the accepted records. Task 009 remains separate: one
-minimal deterministic legacy backend path, `.axp` boundary, source map, exact
-toolchain/runtime closure, and ARM compile/link evidence. Neither scope is
-implemented by Task 007.
+Task 008 completed the bounded validator-core consolidation and shared headless
+operations. Task 009 consumes that boundary without changing accepted Task
+005-008 output bytes. The default accepted view remains unresolved by design;
+the explicit Task 009 successor view resolves only the promoted exact pair.
+Task 010 remains separate and not started.

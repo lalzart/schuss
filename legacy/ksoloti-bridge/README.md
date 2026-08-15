@@ -17,3 +17,34 @@ commits, runs two fresh JVMs, and requires byte-identical output.
 
 Code outside this directory must consume versioned Schuss records rather than
 legacy Java or Swing objects.
+
+The Task 009 prerequisite adds
+`ExplicitCompileEnvironmentSmoke` as a bounded no-patch proof that a later
+bridge entrypoint can receive content-addressed source, registry, target,
+firmware, locale, and encoding values explicitly. It does not load the Blend
+graph, generate source, read preferences, present GUI, access a device, upload,
+or flash. Its compiled class and output are authenticated by the prerequisite
+environment capture; it is not an executable backend handler.
+
+The separately authorized prerequisite repair adds
+`ExplicitLegacyIsolationProbe`. It installs a fresh in-memory `Preferences`
+singleton with one explicit pinned factory root, invokes the real
+`generatedobjects.Mixer` provider through `SchussGeneratedCapture`, and checks
+the exact mixed-rate Crossfader emission without serializing factory objects.
+The repair harness runs it in isolated user, preference, temporary, and working
+roots, checks those roots and the factory tree for writes, rejects additional
+authority arguments, and audits its direct bytecode references. This remains a
+no-Schuss-graph prerequisite probe: it does not load or lower Blend, emit
+`.axp`/patch source, compile a patch, access a device, upload, or flash.
+
+Task 009 adds `ExactSliceBridge`, a headless entry point for only the exact
+Blend/mixed-Crossfader proof. It receives explicit `.axp`, output, pinned
+factory, pinned patcher, and runtime roots; installs fresh in-memory
+preferences; registers only the required inlet, outlet, and mixed-rate
+Crossfader types; compares the factory definition with the real Mixer provider;
+and emits one canonical JSON result plus generated C++. It cannot discover an
+ambient registry or call USB, upload, flash, or GUI presentation paths.
+
+The Python adapter in `tools/contracts/task009_backend.py` compiles and invokes
+this bridge from authenticated retained inputs. The bridge remains a bounded
+compatibility adapter, not the Schuss graph model or a general `.axp` compiler.

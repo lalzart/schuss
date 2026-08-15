@@ -182,8 +182,30 @@ validator core. Device/instrument, component/graph, and target/backend/build
 rules are siblings that import only the core. The aggregate validator composes
 them. Historic validator summaries and bytes remain unchanged.
 
-The Task 009 invocation seam is data-only and stops before backend lowering;
-Task 008 contains no executable handler. See `docs/OPERATION_CONTRACTS.md`.
+Repository membership is explicit. `record-set-v0` pins schemas and records by
+portable path and byte/content hash. The Task 005-008 accepted set is the
+default; prospective work is loaded only by an exact manifest reference, and
+the operation context retains that selected reference.
+
+The Task 009 invocation seam remains data-only and stops before backend
+lowering; Task 008 contains no executable handler. The bounded Task 009 handler
+accepts that exact public value as a separate adapter and does not change the
+dispatcher or introduce a client-specific request. See
+`docs/OPERATION_CONTRACTS.md`.
+
+The Task 009 prerequisite authenticates the local pinned source, Java,
+classpath, GNU Arm, and firmware/runtime closure and adds a separate
+non-production `candidate-under-test` probe/result/evidence boundary. That
+environment identity is not backend-stage evidence. The retained prerequisite
+fixture remains `not-authorized` and `not-run`. Task 009 adds a separate
+authorized probe and successor record set without rewriting that fixture.
+
+The implemented Task 009 path is deliberately one slice: exact Blend graph ->
+promoted mixed-Crossfader binding -> deterministic legacy `.axp` -> isolated
+Java generation -> generated C++ -> exact ARM object/ELF/link map. The `.axp`
+and every later product are boundary artifacts; the Schuss graph remains the
+authority. Compile/link evidence reaches level 5 only. No executable was sent
+to hardware or treated as runtime or audible proof.
 
 ## Legacy boundary
 

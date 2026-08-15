@@ -94,15 +94,28 @@ contracts and implementation seam maps, one authoritative typed graph, and an
 exactly resolved instrument revision 2 while retaining deferred revision 1.
 Structural, exact-reference, target-independent type, legacy seam-map, and
 graph-target evidence pass. Task 007 now adds reusable target/backend/build
-contracts and a Ksoloti-specific production closure. Its pure resolver reports
-the candidate unresolved because compatibility, capabilities, toolchain, and
-runtime identity remain unproved. No backend, artifact-generation, ARM,
-device, real-time, or audible evidence was performed. Task 008 now consolidates
+contracts and a Ksoloti-specific revision-1 production closure. Its default
+pure resolver still reports that frozen candidate unresolved. Task 008 now consolidates
 the validator core and provides one shared headless dispatcher for validation,
 inspection, build resolution, and atomic graph transactions, plus a minimal
-canonical-JSON process boundary. It stops before lowering and exposes no
-backend handler. Task 009 is next. See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`
-and `docs/OPERATION_CONTRACTS.md`.
+canonical-JSON process boundary. Its operation layer remains pure and stops
+before lowering. See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md` and
+`docs/OPERATION_CONTRACTS.md`.
+
+The Task 009 prerequisite is complete. Default validation and operations now
+load the exact frozen Task 005-008 record set, while the prerequisite view is an
+explicit exact superset. A pinned source/Java/classpath/GNU Arm/firmware closure
+and a closed `candidate-under-test` probe contract are established. The
+retained prerequisite probe remains `not-authorized` and `not-run`.
+
+Task 009 is now complete for the exact Blend/mixed-Crossfader slice. Successor
+record set `schuss-record-set-000003` revision 1 adds an authorized probe,
+strictly-earlier binding evidence, promoted revision-2 target/backend/
+environment/binding/eligibility/request records, one successful build result,
+14 probe/production artifact descriptors, a static resource report, and
+separate evidence claims through ARM compile/link level 5. The production
+handler consumes the exact Task 008 seam; it is not a general compiler.
+Connected-device, real-time, and audible levels 6-8 remain `not-run`.
 
 ## Terminology
 

@@ -12,8 +12,8 @@ one compatibility backend.
 
 ## Current status
 
-Schuss has completed the Phase 4A semantic-catalog foundation and the Task 008
-shared headless control-plane gate:
+Schuss has completed the Phase 4A semantic-catalog foundation and the bounded
+Task 009 legacy-backend proof:
 
 - the project boundaries and terminology are documented;
 - upstream sources are pinned without committing machine-local paths;
@@ -45,12 +45,20 @@ shared headless control-plane gate:
   modules, one aggregate validator, four versioned headless operations, atomic
   graph transactions, and a minimal canonical-JSON `schuss op` adapter provide
   one client-neutral control plane;
-- historical instrument revision 1 and all Task 005/006 records remain
-  byte-identical; the production binding candidate remains unresolved and all
-  lowering, artifact, ARM, connected-device, real-time, and audible levels are
-  `not-run`;
-- no Schuss graph editor, executable backend/compiler frontend, device runtime,
-  or desktop app is implemented yet.
+- the Task 009 prerequisite is complete: exact accepted/prospective record-set
+  views, a reproducible pinned Java/source/GNU Arm/firmware closure, and a
+  closed non-production probe/evidence boundary are validated; the retained
+  probe remains `not-authorized` and `not-run`;
+- Task 009 is complete for one exact graph slice: an authorized non-production
+  probe over binding revision 1 supports binding/eligibility revision 2, the
+  ordinary Task 008 resolver emits its unchanged invocation seam, and the
+  bounded handler deterministically emits `.axp`, source-map, generated C++,
+  ARM object, ELF, and link-map artifacts;
+- successor record set `schuss-record-set-000003` revision 1 retains all older
+  records byte-identically and records separate evidence levels 1-5; connected
+  device, real-time, and audible levels 6-8 remain `not-run`; and
+- no general compiler frontend, graph editor, device runtime, Task 010 product
+  CLI, or desktop app is implemented yet.
 
 Start with [the project context](docs/PROJECT_CONTEXT.md), then read
 [the architecture](docs/ARCHITECTURE.md),

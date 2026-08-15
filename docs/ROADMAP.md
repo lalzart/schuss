@@ -15,7 +15,7 @@ into transparent, typed Schuss models.
 | 6 | Component-contract, implementation-binding, and DSP-graph schemas | Complete |
 | 7 | Compute-target, backend-capability, build, artifact, and evidence schemas | Complete; Task 007 contract gate |
 | 8 | Shared headless validation and typed operation layer | Complete; shared dispatcher and minimal process gate |
-| 9 | One minimal graph through the legacy `.axp` adapter and ARM compiler/linker | Next |
+| 9 | One minimal graph through the legacy `.axp` adapter and ARM compiler/linker | Complete; exact Blend slice reaches level 5 |
 | 10 | Deterministic structured CLI over shared operations | Planned |
 | 4B / 11 | Incremental reviewed-core expansion with actual contracts and bindings | Gated on Phase 6 contract model |
 | 12 | Basic object drawer and transparent graph canvas | Planned |
@@ -48,8 +48,15 @@ production candidate remains unresolved and no backend stage ran. Task 008 now
 adds the lower shared validator core, three sibling rule modules, one aggregate
 validator, four versioned headless operations, atomic in-memory graph
 transactions, a data-only Task 009 seam, and the minimal canonical-JSON
-`schuss op` process boundary. Task 009 is next; no lowering or tool invocation
-occurred in Task 008. The completed boundaries are in
+`schuss op` process boundary. The Task 009 prerequisite now adds exact accepted
+and prospective record-set views, an authenticated pinned Java/source/ARM/
+firmware closure, and a closed non-production probe/evidence boundary. Task
+009 then executes an authorized probe, promotes only new exact revisions, runs
+ordinary `build.resolve`, and carries its exact seam through deterministic
+`.axp`, Java generation, and ARM compile/link for the one-node Blend slice.
+Successor record set `schuss-record-set-000003` records levels 1-5 as passed;
+levels 6-8 remain `not-run`. Task 010 is the next planned product-facing gate.
+The completed boundaries are in
 `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and
 `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`, and

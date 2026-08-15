@@ -5,6 +5,8 @@ Validate the accepted production closures:
 ```bash
 python3 tools/contracts/validate_component_graph_contracts.py
 python3 tools/contracts/validate_target_backend_build_contracts.py
+python3 tools/contracts/validate_task009_prerequisite.py
+python3 tools/contracts/run_task009.py --check
 python3 -m unittest discover -s tools/contracts/tests
 ```
 
@@ -30,3 +32,9 @@ Task 008 operations and their minimal machine adapter are documented in
 ```bash
 bin/schuss op --request request.json --json
 ```
+
+`run_task009.py --check` is read only and validates the explicit Task 009
+successor record set plus retained artifacts. Running it without `--check` is
+the separately authorized executable proof path: it invokes the exact isolated
+Java and ARM closure and writes only to its explicit task output roots. It is
+not a general compiler or product CLI.

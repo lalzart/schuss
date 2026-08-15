@@ -25,6 +25,25 @@ mechanisms. Domain policy remains in its owning rule module. The three historic
 `validate_*_contracts.py` commands are compatibility adapters and preserve
 their accepted summaries byte-for-byte.
 
+## Explicit record-set boundary
+
+Repository validation no longer treats every JSON file in a known directory as
+one ambient registry. `record-set-v0` pins every selected schema and semantic
+record by portable path, raw byte hash, semantic content hash, stable ID, and
+revision. Missing, extra, duplicate, stale, hash-mismatched, or unlisted members
+fail closed.
+
+The default validators and `load_repository_context()` select exactly
+`schuss-record-set-000001` revision 1, content hash
+`sha256:f3fde23e7410a0a78c79ffdbcf3741995cedbf69f41c5a47e596ac39a2ac62f6`.
+That is the frozen Task 005-008 view. The Task 009 prerequisite view is an
+explicit opt-in parent-preserving superset,
+`schuss-record-set-000002` revision 1, content hash
+`sha256:6f2855c384ef8bab88991a6cabdd8416c7f3c59a010eed0c6cda1ac08651ecaf`.
+The in-memory operation context retains the exact selected record-set
+reference. It never guesses a newest revision or derives membership from
+filesystem order.
+
 ## Request and result envelopes
 
 `operation-request-v1.schema.json` defines a closed request for exactly one of:
@@ -66,7 +85,16 @@ next_stage_status: not-run
 executable_handler_status: absent
 ```
 
-Task 008 defines no executable backend handler.
+Task 008 defines no executable backend handler. The
+`executable_handler_status: absent` member records that frozen producer-side
+boundary; it is not a mutable global handler registry.
+
+Task 009 leaves this value and the dispatcher unchanged. Its bounded external
+handler revalidates the exact seam plus the accepted build-request schema,
+requires the complete revision-2 request and selected binding, rejects stale or
+uncertain input before creating an output root, and then runs only the exact
+Blend slice. The retained seam bytes are recorded under
+`evidence/task-009-v1/`.
 
 `graph.transact` supports only add/remove node, add/remove connection, set node
 parameter, and set node attribute. It rejects a stale base content hash, applies
@@ -90,8 +118,8 @@ Exit codes are `0` for success, `1` for a dispatched non-success result, `2`
 when dispatch could not begin, and `3` for an unexpected adapter failure.
 
 Task 010 owns ergonomic commands, human output, convenient flags, completion,
-progress, and final CLI UX. Task 009 owns lowering, `.axp`, Java and ARM tools,
-compile/link, and executable artifacts.
+progress, and final CLI UX. Task 009 has completed only its bounded lowering,
+`.axp`, Java/ARM, compile/link, and artifact proof; it adds no product CLI.
 
 ## Evidence boundary
 
