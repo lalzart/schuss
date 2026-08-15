@@ -95,8 +95,9 @@ Tasks 013-015 are complete. ADR 0010 retires the misinterpreted Task 012B UI
 contract. The Task 016 contract and pinned-source prerequisite audit are
 complete, but implementation awaits one explicit choice between recommended
 legacy-equivalent behavior and a separately designed Schuss-native sound. Task
-017 has a concrete contract and waits for Task 016. UI remains an unnumbered
-later milestone requiring new explicit authorization.
+017 has a concrete contract and waits for Task 016. The object drawer and
+transparent graph canvas remain an unnumbered later UI milestone requiring new
+explicit authorization.
 
 Start with [the project context](docs/PROJECT_CONTEXT.md), then read
 [the architecture](docs/ARCHITECTURE.md),
@@ -176,6 +177,10 @@ python3 tools/contracts/validate_task011b.py
 python3 tools/contracts/validate_task012a.py
 python3 tools/contracts/validate_task013.py
 python3 tools/contracts/validate_task014.py
+python3 tools/contracts/validate_task015.py
+python3 tools/contracts/validate_task016_contract.py
+python3 tools/contracts/validate_task017_contract.py
+python3 tools/contracts/validate_backbone_governance.py
 ```
 
 The raw snapshot records 4,209 candidate files and two retained XML parse

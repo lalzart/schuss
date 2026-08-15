@@ -1,0 +1,47 @@
+{
+  "schema_version": "backbone-governance-negative-fixtures-v1",
+  "cases": [
+    {
+      "name": "ui-resurrection",
+      "path": "docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md",
+      "old": "No UI\nimplementation was accepted under this task.",
+      "new": "Task 012B is a runnable deferred UI implementation.",
+      "expected_code": "TASK_012B_UI_RESURRECTED"
+    },
+    {
+      "name": "informal-b6-alias",
+      "path": "docs/ROADMAP.md",
+      "old": "## Active backbone sequence and deferred UI",
+      "new": "## Active B6 sequence and deferred UI",
+      "expected_code": "INFORMAL_TASK_ALIAS_PRESENT"
+    },
+    {
+      "name": "lettered-task-alias",
+      "path": "README.md",
+      "old": "Task 016 contract and pinned-source prerequisite audit",
+      "new": "Task 016A contract and pinned-source prerequisite audit",
+      "expected_code": "LETTERED_TASK_ALIAS_PRESENT"
+    },
+    {
+      "name": "status-drift",
+      "path": "docs/tasks/015-normalized-dsp-and-minimal-direct-frontend.md",
+      "old": "Status: complete on 2026-08-16; accepted locally through evidence level 4.",
+      "new": "Status: planned; implementation not started.",
+      "expected_code": "TASK_015_STATUS_DRIFT"
+    },
+    {
+      "name": "bad-supersession",
+      "path": "docs/decisions/0009-resume-task-012b-after-durable-project-authoring.md",
+      "old": "- Status: superseded by ADR 0010",
+      "new": "- Status: accepted",
+      "expected_code": "ADR_0009_NOT_HISTORICAL"
+    },
+    {
+      "name": "task017-dependency-loss",
+      "path": "docs/tasks/017-curated-core-and-headless-reference-instruments.md",
+      "old": "Task 016 must be complete with accepted direct DSP/runtime specifications,",
+      "new": "Task 016 may complete later; its direct DSP/runtime specifications are optional,",
+      "expected_code": "TASK_017_DEPENDENCY_INVALID"
+    }
+  ]
+}

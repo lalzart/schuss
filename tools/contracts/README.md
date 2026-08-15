@@ -19,6 +19,7 @@ python3 tools/contracts/validate_task015.py
 python3 tools/contracts/compiler_determinism_matrix.py
 python3 tools/contracts/validate_task016_contract.py
 python3 tools/contracts/validate_task017_contract.py
+python3 tools/contracts/validate_backbone_governance.py
 python3 -m unittest discover -s tools/contracts/tests
 ```
 
@@ -117,3 +118,14 @@ two later task contracts and their dependency/stop conditions. They claim no
 implementation or evidence: Task 016's pinned-source brief characterizes all
 eight prerequisites conditionally but awaits one compatibility-mode choice,
 and Task 017 awaits Task 016.
+
+`validate_backbone_governance.py` is the read-only, fail-closed current-routing
+guard. It checks ADR 0010 authority and ADR 0009 supersession, the ordinary
+Task 013-020 sequence, live Task 012B-017 status/dependency gates, and the
+unnumbered explicitly authorized UI milestone across the README, project
+context, roadmap, decisions index, and task contracts. Superseded ADR bodies
+and completed-task report sections remain valid historical evidence and are
+excluded from current alias scans. The command emits one deterministic JSON
+line and never rewrites or normalizes a document.
+The exact validation evidence and limitations are retained in
+`evidence/backbone-governance-guard-v1/completion-report.md`.
