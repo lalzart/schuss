@@ -12,6 +12,11 @@ public final class SchussPatchAccess {
         return patch.objectInstances;
     }
 
+    /** Invoke the pinned package-private generator without exposing it elsewhere. */
+    public static String generateCode(Patch patch) {
+        return patch.GenerateCode3();
+    }
+
     public static void initializeSynonyms() {
         if (Synonyms.instance == null) {
             axoloti.utils.AxolotiLibrary factory =

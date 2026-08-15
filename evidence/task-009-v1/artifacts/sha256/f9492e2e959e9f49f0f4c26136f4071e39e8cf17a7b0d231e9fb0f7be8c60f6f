@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch-1.0 appVersion="1.0.12">
+   <obj type="patch/inlet a" uuid="b577fe41e0a6bc7b5502ce33cb8a3129e2e28ee5" name="schuss_a" x="14" y="28">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="patch/inlet a" uuid="b577fe41e0a6bc7b5502ce33cb8a3129e2e28ee5" name="schuss_b" x="14" y="98">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="patch/inlet f" uuid="5c585d2dcd9c05631e345ac09626a22a639d7c13" name="schuss_blend" x="14" y="168">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="mix/xfade" uuid="375dc91d218e96cdc9cbc7e92adb48f705ef701a" name="schuss_xfade" x="182" y="84">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="patch/outlet a" uuid="abd8c5fd3b0524a6630f65cad6dc27f6c58e2a3e" name="schuss_out" x="350" y="84">
+      <params/>
+      <attribs/>
+   </obj>
+   <nets>
+      <net>
+         <source obj="schuss_a" outlet="inlet"/>
+         <dest obj="schuss_xfade" inlet="i1"/>
+      </net>
+      <net>
+         <source obj="schuss_b" outlet="inlet"/>
+         <dest obj="schuss_xfade" inlet="i2"/>
+      </net>
+      <net>
+         <source obj="schuss_blend" outlet="inlet"/>
+         <dest obj="schuss_xfade" inlet="c"/>
+      </net>
+      <net>
+         <source obj="schuss_xfade" outlet="o"/>
+         <dest obj="schuss_out" inlet="outlet"/>
+      </net>
+   </nets>
+   <settings>
+      <subpatchmode>normal</subpatchmode>
+   </settings>
+   <notes><![CDATA[]]></notes>
+</patch-1.0>

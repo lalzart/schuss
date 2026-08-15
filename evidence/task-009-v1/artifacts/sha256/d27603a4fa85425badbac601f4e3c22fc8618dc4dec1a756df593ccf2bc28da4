@@ -1,0 +1,1907 @@
+
+Discarded input sections
+
+ .group         0x0000000000000000       0x2c ../../proof/build/blend-stripped.o
+ .group         0x0000000000000000        0x8 ../../proof/build/blend-stripped.o
+ .text          0x0000000000000000        0x0 ../../proof/build/blend-stripped.o
+ .data          0x0000000000000000        0x0 ../../proof/build/blend-stripped.o
+ .bss           0x0000000000000000        0x0 ../../proof/build/blend-stripped.o
+ .ARM.extab.text.ApplyPreset
+                0x0000000000000000        0x0 ../../proof/build/blend-stripped.o
+ .ARM.extab.text._Z18PatchMidiInHandler13midi_device_thhhh
+                0x0000000000000000        0x0 ../../proof/build/blend-stripped.o
+ .ARM.extab.text._Z12PatchDisposev
+                0x0000000000000000        0x0 ../../proof/build/blend-stripped.o
+ .ARM.extab.text._Z12xpatch_init2m.part.0
+                0x0000000000000000        0x0 ../../proof/build/blend-stripped.o
+ .ARM.extab.boot
+                0x0000000000000000        0x0 ../../proof/build/blend-stripped.o
+ .ARM.extab.text._Z12PatchProcessPlS_
+                0x0000000000000000        0x0 ../../proof/build/blend-stripped.o
+ .text._Z12xpatch_init2m
+                0x0000000000000000       0x10 ../../proof/build/blend-stripped.o
+ .ARM.extab.text._Z12xpatch_init2m
+                0x0000000000000000        0x0 ../../proof/build/blend-stripped.o
+ .ARM.exidx.text._Z12xpatch_init2m
+                0x0000000000000000        0x8 ../../proof/build/blend-stripped.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+CCMSRAM          0x0000000010000000 0x000000000000c800 rw
+SRAM1            0x0000000000011000 0x000000000000b000 xrw
+SRAM2            0x000000002001c000 0x0000000000002000 xrw
+SRAM3            0x0000000020020000 0x0000000000010000 xrw
+SDRAM            0x00000000c0000000 0x0000000002000000
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD ../../proof/build/blend-stripped.o
+LOAD /Applications/Ksoloti Local.app/Contents/Resources/platform_mac_x64/bin/../lib/gcc/arm-none-eabi/9.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libm.a
+LOAD ../../runtime/build/ksoloti.elf
+START GROUP
+LOAD /Applications/Ksoloti Local.app/Contents/Resources/platform_mac_x64/bin/../lib/gcc/arm-none-eabi/9.3.1/thumb/v7e-m+fp/hard/libgcc.a
+LOAD /Applications/Ksoloti Local.app/Contents/Resources/platform_mac_x64/bin/../lib/gcc/arm-none-eabi/9.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc.a
+END GROUP
+
+.text           0x0000000000011000       0x10
+ *(.boot)
+ .boot          0x0000000000011000       0x10 ../../proof/build/blend-stripped.o
+                0x0000000000011000                xpatch_init
+ *(.text)
+                0x0000000000011010                etext = .
+
+.glue_7         0x0000000000011010        0x0
+ .glue_7        0x0000000000011010        0x0 linker stubs
+
+.glue_7t        0x0000000000011010        0x0
+ .glue_7t       0x0000000000011010        0x0 linker stubs
+
+.vfp11_veneer   0x0000000000011010        0x0
+ .vfp11_veneer  0x0000000000011010        0x0 linker stubs
+
+.v4_bx          0x0000000000011010        0x0
+ .v4_bx         0x0000000000011010        0x0 linker stubs
+
+.text.ApplyPreset
+                0x0000000000011010        0x4
+ .text.ApplyPreset
+                0x0000000000011010        0x4 ../../proof/build/blend-stripped.o
+                0x0000000000011010                ApplyPreset
+
+.text._Z18PatchMidiInHandler13midi_device_thhhh
+                0x0000000000011014        0x4
+ .text._Z18PatchMidiInHandler13midi_device_thhhh
+                0x0000000000011014        0x4 ../../proof/build/blend-stripped.o
+                0x0000000000011014                PatchMidiInHandler(midi_device_t, unsigned char, unsigned char, unsigned char, unsigned char)
+
+.text._Z12PatchDisposev
+                0x0000000000011018       0x2c
+ .text._Z12PatchDisposev
+                0x0000000000011018       0x2c ../../proof/build/blend-stripped.o
+                0x0000000000011018                PatchDispose()
+
+.text._ZN5rootc12clearBuffersEv.isra.0
+                0x0000000000011044       0x20
+ .text._ZN5rootc12clearBuffersEv.isra.0
+                0x0000000000011044       0x20 ../../proof/build/blend-stripped.o
+
+.text._Z12xpatch_init2m.part.0
+                0x0000000000011068       0xd0
+ .text._Z12xpatch_init2m.part.0
+                0x0000000000011068       0xc8 ../../proof/build/blend-stripped.o
+ .text._Z12xpatch_init2m.part.0.__stub
+                0x0000000000011130        0x8 linker stubs
+
+.text._ZN5rootc3dspEv
+                0x0000000000011138      0x290
+ .text._ZN5rootc3dspEv
+                0x0000000000011138      0x290 ../../proof/build/blend-stripped.o
+                0x0000000000011138                rootc::dsp()
+
+.text._Z12PatchProcessPlS_
+                0x00000000000113c8      0x114
+ .text._Z12PatchProcessPlS_
+                0x00000000000113c8      0x114 ../../proof/build/blend-stripped.o
+                0x00000000000113c8                PatchProcess(long*, long*)
+
+.iplt           0x00000000000114dc        0x0
+ .iplt          0x00000000000114dc        0x0 ../../proof/build/blend-stripped.o
+
+.bss            0x0000000010000000        0x0
+                0x0000000010000000                PROVIDE (_pbss_start = .)
+                0x0000000010000000                sbss = .
+ *(.bss)
+                0x0000000010000000                ebss = .
+                0x0000000010000000                PROVIDE (_pbss_end = .)
+
+.bss.AudioInputLeft
+                0x0000000010000000       0x40
+ .bss.AudioInputLeft
+                0x0000000010000000       0x40 ../../proof/build/blend-stripped.o
+                0x0000000010000000                AudioInputLeft
+
+.bss.AudioInputRight
+                0x0000000010000040       0x40
+ .bss.AudioInputRight
+                0x0000000010000040       0x40 ../../proof/build/blend-stripped.o
+                0x0000000010000040                AudioInputRight
+
+.bss.AudioOutputLeft
+                0x0000000010000080       0x40
+ .bss.AudioOutputLeft
+                0x0000000010000080       0x40 ../../proof/build/blend-stripped.o
+                0x0000000010000080                AudioOutputLeft
+
+.bss.AudioOutputRight
+                0x00000000100000c0       0x40
+ .bss.AudioOutputRight
+                0x00000000100000c0       0x40 ../../proof/build/blend-stripped.o
+                0x00000000100000c0                AudioOutputRight
+
+.bss._ZL4root   0x0000000010000100      0x128
+ .bss._ZL4root  0x0000000010000100      0x128 ../../proof/build/blend-stripped.o
+
+constructors    0x00000000000114dc        0x0
+                0x00000000000114dc                PROVIDE (__ctor_array_start = .)
+ *(SORT_BY_NAME(.init_array.*))
+ *(.init_array)
+                0x00000000000114dc                PROVIDE (__ctor_array_end = .)
+
+destructors     0x00000000000114dc        0x0
+                0x00000000000114dc                PROVIDE (__dtor_array_start = .)
+ *(.fini_array)
+ *(SORT_BY_NAME(.fini_array.*))
+                0x00000000000114dc                PROVIDE (__dtor_array_end = .)
+
+.rodata         0x00000000000114dc        0x0
+ *(.rodata)
+ *(.rodata.*)
+ .rodata._ZZN5rootc10GetPresetsEvE1p
+                0x00000000000114dc        0x0 ../../proof/build/blend-stripped.o
+
+.ARM.exidx.text.ApplyPreset
+                0x00000000000114dc        0x0
+ .ARM.exidx.text.ApplyPreset
+                0x00000000000114dc        0x0 ../../proof/build/blend-stripped.o
+                                          0x8 (size before relaxing)
+
+.ARM.exidx.text._Z18PatchMidiInHandler13midi_device_thhhh
+                0x00000000000114dc        0x0
+ .ARM.exidx.text._Z18PatchMidiInHandler13midi_device_thhhh
+                0x00000000000114dc        0x0 ../../proof/build/blend-stripped.o
+                                          0x8 (size before relaxing)
+
+.ARM.exidx.text._Z12PatchDisposev
+                0x00000000000114dc        0x8
+ .ARM.exidx.text._Z12PatchDisposev
+                0x00000000000114dc        0x8 ../../proof/build/blend-stripped.o
+
+.ARM.extab.text._ZN5rootc12clearBuffersEv.isra.0
+                0x00000000000114e4        0x0
+ .ARM.extab.text._ZN5rootc12clearBuffersEv.isra.0
+                0x00000000000114e4        0x0 ../../proof/build/blend-stripped.o
+
+.ARM.exidx.text._ZN5rootc12clearBuffersEv.isra.0
+                0x00000000000114e4        0x8
+ .ARM.exidx.text._ZN5rootc12clearBuffersEv.isra.0
+                0x00000000000114e4        0x8 ../../proof/build/blend-stripped.o
+
+.ARM.exidx.text._Z12xpatch_init2m.part.0
+                0x00000000000114ec        0x8
+ .ARM.exidx.text._Z12xpatch_init2m.part.0
+                0x00000000000114ec        0x8 ../../proof/build/blend-stripped.o
+
+.ARM.exidx.boot
+                0x00000000000114f4        0x8
+ .ARM.exidx.boot
+                0x00000000000114f4        0x8 ../../proof/build/blend-stripped.o
+
+.ARM.extab.text._ZN5rootc3dspEv
+                0x00000000000114fc        0x0
+ .ARM.extab.text._ZN5rootc3dspEv
+                0x00000000000114fc        0x0 ../../proof/build/blend-stripped.o
+
+.ARM.exidx.text._ZN5rootc3dspEv
+                0x00000000000114fc        0x8
+ .ARM.exidx.text._ZN5rootc3dspEv
+                0x00000000000114fc        0x8 ../../proof/build/blend-stripped.o
+
+.ARM.exidx.text._Z12PatchProcessPlS_
+                0x0000000000011504        0x0
+ .ARM.exidx.text._Z12PatchProcessPlS_
+                0x0000000000011504        0x0 ../../proof/build/blend-stripped.o
+                                          0x8 (size before relaxing)
+
+.rel.dyn        0x0000000000011504        0x0
+ .rel.iplt      0x0000000000011504        0x0 ../../proof/build/blend-stripped.o
+
+.data           0x0000000000011504        0x0
+                0x0000000000011504                sdata = .
+ *(.data)
+                0x0000000000011504                edata = .
+
+.igot.plt       0x0000000000011504        0x0
+ .igot.plt      0x0000000000011504        0x0 ../../proof/build/blend-stripped.o
+
+.sram2
+ *(.sram2)
+ *(.sram2.*)
+
+.sram3          0x0000000020020000        0x0
+                0x0000000020020000                . = ALIGN (0x4)
+                [!provide]                        PROVIDE (_sram3_start = .)
+ *(.sram3)
+ *(.sram3.*)
+                [!provide]                        PROVIDE (_sram3_end = .)
+
+.sdram          0x00000000c0000000        0x0
+ *(.sdram)
+ *(.sdram.*)
+                0x00000000c0000000                PROVIDE (_sdram_dyn_start = .)
+                0x00000000c2000000                PROVIDE (_sdram_dyn_end = (ORIGIN (SDRAM) + LENGTH (SDRAM)))
+OUTPUT(../../proof/build/blend-deterministic.elf elf32-littlearm)
+LOAD linker stubs
+
+.comment        0x0000000000000000       0x4c
+ .comment       0x0000000000000000       0x4c ../../proof/build/blend-stripped.o
+                                         0x4d (size before relaxing)
+
+.ARM.attributes
+                0x0000000000000000       0x32
+ .ARM.attributes
+                0x0000000000000000       0x34 ../../proof/build/blend-stripped.o
+
+Cross Reference Table
+
+Symbol                                            File
+ADAU1961_ReadRegister6                            ../../runtime/build/ksoloti.elf
+ADAU1961_WriteRegister                            ../../runtime/build/ksoloti.elf
+ADAU1961_WriteRegister6                           ../../runtime/build/ksoloti.elf
+ADCD1                                             ../../runtime/build/ksoloti.elf
+ApplyPreset                                       ../../proof/build/blend-stripped.o
+AudioInputLeft                                    ../../proof/build/blend-stripped.o
+AudioInputRight                                   ../../proof/build/blend-stripped.o
+AudioOutputLeft                                   ../../proof/build/blend-stripped.o
+AudioOutputRight                                  ../../proof/build/blend-stripped.o
+BDU1                                              ../../runtime/build/ksoloti.elf
+BootLoaderInit                                    ../../runtime/build/ksoloti.elf
+BusFaultVector                                    ../../runtime/build/ksoloti.elf
+BusFault_Handler                                  ../../runtime/build/ksoloti.elf
+CalcCRC32                                         ../../runtime/build/ksoloti.elf
+CheckForMounterBoot                               ../../runtime/build/ksoloti.elf
+CheckForReset                                     ../../runtime/build/ksoloti.elf
+DebugMon_Handler                                  ../../runtime/build/ksoloti.elf
+DspTime                                           ../../runtime/build/ksoloti.elf
+FMC_ClearFlag                                     ../../runtime/build/ksoloti.elf
+FMC_ClearITPendingBit                             ../../runtime/build/ksoloti.elf
+FMC_GetFlagStatus                                 ../../runtime/build/ksoloti.elf
+FMC_GetITStatus                                   ../../runtime/build/ksoloti.elf
+FMC_GetModeStatus                                 ../../runtime/build/ksoloti.elf
+FMC_NANDStructInit                                ../../runtime/build/ksoloti.elf
+FMC_NORSRAMStructInit                             ../../runtime/build/ksoloti.elf
+FMC_PCCARDStructInit                              ../../runtime/build/ksoloti.elf
+FMC_SDRAMCmdConfig                                ../../runtime/build/ksoloti.elf
+FMC_SDRAMInit                                     ../../runtime/build/ksoloti.elf
+FMC_SDRAMStructInit                               ../../runtime/build/ksoloti.elf
+FMC_SDRAMWriteProtectionConfig                    ../../runtime/build/ksoloti.elf
+FMC_SetAutoRefresh_Number                         ../../runtime/build/ksoloti.elf
+FMC_SetRefreshCount                               ../../runtime/build/ksoloti.elf
+FastLog                                           ../../runtime/build/ksoloti.elf
+GetFirmwareID                                     ../../runtime/build/ksoloti.elf
+GetIndexOfCurrentPatch                            ../../runtime/build/ksoloti.elf
+HAL_Delay                                         ../../runtime/build/ksoloti.elf
+HAL_GPIO_DeInit                                   ../../runtime/build/ksoloti.elf
+HAL_GPIO_EXTI_Callback                            ../../runtime/build/ksoloti.elf
+HAL_GPIO_EXTI_IRQHandler                          ../../runtime/build/ksoloti.elf
+HAL_GPIO_Init                                     ../../runtime/build/ksoloti.elf
+HAL_GPIO_LockPin                                  ../../runtime/build/ksoloti.elf
+HAL_GPIO_ReadPin                                  ../../runtime/build/ksoloti.elf
+HAL_GPIO_TogglePin                                ../../runtime/build/ksoloti.elf
+HAL_GPIO_WritePin                                 ../../runtime/build/ksoloti.elf
+HAL_GetTick                                       ../../runtime/build/ksoloti.elf
+HAL_HCD_Connect_Callback                          ../../runtime/build/ksoloti.elf
+HAL_HCD_DeInit                                    ../../runtime/build/ksoloti.elf
+HAL_HCD_Disconnect_Callback                       ../../runtime/build/ksoloti.elf
+HAL_HCD_GetCurrentFrame                           ../../runtime/build/ksoloti.elf
+HAL_HCD_GetCurrentSpeed                           ../../runtime/build/ksoloti.elf
+HAL_HCD_GetState                                  ../../runtime/build/ksoloti.elf
+HAL_HCD_HC_GetState                               ../../runtime/build/ksoloti.elf
+HAL_HCD_HC_GetURBState                            ../../runtime/build/ksoloti.elf
+HAL_HCD_HC_GetXferCount                           ../../runtime/build/ksoloti.elf
+HAL_HCD_HC_Halt                                   ../../runtime/build/ksoloti.elf
+HAL_HCD_HC_Init                                   ../../runtime/build/ksoloti.elf
+HAL_HCD_HC_NotifyURBChange_Callback               ../../runtime/build/ksoloti.elf
+HAL_HCD_HC_SubmitRequest                          ../../runtime/build/ksoloti.elf
+HAL_HCD_IRQHandler                                ../../runtime/build/ksoloti.elf
+HAL_HCD_Init                                      ../../runtime/build/ksoloti.elf
+HAL_HCD_MspDeInit                                 ../../runtime/build/ksoloti.elf
+HAL_HCD_MspInit                                   ../../runtime/build/ksoloti.elf
+HAL_HCD_ResetPort                                 ../../runtime/build/ksoloti.elf
+HAL_HCD_SOF_Callback                              ../../runtime/build/ksoloti.elf
+HAL_HCD_Start                                     ../../runtime/build/ksoloti.elf
+HAL_HCD_Stop                                      ../../runtime/build/ksoloti.elf
+HAL_I2C_AbortCpltCallback                         ../../runtime/build/ksoloti.elf
+HAL_I2C_AddrCallback                              ../../runtime/build/ksoloti.elf
+HAL_I2C_DeInit                                    ../../runtime/build/ksoloti.elf
+HAL_I2C_DisableListen_IT                          ../../runtime/build/ksoloti.elf
+HAL_I2C_ER_IRQHandler                             ../../runtime/build/ksoloti.elf
+HAL_I2C_EV_IRQHandler                             ../../runtime/build/ksoloti.elf
+HAL_I2C_EnableListen_IT                           ../../runtime/build/ksoloti.elf
+HAL_I2C_ErrorCallback                             ../../runtime/build/ksoloti.elf
+HAL_I2C_GetError                                  ../../runtime/build/ksoloti.elf
+HAL_I2C_GetMode                                   ../../runtime/build/ksoloti.elf
+HAL_I2C_GetState                                  ../../runtime/build/ksoloti.elf
+HAL_I2C_Init                                      ../../runtime/build/ksoloti.elf
+HAL_I2C_IsDeviceReady                             ../../runtime/build/ksoloti.elf
+HAL_I2C_ListenCpltCallback                        ../../runtime/build/ksoloti.elf
+HAL_I2C_MasterRxCpltCallback                      ../../runtime/build/ksoloti.elf
+HAL_I2C_MasterTxCpltCallback                      ../../runtime/build/ksoloti.elf
+HAL_I2C_Master_Abort_IT                           ../../runtime/build/ksoloti.elf
+HAL_I2C_Master_Receive                            ../../runtime/build/ksoloti.elf
+HAL_I2C_Master_Receive_IT                         ../../runtime/build/ksoloti.elf
+HAL_I2C_Master_Sequential_Receive_IT              ../../runtime/build/ksoloti.elf
+HAL_I2C_Master_Sequential_Transmit_IT             ../../runtime/build/ksoloti.elf
+HAL_I2C_Master_Transmit                           ../../runtime/build/ksoloti.elf
+HAL_I2C_Master_Transmit_IT                        ../../runtime/build/ksoloti.elf
+HAL_I2C_MemRxCpltCallback                         ../../runtime/build/ksoloti.elf
+HAL_I2C_MemTxCpltCallback                         ../../runtime/build/ksoloti.elf
+HAL_I2C_Mem_Read                                  ../../runtime/build/ksoloti.elf
+HAL_I2C_Mem_Read_IT                               ../../runtime/build/ksoloti.elf
+HAL_I2C_Mem_Write                                 ../../runtime/build/ksoloti.elf
+HAL_I2C_Mem_Write_IT                              ../../runtime/build/ksoloti.elf
+HAL_I2C_MspDeInit                                 ../../runtime/build/ksoloti.elf
+HAL_I2C_MspInit                                   ../../runtime/build/ksoloti.elf
+HAL_I2C_SlaveRxCpltCallback                       ../../runtime/build/ksoloti.elf
+HAL_I2C_SlaveTxCpltCallback                       ../../runtime/build/ksoloti.elf
+HAL_I2C_Slave_Receive                             ../../runtime/build/ksoloti.elf
+HAL_I2C_Slave_Receive_IT                          ../../runtime/build/ksoloti.elf
+HAL_I2C_Slave_Sequential_Receive_IT               ../../runtime/build/ksoloti.elf
+HAL_I2C_Slave_Sequential_Transmit_IT              ../../runtime/build/ksoloti.elf
+HAL_I2C_Slave_Transmit                            ../../runtime/build/ksoloti.elf
+HAL_I2C_Slave_Transmit_IT                         ../../runtime/build/ksoloti.elf
+HAL_NVIC_ClearPendingIRQ                          ../../runtime/build/ksoloti.elf
+HAL_NVIC_DisableIRQ                               ../../runtime/build/ksoloti.elf
+HAL_NVIC_EnableIRQ                                ../../runtime/build/ksoloti.elf
+HAL_NVIC_GetActive                                ../../runtime/build/ksoloti.elf
+HAL_NVIC_GetPendingIRQ                            ../../runtime/build/ksoloti.elf
+HAL_NVIC_GetPriority                              ../../runtime/build/ksoloti.elf
+HAL_NVIC_GetPriorityGrouping                      ../../runtime/build/ksoloti.elf
+HAL_NVIC_SetPendingIRQ                            ../../runtime/build/ksoloti.elf
+HAL_NVIC_SetPriority                              ../../runtime/build/ksoloti.elf
+HAL_NVIC_SetPriorityGrouping                      ../../runtime/build/ksoloti.elf
+HAL_NVIC_SystemReset                              ../../runtime/build/ksoloti.elf
+HAL_RCC_GetPCLK1Freq                              ../../runtime/build/ksoloti.elf
+HAL_SYSTICK_CLKSourceConfig                       ../../runtime/build/ksoloti.elf
+HAL_SYSTICK_Callback                              ../../runtime/build/ksoloti.elf
+HAL_SYSTICK_Config                                ../../runtime/build/ksoloti.elf
+HAL_SYSTICK_IRQHandler                            ../../runtime/build/ksoloti.elf
+HID_Class                                         ../../runtime/build/ksoloti.elf
+HID_ReadItem                                      ../../runtime/build/ksoloti.elf
+HID_WriteItem                                     ../../runtime/build/ksoloti.elf
+HardFaultVector                                   ../../runtime/build/ksoloti.elf
+HardFault_Handler                                 ../../runtime/build/ksoloti.elf
+I2CD1                                             ../../runtime/build/ksoloti.elf
+InitPConnection                                   ../../runtime/build/ksoloti.elf
+InitPatch0                                        ../../runtime/build/ksoloti.elf
+LoadPatch                                         ../../runtime/build/ksoloti.elf
+LoadPatchIndexed                                  ../../runtime/build/ksoloti.elf
+LoadPatchStartFlash                               ../../runtime/build/ksoloti.elf
+LoadPatchStartSD                                  ../../runtime/build/ksoloti.elf
+LogBuffer                                         ../../runtime/build/ksoloti.elf
+LogBufferUsed                                     ../../runtime/build/ksoloti.elf
+LogMutex                                          ../../runtime/build/ksoloti.elf
+LogTextMessage                                    ../../runtime/build/ksoloti.elf
+MDU1                                              ../../runtime/build/ksoloti.elf
+MIDI_CB                                           ../../runtime/build/ksoloti.elf
+MIDI_Class                                        ../../runtime/build/ksoloti.elf
+MIDI_Setup                                        ../../runtime/build/ksoloti.elf
+MY_USBH_Init                                      ../../runtime/build/ksoloti.elf
+MemManageVector                                   ../../runtime/build/ksoloti.elf
+MemManage_Handler                                 ../../runtime/build/ksoloti.elf
+MidiByte0                                         ../../runtime/build/ksoloti.elf
+MidiByte1                                         ../../runtime/build/ksoloti.elf
+MidiByte2                                         ../../runtime/build/ksoloti.elf
+MidiCurData                                       ../../runtime/build/ksoloti.elf
+MidiGetOutputBufferAvailable                      ../../runtime/build/ksoloti.elf
+MidiGetOutputBufferPending                        ../../runtime/build/ksoloti.elf
+MidiInChannel                                     ../../runtime/build/ksoloti.elf
+MidiInMsgHandler                                  ../../runtime/build/ksoloti.elf
+MidiNumData                                       ../../runtime/build/ksoloti.elf
+MidiSend1                                         ../../runtime/build/ksoloti.elf
+MidiSend2                                         ../../runtime/build/ksoloti.elf
+MidiSend3                                         ../../runtime/build/ksoloti.elf
+MidiSendSysEx                                     ../../runtime/build/ksoloti.elf
+NMI_Handler                                       ../../runtime/build/ksoloti.elf
+PExModulationSourceChange                         ../../runtime/build/ksoloti.elf
+PExParameterChange                                ../../runtime/build/ksoloti.elf
+PExReceive                                        ../../runtime/build/ksoloti.elf
+PExReceiveByte                                    ../../runtime/build/ksoloti.elf
+PExTransmit                                       ../../runtime/build/ksoloti.elf
+PWMD1                                             ../../runtime/build/ksoloti.elf
+PWMD2                                             ../../runtime/build/ksoloti.elf
+PWMD3                                             ../../runtime/build/ksoloti.elf
+PWMD4                                             ../../runtime/build/ksoloti.elf
+PWMD5                                             ../../runtime/build/ksoloti.elf
+PWMD8                                             ../../runtime/build/ksoloti.elf
+PatchDispose()                                    ../../proof/build/blend-stripped.o
+PatchMidiInHandler(midi_device_t, unsigned char, unsigned char, unsigned char, unsigned char) ../../proof/build/blend-stripped.o
+PatchProcess(long*, long*)                        ../../proof/build/blend-stripped.o
+PendSV_Handler                                    ../../runtime/build/ksoloti.elf
+ReadDirectoryListing                              ../../runtime/build/ksoloti.elf
+ReplyFWVersion                                    ../../runtime/build/ksoloti.elf
+ReplySpilinkSynced                                ../../runtime/build/ksoloti.elf
+ReportThreadStacks                                ../../runtime/build/ksoloti.elf
+Reset_Handler                                     ../../runtime/build/ksoloti.elf
+SD1                                               ../../runtime/build/ksoloti.elf
+SD2                                               ../../runtime/build/ksoloti.elf
+SD3                                               ../../runtime/build/ksoloti.elf
+SD6                                               ../../runtime/build/ksoloti.elf
+SDCD1                                             ../../runtime/build/ksoloti.elf
+SDC_FS                                            ../../runtime/build/ksoloti.elf
+SDRAM_Init                                        ../../runtime/build/ksoloti.elf
+SDRAM_InitSequence                                ../../runtime/build/ksoloti.elf
+SDRAM_ReadBuffer                                  ../../runtime/build/ksoloti.elf
+SDRAM_WriteBuffer                                 ../../runtime/build/ksoloti.elf
+SPID1                                             ../../runtime/build/ksoloti.elf
+SPID3                                             ../../runtime/build/ksoloti.elf
+SVC_Handler                                       ../../runtime/build/ksoloti.elf
+SVCall_Handler                                    ../../runtime/build/ksoloti.elf
+SetPatchSafety                                    ../../runtime/build/ksoloti.elf
+StartMounter                                      ../../runtime/build/ksoloti.elf
+StartPatch                                        ../../runtime/build/ksoloti.elf
+StopPatch                                         ../../runtime/build/ksoloti.elf
+SysTick_Handler                                   ../../runtime/build/ksoloti.elf
+SystemCoreClock                                   ../../runtime/build/ksoloti.elf
+TransmitDisplayPckt                               ../../runtime/build/ksoloti.elf
+UMSD1                                             ../../runtime/build/ksoloti.elf
+USBD1                                             ../../runtime/build/ksoloti.elf
+USBH_AllocPipe                                    ../../runtime/build/ksoloti.elf
+USBH_BulkReceiveData                              ../../runtime/build/ksoloti.elf
+USBH_BulkSendData                                 ../../runtime/build/ksoloti.elf
+USBH_ClosePipe                                    ../../runtime/build/ksoloti.elf
+USBH_ClrFeature                                   ../../runtime/build/ksoloti.elf
+USBH_CtlReceiveData                               ../../runtime/build/ksoloti.elf
+USBH_CtlReq                                       ../../runtime/build/ksoloti.elf
+USBH_CtlSendData                                  ../../runtime/build/ksoloti.elf
+USBH_CtlSendSetup                                 ../../runtime/build/ksoloti.elf
+USBH_DeInit                                       ../../runtime/build/ksoloti.elf
+USBH_Delay                                        ../../runtime/build/ksoloti.elf
+USBH_FindInterface                                ../../runtime/build/ksoloti.elf
+USBH_FindInterfaceIndex                           ../../runtime/build/ksoloti.elf
+USBH_FreePipe                                     ../../runtime/build/ksoloti.elf
+USBH_GetActiveClass                               ../../runtime/build/ksoloti.elf
+USBH_GetDescriptor                                ../../runtime/build/ksoloti.elf
+USBH_GetNextDesc                                  ../../runtime/build/ksoloti.elf
+USBH_Get_CfgDesc                                  ../../runtime/build/ksoloti.elf
+USBH_Get_DevDesc                                  ../../runtime/build/ksoloti.elf
+USBH_Get_StringDesc                               ../../runtime/build/ksoloti.elf
+USBH_HID_EventCallback                            ../../runtime/build/ksoloti.elf
+USBH_HID_GetASCIICode                             ../../runtime/build/ksoloti.elf
+USBH_HID_GetDeviceType                            ../../runtime/build/ksoloti.elf
+USBH_HID_GetHIDDescriptor                         ../../runtime/build/ksoloti.elf
+USBH_HID_GetHIDReportDescriptor                   ../../runtime/build/ksoloti.elf
+USBH_HID_GetJoystickInfo                          ../../runtime/build/ksoloti.elf
+USBH_HID_GetKeybdInfo                             ../../runtime/build/ksoloti.elf
+USBH_HID_GetMouseInfo                             ../../runtime/build/ksoloti.elf
+USBH_HID_GetPollInterval                          ../../runtime/build/ksoloti.elf
+USBH_HID_GetReport                                ../../runtime/build/ksoloti.elf
+USBH_HID_JoystickInit                             ../../runtime/build/ksoloti.elf
+USBH_HID_KeybdInit                                ../../runtime/build/ksoloti.elf
+USBH_HID_MouseInit                                ../../runtime/build/ksoloti.elf
+USBH_HID_SetIdle                                  ../../runtime/build/ksoloti.elf
+USBH_HID_SetProtocol                              ../../runtime/build/ksoloti.elf
+USBH_HID_SetReport                                ../../runtime/build/ksoloti.elf
+USBH_Init                                         ../../runtime/build/ksoloti.elf
+USBH_InterruptReceiveData                         ../../runtime/build/ksoloti.elf
+USBH_InterruptSendData                            ../../runtime/build/ksoloti.elf
+USBH_IsocReceiveData                              ../../runtime/build/ksoloti.elf
+USBH_IsocSendData                                 ../../runtime/build/ksoloti.elf
+USBH_LL_ClosePipe                                 ../../runtime/build/ksoloti.elf
+USBH_LL_Connect                                   ../../runtime/build/ksoloti.elf
+USBH_LL_DeInit                                    ../../runtime/build/ksoloti.elf
+USBH_LL_Disconnect                                ../../runtime/build/ksoloti.elf
+USBH_LL_DriverVBUS                                ../../runtime/build/ksoloti.elf
+USBH_LL_GetLastXferSize                           ../../runtime/build/ksoloti.elf
+USBH_LL_GetSpeed                                  ../../runtime/build/ksoloti.elf
+USBH_LL_GetToggle                                 ../../runtime/build/ksoloti.elf
+USBH_LL_IncTimer                                  ../../runtime/build/ksoloti.elf
+USBH_LL_Init                                      ../../runtime/build/ksoloti.elf
+USBH_LL_NotifyURBChange                           ../../runtime/build/ksoloti.elf
+USBH_LL_OpenPipe                                  ../../runtime/build/ksoloti.elf
+USBH_LL_ResetPort                                 ../../runtime/build/ksoloti.elf
+USBH_LL_SetTimer                                  ../../runtime/build/ksoloti.elf
+USBH_LL_SetToggle                                 ../../runtime/build/ksoloti.elf
+USBH_LL_Start                                     ../../runtime/build/ksoloti.elf
+USBH_LL_Stop                                      ../../runtime/build/ksoloti.elf
+USBH_MIDI_ClassRequest                            ../../runtime/build/ksoloti.elf
+USBH_MIDI_InterfaceDeInit                         ../../runtime/build/ksoloti.elf
+USBH_MIDI_InterfaceInit                           ../../runtime/build/ksoloti.elf
+USBH_MIDI_Process                                 ../../runtime/build/ksoloti.elf
+USBH_MIDI_ProcessInput                            ../../runtime/build/ksoloti.elf
+USBH_MIDI_ProcessOutput                           ../../runtime/build/ksoloti.elf
+USBH_MIDI_SOFProcess                              ../../runtime/build/ksoloti.elf
+USBH_OpenPipe                                     ../../runtime/build/ksoloti.elf
+USBH_Process                                      ../../runtime/build/ksoloti.elf
+USBH_ReEnumerate                                  ../../runtime/build/ksoloti.elf
+USBH_RegisterClass                                ../../runtime/build/ksoloti.elf
+USBH_SelectInterface                              ../../runtime/build/ksoloti.elf
+USBH_SetAddress                                   ../../runtime/build/ksoloti.elf
+USBH_SetCfg                                       ../../runtime/build/ksoloti.elf
+USBH_SetInterface                                 ../../runtime/build/ksoloti.elf
+USBH_Start                                        ../../runtime/build/ksoloti.elf
+USBH_Stop                                         ../../runtime/build/ksoloti.elf
+USB_ActivateDedicatedEndpoint                     ../../runtime/build/ksoloti.elf
+USB_ActivateEndpoint                              ../../runtime/build/ksoloti.elf
+USB_ActivateSetup                                 ../../runtime/build/ksoloti.elf
+USB_ClearInterrupts                               ../../runtime/build/ksoloti.elf
+USB_CoreInit                                      ../../runtime/build/ksoloti.elf
+USB_DeactivateDedicatedEndpoint                   ../../runtime/build/ksoloti.elf
+USB_DeactivateEndpoint                            ../../runtime/build/ksoloti.elf
+USB_DevConnect                                    ../../runtime/build/ksoloti.elf
+USB_DevDisconnect                                 ../../runtime/build/ksoloti.elf
+USB_DevInit                                       ../../runtime/build/ksoloti.elf
+USB_DisableGlobalInt                              ../../runtime/build/ksoloti.elf
+USB_DoPing                                        ../../runtime/build/ksoloti.elf
+USB_DriveVbus                                     ../../runtime/build/ksoloti.elf
+USB_EP0StartXfer                                  ../../runtime/build/ksoloti.elf
+USB_EP0_OutStart                                  ../../runtime/build/ksoloti.elf
+USB_EPClearStall                                  ../../runtime/build/ksoloti.elf
+USB_EPSetStall                                    ../../runtime/build/ksoloti.elf
+USB_EPStartXfer                                   ../../runtime/build/ksoloti.elf
+USB_EnableGlobalInt                               ../../runtime/build/ksoloti.elf
+USB_FlushRxFifo                                   ../../runtime/build/ksoloti.elf
+USB_FlushTxFifo                                   ../../runtime/build/ksoloti.elf
+USB_GetCurrentFrame                               ../../runtime/build/ksoloti.elf
+USB_GetDevSpeed                                   ../../runtime/build/ksoloti.elf
+USB_GetHostSpeed                                  ../../runtime/build/ksoloti.elf
+USB_GetMode                                       ../../runtime/build/ksoloti.elf
+USB_HC_Halt                                       ../../runtime/build/ksoloti.elf
+USB_HC_Init                                       ../../runtime/build/ksoloti.elf
+USB_HC_ReadInterrupt                              ../../runtime/build/ksoloti.elf
+USB_HC_StartXfer                                  ../../runtime/build/ksoloti.elf
+USB_HostInit                                      ../../runtime/build/ksoloti.elf
+USB_InitFSLSPClkSel                               ../../runtime/build/ksoloti.elf
+USB_ReadDevAllInEpInterrupt                       ../../runtime/build/ksoloti.elf
+USB_ReadDevAllOutEpInterrupt                      ../../runtime/build/ksoloti.elf
+USB_ReadDevInEPInterrupt                          ../../runtime/build/ksoloti.elf
+USB_ReadDevOutEPInterrupt                         ../../runtime/build/ksoloti.elf
+USB_ReadInterrupts                                ../../runtime/build/ksoloti.elf
+USB_ReadPacket                                    ../../runtime/build/ksoloti.elf
+USB_ResetPort                                     ../../runtime/build/ksoloti.elf
+USB_SetCurrentMode                                ../../runtime/build/ksoloti.elf
+USB_SetDevAddress                                 ../../runtime/build/ksoloti.elf
+USB_SetDevSpeed                                   ../../runtime/build/ksoloti.elf
+USB_StopDevice                                    ../../runtime/build/ksoloti.elf
+USB_StopHost                                      ../../runtime/build/ksoloti.elf
+USB_WritePacket                                   ../../runtime/build/ksoloti.elf
+UsageFaultVector                                  ../../runtime/build/ksoloti.elf
+UsageFault_Handler                                ../../runtime/build/ksoloti.elf
+Vector100                                         ../../runtime/build/ksoloti.elf
+Vector104                                         ../../runtime/build/ksoloti.elf
+Vector108                                         ../../runtime/build/ksoloti.elf
+Vector10C                                         ../../runtime/build/ksoloti.elf
+Vector110                                         ../../runtime/build/ksoloti.elf
+Vector114                                         ../../runtime/build/ksoloti.elf
+Vector118                                         ../../runtime/build/ksoloti.elf
+Vector11C                                         ../../runtime/build/ksoloti.elf
+Vector120                                         ../../runtime/build/ksoloti.elf
+Vector124                                         ../../runtime/build/ksoloti.elf
+Vector128                                         ../../runtime/build/ksoloti.elf
+Vector12C                                         ../../runtime/build/ksoloti.elf
+Vector130                                         ../../runtime/build/ksoloti.elf
+Vector134                                         ../../runtime/build/ksoloti.elf
+Vector138                                         ../../runtime/build/ksoloti.elf
+Vector13C                                         ../../runtime/build/ksoloti.elf
+Vector140                                         ../../runtime/build/ksoloti.elf
+Vector144                                         ../../runtime/build/ksoloti.elf
+Vector148                                         ../../runtime/build/ksoloti.elf
+Vector14C                                         ../../runtime/build/ksoloti.elf
+Vector150                                         ../../runtime/build/ksoloti.elf
+Vector154                                         ../../runtime/build/ksoloti.elf
+Vector158                                         ../../runtime/build/ksoloti.elf
+Vector15C                                         ../../runtime/build/ksoloti.elf
+Vector160                                         ../../runtime/build/ksoloti.elf
+Vector164                                         ../../runtime/build/ksoloti.elf
+Vector168                                         ../../runtime/build/ksoloti.elf
+Vector16C                                         ../../runtime/build/ksoloti.elf
+Vector170                                         ../../runtime/build/ksoloti.elf
+Vector174                                         ../../runtime/build/ksoloti.elf
+Vector178                                         ../../runtime/build/ksoloti.elf
+Vector17C                                         ../../runtime/build/ksoloti.elf
+Vector180                                         ../../runtime/build/ksoloti.elf
+Vector184                                         ../../runtime/build/ksoloti.elf
+Vector188                                         ../../runtime/build/ksoloti.elf
+Vector18C                                         ../../runtime/build/ksoloti.elf
+Vector190                                         ../../runtime/build/ksoloti.elf
+Vector194                                         ../../runtime/build/ksoloti.elf
+Vector198                                         ../../runtime/build/ksoloti.elf
+Vector19C                                         ../../runtime/build/ksoloti.elf
+Vector1A0                                         ../../runtime/build/ksoloti.elf
+Vector1A4                                         ../../runtime/build/ksoloti.elf
+Vector1A8                                         ../../runtime/build/ksoloti.elf
+Vector1AC                                         ../../runtime/build/ksoloti.elf
+Vector1B0                                         ../../runtime/build/ksoloti.elf
+Vector1B4                                         ../../runtime/build/ksoloti.elf
+Vector1B8                                         ../../runtime/build/ksoloti.elf
+Vector1BC                                         ../../runtime/build/ksoloti.elf
+Vector1C                                          ../../runtime/build/ksoloti.elf
+Vector20                                          ../../runtime/build/ksoloti.elf
+Vector24                                          ../../runtime/build/ksoloti.elf
+Vector28                                          ../../runtime/build/ksoloti.elf
+Vector34                                          ../../runtime/build/ksoloti.elf
+Vector40                                          ../../runtime/build/ksoloti.elf
+Vector44                                          ../../runtime/build/ksoloti.elf
+Vector48                                          ../../runtime/build/ksoloti.elf
+Vector4C                                          ../../runtime/build/ksoloti.elf
+Vector50                                          ../../runtime/build/ksoloti.elf
+Vector54                                          ../../runtime/build/ksoloti.elf
+Vector58                                          ../../runtime/build/ksoloti.elf
+Vector5C                                          ../../runtime/build/ksoloti.elf
+Vector60                                          ../../runtime/build/ksoloti.elf
+Vector64                                          ../../runtime/build/ksoloti.elf
+Vector68                                          ../../runtime/build/ksoloti.elf
+Vector6C                                          ../../runtime/build/ksoloti.elf
+Vector70                                          ../../runtime/build/ksoloti.elf
+Vector74                                          ../../runtime/build/ksoloti.elf
+Vector78                                          ../../runtime/build/ksoloti.elf
+Vector7C                                          ../../runtime/build/ksoloti.elf
+Vector80                                          ../../runtime/build/ksoloti.elf
+Vector84                                          ../../runtime/build/ksoloti.elf
+Vector88                                          ../../runtime/build/ksoloti.elf
+Vector8C                                          ../../runtime/build/ksoloti.elf
+Vector90                                          ../../runtime/build/ksoloti.elf
+Vector94                                          ../../runtime/build/ksoloti.elf
+Vector98                                          ../../runtime/build/ksoloti.elf
+Vector9C                                          ../../runtime/build/ksoloti.elf
+VectorA0                                          ../../runtime/build/ksoloti.elf
+VectorA4                                          ../../runtime/build/ksoloti.elf
+VectorA8                                          ../../runtime/build/ksoloti.elf
+VectorAC                                          ../../runtime/build/ksoloti.elf
+VectorB0                                          ../../runtime/build/ksoloti.elf
+VectorB4                                          ../../runtime/build/ksoloti.elf
+VectorB8                                          ../../runtime/build/ksoloti.elf
+VectorBC                                          ../../runtime/build/ksoloti.elf
+VectorC0                                          ../../runtime/build/ksoloti.elf
+VectorC4                                          ../../runtime/build/ksoloti.elf
+VectorC8                                          ../../runtime/build/ksoloti.elf
+VectorCC                                          ../../runtime/build/ksoloti.elf
+VectorD0                                          ../../runtime/build/ksoloti.elf
+VectorD4                                          ../../runtime/build/ksoloti.elf
+VectorD8                                          ../../runtime/build/ksoloti.elf
+VectorDC                                          ../../runtime/build/ksoloti.elf
+VectorE0                                          ../../runtime/build/ksoloti.elf
+VectorE4                                          ../../runtime/build/ksoloti.elf
+VectorE8                                          ../../runtime/build/ksoloti.elf
+VectorEC                                          ../../runtime/build/ksoloti.elf
+VectorF0                                          ../../runtime/build/ksoloti.elf
+VectorF4                                          ../../runtime/build/ksoloti.elf
+VectorF8                                          ../../runtime/build/ksoloti.elf
+VectorFC                                          ../../runtime/build/ksoloti.elf
+Vendor_Class                                      ../../runtime/build/ksoloti.elf
+WWDG_IRQHandler                                   ../../runtime/build/ksoloti.elf
+_Unwind_Backtrace                                 ../../runtime/build/ksoloti.elf
+_Unwind_Complete                                  ../../runtime/build/ksoloti.elf
+_Unwind_DeleteException                           ../../runtime/build/ksoloti.elf
+_Unwind_ForcedUnwind                              ../../runtime/build/ksoloti.elf
+_Unwind_GetCFA                                    ../../runtime/build/ksoloti.elf
+_Unwind_GetDataRelBase                            ../../runtime/build/ksoloti.elf
+_Unwind_GetLanguageSpecificData                   ../../runtime/build/ksoloti.elf
+_Unwind_GetRegionStart                            ../../runtime/build/ksoloti.elf
+_Unwind_GetTextRelBase                            ../../runtime/build/ksoloti.elf
+_Unwind_RaiseException                            ../../runtime/build/ksoloti.elf
+_Unwind_Resume                                    ../../runtime/build/ksoloti.elf
+_Unwind_Resume_or_Rethrow                         ../../runtime/build/ksoloti.elf
+_Unwind_VRS_Get                                   ../../runtime/build/ksoloti.elf
+_Unwind_VRS_Pop                                   ../../runtime/build/ksoloti.elf
+_Unwind_VRS_Set                                   ../../runtime/build/ksoloti.elf
+___Unwind_Backtrace                               ../../runtime/build/ksoloti.elf
+___Unwind_ForcedUnwind                            ../../runtime/build/ksoloti.elf
+___Unwind_RaiseException                          ../../runtime/build/ksoloti.elf
+___Unwind_Resume                                  ../../runtime/build/ksoloti.elf
+___Unwind_Resume_or_Rethrow                       ../../runtime/build/ksoloti.elf
+__adddf3                                          ../../runtime/build/ksoloti.elf
+__aeabi_cdcmpeq                                   ../../runtime/build/ksoloti.elf
+__aeabi_cdcmple                                   ../../runtime/build/ksoloti.elf
+__aeabi_cdrcmple                                  ../../runtime/build/ksoloti.elf
+__aeabi_d2f                                       ../../runtime/build/ksoloti.elf
+__aeabi_d2iz                                      ../../runtime/build/ksoloti.elf
+__aeabi_d2uiz                                     ../../runtime/build/ksoloti.elf
+__aeabi_dadd                                      ../../runtime/build/ksoloti.elf
+__aeabi_dcmpeq                                    ../../runtime/build/ksoloti.elf
+__aeabi_dcmpge                                    ../../runtime/build/ksoloti.elf
+__aeabi_dcmpgt                                    ../../runtime/build/ksoloti.elf
+__aeabi_dcmple                                    ../../runtime/build/ksoloti.elf
+__aeabi_dcmplt                                    ../../runtime/build/ksoloti.elf
+__aeabi_dcmpun                                    ../../runtime/build/ksoloti.elf
+__aeabi_ddiv                                      ../../runtime/build/ksoloti.elf
+__aeabi_dmul                                      ../../runtime/build/ksoloti.elf
+__aeabi_drsub                                     ../../runtime/build/ksoloti.elf
+__aeabi_dsub                                      ../../runtime/build/ksoloti.elf
+__aeabi_f2d                                       ../../runtime/build/ksoloti.elf
+__aeabi_i2d                                       ../../runtime/build/ksoloti.elf
+__aeabi_l2d                                       ../../runtime/build/ksoloti.elf
+__aeabi_ui2d                                      ../../runtime/build/ksoloti.elf
+__aeabi_ul2d                                      ../../runtime/build/ksoloti.elf
+__aeabi_unwind_cpp_pr0                            ../../runtime/build/ksoloti.elf
+                                                  ../../proof/build/blend-stripped.o
+__aeabi_unwind_cpp_pr1                            ../../runtime/build/ksoloti.elf
+__aeabi_unwind_cpp_pr2                            ../../runtime/build/ksoloti.elf
+__ccram_end__                                     ../../runtime/build/ksoloti.elf
+__ccram_size__                                    ../../runtime/build/ksoloti.elf
+__ccram_start__                                   ../../runtime/build/ksoloti.elf
+__cmpdf2                                          ../../runtime/build/ksoloti.elf
+__core_init                                       ../../runtime/build/ksoloti.elf
+__ctor_array_end                                  ../../proof/build/blend-stripped.o
+__ctor_array_start                                ../../proof/build/blend-stripped.o
+__default_exit                                    ../../runtime/build/ksoloti.elf
+__divdf3                                          ../../runtime/build/ksoloti.elf
+__dtor_array_end                                  ../../proof/build/blend-stripped.o
+__dtor_array_start                                ../../proof/build/blend-stripped.o
+__early_init                                      ../../runtime/build/ksoloti.elf
+__eqdf2                                           ../../runtime/build/ksoloti.elf
+__errno                                           ../../runtime/build/ksoloti.elf
+__exidx_end                                       ../../runtime/build/ksoloti.elf
+__exidx_start                                     ../../runtime/build/ksoloti.elf
+__extendsfdf2                                     ../../runtime/build/ksoloti.elf
+__fdlib_version                                   ../../runtime/build/ksoloti.elf
+__fini_array_end                                  ../../runtime/build/ksoloti.elf
+__fini_array_start                                ../../runtime/build/ksoloti.elf
+__fixdfsi                                         ../../runtime/build/ksoloti.elf
+__fixunsdfsi                                      ../../runtime/build/ksoloti.elf
+__floatdidf                                       ../../runtime/build/ksoloti.elf
+__floatsidf                                       ../../runtime/build/ksoloti.elf
+__floatundidf                                     ../../runtime/build/ksoloti.elf
+__floatunsidf                                     ../../runtime/build/ksoloti.elf
+__gedf2                                           ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Backtrace                            ../../runtime/build/ksoloti.elf
+__gnu_Unwind_ForcedUnwind                         ../../runtime/build/ksoloti.elf
+__gnu_Unwind_RaiseException                       ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Restore_VFP                          ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Restore_VFP_D                        ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Restore_VFP_D_16_to_31               ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Restore_WMMXC                        ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Restore_WMMXD                        ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Resume                               ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Resume_or_Rethrow                    ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Save_VFP                             ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Save_VFP_D                           ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Save_VFP_D_16_to_31                  ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Save_WMMXC                           ../../runtime/build/ksoloti.elf
+__gnu_Unwind_Save_WMMXD                           ../../runtime/build/ksoloti.elf
+__gnu_unwind_execute                              ../../runtime/build/ksoloti.elf
+__gnu_unwind_frame                                ../../runtime/build/ksoloti.elf
+__gtdf2                                           ../../runtime/build/ksoloti.elf
+__heap_base__                                     ../../runtime/build/ksoloti.elf
+__heap_end__                                      ../../runtime/build/ksoloti.elf
+__ieee754_log                                     ../../runtime/build/ksoloti.elf
+__ieee754_pow                                     ../../runtime/build/ksoloti.elf
+__ieee754_powf                                    ../../runtime/build/ksoloti.elf
+__ieee754_rem_pio2f                               ../../runtime/build/ksoloti.elf
+__ieee754_sqrt                                    ../../runtime/build/ksoloti.elf
+__ieee754_sqrtf                                   ../../runtime/build/ksoloti.elf
+__init_array_end                                  ../../runtime/build/ksoloti.elf
+__init_array_start                                ../../runtime/build/ksoloti.elf
+__init_ram_areas                                  ../../runtime/build/ksoloti.elf
+__kernel_cosf                                     ../../runtime/build/ksoloti.elf
+__kernel_rem_pio2f                                ../../runtime/build/ksoloti.elf
+__kernel_sinf                                     ../../runtime/build/ksoloti.elf
+__late_init                                       ../../runtime/build/ksoloti.elf
+__ledf2                                           ../../runtime/build/ksoloti.elf
+__lock___arc4random_mutex                         ../../runtime/build/ksoloti.elf
+__lock___at_quick_exit_mutex                      ../../runtime/build/ksoloti.elf
+__lock___atexit_recursive_mutex                   ../../runtime/build/ksoloti.elf
+__lock___dd_hash_mutex                            ../../runtime/build/ksoloti.elf
+__lock___env_recursive_mutex                      ../../runtime/build/ksoloti.elf
+__lock___malloc_recursive_mutex                   ../../runtime/build/ksoloti.elf
+__lock___sfp_recursive_mutex                      ../../runtime/build/ksoloti.elf
+__lock___sinit_recursive_mutex                    ../../runtime/build/ksoloti.elf
+__lock___tz_mutex                                 ../../runtime/build/ksoloti.elf
+__ltdf2                                           ../../runtime/build/ksoloti.elf
+__main_stack_base__                               ../../runtime/build/ksoloti.elf
+__main_stack_end__                                ../../runtime/build/ksoloti.elf
+__main_stack_size__                               ../../runtime/build/ksoloti.elf
+__main_thread_stack_base__                        ../../runtime/build/ksoloti.elf
+__main_thread_stack_end__                         ../../runtime/build/ksoloti.elf
+__malloc_free_list                                ../../runtime/build/ksoloti.elf
+__malloc_lock                                     ../../runtime/build/ksoloti.elf
+__malloc_sbrk_start                               ../../runtime/build/ksoloti.elf
+__malloc_unlock                                   ../../runtime/build/ksoloti.elf
+__muldf3                                          ../../runtime/build/ksoloti.elf
+__nedf2                                           ../../runtime/build/ksoloti.elf
+__process_stack_base__                            ../../runtime/build/ksoloti.elf
+__process_stack_end__                             ../../runtime/build/ksoloti.elf
+__process_stack_size__                            ../../runtime/build/ksoloti.elf
+__ram_end__                                       ../../runtime/build/ksoloti.elf
+__ram_size__                                      ../../runtime/build/ksoloti.elf
+__ram_start__                                     ../../runtime/build/ksoloti.elf
+__restore_core_regs                               ../../runtime/build/ksoloti.elf
+__retarget_lock_acquire                           ../../runtime/build/ksoloti.elf
+__retarget_lock_acquire_recursive                 ../../runtime/build/ksoloti.elf
+__retarget_lock_close                             ../../runtime/build/ksoloti.elf
+__retarget_lock_close_recursive                   ../../runtime/build/ksoloti.elf
+__retarget_lock_init                              ../../runtime/build/ksoloti.elf
+__retarget_lock_init_recursive                    ../../runtime/build/ksoloti.elf
+__retarget_lock_release                           ../../runtime/build/ksoloti.elf
+__retarget_lock_release_recursive                 ../../runtime/build/ksoloti.elf
+__retarget_lock_try_acquire                       ../../runtime/build/ksoloti.elf
+__retarget_lock_try_acquire_recursive             ../../runtime/build/ksoloti.elf
+__sdram_end__                                     ../../runtime/build/ksoloti.elf
+__sdram_size__                                    ../../runtime/build/ksoloti.elf
+__sdram_start__                                   ../../runtime/build/ksoloti.elf
+__sigtramp                                        ../../runtime/build/ksoloti.elf
+__sigtramp_r                                      ../../runtime/build/ksoloti.elf
+__subdf3                                          ../../runtime/build/ksoloti.elf
+__truncdfsf2                                      ../../runtime/build/ksoloti.elf
+__unorddf2                                        ../../runtime/build/ksoloti.elf
+_bss_end                                          ../../runtime/build/ksoloti.elf
+_bss_start                                        ../../runtime/build/ksoloti.elf
+_core_init                                        ../../runtime/build/ksoloti.elf
+_data_end                                         ../../runtime/build/ksoloti.elf
+_data_start                                       ../../runtime/build/ksoloti.elf
+_end                                              ../../runtime/build/ksoloti.elf
+_etext                                            ../../runtime/build/ksoloti.elf
+_exit                                             ../../runtime/build/ksoloti.elf
+_fini                                             ../../runtime/build/ksoloti.elf
+_flash_end                                        ../../runtime/build/ksoloti.elf
+_free_r                                           ../../runtime/build/ksoloti.elf
+_getpid                                           ../../runtime/build/ksoloti.elf
+_getpid_r                                         ../../runtime/build/ksoloti.elf
+_global_impure_ptr                                ../../runtime/build/ksoloti.elf
+_impure_ptr                                       ../../runtime/build/ksoloti.elf
+_init_signal                                      ../../runtime/build/ksoloti.elf
+_init_signal_r                                    ../../runtime/build/ksoloti.elf
+_kill                                             ../../runtime/build/ksoloti.elf
+_kill_r                                           ../../runtime/build/ksoloti.elf
+_malloc_r                                         ../../runtime/build/ksoloti.elf
+_mmcsd_get_capacity                               ../../runtime/build/ksoloti.elf
+_mmcsd_get_capacity_ext                           ../../runtime/build/ksoloti.elf
+_mmcsd_get_slice                                  ../../runtime/build/ksoloti.elf
+_mmcsd_unpack_csd_mmc                             ../../runtime/build/ksoloti.elf
+_mmcsd_unpack_csd_v10                             ../../runtime/build/ksoloti.elf
+_mmcsd_unpack_csd_v20                             ../../runtime/build/ksoloti.elf
+_mmcsd_unpack_mmc_cid                             ../../runtime/build/ksoloti.elf
+_mmcsd_unpack_sdc_cid                             ../../runtime/build/ksoloti.elf
+_pal_lld_init                                     ../../runtime/build/ksoloti.elf
+_pal_lld_setgroupmode                             ../../runtime/build/ksoloti.elf
+_pbss_end                                         ../../proof/build/blend-stripped.o
+_pbss_start                                       ../../proof/build/blend-stripped.o
+_port_exit_from_isr                               ../../runtime/build/ksoloti.elf
+_port_irq_epilogue                                ../../runtime/build/ksoloti.elf
+_port_switch                                      ../../runtime/build/ksoloti.elf
+_port_switch_from_isr                             ../../runtime/build/ksoloti.elf
+_port_thread_start                                ../../runtime/build/ksoloti.elf
+_raise_r                                          ../../runtime/build/ksoloti.elf
+_reclaim_reent                                    ../../runtime/build/ksoloti.elf
+_sbrk                                             ../../runtime/build/ksoloti.elf
+_sbrk_r                                           ../../runtime/build/ksoloti.elf
+_scheduler_init                                   ../../runtime/build/ksoloti.elf
+_sdc_wait_for_transfer_state                      ../../runtime/build/ksoloti.elf
+_sdram_dyn_end                                    ../../proof/build/blend-stripped.o
+_sdram_dyn_start                                  ../../proof/build/blend-stripped.o
+_signal_r                                         ../../runtime/build/ksoloti.elf
+_stm32_dma_streams                                ../../runtime/build/ksoloti.elf
+_text                                             ../../runtime/build/ksoloti.elf
+_textdata                                         ../../runtime/build/ksoloti.elf
+_textdata_start                                   ../../runtime/build/ksoloti.elf
+_thread_init                                      ../../runtime/build/ksoloti.elf
+_thread_memfill                                   ../../runtime/build/ksoloti.elf
+_unhandled_exception                              ../../runtime/build/ksoloti.elf
+_usb_ep0in                                        ../../runtime/build/ksoloti.elf
+_usb_ep0out                                       ../../runtime/build/ksoloti.elf
+_usb_ep0setup                                     ../../runtime/build/ksoloti.elf
+_usb_reset                                        ../../runtime/build/ksoloti.elf
+_usb_suspend                                      ../../runtime/build/ksoloti.elf
+_usb_wakeup                                       ../../runtime/build/ksoloti.elf
+_vectors                                          ../../runtime/build/ksoloti.elf
+_vt_init                                          ../../runtime/build/ksoloti.elf
+_write                                            ../../runtime/build/ksoloti.elf
+abort                                             ../../runtime/build/ksoloti.elf
+adc3_ch                                           ../../runtime/build/ksoloti.elf
+adc3_convert                                      ../../runtime/build/ksoloti.elf
+adc3_init                                         ../../runtime/build/ksoloti.elf
+adcAcquireBus                                     ../../runtime/build/ksoloti.elf
+adcConvert                                        ../../runtime/build/ksoloti.elf
+adcInit                                           ../../runtime/build/ksoloti.elf
+adcObjectInit                                     ../../runtime/build/ksoloti.elf
+adcReleaseBus                                     ../../runtime/build/ksoloti.elf
+adcSTM32DisableTSVREFE                            ../../runtime/build/ksoloti.elf
+adcSTM32DisableVBATE                              ../../runtime/build/ksoloti.elf
+adcSTM32EnableTSVREFE                             ../../runtime/build/ksoloti.elf
+adcSTM32EnableVBATE                               ../../runtime/build/ksoloti.elf
+adcStart                                          ../../runtime/build/ksoloti.elf
+adcStartConversion                                ../../runtime/build/ksoloti.elf
+adcStartConversionI                               ../../runtime/build/ksoloti.elf
+adcStop                                           ../../runtime/build/ksoloti.elf
+adcStopConversion                                 ../../runtime/build/ksoloti.elf
+adcStopConversionI                                ../../runtime/build/ksoloti.elf
+adc_configpads                                    ../../runtime/build/ksoloti.elf
+adc_convert                                       ../../runtime/build/ksoloti.elf
+adc_init                                          ../../runtime/build/ksoloti.elf
+adc_lld_init                                      ../../runtime/build/ksoloti.elf
+adc_lld_start                                     ../../runtime/build/ksoloti.elf
+adc_lld_start_conversion                          ../../runtime/build/ksoloti.elf
+adc_lld_stop                                      ../../runtime/build/ksoloti.elf
+adc_lld_stop_conversion                           ../../runtime/build/ksoloti.elf
+adcvalues                                         ../../runtime/build/ksoloti.elf
+armBitRevIndexTable1024                           ../../runtime/build/ksoloti.elf
+armBitRevIndexTable128                            ../../runtime/build/ksoloti.elf
+armBitRevIndexTable16                             ../../runtime/build/ksoloti.elf
+armBitRevIndexTable256                            ../../runtime/build/ksoloti.elf
+armBitRevIndexTable32                             ../../runtime/build/ksoloti.elf
+armBitRevIndexTable512                            ../../runtime/build/ksoloti.elf
+armBitRevIndexTable64                             ../../runtime/build/ksoloti.elf
+armBitRevIndexTable_fixed_1024                    ../../runtime/build/ksoloti.elf
+armBitRevIndexTable_fixed_128                     ../../runtime/build/ksoloti.elf
+armBitRevIndexTable_fixed_16                      ../../runtime/build/ksoloti.elf
+armBitRevIndexTable_fixed_256                     ../../runtime/build/ksoloti.elf
+armBitRevIndexTable_fixed_32                      ../../runtime/build/ksoloti.elf
+armBitRevIndexTable_fixed_512                     ../../runtime/build/ksoloti.elf
+armBitRevIndexTable_fixed_64                      ../../runtime/build/ksoloti.elf
+armBitRevTable                                    ../../runtime/build/ksoloti.elf
+armRecipTableQ15                                  ../../runtime/build/ksoloti.elf
+armRecipTableQ31                                  ../../runtime/build/ksoloti.elf
+arm_biquad_cas_df1_32x64_init_q31                 ../../runtime/build/ksoloti.elf
+arm_biquad_cas_df1_32x64_q31                      ../../runtime/build/ksoloti.elf
+arm_biquad_cascade_df1_fast_q31                   ../../runtime/build/ksoloti.elf
+arm_biquad_cascade_df1_init_q31                   ../../runtime/build/ksoloti.elf
+arm_biquad_cascade_df1_q31                        ../../runtime/build/ksoloti.elf
+arm_bitreversal_16                                ../../runtime/build/ksoloti.elf
+arm_bitreversal_32                                ../../runtime/build/ksoloti.elf
+arm_bitreversal_f32                               ../../runtime/build/ksoloti.elf
+arm_bitreversal_q15                               ../../runtime/build/ksoloti.elf
+arm_bitreversal_q31                               ../../runtime/build/ksoloti.elf
+arm_cfft_q15                                      ../../runtime/build/ksoloti.elf
+arm_cfft_q31                                      ../../runtime/build/ksoloti.elf
+arm_cfft_radix2_init_q15                          ../../runtime/build/ksoloti.elf
+arm_cfft_radix2_init_q31                          ../../runtime/build/ksoloti.elf
+arm_cfft_radix2_q15                               ../../runtime/build/ksoloti.elf
+arm_cfft_radix2_q31                               ../../runtime/build/ksoloti.elf
+arm_cfft_radix4_init_q15                          ../../runtime/build/ksoloti.elf
+arm_cfft_radix4_init_q31                          ../../runtime/build/ksoloti.elf
+arm_cfft_radix4_q15                               ../../runtime/build/ksoloti.elf
+arm_cfft_radix4_q31                               ../../runtime/build/ksoloti.elf
+arm_cfft_radix4by2_inverse_q15                    ../../runtime/build/ksoloti.elf
+arm_cfft_radix4by2_inverse_q31                    ../../runtime/build/ksoloti.elf
+arm_cfft_radix4by2_q15                            ../../runtime/build/ksoloti.elf
+arm_cfft_radix4by2_q31                            ../../runtime/build/ksoloti.elf
+arm_cfft_sR_f32_len1024                           ../../runtime/build/ksoloti.elf
+arm_cfft_sR_f32_len128                            ../../runtime/build/ksoloti.elf
+arm_cfft_sR_f32_len16                             ../../runtime/build/ksoloti.elf
+arm_cfft_sR_f32_len256                            ../../runtime/build/ksoloti.elf
+arm_cfft_sR_f32_len32                             ../../runtime/build/ksoloti.elf
+arm_cfft_sR_f32_len512                            ../../runtime/build/ksoloti.elf
+arm_cfft_sR_f32_len64                             ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q15_len1024                           ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q15_len128                            ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q15_len16                             ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q15_len256                            ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q15_len32                             ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q15_len512                            ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q15_len64                             ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q31_len1024                           ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q31_len128                            ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q31_len16                             ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q31_len256                            ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q31_len32                             ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q31_len512                            ../../runtime/build/ksoloti.elf
+arm_cfft_sR_q31_len64                             ../../runtime/build/ksoloti.elf
+arm_cmplx_mag_q15                                 ../../runtime/build/ksoloti.elf
+arm_cmplx_mag_q31                                 ../../runtime/build/ksoloti.elf
+arm_cmplx_mult_cmplx_f32                          ../../runtime/build/ksoloti.elf
+arm_cmplx_mult_cmplx_q15                          ../../runtime/build/ksoloti.elf
+arm_cmplx_mult_cmplx_q31                          ../../runtime/build/ksoloti.elf
+arm_cos_q31                                       ../../runtime/build/ksoloti.elf
+arm_fir_decimate_fast_q31                         ../../runtime/build/ksoloti.elf
+arm_fir_decimate_init_q31                         ../../runtime/build/ksoloti.elf
+arm_fir_decimate_q31                              ../../runtime/build/ksoloti.elf
+arm_fir_fast_q31                                  ../../runtime/build/ksoloti.elf
+arm_fir_init_q31                                  ../../runtime/build/ksoloti.elf
+arm_fir_interpolate_init_q31                      ../../runtime/build/ksoloti.elf
+arm_fir_interpolate_q31                           ../../runtime/build/ksoloti.elf
+arm_fir_lattice_init_q31                          ../../runtime/build/ksoloti.elf
+arm_fir_lattice_q31                               ../../runtime/build/ksoloti.elf
+arm_iir_lattice_init_q31                          ../../runtime/build/ksoloti.elf
+arm_iir_lattice_q31                               ../../runtime/build/ksoloti.elf
+arm_mult_f32                                      ../../runtime/build/ksoloti.elf
+arm_mult_q15                                      ../../runtime/build/ksoloti.elf
+arm_mult_q31                                      ../../runtime/build/ksoloti.elf
+arm_radix2_butterfly_inverse_q15                  ../../runtime/build/ksoloti.elf
+arm_radix2_butterfly_inverse_q31                  ../../runtime/build/ksoloti.elf
+arm_radix2_butterfly_q15                          ../../runtime/build/ksoloti.elf
+arm_radix2_butterfly_q31                          ../../runtime/build/ksoloti.elf
+arm_radix4_butterfly_inverse_q15                  ../../runtime/build/ksoloti.elf
+arm_radix4_butterfly_inverse_q31                  ../../runtime/build/ksoloti.elf
+arm_radix4_butterfly_q15                          ../../runtime/build/ksoloti.elf
+arm_radix4_butterfly_q31                          ../../runtime/build/ksoloti.elf
+arm_rfft_fast_sR_f32_len1024                      ../../runtime/build/ksoloti.elf
+arm_rfft_fast_sR_f32_len128                       ../../runtime/build/ksoloti.elf
+arm_rfft_fast_sR_f32_len256                       ../../runtime/build/ksoloti.elf
+arm_rfft_fast_sR_f32_len32                        ../../runtime/build/ksoloti.elf
+arm_rfft_fast_sR_f32_len512                       ../../runtime/build/ksoloti.elf
+arm_rfft_fast_sR_f32_len64                        ../../runtime/build/ksoloti.elf
+arm_rfft_init_q15                                 ../../runtime/build/ksoloti.elf
+arm_rfft_init_q31                                 ../../runtime/build/ksoloti.elf
+arm_rfft_q15                                      ../../runtime/build/ksoloti.elf
+arm_rfft_q31                                      ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q15_len1024                           ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q15_len128                            ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q15_len256                            ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q15_len32                             ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q15_len512                            ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q15_len64                             ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q31_len1024                           ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q31_len128                            ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q31_len256                            ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q31_len32                             ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q31_len512                            ../../runtime/build/ksoloti.elf
+arm_rfft_sR_q31_len64                             ../../runtime/build/ksoloti.elf
+arm_scale_f32                                     ../../runtime/build/ksoloti.elf
+arm_shift_q15                                     ../../runtime/build/ksoloti.elf
+arm_shift_q31                                     ../../runtime/build/ksoloti.elf
+arm_sin_q31                                       ../../runtime/build/ksoloti.elf
+arm_split_rfft_q15                                ../../runtime/build/ksoloti.elf
+arm_split_rfft_q31                                ../../runtime/build/ksoloti.elf
+arm_split_rifft_q15                               ../../runtime/build/ksoloti.elf
+arm_split_rifft_q31                               ../../runtime/build/ksoloti.elf
+arm_sqrt_q15                                      ../../runtime/build/ksoloti.elf
+arm_sqrt_q31                                      ../../runtime/build/ksoloti.elf
+axoloti_board_init                                ../../runtime/build/ksoloti.elf
+axoloti_math_init                                 ../../runtime/build/ksoloti.elf
+bduConfigureHookI                                 ../../runtime/build/ksoloti.elf
+bduDataReceived                                   ../../runtime/build/ksoloti.elf
+bduDataTransmitted                                ../../runtime/build/ksoloti.elf
+bduInit                                           ../../runtime/build/ksoloti.elf
+bduInitiateReceiveI                               ../../runtime/build/ksoloti.elf
+bduInitiateTransmitI                              ../../runtime/build/ksoloti.elf
+bduObjectInit                                     ../../runtime/build/ksoloti.elf
+bduReceiveBuffer                                  ../../runtime/build/ksoloti.elf
+bduRequestsHook                                   ../../runtime/build/ksoloti.elf
+bduStart                                          ../../runtime/build/ksoloti.elf
+bduStop                                           ../../runtime/build/ksoloti.elf
+bduTransmitBuffer                                 ../../runtime/build/ksoloti.elf
+blept                                             ../../runtime/build/ksoloti.elf
+boardInit                                         ../../runtime/build/ksoloti.elf
+braids::char_table                                ../../runtime/build/ksoloti.elf
+braids::chr_characters                            ../../runtime/build/ksoloti.elf
+braids::lookup_table_hr_table                     ../../runtime/build/ksoloti.elf
+braids::lookup_table_signed_table                 ../../runtime/build/ksoloti.elf
+braids::lookup_table_table                        ../../runtime/build/ksoloti.elf
+braids::lut_bell                                  ../../runtime/build/ksoloti.elf
+braids::lut_blowing_envelope                      ../../runtime/build/ksoloti.elf
+braids::lut_blowing_jet                           ../../runtime/build/ksoloti.elf
+braids::lut_bowing_envelope                       ../../runtime/build/ksoloti.elf
+braids::lut_bowing_friction                       ../../runtime/build/ksoloti.elf
+braids::lut_env_expo                              ../../runtime/build/ksoloti.elf
+braids::lut_env_portamento_increments             ../../runtime/build/ksoloti.elf
+braids::lut_flute_body_filter                     ../../runtime/build/ksoloti.elf
+braids::lut_fm_frequency_quantizer                ../../runtime/build/ksoloti.elf
+braids::lut_granular_envelope                     ../../runtime/build/ksoloti.elf
+braids::lut_granular_envelope_rate                ../../runtime/build/ksoloti.elf
+braids::lut_oscillator_delays                     ../../runtime/build/ksoloti.elf
+braids::lut_oscillator_increments                 ../../runtime/build/ksoloti.elf
+braids::lut_resonator_coefficient                 ../../runtime/build/ksoloti.elf
+braids::lut_resonator_scale                       ../../runtime/build/ksoloti.elf
+braids::lut_svf_cutoff                            ../../runtime/build/ksoloti.elf
+braids::lut_svf_damp                              ../../runtime/build/ksoloti.elf
+braids::lut_svf_scale                             ../../runtime/build/ksoloti.elf
+braids::lut_vco_detune                            ../../runtime/build/ksoloti.elf
+braids::string_table                              ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_0                    ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_1                    ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_10                   ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_11                   ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_12                   ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_13                   ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_14                   ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_2                    ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_3                    ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_4                    ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_5                    ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_6                    ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_7                    ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_8                    ../../runtime/build/ksoloti.elf
+braids::wav_bandlimited_comb_9                    ../../runtime/build/ksoloti.elf
+braids::wav_formant_sine                          ../../runtime/build/ksoloti.elf
+braids::wav_formant_square                        ../../runtime/build/ksoloti.elf
+braids::wav_sine                                  ../../runtime/build/ksoloti.elf
+braids::waveform_table                            ../../runtime/build/ksoloti.elf
+braids::waveshaper_table                          ../../runtime/build/ksoloti.elf
+braids::ws_moderate_overdrive                     ../../runtime/build/ksoloti.elf
+braids::ws_sine_fold                              ../../runtime/build/ksoloti.elf
+braids::ws_tri_fold                               ../../runtime/build/ksoloti.elf
+braids::ws_violent_overdrive                      ../../runtime/build/ksoloti.elf
+braids::wt_code                                   ../../runtime/build/ksoloti.elf
+braids::wt_map                                    ../../runtime/build/ksoloti.elf
+braids::wt_table                                  ../../runtime/build/ksoloti.elf
+braids::wt_waves                                  ../../runtime/build/ksoloti.elf
+buf                                               ../../runtime/build/ksoloti.elf
+buf2                                              ../../runtime/build/ksoloti.elf
+bulkusbcfg                                        ../../runtime/build/ksoloti.elf
+calcCIN1                                          ../../runtime/build/ksoloti.elf
+calcDS1                                           ../../runtime/build/ksoloti.elf
+ch                                                ../../runtime/build/ksoloti.elf
+chCoreAlloc                                       ../../runtime/build/ksoloti.elf
+chCoreAllocI                                      ../../runtime/build/ksoloti.elf
+chCoreGetStatusX                                  ../../runtime/build/ksoloti.elf
+chEvtAddEvents                                    ../../runtime/build/ksoloti.elf
+chEvtBroadcastFlags                               ../../runtime/build/ksoloti.elf
+chEvtBroadcastFlagsI                              ../../runtime/build/ksoloti.elf
+chEvtDispatch                                     ../../runtime/build/ksoloti.elf
+chEvtGetAndClearEvents                            ../../runtime/build/ksoloti.elf
+chEvtGetAndClearFlags                             ../../runtime/build/ksoloti.elf
+chEvtGetAndClearFlagsI                            ../../runtime/build/ksoloti.elf
+chEvtRegisterMaskWithFlags                        ../../runtime/build/ksoloti.elf
+chEvtSignal                                       ../../runtime/build/ksoloti.elf
+chEvtSignalI                                      ../../runtime/build/ksoloti.elf
+chEvtUnregister                                   ../../runtime/build/ksoloti.elf
+chEvtWaitAll                                      ../../runtime/build/ksoloti.elf
+chEvtWaitAllTimeout                               ../../runtime/build/ksoloti.elf
+chEvtWaitAny                                      ../../runtime/build/ksoloti.elf
+chEvtWaitAnyTimeout                               ../../runtime/build/ksoloti.elf
+chEvtWaitOne                                      ../../runtime/build/ksoloti.elf
+chEvtWaitOneTimeout                               ../../runtime/build/ksoloti.elf
+chIQGetTimeout                                    ../../runtime/build/ksoloti.elf
+chIQObjectInit                                    ../../runtime/build/ksoloti.elf
+chIQPutI                                          ../../runtime/build/ksoloti.elf
+chIQReadTimeout                                   ../../runtime/build/ksoloti.elf
+chIQResetI                                        ../../runtime/build/ksoloti.elf
+chMsgRelease                                      ../../runtime/build/ksoloti.elf
+chMsgSend                                         ../../runtime/build/ksoloti.elf
+chMsgWait                                         ../../runtime/build/ksoloti.elf
+chMtxLock                                         ../../runtime/build/ksoloti.elf
+chMtxLockS                                        ../../runtime/build/ksoloti.elf
+chMtxObjectInit                                   ../../runtime/build/ksoloti.elf
+chMtxTryLock                                      ../../runtime/build/ksoloti.elf
+chMtxTryLockS                                     ../../runtime/build/ksoloti.elf
+chMtxUnlock                                       ../../runtime/build/ksoloti.elf
+chMtxUnlockAll                                    ../../runtime/build/ksoloti.elf
+chMtxUnlockS                                      ../../runtime/build/ksoloti.elf
+chOQGetI                                          ../../runtime/build/ksoloti.elf
+chOQObjectInit                                    ../../runtime/build/ksoloti.elf
+chOQPutTimeout                                    ../../runtime/build/ksoloti.elf
+chOQResetI                                        ../../runtime/build/ksoloti.elf
+chOQWriteTimeout                                  ../../runtime/build/ksoloti.elf
+chRegFirstThread                                  ../../runtime/build/ksoloti.elf
+chRegNextThread                                   ../../runtime/build/ksoloti.elf
+chSchDoReschedule                                 ../../runtime/build/ksoloti.elf
+chSchDoRescheduleAhead                            ../../runtime/build/ksoloti.elf
+chSchDoRescheduleBehind                           ../../runtime/build/ksoloti.elf
+chSchGoSleepS                                     ../../runtime/build/ksoloti.elf
+chSchGoSleepTimeoutS                              ../../runtime/build/ksoloti.elf
+chSchIsPreemptionRequired                         ../../runtime/build/ksoloti.elf
+chSchReadyI                                       ../../runtime/build/ksoloti.elf
+chSchRescheduleS                                  ../../runtime/build/ksoloti.elf
+chSchWakeupS                                      ../../runtime/build/ksoloti.elf
+chSemAddCounterI                                  ../../runtime/build/ksoloti.elf
+chSemObjectInit                                   ../../runtime/build/ksoloti.elf
+chSemReset                                        ../../runtime/build/ksoloti.elf
+chSemResetI                                       ../../runtime/build/ksoloti.elf
+chSemSignal                                       ../../runtime/build/ksoloti.elf
+chSemSignalI                                      ../../runtime/build/ksoloti.elf
+chSemSignalWait                                   ../../runtime/build/ksoloti.elf
+chSemWait                                         ../../runtime/build/ksoloti.elf
+chSemWaitS                                        ../../runtime/build/ksoloti.elf
+chSemWaitTimeout                                  ../../runtime/build/ksoloti.elf
+chSemWaitTimeoutS                                 ../../runtime/build/ksoloti.elf
+chSysGetStatusAndLockX                            ../../runtime/build/ksoloti.elf
+chSysHalt                                         ../../runtime/build/ksoloti.elf
+chSysInit                                         ../../runtime/build/ksoloti.elf
+chSysIntegrityCheckI                              ../../runtime/build/ksoloti.elf
+chSysIsCounterWithinX                             ../../runtime/build/ksoloti.elf
+chSysPolledDelayX                                 ../../runtime/build/ksoloti.elf
+chSysRestoreStatusX                               ../../runtime/build/ksoloti.elf
+chSysTimerHandlerI                                ../../runtime/build/ksoloti.elf
+chThdCreateI                                      ../../runtime/build/ksoloti.elf
+chThdCreateStatic                                 ../../runtime/build/ksoloti.elf
+chThdDequeueAllI                                  ../../runtime/build/ksoloti.elf
+chThdDequeueNextI                                 ../../runtime/build/ksoloti.elf
+chThdEnqueueTimeoutS                              ../../runtime/build/ksoloti.elf
+chThdExit                                         ../../runtime/build/ksoloti.elf
+chThdExitS                                        ../../runtime/build/ksoloti.elf
+chThdResume                                       ../../runtime/build/ksoloti.elf
+chThdResumeI                                      ../../runtime/build/ksoloti.elf
+chThdResumeS                                      ../../runtime/build/ksoloti.elf
+chThdSetPriority                                  ../../runtime/build/ksoloti.elf
+chThdSleep                                        ../../runtime/build/ksoloti.elf
+chThdSleepUntil                                   ../../runtime/build/ksoloti.elf
+chThdSleepUntilWindowed                           ../../runtime/build/ksoloti.elf
+chThdStart                                        ../../runtime/build/ksoloti.elf
+chThdSuspendS                                     ../../runtime/build/ksoloti.elf
+chThdSuspendTimeoutS                              ../../runtime/build/ksoloti.elf
+chThdTerminate                                    ../../runtime/build/ksoloti.elf
+chThdWait                                         ../../runtime/build/ksoloti.elf
+chThdYield                                        ../../runtime/build/ksoloti.elf
+chVTDoResetI                                      ../../runtime/build/ksoloti.elf
+chVTDoSetI                                        ../../runtime/build/ksoloti.elf
+ch_debug                                          ../../runtime/build/ksoloti.elf
+chprintf                                          ../../runtime/build/ksoloti.elf
+chsnprintf                                        ../../runtime/build/ksoloti.elf
+chvprintf                                         ../../runtime/build/ksoloti.elf
+cleanup_glue                                      ../../runtime/build/ksoloti.elf
+clouds::Correlator::EvaluateNextCandidate()       ../../runtime/build/ksoloti.elf
+clouds::Correlator::Init(unsigned long*, unsigned long*) ../../runtime/build/ksoloti.elf
+clouds::Correlator::StartSearch(long, long, long) ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::AddGlitch(float*)    ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::Init(float*, long, long) ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::PolarToRectangular(float*) ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::Process(clouds::Parameters const&, float*, float*) ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::QuantizeMagnitudes(float*, float) ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::RectangularToPolar(float*) ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::ReplayMagnitudes(float*, float) ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::Reset()              ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::SetPhases(float*, float, float) ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::ShiftMagnitudes(float*, float*, float) ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::StoreMagnitudes(float*, float, float) ../../runtime/build/ksoloti.elf
+clouds::FrameTransformation::WarpMagnitudes(float*, float*, float) ../../runtime/build/ksoloti.elf
+clouds::GranularProcessor::GetPersistentData(clouds::PersistentBlock*, unsigned int*) ../../runtime/build/ksoloti.elf
+clouds::GranularProcessor::Init(void*, unsigned int, void*, unsigned int) ../../runtime/build/ksoloti.elf
+clouds::GranularProcessor::LoadPersistentData(unsigned long const*) ../../runtime/build/ksoloti.elf
+clouds::GranularProcessor::Prepare()              ../../runtime/build/ksoloti.elf
+clouds::GranularProcessor::PreparePersistentData() ../../runtime/build/ksoloti.elf
+clouds::GranularProcessor::Process(clouds::ShortFrame*, clouds::ShortFrame*, unsigned int) ../../runtime/build/ksoloti.elf
+clouds::GranularProcessor::ProcessGranular(clouds::FloatFrame*, clouds::FloatFrame*, unsigned int) ../../runtime/build/ksoloti.elf
+clouds::GranularProcessor::ResetFilters()         ../../runtime/build/ksoloti.elf
+clouds::PhaseVocoder::Buffer()                    ../../runtime/build/ksoloti.elf
+clouds::PhaseVocoder::Init(void**, unsigned int*, float const*, unsigned int, long, long, float) ../../runtime/build/ksoloti.elf
+clouds::PhaseVocoder::Process(clouds::Parameters const&, clouds::FloatFrame const*, clouds::FloatFrame*, unsigned int) ../../runtime/build/ksoloti.elf
+clouds::Reverb::Process(clouds::FloatFrame*, unsigned int) ../../runtime/build/ksoloti.elf
+clouds::STFT::Buffer()                            ../../runtime/build/ksoloti.elf
+clouds::STFT::Init(stmlib::ShyFFT<float, 4096u, stmlib::RotationPhasor>*, unsigned int, unsigned int, float*, float*, float const*, short*, clouds::FrameTransformation*) ../../runtime/build/ksoloti.elf
+clouds::STFT::Process(clouds::Parameters const&, float const*, float*, unsigned int, unsigned int) ../../runtime/build/ksoloti.elf
+clouds::STFT::Reset()                             ../../runtime/build/ksoloti.elf
+clouds::lookup_table_int16_table                  ../../runtime/build/ksoloti.elf
+clouds::lookup_table_table                        ../../runtime/build/ksoloti.elf
+clouds::lut_cutoff                                ../../runtime/build/ksoloti.elf
+clouds::lut_db                                    ../../runtime/build/ksoloti.elf
+clouds::lut_grain_size                            ../../runtime/build/ksoloti.elf
+clouds::lut_quantized_pitch                       ../../runtime/build/ksoloti.elf
+clouds::lut_sin                                   ../../runtime/build/ksoloti.elf
+clouds::lut_sine_window_4096                      ../../runtime/build/ksoloti.elf
+clouds::lut_ulaw                                  ../../runtime/build/ksoloti.elf
+clouds::lut_window                                ../../runtime/build/ksoloti.elf
+clouds::lut_xfade_in                              ../../runtime/build/ksoloti.elf
+clouds::lut_xfade_out                             ../../runtime/build/ksoloti.elf
+clouds::src_filter_1x_2_31                        ../../runtime/build/ksoloti.elf
+clouds::src_filter_1x_2_45                        ../../runtime/build/ksoloti.elf
+clouds::src_filter_1x_2_63                        ../../runtime/build/ksoloti.elf
+clouds::src_filter_1x_2_91                        ../../runtime/build/ksoloti.elf
+clouds::src_filter_table                          ../../runtime/build/ksoloti.elf
+clust2sect                                        ../../runtime/build/ksoloti.elf
+codec_ADAU1961_SAI_init                           ../../runtime/build/ksoloti.elf
+codec_ADAU1961_hw_init                            ../../runtime/build/ksoloti.elf
+codec_clearbuffer                                 ../../runtime/build/ksoloti.elf
+codec_init                                        ../../runtime/build/ksoloti.elf
+codec_interrupt_timestamp                         ../../runtime/build/ksoloti.elf
+computebufI                                       ../../runtime/build/ksoloti.elf
+configSDRAM                                       ../../runtime/build/ksoloti.elf
+connectionFlags                                   ../../runtime/build/ksoloti.elf
+cosf                                              ../../runtime/build/ksoloti.elf
+dbg_set_i                                         ../../runtime/build/ksoloti.elf
+disk_initialize                                   ../../runtime/build/ksoloti.elf
+disk_ioctl                                        ../../runtime/build/ksoloti.elf
+disk_read                                         ../../runtime/build/ksoloti.elf
+disk_status                                       ../../runtime/build/ksoloti.elf
+disk_write                                        ../../runtime/build/ksoloti.elf
+dmaInit                                           ../../runtime/build/ksoloti.elf
+dmaStreamAllocate                                 ../../runtime/build/ksoloti.elf
+dmaStreamRelease                                  ../../runtime/build/ksoloti.elf
+dspLoad200                                        ../../runtime/build/ksoloti.elf
+dsptimeSmoothingData                              ../../runtime/build/ksoloti.elf
+elements::Exciter::GetPulseAmplitude(float)       ../../runtime/build/ksoloti.elf
+elements::Exciter::Init()                         ../../runtime/build/ksoloti.elf
+elements::Exciter::Process(unsigned char, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Exciter::ProcessFlow(unsigned char, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Exciter::ProcessGranularSamplePlayer(unsigned char, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Exciter::ProcessMallet(unsigned char, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Exciter::ProcessNoise(unsigned char, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Exciter::ProcessParticles(unsigned char, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Exciter::ProcessPlectrum(unsigned char, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Exciter::ProcessSamplePlayer(unsigned char, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Exciter::fn_table_                      ../../runtime/build/ksoloti.elf
+elements::FmOscillator::Process(float, float, float, float, float const*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::MultistageEnvelope::Init()              ../../runtime/build/ksoloti.elf
+elements::OminousVoice::ConfigureEnvelope(elements::Patch const&) ../../runtime/build/ksoloti.elf
+elements::OminousVoice::Init()                    ../../runtime/build/ksoloti.elf
+elements::OminousVoice::Process(elements::Patch const&, float, float, bool, float const*, float const*, float*, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Part::Init(unsigned short*)             ../../runtime/build/ksoloti.elf
+elements::Part::Process(elements::PerformanceState const&, float const*, float const*, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Part::Seed(unsigned long*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Resonator::ComputeFilters()             ../../runtime/build/ksoloti.elf
+elements::Resonator::Init()                       ../../runtime/build/ksoloti.elf
+elements::Resonator::Process(float const*, float const*, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Reverb::Process(float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Spatializer::Init(float)                ../../runtime/build/ksoloti.elf
+elements::Spatializer::Process(float*, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::String::Init(bool)                      ../../runtime/build/ksoloti.elf
+elements::String::Process(float const*, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Tube::Init()                            ../../runtime/build/ksoloti.elf
+elements::Tube::Process(float, float, float, float, float*, float, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Voice::Init()                           ../../runtime/build/ksoloti.elf
+elements::Voice::Process(elements::Patch const&, float, float, bool, float const*, float const*, float*, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+elements::Voice::ResetResonator()                 ../../runtime/build/ksoloti.elf
+elements::chords                                  ../../runtime/build/ksoloti.elf
+elements::lookup_table_int16_table                ../../runtime/build/ksoloti.elf
+elements::lookup_table_table                      ../../runtime/build/ksoloti.elf
+elements::lut_accent_gain_coarse                  ../../runtime/build/ksoloti.elf
+elements::lut_accent_gain_fine                    ../../runtime/build/ksoloti.elf
+elements::lut_approx_svf_g                        ../../runtime/build/ksoloti.elf
+elements::lut_approx_svf_gain                     ../../runtime/build/ksoloti.elf
+elements::lut_approx_svf_h                        ../../runtime/build/ksoloti.elf
+elements::lut_approx_svf_r                        ../../runtime/build/ksoloti.elf
+elements::lut_db_led_brightness                   ../../runtime/build/ksoloti.elf
+elements::lut_detune_quantizer                    ../../runtime/build/ksoloti.elf
+elements::lut_env_expo                            ../../runtime/build/ksoloti.elf
+elements::lut_env_increments                      ../../runtime/build/ksoloti.elf
+elements::lut_env_linear                          ../../runtime/build/ksoloti.elf
+elements::lut_env_quartic                         ../../runtime/build/ksoloti.elf
+elements::lut_midi_to_f_high                      ../../runtime/build/ksoloti.elf
+elements::lut_midi_to_f_low                       ../../runtime/build/ksoloti.elf
+elements::lut_midi_to_increment_high              ../../runtime/build/ksoloti.elf
+elements::sample_boundary_table                   ../../runtime/build/ksoloti.elf
+elements::sample_table                            ../../runtime/build/ksoloti.elf
+elements::smp_boundaries                          ../../runtime/build/ksoloti.elf
+errno                                             ../../runtime/build/ksoloti.elf
+errorFlagClearAll                                 ../../runtime/build/ksoloti.elf
+errorflags                                        ../../runtime/build/ksoloti.elf
+exception_check                                   ../../runtime/build/ksoloti.elf
+exception_check_DFU                               ../../runtime/build/ksoloti.elf
+exception_checkandreport                          ../../runtime/build/ksoloti.elf
+exception_clear                                   ../../runtime/build/ksoloti.elf
+exception_init                                    ../../runtime/build/ksoloti.elf
+exception_initiate_dfu                            ../../runtime/build/ksoloti.elf
+expt                                              ../../runtime/build/ksoloti.elf
+f_chdir                                           ../../runtime/build/ksoloti.elf
+f_chmod                                           ../../runtime/build/ksoloti.elf
+f_close                                           ../../runtime/build/ksoloti.elf
+f_closedir                                        ../../runtime/build/ksoloti.elf
+f_filter_biquad_A                                 ../../runtime/build/ksoloti.elf
+f_getcwd                                          ../../runtime/build/ksoloti.elf
+f_getfree                                         ../../runtime/build/ksoloti.elf
+f_lseek                                           ../../runtime/build/ksoloti.elf
+f_mkdir                                           ../../runtime/build/ksoloti.elf
+f_mkfs                                            ../../runtime/build/ksoloti.elf
+f_mount                                           ../../runtime/build/ksoloti.elf
+f_open                                            ../../runtime/build/ksoloti.elf
+f_opendir                                         ../../runtime/build/ksoloti.elf
+f_read                                            ../../runtime/build/ksoloti.elf
+f_readdir                                         ../../runtime/build/ksoloti.elf
+f_rename                                          ../../runtime/build/ksoloti.elf
+f_stat                                            ../../runtime/build/ksoloti.elf
+f_sync                                            ../../runtime/build/ksoloti.elf
+f_truncate                                        ../../runtime/build/ksoloti.elf
+f_unlink                                          ../../runtime/build/ksoloti.elf
+f_utime                                           ../../runtime/build/ksoloti.elf
+f_write                                           ../../runtime/build/ksoloti.elf
+fabs                                              ../../runtime/build/ksoloti.elf
+fabsf                                             ../../runtime/build/ksoloti.elf
+fakefree                                          ../../runtime/build/ksoloti.elf
+fakemalloc                                        ../../runtime/build/ksoloti.elf
+fbuff                                             ../../runtime/build/ksoloti.elf
+ff_convert                                        ../../runtime/build/ksoloti.elf
+ff_cre_syncobj                                    ../../runtime/build/ksoloti.elf
+ff_del_syncobj                                    ../../runtime/build/ksoloti.elf
+ff_rel_grant                                      ../../runtime/build/ksoloti.elf
+ff_req_grant                                      ../../runtime/build/ksoloti.elf
+ff_wtoupper                                       ../../runtime/build/ksoloti.elf
+fifoTicksUsed                                     ../../runtime/build/ksoloti.elf
+fifo_init                                         ../../runtime/build/ksoloti.elf
+fifo_read                                         ../../runtime/build/ksoloti.elf
+fifo_write                                        ../../runtime/build/ksoloti.elf
+finite                                            ../../runtime/build/ksoloti.elf
+finitef                                           ../../runtime/build/ksoloti.elf
+flash_Erase_sector                                ../../runtime/build/ksoloti.elf
+flash_ProgramWord                                 ../../runtime/build/ksoloti.elf
+flash_lock                                        ../../runtime/build/ksoloti.elf
+flash_unlock                                      ../../runtime/build/ksoloti.elf
+float warps::Oscillator::RenderPolyblep<(warps::OscillatorShape)1>(float, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+float warps::Oscillator::RenderPolyblep<(warps::OscillatorShape)2>(float, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+float warps::Oscillator::RenderPolyblep<(warps::OscillatorShape)3>(float, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+floorf                                            ../../runtime/build/ksoloti.elf
+fs_err_name                                       ../../runtime/build/ksoloti.elf
+fs_ready                                          ../../runtime/build/ksoloti.elf
+g_reset_flags                                     ../../runtime/build/ksoloti.elf
+g_startup_flags                                   ../../runtime/build/ksoloti.elf
+getErrorFlag                                      ../../runtime/build/ksoloti.elf
+get_fat                                           ../../runtime/build/ksoloti.elf
+get_fattime                                       ../../runtime/build/ksoloti.elf
+hHCD                                              ../../runtime/build/ksoloti.elf
+hUSBHost                                          ../../runtime/build/ksoloti.elf
+halInit                                           ../../runtime/build/ksoloti.elf
+hal_lld_init                                      ../../runtime/build/ksoloti.elf
+hid_buttons                                       ../../runtime/build/ksoloti.elf
+hid_joy_buttons                                   ../../runtime/build/ksoloti.elf
+hid_joy_left_axis_x                               ../../runtime/build/ksoloti.elf
+hid_joy_left_axis_y                               ../../runtime/build/ksoloti.elf
+hid_joy_right_axis_x                              ../../runtime/build/ksoloti.elf
+hid_joy_right_axis_y                              ../../runtime/build/ksoloti.elf
+hid_key_modifiers                                 ../../runtime/build/ksoloti.elf
+hid_keys                                          ../../runtime/build/ksoloti.elf
+hid_mouse_x                                       ../../runtime/build/ksoloti.elf
+hid_mouse_y                                       ../../runtime/build/ksoloti.elf
+i2cAcquireBus                                     ../../runtime/build/ksoloti.elf
+i2cGetErrors                                      ../../runtime/build/ksoloti.elf
+i2cInit                                           ../../runtime/build/ksoloti.elf
+i2cMasterReceiveTimeout                           ../../runtime/build/ksoloti.elf
+i2cMasterTransmitTimeout                          ../../runtime/build/ksoloti.elf
+i2cObjectInit                                     ../../runtime/build/ksoloti.elf
+i2cReleaseBus                                     ../../runtime/build/ksoloti.elf
+i2cStart                                          ../../runtime/build/ksoloti.elf
+i2cStop                                           ../../runtime/build/ksoloti.elf
+i2c_lld_init                                      ../../runtime/build/ksoloti.elf
+i2c_lld_master_receive_timeout                    ../../runtime/build/ksoloti.elf
+i2c_lld_master_transmit_timeout                   ../../runtime/build/ksoloti.elf
+i2c_lld_start                                     ../../runtime/build/ksoloti.elf
+i2c_lld_stop                                      ../../runtime/build/ksoloti.elf
+i2crxbuf                                          ../../runtime/build/ksoloti.elf
+i2ctxbuf                                          ../../runtime/build/ksoloti.elf
+ibqGetEmptyBufferI                                ../../runtime/build/ksoloti.elf
+ibqGetFullBufferTimeout                           ../../runtime/build/ksoloti.elf
+ibqGetFullBufferTimeoutS                          ../../runtime/build/ksoloti.elf
+ibqGetTimeout                                     ../../runtime/build/ksoloti.elf
+ibqObjectInit                                     ../../runtime/build/ksoloti.elf
+ibqPostFullBufferI                                ../../runtime/build/ksoloti.elf
+ibqReadTimeout                                    ../../runtime/build/ksoloti.elf
+ibqReleaseEmptyBuffer                             ../../runtime/build/ksoloti.elf
+ibqReleaseEmptyBufferS                            ../../runtime/build/ksoloti.elf
+ibqResetI                                         ../../runtime/build/ksoloti.elf
+init_filter_biquad_A                              ../../runtime/build/ksoloti.elf
+inttohex                                          ../../runtime/build/ksoloti.elf
+isEnabled                                         ../../runtime/build/ksoloti.elf
+isValidInput                                      ../../runtime/build/ksoloti.elf
+isValidOutput                                     ../../runtime/build/ksoloti.elf
+joystick_info                                     ../../runtime/build/ksoloti.elf
+joystick_report_data                              ../../runtime/build/ksoloti.elf
+keybd_info                                        ../../runtime/build/ksoloti.elf
+keybd_report_data                                 ../../runtime/build/ksoloti.elf
+le_bytes_to_uint32                                ../../runtime/build/ksoloti.elf
+loadFName                                         ../../runtime/build/ksoloti.elf
+loadPatchIndex                                    ../../runtime/build/ksoloti.elf
+log                                               ../../runtime/build/ksoloti.elf
+logt                                              ../../runtime/build/ksoloti.elf
+ma_add                                            ../../runtime/build/ksoloti.elf
+ma_add_all                                        ../../runtime/build/ksoloti.elf
+ma_average                                        ../../runtime/build/ksoloti.elf
+ma_init                                           ../../runtime/build/ksoloti.elf
+main                                              ../../runtime/build/ksoloti.elf
+mduConfigureHookI                                 ../../runtime/build/ksoloti.elf
+mduDataReceived                                   ../../runtime/build/ksoloti.elf
+mduDataTransmitted                                ../../runtime/build/ksoloti.elf
+mduInit                                           ../../runtime/build/ksoloti.elf
+mduInitiateReceiveI                               ../../runtime/build/ksoloti.elf
+mduInitiateTransmitI                              ../../runtime/build/ksoloti.elf
+mduObjectInit                                     ../../runtime/build/ksoloti.elf
+mduReceiveBuffer                                  ../../runtime/build/ksoloti.elf
+mduRequestsHook                                   ../../runtime/build/ksoloti.elf
+mduStart                                          ../../runtime/build/ksoloti.elf
+mduStop                                           ../../runtime/build/ksoloti.elf
+mduTransmitBuffer                                 ../../runtime/build/ksoloti.elf
+mem                                               ../../runtime/build/ksoloti.elf
+memTest                                           ../../runtime/build/ksoloti.elf
+memcpy                                            ../../runtime/build/ksoloti.elf
+memmove                                           ../../runtime/build/ksoloti.elf
+memset                                            ../../runtime/build/ksoloti.elf
+memused                                           ../../runtime/build/ksoloti.elf
+midi_init                                         ../../runtime/build/ksoloti.elf
+midi_usb_MidiSend1                                ../../runtime/build/ksoloti.elf
+midi_usb_MidiSend2                                ../../runtime/build/ksoloti.elf
+midi_usb_MidiSend3                                ../../runtime/build/ksoloti.elf
+midi_usb_MidiSendSysEx                            ../../runtime/build/ksoloti.elf
+midiusbcfg                                        ../../runtime/build/ksoloti.elf
+mounter                                           ../../runtime/build/ksoloti.elf
+mouse_info                                        ../../runtime/build/ksoloti.elf
+mouse_report_data                                 ../../runtime/build/ksoloti.elf
+msObjectInit                                      ../../runtime/build/ksoloti.elf
+msdConfigureHookI                                 ../../runtime/build/ksoloti.elf
+msdInit                                           ../../runtime/build/ksoloti.elf
+msdRequestsHook                                   ../../runtime/build/ksoloti.elf
+msdStart                                          ../../runtime/build/ksoloti.elf
+msdStop                                           ../../runtime/build/ksoloti.elf
+msd_read_command_block                            ../../runtime/build/ksoloti.elf
+msd_scsi_process_inquiry                          ../../runtime/build/ksoloti.elf
+msd_scsi_process_mode_sense_6                     ../../runtime/build/ksoloti.elf
+msd_scsi_process_read_capacity_10                 ../../runtime/build/ksoloti.elf
+msd_scsi_process_read_format_capacities           ../../runtime/build/ksoloti.elf
+msd_scsi_process_request_sense                    ../../runtime/build/ksoloti.elf
+msd_scsi_process_send_diagnostic                  ../../runtime/build/ksoloti.elf
+msd_scsi_process_start_read_write_10              ../../runtime/build/ksoloti.elf
+msd_scsi_process_start_stop_unit                  ../../runtime/build/ksoloti.elf
+msd_scsi_process_test_unit_ready                  ../../runtime/build/ksoloti.elf
+msd_wait_for_command_block                        ../../runtime/build/ksoloti.elf
+mutable_resources::lut_4_decades                  ../../runtime/build/ksoloti.elf
+mutable_resources::lut_fm_frequency_quantizer     ../../runtime/build/ksoloti.elf
+mutable_resources::lut_sine                       ../../runtime/build/ksoloti.elf
+mutable_resources::lut_stiffness                  ../../runtime/build/ksoloti.elf
+mutable_resources::lut_svf_shift                  ../../runtime/build/ksoloti.elf
+nan                                               ../../runtime/build/ksoloti.elf
+nanf                                              ../../runtime/build/ksoloti.elf
+nvicClearPending                                  ../../runtime/build/ksoloti.elf
+nvicDisableVector                                 ../../runtime/build/ksoloti.elf
+nvicEnableVector                                  ../../runtime/build/ksoloti.elf
+nvicSetSystemHandlerPriority                      ../../runtime/build/ksoloti.elf
+obqFlush                                          ../../runtime/build/ksoloti.elf
+obqGetEmptyBufferTimeout                          ../../runtime/build/ksoloti.elf
+obqGetEmptyBufferTimeoutS                         ../../runtime/build/ksoloti.elf
+obqGetFullBufferI                                 ../../runtime/build/ksoloti.elf
+obqObjectInit                                     ../../runtime/build/ksoloti.elf
+obqPostFullBuffer                                 ../../runtime/build/ksoloti.elf
+obqPostFullBufferS                                ../../runtime/build/ksoloti.elf
+obqPutTimeout                                     ../../runtime/build/ksoloti.elf
+obqReleaseEmptyBufferI                            ../../runtime/build/ksoloti.elf
+obqResetI                                         ../../runtime/build/ksoloti.elf
+obqTryFlushI                                      ../../runtime/build/ksoloti.elf
+obqWriteTimeout                                   ../../runtime/build/ksoloti.elf
+onboard_i2c_handle                                ../../runtime/build/ksoloti.elf
+palReadBus                                        ../../runtime/build/ksoloti.elf
+palSetBusMode                                     ../../runtime/build/ksoloti.elf
+palWriteBus                                       ../../runtime/build/ksoloti.elf
+pal_default_config                                ../../runtime/build/ksoloti.elf
+patchMeta                                         ../../runtime/build/ksoloti.elf
+                                                  ../../proof/build/blend-stripped.o
+patchStatus                                       ../../runtime/build/ksoloti.elf
+pattern                                           ../../runtime/build/ksoloti.elf
+pattern_index                                     ../../runtime/build/ksoloti.elf
+pitcht                                            ../../runtime/build/ksoloti.elf
+pow                                               ../../runtime/build/ksoloti.elf
+powf                                              ../../runtime/build/ksoloti.elf
+prvGetRegistersFromStack                          ../../runtime/build/ksoloti.elf
+put_fat                                           ../../runtime/build/ksoloti.elf
+pwmChangePeriod                                   ../../runtime/build/ksoloti.elf
+pwmDisableChannel                                 ../../runtime/build/ksoloti.elf
+pwmDisableChannelNotification                     ../../runtime/build/ksoloti.elf
+pwmDisablePeriodicNotification                    ../../runtime/build/ksoloti.elf
+pwmEnableChannel                                  ../../runtime/build/ksoloti.elf
+pwmEnableChannelNotification                      ../../runtime/build/ksoloti.elf
+pwmEnablePeriodicNotification                     ../../runtime/build/ksoloti.elf
+pwmInit                                           ../../runtime/build/ksoloti.elf
+pwmObjectInit                                     ../../runtime/build/ksoloti.elf
+pwmStart                                          ../../runtime/build/ksoloti.elf
+pwmStop                                           ../../runtime/build/ksoloti.elf
+pwm_lld_disable_channel                           ../../runtime/build/ksoloti.elf
+pwm_lld_disable_channel_notification              ../../runtime/build/ksoloti.elf
+pwm_lld_disable_periodic_notification             ../../runtime/build/ksoloti.elf
+pwm_lld_enable_channel                            ../../runtime/build/ksoloti.elf
+pwm_lld_enable_channel_notification               ../../runtime/build/ksoloti.elf
+pwm_lld_enable_periodic_notification              ../../runtime/build/ksoloti.elf
+pwm_lld_init                                      ../../runtime/build/ksoloti.elf
+pwm_lld_serve_interrupt                           ../../runtime/build/ksoloti.elf
+pwm_lld_start                                     ../../runtime/build/ksoloti.elf
+pwm_lld_stop                                      ../../runtime/build/ksoloti.elf
+raise                                             ../../runtime/build/ksoloti.elf
+rbuf                                              ../../runtime/build/ksoloti.elf
+rbuf2                                             ../../runtime/build/ksoloti.elf
+realCoefAQ15                                      ../../runtime/build/ksoloti.elf
+realCoefAQ31                                      ../../runtime/build/ksoloti.elf
+realCoefBQ15                                      ../../runtime/build/ksoloti.elf
+realCoefBQ31                                      ../../runtime/build/ksoloti.elf
+repeat                                            ../../runtime/build/ksoloti.elf
+report_fatfs_error                                ../../runtime/build/ksoloti.elf
+report_patchLoadFail                              ../../runtime/build/ksoloti.elf
+report_patchLoadSDRamOverflow                     ../../runtime/build/ksoloti.elf
+report_usbh_midi_ringbuffer_overflow              ../../runtime/build/ksoloti.elf
+restore_core_regs                                 ../../runtime/build/ksoloti.elf
+rings::lookup_table_table                         ../../runtime/build/ksoloti.elf
+rint                                              ../../runtime/build/ksoloti.elf
+rintf                                             ../../runtime/build/ksoloti.elf
+rootc::GetPresets()::p                            ../../proof/build/blend-stripped.o
+rootc::dsp()                                      ../../proof/build/blend-stripped.o
+sai_a                                             ../../runtime/build/ksoloti.elf
+sai_a_dma                                         ../../runtime/build/ksoloti.elf
+sai_b                                             ../../runtime/build/ksoloti.elf
+sai_b_dma                                         ../../runtime/build/ksoloti.elf
+scalbn                                            ../../runtime/build/ksoloti.elf
+scalbnf                                           ../../runtime/build/ksoloti.elf
+sdGetWouldBlock                                   ../../runtime/build/ksoloti.elf
+sdIncomingDataI                                   ../../runtime/build/ksoloti.elf
+sdInit                                            ../../runtime/build/ksoloti.elf
+sdObjectInit                                      ../../runtime/build/ksoloti.elf
+sdPutWouldBlock                                   ../../runtime/build/ksoloti.elf
+sdRequestDataI                                    ../../runtime/build/ksoloti.elf
+sdStart                                           ../../runtime/build/ksoloti.elf
+sdStop                                            ../../runtime/build/ksoloti.elf
+sd_lld_init                                       ../../runtime/build/ksoloti.elf
+sd_lld_start                                      ../../runtime/build/ksoloti.elf
+sd_lld_stop                                       ../../runtime/build/ksoloti.elf
+sdcConnect                                        ../../runtime/build/ksoloti.elf
+sdcDisconnect                                     ../../runtime/build/ksoloti.elf
+sdcErase                                          ../../runtime/build/ksoloti.elf
+sdcGetAndClearErrors                              ../../runtime/build/ksoloti.elf
+sdcGetInfo                                        ../../runtime/build/ksoloti.elf
+sdcInit                                           ../../runtime/build/ksoloti.elf
+sdcObjectInit                                     ../../runtime/build/ksoloti.elf
+sdcRead                                           ../../runtime/build/ksoloti.elf
+sdcStart                                          ../../runtime/build/ksoloti.elf
+sdcStop                                           ../../runtime/build/ksoloti.elf
+sdcSync                                           ../../runtime/build/ksoloti.elf
+sdcWrite                                          ../../runtime/build/ksoloti.elf
+sdc_lld_init                                      ../../runtime/build/ksoloti.elf
+sdc_lld_is_card_inserted                          ../../runtime/build/ksoloti.elf
+sdc_lld_is_write_protected                        ../../runtime/build/ksoloti.elf
+sdc_lld_read                                      ../../runtime/build/ksoloti.elf
+sdc_lld_read_aligned                              ../../runtime/build/ksoloti.elf
+sdc_lld_read_special                              ../../runtime/build/ksoloti.elf
+sdc_lld_send_cmd_long_crc                         ../../runtime/build/ksoloti.elf
+sdc_lld_send_cmd_none                             ../../runtime/build/ksoloti.elf
+sdc_lld_send_cmd_short                            ../../runtime/build/ksoloti.elf
+sdc_lld_send_cmd_short_crc                        ../../runtime/build/ksoloti.elf
+sdc_lld_set_bus_mode                              ../../runtime/build/ksoloti.elf
+sdc_lld_set_data_clk                              ../../runtime/build/ksoloti.elf
+sdc_lld_start                                     ../../runtime/build/ksoloti.elf
+sdc_lld_start_clk                                 ../../runtime/build/ksoloti.elf
+sdc_lld_stop                                      ../../runtime/build/ksoloti.elf
+sdc_lld_stop_clk                                  ../../runtime/build/ksoloti.elf
+sdc_lld_sync                                      ../../runtime/build/ksoloti.elf
+sdc_lld_write                                     ../../runtime/build/ksoloti.elf
+sdc_lld_write_aligned                             ../../runtime/build/ksoloti.elf
+sdcard_attemptMountIfUnmounted                    ../../runtime/build/ksoloti.elf
+sdcard_init                                       ../../runtime/build/ksoloti.elf
+sdcard_loadPatch1                                 ../../runtime/build/ksoloti.elf
+sdcard_unmount                                    ../../runtime/build/ksoloti.elf
+sdcsw_prev                                        ../../runtime/build/ksoloti.elf
+sdram_free                                        ../../runtime/build/ksoloti.elf
+sdram_get_free                                    ../../runtime/build/ksoloti.elf
+sdram_init                                        ../../runtime/build/ksoloti.elf
+                                                  ../../proof/build/blend-stripped.o
+sdram_malloc                                      ../../runtime/build/ksoloti.elf
+serial_MidiGetOutputBufferPending                 ../../runtime/build/ksoloti.elf
+serial_MidiInByteHandler                          ../../runtime/build/ksoloti.elf
+serial_MidiSend1                                  ../../runtime/build/ksoloti.elf
+serial_MidiSend2                                  ../../runtime/build/ksoloti.elf
+serial_MidiSend3                                  ../../runtime/build/ksoloti.elf
+serial_midi_init                                  ../../runtime/build/ksoloti.elf
+setErrorFlag                                      ../../runtime/build/ksoloti.elf
+signal                                            ../../runtime/build/ksoloti.elf
+sinTable_f32                                      ../../runtime/build/ksoloti.elf
+sinTable_q15                                      ../../runtime/build/ksoloti.elf
+sinTable_q31                                      ../../runtime/build/ksoloti.elf
+sine2t                                            ../../runtime/build/ksoloti.elf
+sinf                                              ../../runtime/build/ksoloti.elf
+spiAcquireBus                                     ../../runtime/build/ksoloti.elf
+spiExchange                                       ../../runtime/build/ksoloti.elf
+spiIgnore                                         ../../runtime/build/ksoloti.elf
+spiInit                                           ../../runtime/build/ksoloti.elf
+spiObjectInit                                     ../../runtime/build/ksoloti.elf
+spiReceive                                        ../../runtime/build/ksoloti.elf
+spiReleaseBus                                     ../../runtime/build/ksoloti.elf
+spiSelect                                         ../../runtime/build/ksoloti.elf
+spiSend                                           ../../runtime/build/ksoloti.elf
+spiStart                                          ../../runtime/build/ksoloti.elf
+spiStartExchange                                  ../../runtime/build/ksoloti.elf
+spiStartIgnore                                    ../../runtime/build/ksoloti.elf
+spiStartReceive                                   ../../runtime/build/ksoloti.elf
+spiStartSend                                      ../../runtime/build/ksoloti.elf
+spiStop                                           ../../runtime/build/ksoloti.elf
+spiUnselect                                       ../../runtime/build/ksoloti.elf
+spi_lld_exchange                                  ../../runtime/build/ksoloti.elf
+spi_lld_ignore                                    ../../runtime/build/ksoloti.elf
+spi_lld_init                                      ../../runtime/build/ksoloti.elf
+spi_lld_polled_exchange                           ../../runtime/build/ksoloti.elf
+spi_lld_receive                                   ../../runtime/build/ksoloti.elf
+spi_lld_select                                    ../../runtime/build/ksoloti.elf
+spi_lld_send                                      ../../runtime/build/ksoloti.elf
+spi_lld_start                                     ../../runtime/build/ksoloti.elf
+spi_lld_stop                                      ../../runtime/build/ksoloti.elf
+spi_lld_unselect                                  ../../runtime/build/ksoloti.elf
+stGetAlarm                                        ../../runtime/build/ksoloti.elf
+stInit                                            ../../runtime/build/ksoloti.elf
+stSetAlarm                                        ../../runtime/build/ksoloti.elf
+stStartAlarm                                      ../../runtime/build/ksoloti.elf
+stStopAlarm                                       ../../runtime/build/ksoloti.elf
+st_lld_init                                       ../../runtime/build/ksoloti.elf
+start_dsp_thread                                  ../../runtime/build/ksoloti.elf
+stm32_clock_init                                  ../../runtime/build/ksoloti.elf
+stmlib::DirectTransform<float, 12u, stmlib::RotationPhasor<float, 12u> >::operator()(float*, float*, unsigned char const*, stmlib::RotationPhasor<float, 12u>*, unsigned int) ../../runtime/build/ksoloti.elf
+stmlib::InverseTransform<float, 12u, stmlib::RotationPhasor<float, 12u> >::operator()(float*, float*, unsigned char const*, stmlib::RotationPhasor<float, 12u>*, unsigned int) ../../runtime/build/ksoloti.elf
+stmlib::Random::rng_state_                        ../../runtime/build/ksoloti.elf
+stmlib::ShyFFT<float, 4096u, stmlib::RotationPhasor>::bit_rev_256_lut_ ../../runtime/build/ksoloti.elf
+stmlib::atan_lut                                  ../../runtime/build/ksoloti.elf
+stmlib::lut_pitch_ratio_high                      ../../runtime/build/ksoloti.elf
+stmlib::lut_pitch_ratio_low                       ../../runtime/build/ksoloti.elf
+stpcpy                                            ../../runtime/build/ksoloti.elf
+strcpy                                            ../../runtime/build/ksoloti.elf
+streams::Compressor::Compress(long, long, long, bool) ../../runtime/build/ksoloti.elf
+streams::Compressor::Exp2(long)                   ../../runtime/build/ksoloti.elf
+streams::Compressor::Init()                       ../../runtime/build/ksoloti.elf
+streams::Compressor::Log2(long)                   ../../runtime/build/ksoloti.elf
+streams::Compressor::Process(short, short, unsigned short*, unsigned short*) ../../runtime/build/ksoloti.elf
+streams::Envelope::Init()                         ../../runtime/build/ksoloti.elf
+streams::Envelope::Process(short, short, unsigned short*, unsigned short*) ../../runtime/build/ksoloti.elf
+streams::Follower::Init()                         ../../runtime/build/ksoloti.elf
+streams::Follower::Process(short, short, unsigned short*, unsigned short*) ../../runtime/build/ksoloti.elf
+streams::LorenzGenerator::Init()                  ../../runtime/build/ksoloti.elf
+streams::LorenzGenerator::Process(short, short, unsigned short*, unsigned short*) ../../runtime/build/ksoloti.elf
+streams::Processor::CompressorConfigure(bool, long*, long*) ../../runtime/build/ksoloti.elf
+streams::Processor::CompressorInit()              ../../runtime/build/ksoloti.elf
+streams::Processor::CompressorProcess(short, short, unsigned short*, unsigned short*) ../../runtime/build/ksoloti.elf
+streams::Processor::EnvelopeConfigure(bool, long*, long*) ../../runtime/build/ksoloti.elf
+streams::Processor::EnvelopeInit()                ../../runtime/build/ksoloti.elf
+streams::Processor::EnvelopeProcess(short, short, unsigned short*, unsigned short*) ../../runtime/build/ksoloti.elf
+streams::Processor::FilterControllerConfigure(bool, long*, long*) ../../runtime/build/ksoloti.elf
+streams::Processor::FilterControllerInit()        ../../runtime/build/ksoloti.elf
+streams::Processor::FilterControllerProcess(short, short, unsigned short*, unsigned short*) ../../runtime/build/ksoloti.elf
+streams::Processor::FollowerConfigure(bool, long*, long*) ../../runtime/build/ksoloti.elf
+streams::Processor::FollowerInit()                ../../runtime/build/ksoloti.elf
+streams::Processor::FollowerProcess(short, short, unsigned short*, unsigned short*) ../../runtime/build/ksoloti.elf
+streams::Processor::Init(unsigned char)           ../../runtime/build/ksoloti.elf
+streams::Processor::LorenzGeneratorConfigure(bool, long*, long*) ../../runtime/build/ksoloti.elf
+streams::Processor::LorenzGeneratorInit()         ../../runtime/build/ksoloti.elf
+streams::Processor::LorenzGeneratorProcess(short, short, unsigned short*, unsigned short*) ../../runtime/build/ksoloti.elf
+streams::Processor::VactrolConfigure(bool, long*, long*) ../../runtime/build/ksoloti.elf
+streams::Processor::VactrolInit()                 ../../runtime/build/ksoloti.elf
+streams::Processor::VactrolProcess(short, short, unsigned short*, unsigned short*) ../../runtime/build/ksoloti.elf
+streams::Processor::callbacks_table_              ../../runtime/build/ksoloti.elf
+streams::Svf::Init()                              ../../runtime/build/ksoloti.elf
+streams::Svf::Process(long)                       ../../runtime/build/ksoloti.elf
+streams::Vactrol::Init()                          ../../runtime/build/ksoloti.elf
+streams::Vactrol::Process(short, short, unsigned short*, unsigned short*) ../../runtime/build/ksoloti.elf
+streams::lookup_table_32_table                    ../../runtime/build/ksoloti.elf
+streams::lookup_table_table                       ../../runtime/build/ksoloti.elf
+streams::lut_2164_gain                            ../../runtime/build/ksoloti.elf
+streams::lut_compressor_ratio                     ../../runtime/build/ksoloti.elf
+streams::lut_env_expo                             ../../runtime/build/ksoloti.elf
+streams::lut_env_increments                       ../../runtime/build/ksoloti.elf
+streams::lut_env_linear                           ../../runtime/build/ksoloti.elf
+streams::lut_env_quartic                          ../../runtime/build/ksoloti.elf
+streams::lut_exp2                                 ../../runtime/build/ksoloti.elf
+streams::lut_log2                                 ../../runtime/build/ksoloti.elf
+streams::lut_lorenz_rate                          ../../runtime/build/ksoloti.elf
+streams::lut_lp_coefficients                      ../../runtime/build/ksoloti.elf
+streams::lut_soft_knee                            ../../runtime/build/ksoloti.elf
+streams::lut_square_root                          ../../runtime/build/ksoloti.elf
+streams::lut_svf_cutoff                           ../../runtime/build/ksoloti.elf
+streams::lut_svf_damp                             ../../runtime/build/ksoloti.elf
+streams::string_table                             ../../runtime/build/ksoloti.elf
+streams::wav_db                                   ../../runtime/build/ksoloti.elf
+streams::wav_gompertz                             ../../runtime/build/ksoloti.elf
+streams::waveforms_table                          ../../runtime/build/ksoloti.elf
+strlen                                            ../../runtime/build/ksoloti.elf
+sysmon_blink_pattern                              ../../runtime/build/ksoloti.elf
+sysmon_disable_blinker                            ../../runtime/build/ksoloti.elf
+sysmon_enable_blinker                             ../../runtime/build/ksoloti.elf
+sysmon_getVoltage10                               ../../runtime/build/ksoloti.elf
+sysmon_getVoltage50                               ../../runtime/build/ksoloti.elf
+sysmon_init                                       ../../runtime/build/ksoloti.elf
+twiddleCoef_1024                                  ../../runtime/build/ksoloti.elf
+twiddleCoef_1024_q15                              ../../runtime/build/ksoloti.elf
+twiddleCoef_1024_q31                              ../../runtime/build/ksoloti.elf
+twiddleCoef_128                                   ../../runtime/build/ksoloti.elf
+twiddleCoef_128_q15                               ../../runtime/build/ksoloti.elf
+twiddleCoef_128_q31                               ../../runtime/build/ksoloti.elf
+twiddleCoef_16                                    ../../runtime/build/ksoloti.elf
+twiddleCoef_16_q15                                ../../runtime/build/ksoloti.elf
+twiddleCoef_16_q31                                ../../runtime/build/ksoloti.elf
+twiddleCoef_256                                   ../../runtime/build/ksoloti.elf
+twiddleCoef_256_q15                               ../../runtime/build/ksoloti.elf
+twiddleCoef_256_q31                               ../../runtime/build/ksoloti.elf
+twiddleCoef_32                                    ../../runtime/build/ksoloti.elf
+twiddleCoef_32_q15                                ../../runtime/build/ksoloti.elf
+twiddleCoef_32_q31                                ../../runtime/build/ksoloti.elf
+twiddleCoef_512                                   ../../runtime/build/ksoloti.elf
+twiddleCoef_512_q15                               ../../runtime/build/ksoloti.elf
+twiddleCoef_512_q31                               ../../runtime/build/ksoloti.elf
+twiddleCoef_64                                    ../../runtime/build/ksoloti.elf
+twiddleCoef_64_q15                                ../../runtime/build/ksoloti.elf
+twiddleCoef_64_q31                                ../../runtime/build/ksoloti.elf
+twiddleCoef_rfft_1024                             ../../runtime/build/ksoloti.elf
+twiddleCoef_rfft_128                              ../../runtime/build/ksoloti.elf
+twiddleCoef_rfft_256                              ../../runtime/build/ksoloti.elf
+twiddleCoef_rfft_32                               ../../runtime/build/ksoloti.elf
+twiddleCoef_rfft_512                              ../../runtime/build/ksoloti.elf
+twiddleCoef_rfft_64                               ../../runtime/build/ksoloti.elf
+uPatchUIMidiCost                                  ../../runtime/build/ksoloti.elf
+uPatchUsbLimit200                                 ../../runtime/build/ksoloti.elf
+ui_init                                           ../../runtime/build/ksoloti.elf
+uint32_to_le_bytes                                ../../runtime/build/ksoloti.elf
+usbDisableEndpointsI                              ../../runtime/build/ksoloti.elf
+usbInit                                           ../../runtime/build/ksoloti.elf
+usbInitEndpointI                                  ../../runtime/build/ksoloti.elf
+usbObjectInit                                     ../../runtime/build/ksoloti.elf
+usbReceive                                        ../../runtime/build/ksoloti.elf
+usbStallReceiveI                                  ../../runtime/build/ksoloti.elf
+usbStallTransmitI                                 ../../runtime/build/ksoloti.elf
+usbStart                                          ../../runtime/build/ksoloti.elf
+usbStartReceiveI                                  ../../runtime/build/ksoloti.elf
+usbStartTransmitI                                 ../../runtime/build/ksoloti.elf
+usbStop                                           ../../runtime/build/ksoloti.elf
+usbTransmit                                       ../../runtime/build/ksoloti.elf
+usb_lld_clear_in                                  ../../runtime/build/ksoloti.elf
+usb_lld_clear_out                                 ../../runtime/build/ksoloti.elf
+usb_lld_disable_endpoints                         ../../runtime/build/ksoloti.elf
+usb_lld_get_status_in                             ../../runtime/build/ksoloti.elf
+usb_lld_get_status_out                            ../../runtime/build/ksoloti.elf
+usb_lld_init                                      ../../runtime/build/ksoloti.elf
+usb_lld_init_endpoint                             ../../runtime/build/ksoloti.elf
+usb_lld_pump                                      ../../runtime/build/ksoloti.elf
+usb_lld_read_setup                                ../../runtime/build/ksoloti.elf
+usb_lld_reset                                     ../../runtime/build/ksoloti.elf
+usb_lld_set_address                               ../../runtime/build/ksoloti.elf
+usb_lld_stall_in                                  ../../runtime/build/ksoloti.elf
+usb_lld_stall_out                                 ../../runtime/build/ksoloti.elf
+usb_lld_start                                     ../../runtime/build/ksoloti.elf
+usb_lld_start_in                                  ../../runtime/build/ksoloti.elf
+usb_lld_start_out                                 ../../runtime/build/ksoloti.elf
+usb_lld_stop                                      ../../runtime/build/ksoloti.elf
+usbcfg                                            ../../runtime/build/ksoloti.elf
+usbh_MidiGetOutputBufferAvailable                 ../../runtime/build/ksoloti.elf
+usbh_MidiGetOutputBufferPending                   ../../runtime/build/ksoloti.elf
+usbh_MidiSend1                                    ../../runtime/build/ksoloti.elf
+usbh_MidiSend2                                    ../../runtime/build/ksoloti.elf
+usbh_MidiSend3                                    ../../runtime/build/ksoloti.elf
+usbh_MidiSendSysEx                                ../../runtime/build/ksoloti.elf
+usbh_midi_deinit_buffer                           ../../runtime/build/ksoloti.elf
+usbh_midi_init                                    ../../runtime/build/ksoloti.elf
+usbh_midi_init_buffer                             ../../runtime/build/ksoloti.elf
+usbh_midi_reset_buffer                            ../../runtime/build/ksoloti.elf
+v50_max                                           ../../runtime/build/ksoloti.elf
+v50_min                                           ../../runtime/build/ksoloti.elf
+void clouds::GranularSamplePlayer::Play<(clouds::Resolution)0>(clouds::AudioBuffer<(clouds::Resolution)0> const*, clouds::Parameters const&, float*, unsigned int) ../../runtime/build/ksoloti.elf
+void clouds::GranularSamplePlayer::Play<(clouds::Resolution)3>(clouds::AudioBuffer<(clouds::Resolution)3> const*, clouds::Parameters const&, float*, unsigned int) ../../runtime/build/ksoloti.elf
+void elements::String::ProcessInternal<false>(float const*, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+void elements::String::ProcessInternal<true>(float const*, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+void warps::Modulator::ProcessXmod<(warps::XmodAlgorithm)0, (warps::XmodAlgorithm)1>(float, float, float, float, float const*, float const*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+void warps::Modulator::ProcessXmod<(warps::XmodAlgorithm)1, (warps::XmodAlgorithm)2>(float, float, float, float, float const*, float const*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+void warps::Modulator::ProcessXmod<(warps::XmodAlgorithm)2, (warps::XmodAlgorithm)3>(float, float, float, float, float const*, float const*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+void warps::Modulator::ProcessXmod<(warps::XmodAlgorithm)3, (warps::XmodAlgorithm)4>(float, float, float, float, float const*, float const*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+void warps::Modulator::ProcessXmod<(warps::XmodAlgorithm)4, (warps::XmodAlgorithm)5>(float, float, float, float, float const*, float const*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+void warps::Modulator::ProcessXmod<(warps::XmodAlgorithm)5, (warps::XmodAlgorithm)6>(float, float, float, float, float const*, float const*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+voltage_50                                        ../../runtime/build/ksoloti.elf
+warps::FilterBank::Analyze(float const*, unsigned int) ../../runtime/build/ksoloti.elf
+warps::FilterBank::Init(float)                    ../../runtime/build/ksoloti.elf
+warps::FilterBank::Synthesize(float*, unsigned int) ../../runtime/build/ksoloti.elf
+warps::Modulator::Init(float)                     ../../runtime/build/ksoloti.elf
+warps::Modulator::Process(warps::ShortFrame*, warps::ShortFrame*, unsigned int) ../../runtime/build/ksoloti.elf
+warps::Modulator::ProcessEasterEgg(warps::ShortFrame*, warps::ShortFrame*, unsigned int) ../../runtime/build/ksoloti.elf
+warps::Modulator::xmod_table_                     ../../runtime/build/ksoloti.elf
+warps::Oscillator::Duck(float const*, float const*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+warps::Oscillator::Init(float)                    ../../runtime/build/ksoloti.elf
+warps::Oscillator::Render(warps::OscillatorShape, float, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+warps::Oscillator::RenderNoise(float, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+warps::Oscillator::RenderSine(float, float*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+warps::Oscillator::fn_table_                      ../../runtime/build/ksoloti.elf
+warps::SampleRateConverter<(warps::SampleRateConversionDirection)1, 4l, 48l>::Process(float const*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+warps::SampleRateConverter<(warps::SampleRateConversionDirection)1, 6l, 48l>::Process(float const*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+warps::Vocoder::Init(float)                       ../../runtime/build/ksoloti.elf
+warps::Vocoder::Process(float const*, float const*, float*, unsigned int) ../../runtime/build/ksoloti.elf
+warps::fb_1109_12000                              ../../runtime/build/ksoloti.elf
+warps::fb_110_3000                                ../../runtime/build/ksoloti.elf
+warps::fb_1397_12000                              ../../runtime/build/ksoloti.elf
+warps::fb_139_3000                                ../../runtime/build/ksoloti.elf
+warps::fb_175_3000                                ../../runtime/build/ksoloti.elf
+warps::fb_1760_12000                              ../../runtime/build/ksoloti.elf
+warps::fb_220_3000                                ../../runtime/build/ksoloti.elf
+warps::fb_2217_12000                              ../../runtime/build/ksoloti.elf
+warps::fb_277_3000                                ../../runtime/build/ksoloti.elf
+warps::fb_2794_48000                              ../../runtime/build/ksoloti.elf
+warps::fb_349_3000                                ../../runtime/build/ksoloti.elf
+warps::fb_3520_48000                              ../../runtime/build/ksoloti.elf
+warps::fb_440_3000                                ../../runtime/build/ksoloti.elf
+warps::fb_4435_48000                              ../../runtime/build/ksoloti.elf
+warps::fb_554_3000                                ../../runtime/build/ksoloti.elf
+warps::fb_5588_48000                              ../../runtime/build/ksoloti.elf
+warps::fb_698_12000                               ../../runtime/build/ksoloti.elf
+warps::fb_7040_48000                              ../../runtime/build/ksoloti.elf
+warps::fb_880_12000                               ../../runtime/build/ksoloti.elf
+warps::fb__87_3000                                ../../runtime/build/ksoloti.elf
+warps::filter_bank_table                          ../../runtime/build/ksoloti.elf
+warps::lookup_table_table                         ../../runtime/build/ksoloti.elf
+warps::lut_ap_poles                               ../../runtime/build/ksoloti.elf
+warps::lut_bipolar_fold                           ../../runtime/build/ksoloti.elf
+warps::lut_midi_to_f_high                         ../../runtime/build/ksoloti.elf
+warps::lut_midi_to_f_low                          ../../runtime/build/ksoloti.elf
+warps::lut_pot_curve                              ../../runtime/build/ksoloti.elf
+warps::lut_sin                                    ../../runtime/build/ksoloti.elf
+warps::lut_xfade_in                               ../../runtime/build/ksoloti.elf
+warps::lut_xfade_out                              ../../runtime/build/ksoloti.elf
+warps::wav_buzzy_i                                ../../runtime/build/ksoloti.elf
+warps::wav_buzzy_q                                ../../runtime/build/ksoloti.elf
+warps::wav_harmonics_i                            ../../runtime/build/ksoloti.elf
+warps::wav_harmonics_q                            ../../runtime/build/ksoloti.elf
+warps::wav_sine_i                                 ../../runtime/build/ksoloti.elf
+warps::wav_sine_q                                 ../../runtime/build/ksoloti.elf
+warps::wav_table                                  ../../runtime/build/ksoloti.elf
+watchdog_feed                                     ../../runtime/build/ksoloti.elf
+watchdog_init                                     ../../runtime/build/ksoloti.elf
+windowt                                           ../../runtime/build/ksoloti.elf
+xpatch_init                                       ../../proof/build/blend-stripped.o
+xpatch_init2(unsigned long)                       ../../proof/build/blend-stripped.o
