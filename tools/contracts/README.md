@@ -16,6 +16,7 @@ python3 tools/contracts/generate_task014_record_set.py --check
 python3 tools/contracts/validate_task014.py
 python3 tools/contracts/generate_task015_record_set.py --check
 python3 tools/contracts/validate_task015.py
+python3 tools/contracts/compiler_determinism_matrix.py
 python3 tools/contracts/validate_task016_contract.py
 python3 tools/contracts/validate_task017_contract.py
 python3 -m unittest discover -s tools/contracts/tests
@@ -97,6 +98,19 @@ ambiguity, failure cleanup, atomic publication, operation parity, and CLI.
 `schuss-record-set-000009`. `validate_task015.py` is read only: it authenticates
 the exact Blend plan/graph/contract closure, normalized Q27 module, standalone
 C++17 and source map, compiled arithmetic vectors, and evidence levels 1-4.
+
+`compiler_determinism_matrix.py` copies the current tracked and non-ignored
+untracked tree into two temporary fresh roots, then compares four fresh-process
+Tasks 013-015 cells across repository location, working directory, available
+locale, `PYTHONHASHSEED`, record enumeration, timezone, source-date, and
+unrelated environment noise. It authenticates canonical plans, diagnostics,
+origin/source maps, direct C++, host-compiled arithmetic vectors, and unchanged
+parent semantic bytes. The source worktree is read only; all generated files
+stay in temporary scratch roots. Task 014 execution defaults to `auto` and can
+run only through the exact authenticated Task 011C adapter when its retained
+prerequisite validates. Use `--task014-execution require` to fail instead of
+skip when that local closure is unavailable, or `skip` for a structural and
+host-only run.
 
 `validate_task016_contract.py` and `validate_task017_contract.py` validate the
 two later task contracts and their dependency/stop conditions. They claim no
