@@ -16,6 +16,8 @@ instrument -> DSP graph -> component contract -> catalog family
                           |
               implementation binding -> legacy/source evidence
 
+project/workspace -> graph + instrument + build request + record set + assets
+
 build request -> graph/instrument + compute target + backend
 build result  -> request + selected bindings + artifacts
 evidence      -> build result / stage / artifact
@@ -105,6 +107,26 @@ data, not node identity.
 Every node references an exact component-contract revision. A graph never uses
 a family, category, display name, implementation binding, legacy observation,
 legacy path, or `.axp` as node identity.
+
+### Project/workspace
+
+A project is the portable durable authoring unit. It groups exact references
+to graphs, instruments, build requests, selected semantic record sets, and
+content-addressed assets without absorbing their identities or ownership. A
+workspace is the host directory and local coordination boundary used to load,
+lock, revise, and validate that project; its absolute path is never durable
+semantic identity.
+
+Project-owned records form an explicit exact closure layered over an immutable
+accepted base record set. The durable project enumerates that closure; it never
+derives membership by scanning a workspace directory or mutates the accepted
+base to make an edit visible.
+
+Persistent graph authoring creates explicit new record and project revisions.
+It does not rewrite an accepted record, infer `latest`, mutate a graph behind
+an unchanged hash, or make a CLI-specific file representation authoritative.
+Filesystem mutation belongs behind the same client-neutral operations future
+GUI and AI callers will use.
 
 ### Backend
 
@@ -247,6 +269,13 @@ handler execution; ARM compile/link establishes level 5 only. The generated
 `.axp`, C++, object, ELF, and link map remain derived boundary artifacts. They
 do not become graph truth or establish device, timing, real-time, audible, or
 release behavior.
+
+ADR 0008 now parks the UI while preserving it as a future client. Task 012A
+owns the durable project/workspace and persistent CLI graph-authoring boundary.
+Task 013A then owns the reusable compiler front half through deterministic
+dependency/resource planning. Later Task 013 stages add shared build
+execution, the normalized DSP representation, and direct C++ lowering without
+moving any of those semantics into a GUI or the legacy Java bridge.
 
 The projection reference direction remains one way:
 

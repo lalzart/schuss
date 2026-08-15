@@ -27,6 +27,10 @@ instrument ----> device profile
      |
      +---------> DSP graph
 
+project ----> immutable base record set + exact project-owned record closure
+   |
+   +-------> graph / instrument / build request / assets
+
 build request ----> graph / instrument + compute target + backend
 build result  ----> request + selected bindings + artifacts
 evidence claim ----> build result / stage / artifact
@@ -46,6 +50,7 @@ never embedded merely for convenience.
 | DSP graph | Graph model | Graph identity/revision, node instances, exact contract refs, connections, facet values/bindings, hierarchy, exposed mappings, state/assets | Component contracts and content-addressed resources | Families, categories, legacy observations/paths, implementation bindings, device controls, target/backend choices |
 | Device profile | Device owner | Physical controls/gestures, indicators/displays, physical I/O, feedback, ranges/resolution, stable hardware slots | Shared physical-unit and gesture vocabularies | DSP graph, instrument behavior, compute target, backend |
 | Instrument | Instrument owner | Musical identity, public parameters/actions/displays/state, device mappings, graph mappings | One or more device-profile revisions and one authoritative graph revision | Embedded device design, copied graph structure, implementation binding, backend, target |
+| Project/workspace | Project owner | Portable project identity/revision, immutable base record-set reference, exact project-owned member closure, selected graph/instrument/build references | Exact semantic records and content-addressed assets | Redefined graph/build semantics, ambient directory membership, absolute workspace identity, client-specific behavior |
 | Compute target | Target owner | Processor/ABI constraints, memory regions/budgets, runtime assumptions, firmware interface, asset limits, supported capabilities | Toolchain/firmware declarations and capability vocabulary | Panel design, instrument behavior, catalog classification |
 | Backend | Backend owner | Lowering identity/version, accepted inputs, emitted artifact kinds, supported capability vocabulary, deterministic stage contract | Shared capability vocabulary | Authoritative graphs, device profiles, catalog categories |
 | Build request | Build orchestration | Exact requested inputs, target/backend choice, options, optional validated binding overrides | Graph, optional instrument, compute target, backend, immutable resources | Build conclusions, catalog mutations, implicit source discovery |
@@ -456,17 +461,29 @@ The following are invalid architecture:
 
 ### Planned next
 
-Tasks 008-011B are complete: the Task 005-007 mechanisms are consolidated
+Tasks 008-011C are complete: the Task 005-007 mechanisms are consolidated
 beneath three sibling rule modules; versioned headless validation, inspection,
-resolution, and transaction operations are implemented; one exact Task 009
-slice reaches ARM compile/link; and the Task 010 product CLI projects the same
-operations without adding compiler or persistence semantics.
+resolution, catalog, and transaction operations are implemented; two bounded
+legacy-backend slices reach ARM compile/link; and the product CLI projects the
+shared operations without adding persistence or general build execution.
 
-1. **Task 011C:** bounded legacy-backend expansion and compile/link evidence for
-   the exact Task 011B graph; Phase 4B must not outrun reviewed contracts.
-2. **Task 012:** basic object drawer and transparent graph canvas.
-3. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
-   contract.
+The accepted next sequence is:
+
+1. **Task 012A:** a durable project/workspace contract and persistent CLI graph
+   authoring through client-neutral operations.
+2. **Task 013A:** the reusable compiler front half through deterministic
+   implementation resolution, compound elaboration, and dependency/resource
+   planning.
+3. **Task 013B:** shared build execution and its product-CLI projection.
+4. **Task 013C:** a normalized DSP representation and minimal direct Schuss
+   graph-to-C++ frontend.
+5. **Task 013D:** direct-frontend expansion through the complete Task 011C
+   graph.
+6. **Backbone B6:** a bounded reviewed-core expansion and richer non-UI
+   reference instruments; its task number remains unassigned.
+
+Task 012B retains the basic object drawer and transparent graph canvas but is
+deferred until the headless-backbone readiness gate in `docs/ROADMAP.md`.
 
 ### Deliberately deferred
 
@@ -474,8 +491,8 @@ operations without adding compiler or persistence semantics.
 - Full Gills behavior, firmware, and panel implementation.
 - Complete Ksoloti target budgets and measured resource envelopes.
 - Remote protocol transport, queues, cancellation, and progress events.
-- Optimizer, scheduler, instruction-level IR, direct C++ code generation, and
-  replacement ABI design.
+- General optimizer, instruction-level IR, and replacement ABI design beyond
+  the bounded Task 013 compiler stages.
 - Additional targets/devices, asset pipelines, and complete Phase 4B curation.
 
 The remaining device questions and Task 006's target/backend/build deferrals

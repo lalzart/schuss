@@ -193,3 +193,23 @@ inspection/resolution, atomic in-memory graph mutation, and client-neutral
 canonical bytes. It does not prove backend lowering, artifact generation, ARM
 compile/link, connected hardware, real-time resource behavior, or audible
 behavior.
+
+## Planned project and build-operation sequence
+
+Task 012A is the next owner of persistence. It must preserve the existing
+`graph.transact` proposal semantics and add a client-neutral project/workspace
+boundary that can commit an accepted proposed graph as an explicit new graph
+and project revision. The CLI remains a request constructor and renderer; it
+must not become the only implementation of project loading, locking, atomic
+write, or recovery behavior.
+
+Task 013A then adds only a reusable, deterministic compiler-planning boundary
+through dependency/resource planning. Task 013B separately owns executable
+backend dispatch and its CLI projection. Existing v1/v2 requests, results,
+defaults, canonical bytes, `build.resolve`, and non-persisted transactions stay
+accepted; successor operations are additive and must not infer `latest`, scan
+ambient records, invoke hardware, or make client-specific results authoritative.
+
+The deferred Task 012B UI must consume these same project, graph, catalog,
+build, diagnostic, and compiler operations. It may not define a parallel
+persistence or build path.

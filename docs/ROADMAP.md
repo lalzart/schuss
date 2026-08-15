@@ -20,11 +20,16 @@ into transparent, typed Schuss models.
 | 11A | Browsable catalog control plane and exact seven-role Gills-slice catalog review | [Complete](tasks/011a-browsable-catalog-control-plane-and-exact-gills-slice-catalog-review.md) |
 | 11B | Six component contracts/bindings, authoritative slice graph, minimal Gills instrument, and unresolved build closure | [Complete](tasks/011b-component-contracts-gills-slice-graph-and-unresolved-build-closure.md) |
 | 11C | Bounded legacy backend expansion and ARM compile/link for the slice | [Complete](tasks/011c-bounded-legacy-backend-expansion-and-arm-evidence.md) |
-| 12 | Basic object drawer and transparent graph canvas | Planned |
-| 13 | Direct Schuss graph-to-C++ frontend behind the backend contract | Planned |
-| 14 | Full Gills implementation and parameter/control mapping | Planned |
-| 15 | Sampling and asset management | Planned |
-| 16 | Additional compute targets and devices | Planned |
+| 12A | Durable project/workspace format and persistent CLI graph authoring | [Proposed; immediate next task](tasks/012a-durable-project-workspace-and-cli-graph-authoring.md) |
+| 12B | Basic object drawer and transparent graph canvas | Deferred until the headless-backbone readiness gate |
+| 13A | Reusable compiler front half through dependency/resource planning | [Proposed; follows Task 012A](tasks/013a-reusable-compiler-front-half.md) |
+| 13B | Shared build-execution operation and product CLI | Planned |
+| 13C | Normalized DSP representation and minimal direct graph-to-C++ frontend | Planned |
+| 13D | Direct-frontend expansion through the complete Task 011C graph | Planned |
+| B6 | Curated core expansion and richer headless reference instruments | Planned after Task 013D; task number not yet assigned |
+| 14 | Full Gills implementation and parameter/control mapping | Deferred behind the backbone sequence |
+| 15 | Sampling and asset management | Deferred behind the backbone sequence |
+| 16 | Additional compute targets and devices | Deferred behind the backbone sequence |
 
 ## Current architectural gate and next task
 
@@ -82,13 +87,52 @@ and eligibility successors, adds the one required native realization form,
 and produces deterministic source and ARM compile/link evidence for the exact
 slice. Record set `000006` selects all eight nodes and records levels 1-5 as
 passed. Connected-device, real-time, and audible gates remain separately
-unauthorized and unproved; the general backend, Phase 12 UI, and Phase 13
-direct frontend also remain future work.
+unauthorized and unproved; the general backend and direct frontend also remain
+future work.
+
+The immediate next execution unit is Task 012A. It separates the durable
+project/workspace and persistent graph-authoring dependency from the old
+combined Phase 12 UI milestone. Task 013A is the second proposed task and owns
+only the reusable compiler front half through deterministic dependency and
+resource planning. Task 012B retains the object drawer and transparent graph
+canvas as a deferred client of accepted operations; it owns no independent
+catalog, graph, project, build, or compiler semantics.
 The completed boundaries are in
 `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and
 `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`, and
 `docs/OPERATION_CONTRACTS.md`.
+
+## Headless-backbone sequence and UI readiness gate
+
+The active sequence is:
+
+```text
+Task 012A durable project/workspace + persistent CLI graph authoring
+  -> Task 013A reusable compiler front half and deterministic plans
+  -> Task 013B shared build execution and product CLI
+  -> Task 013C normalized DSP representation + minimal direct frontend
+  -> Task 013D direct frontend for the complete Task 011C graph
+  -> B6 curated core expansion + richer headless reference instruments
+```
+
+Task 012B is not on that critical path. UI work remains deferred until all of
+the following are true:
+
+- a portable project can be created, inspected, validated, revised, and
+  reopened through the CLI without repository-owned fixture assumptions;
+- graph persistence is atomic, exact-reference-safe, and recoverable without
+  making a client or filesystem layout authoritative graph truth;
+- compiler planning and build execution use shared client-neutral boundaries;
+- the legacy and direct paths conform for at least one exact graph without
+  silent fallback;
+- the direct frontend reaches level 5 for the complete Task 011C graph; and
+- the reviewed core supports several useful non-UI reference instruments.
+
+VS-07 connected-device execution remains an optional, separately authorized
+evidence track. It is not a prerequisite for Tasks 012A-013D or B6 and cannot
+substitute for their structural, persistence, compiler, or CLI acceptance
+gates.
 
 ## Contract sequence constraints
 

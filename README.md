@@ -13,7 +13,7 @@ one compatibility backend.
 ## Current status
 
 Schuss has completed the Phase 4A semantic-catalog foundation, the bounded
-Task 009 legacy-backend proof, the Task 010 product CLI, and Tasks 011A-011B
+Task 009 legacy-backend proof, the Task 010 product CLI, and Tasks 011A-011C
 of the first non-UI Gills vertical slice:
 
 - the project boundaries and terminology are documented;
@@ -69,9 +69,20 @@ of the first non-UI Gills vertical slice:
   nine-connection authoritative graph, one exact Gills instrument mapping,
   and successor record set `schuss-record-set-000005` revision 1; its build
   request remains fail-closed with only the promoted Crossfader selected and
-  no backend invocation; and
+  no backend invocation;
+- Task 011C executes six bounded probes, promotes their exact bindings and
+  eligibilities, expands only the required legacy forms, and produces
+  deterministic `.axp`, source-map, C++, ARM object, ELF, link-map, and
+  level-1-through-5 evidence for the exact eight-node slice; and
 - no general compiler frontend, persistent graph editor, device runtime, or
   desktop app is implemented yet.
+
+The active roadmap is now headless-backbone-first. Task 012A proposes a durable
+project/workspace plus persistent CLI graph authoring; Task 013A proposes the
+reusable compiler front half through dependency/resource planning. Shared
+build execution, the normalized DSP representation, direct frontend expansion,
+and a bounded reviewed-core expansion follow. The object drawer and graph
+canvas remain deferred until those readiness gates pass.
 
 Start with [the project context](docs/PROJECT_CONTEXT.md), then read
 [the architecture](docs/ARCHITECTURE.md),
@@ -87,8 +98,9 @@ Task 007 boundary in
 011A projection, matching, filters, inspection chain, and evidence limits.
 The Task 011B component, graph, and unresolved build closure is documented in
 [the component and graph contracts](docs/COMPONENT_GRAPH_CONTRACTS.md) and
-[the target/build contracts](docs/TARGET_BACKEND_BUILD_CONTRACTS.md). Active
-implementation work is bounded by task files under `docs/tasks/`.
+[the target/build contracts](docs/TARGET_BACKEND_BUILD_CONTRACTS.md). The
+completed Task 011C and the proposed next tasks are bounded by their task files
+under `docs/tasks/`.
 
 ## Command-line interface
 

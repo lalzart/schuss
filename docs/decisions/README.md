@@ -10,3 +10,4 @@ details remain in task files unless they change a durable boundary.
 - `0005-separate-family-contract-and-binding-identity.md`
 - `0006-graph-contract-references-and-binding-selection.md`
 - `0007-separate-build-evidence-from-catalog-curation.md`
+- `0008-defer-ui-until-the-headless-backbone-is-ready.md`

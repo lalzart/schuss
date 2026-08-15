@@ -52,7 +52,10 @@ Schuss should provide:
    behavior.
 7. **DSP graph** describes the complete signal and control implementation by
    referencing exact component-contract revisions.
-8. **Backend** resolves implementation bindings and lowers the graph into an
+8. **Project/workspace** durably groups exact graph, instrument, build-request,
+   record-set, and asset references for authoring. It does not replace the
+   identities or ownership of those records.
+9. **Backend** resolves implementation bindings and lowers the graph into an
    executable form for a compute target.
 
 No layer may silently borrow identity from another. A Gills instrument can
@@ -173,6 +176,15 @@ Evidence reaches only level 5. No connected-device execution, real-time
 measurement, listening, firmware action, upload, or flash occurred; levels
 6-8 remain `not-run`.
 
+The active roadmap now prioritizes the headless backbone. Task 012A is the
+immediate proposed task for a durable project/workspace and persistent CLI
+graph-authoring boundary. Task 013A is the second proposed task for a reusable
+compiler front half through dependency/resource planning. Shared build
+execution, a normalized DSP representation, minimal and complete-slice direct
+frontends, and a bounded reviewed-core expansion follow in that order. The
+object drawer and transparent graph canvas remain intended Schuss clients but
+are deferred until those project, CLI, build, and compiler gates pass.
+
 ## Terminology
 
 | Term | Meaning |
@@ -188,4 +200,5 @@ measurement, listening, firmware action, upload, or flash occurred; levels
 | Legacy observation | A snapshot-scoped evidence record, not a Schuss ID |
 | Compound | A reusable graph presented as one object without hiding internals |
 | Instrument | A musical contract that maps a device profile onto behavior and a DSP graph |
+| Project/workspace | A portable exact authoring manifest plus its non-authoritative local coordination directory |
 | Build evidence | An immutable, level-specific observation about exact build inputs or runtime validation; never catalog truth by side effect |

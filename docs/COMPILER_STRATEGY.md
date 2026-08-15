@@ -371,3 +371,26 @@ Task 008 consolidates the shared validator core and exposes typed headless
 operations plus a data-only accepted-request seam. Task 009 separately owns actual legacy lowering,
 `.axp` serialization/source maps, exact toolchain/runtime closure, and ARM
 compile/link execution.
+
+## Planned headless compiler sequence
+
+ADR 0008 defers the UI and stages the compiler work rather than treating the
+old Phase 13 frontend as one jump:
+
+1. Task 013A implements the reusable common front half through stage 6. It
+   emits deterministic resolution, elaboration, dependency, resource, and
+   source-map artifacts, but performs no backend lowering or code generation.
+2. Task 013B adds a client-neutral build-execution boundary and product CLI,
+   initially invoking only a conforming transitional legacy handler.
+3. Task 013C defines the first bounded normalized DSP representation and
+   direct graph-to-C++ frontend for the smallest accepted graph.
+4. Task 013D expands that direct path to the complete Task 011C graph and only
+   the scheduling, state, control, and native-realization semantics required by
+   that exact closure.
+
+Each stage preserves the authoritative graph and exact semantic-record closure.
+The direct path must coexist with the legacy backend and must fail explicitly
+when a direct binding or lowering rule is absent; it may not silently fall back
+to Java or `.axp`. General optimization, a complete scheduler, replacement
+firmware/ABI work, device execution, and audible validation remain separately
+authorized later work.
