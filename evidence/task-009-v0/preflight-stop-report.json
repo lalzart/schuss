@@ -1,0 +1,105 @@
+{
+  "schema_version": "task009-preflight-stop-v0",
+  "task_status": "incomplete",
+  "preflight_verdict": "stopped",
+  "accepted_inputs": {
+    "accepted_record_set": {
+      "record_set_id": "schuss-record-set-000001",
+      "revision": 1,
+      "content_hash": "sha256:f3fde23e7410a0a78c79ffdbcf3741995cedbf69f41c5a47e596ac39a2ac62f6"
+    },
+    "prerequisite_record_set": {
+      "record_set_id": "schuss-record-set-000002",
+      "revision": 1,
+      "content_hash": "sha256:6f2855c384ef8bab88991a6cabdd8416c7f3c59a010eed0c6cda1ac08651ecaf"
+    },
+    "prerequisite_environment": {
+      "prerequisite_environment_id": "schuss-prerequisite-environment-000001",
+      "revision": 1,
+      "content_hash": "sha256:8c2021ba5cbbcc1cbb63ca5957baeba71cdedf6a987d5f7091f609858539b3e7"
+    }
+  },
+  "passing_checks": {
+    "prerequisite_validator": {
+      "status": "valid",
+      "stdout_byte_length": 1930,
+      "stdout_sha256": "3f8f3df84fd47ab51441ec6b3d30abc43fcfd18b2a69cffc6a508f5f0fe08a8b"
+    },
+    "production_build_resolution": {
+      "status": "unresolved",
+      "selected_binding_count": 0,
+      "backend_invocation_present": false,
+      "canonical_result_byte_length": 1367,
+      "canonical_result_sha256": "643a063d1553ff000a4776fd2a4eb5b7d300c0ba34ccbb977f3babd78abf7de9",
+      "reasons": [
+        "BINDING_TARGET_BACKEND_PAIR_NOT_EVALUATED",
+        "CAPABILITY_UNRESOLVED:audio-stream-fixed-q27",
+        "CAPABILITY_UNRESOLVED:control-stream-fixed-q27",
+        "COMPATIBILITY_EVIDENCE_MISSING"
+      ]
+    },
+    "retained_probe_fixture": {
+      "authorization": "not-authorized",
+      "execution": "not-run",
+      "production_selection_authority": false
+    },
+    "available_exact_inputs": {
+      "source_capsule_match": true,
+      "java_runtime_manifest_match": true,
+      "dependency_jar_match": true,
+      "arm_toolchain_manifest_match": true,
+      "installed_firmware_bin_match": true
+    }
+  },
+  "blocking_checks": [
+    {
+      "code": "PREREQUISITE_EXPANDED_COMMAND_PROVENANCE_ABSENT",
+      "artifact": "evidence/task-009-prerequisite-v0/firmware-build-commands.json",
+      "artifact_sha256": "bb81bd052948220444830dcfcee7a77140386e8e33599b9a4eb95287a99a7742",
+      "finding": "The artifact contains the top-level make argument vector and 227 quiet progress or memory-map lines, but no expanded compiler, assembler, or linker argument vectors, flags, or exact linker-input list claimed by the prerequisite completion report."
+    },
+    {
+      "code": "PREREQUISITE_CANONICAL_LINK_ELF_ABSENT",
+      "expected_byte_length": 823980,
+      "expected_byte_sha256": "df65f2153eb999386cc1bc30b382cafeac63aea8495bf8cb4cdad1c01fca944b",
+      "finding": "The declared canonical stripped link ELF is not retained at its portable content-addressed location or elsewhere in the authenticated local inputs."
+    },
+    {
+      "code": "PREREQUISITE_JAVA_CLASS_OUTPUT_ABSENT",
+      "expected_class_count": 896,
+      "expected_classpath_fingerprint_sha256": "5ebd2f2b7f2aa6dc1d3d10a04edb5f2bbedd97cfb4372dab56dc22c778b17710",
+      "finding": "The authenticated compiled-class output was temporary and is not retained; the installed application JAR is not byte-equivalent to that class closure."
+    },
+    {
+      "code": "PREREQUISITE_JAVA_BUILD_ORCHESTRATOR_CLOSURE_INCOMPLETE",
+      "finding": "Reconstructing the absent classes requires an Ant execution, but the authenticated environment records only the launcher identity rather than Ant's executable runtime and library closure."
+    },
+    {
+      "code": "PREREQUISITE_REAL_GENERATION_ISOLATION_UNPROVED",
+      "finding": "The retained explicit-environment smoke validates supplied identities only; it does not execute the real legacy generation path or prove that preference, GUI, and device authority are absent from that path."
+    }
+  ],
+  "audit_recapture": {
+    "performed_during_preflight_audit": true,
+    "scope": "prerequisite-capture-only",
+    "output_scope": "temporary-only",
+    "first_attempt": "retained evidence differed only because parallel quiet-build status lines interleaved nondeterministically",
+    "second_attempt": "all retained prerequisite evidence files reproduced byte-for-byte",
+    "interpretation": "The recapture supports physical reproducibility but cannot replace bytes and command provenance that Task 009 requires to be retained and authenticated before execution. It produced no Task 009 probe, lowering, backend, or promotion evidence."
+  },
+  "effects": {
+    "successor_record_set_created": false,
+    "authorized_probe_created": false,
+    "task009_lowering_ran": false,
+    "task009_java_bridge_ran": false,
+    "task009_arm_compile_link_ran": false,
+    "production_compatibility_promoted": false,
+    "upstream_checkout_mutated": false,
+    "device_access": false,
+    "firmware_action": false,
+    "staged": false,
+    "committed": false,
+    "pushed": false
+  },
+  "required_next_boundary": "Repair and re-authenticate the Task 009 prerequisite in a separately authorized task; Task 009 must then restart from its all-byte preflight."
+}

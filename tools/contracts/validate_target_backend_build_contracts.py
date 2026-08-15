@@ -12,6 +12,7 @@ if str(TOOLS_ROOT) not in sys.path:
     sys.path.insert(0, str(TOOLS_ROOT))
 
 import aggregate_validator as aggregate
+import record_set_rules
 import target_backend_build_rules as rules
 import validator_core as core
 
@@ -38,6 +39,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--schema-root", type=Path, default=repository_root / "schemas")
     parser.add_argument("--canonical-record", type=Path)
     parser.add_argument("--record-kind", choices=tuple(sorted(SCHEMA_SPECS)))
+    parser.add_argument(
+        "--record-set",
+        type=Path,
+        help="exact record-set manifest; the repository default uses the accepted Task 005-008 set",
+    )
     return parser.parse_args(argv)
 
 
@@ -60,11 +66,25 @@ def main(argv: list[str] | None = None) -> int:
             print(f"canonical record emission failed: {exc}", file=sys.stderr)
             return 1
     try:
-        result = validate_target_backend_build_directory(
-            args.contract_root,
-            args.schema_root,
-            repository_root,
+        use_default_set = (
+            args.contract_root.resolve() == (repository_root / "contracts").resolve()
+            and args.schema_root.resolve() == (repository_root / "schemas").resolve()
         )
+        if args.record_set is not None or use_default_set:
+            selected = record_set_rules.load_record_set(
+                repository_root,
+                args.record_set or record_set_rules.ACCEPTED_RECORD_SET,
+            )
+            result = aggregate.validate_target_backend_build_record_set(
+                selected,
+                repository_root,
+            )
+        else:
+            result = validate_target_backend_build_directory(
+                args.contract_root,
+                args.schema_root,
+                repository_root,
+            )
         summary = result.summary
     except (OSError, ValueError, KeyError) as exc:
         summary = {

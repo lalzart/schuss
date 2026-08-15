@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "conformance-probe-procedure-v0.schema.json",
+  "title": "Schuss conformance probe procedure v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "procedure_id", "revision", "content_hash", "purpose", "candidate_state", "environment_reference", "stage_order", "first_terminal_behavior", "production_selection_authority", "prohibited_actions"],
+  "properties": {
+    "schema_version": {"const": "conformance-probe-procedure-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "procedure_id": {"type": "string", "pattern": "^schuss-procedure-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "purpose": {"const": "non-production-binding-conformance"},
+    "candidate_state": {"const": "candidate-under-test"},
+    "environment_reference": {"$ref": "#/$defs/environmentReference"},
+    "stage_order": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/stage"}},
+    "first_terminal_behavior": {"const": "all-later-stages-not-run"},
+    "production_selection_authority": {"const": false},
+    "prohibited_actions": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"enum": ["device-access", "firmware-installation", "flash", "production-selection", "upload"]}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "environmentReference": {"type": "object", "required": ["prerequisite_environment_id", "revision", "content_hash"], "properties": {"prerequisite_environment_id": {"type": "string", "pattern": "^schuss-prerequisite-environment-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "stage": {"enum": ["backend-lowering", "artifact-generation", "target-compile-link"]}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": "conformance-probe-evidence-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "conformance_probe_evidence_id": "schuss-conformance-probe-evidence-000001",
+  "revision": 1,
+  "content_hash": "sha256:c8e9b5f09d6891875fb0418602134dcf57bc57346f139e41c8217d535b248772",
+  "probe_result_reference": {"conformance_probe_result_id": "schuss-conformance-probe-result-000001", "revision": 1, "content_hash": "sha256:6c86cfbac58f4f9de0d3c7c2ee6b635eeae6aeac4120155fffaa122709f2773b"},
+  "binding_reference": {"implementation_id": "schuss-implementation-000028", "revision": 1, "content_hash": "sha256:6f1a0268c40ca192435bcd7a66f201ab0577ff8786590d3c05bace4911726b59"},
+  "procedure_reference": {"procedure_id": "schuss-procedure-000001", "revision": 1, "content_hash": "sha256:ca1fca9f18bedb533d192aa0e04f56a1b87ccd45188720f413e375025366cc73"},
+  "outcome": "not-run",
+  "evidence_level": 1,
+  "limitations": [
+    "This prerequisite fixture records no executed probe evidence.",
+    "It grants no production selection authority."
+  ]
+}

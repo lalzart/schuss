@@ -1,0 +1,130 @@
+{
+  "schema_version": "prerequisite-environment-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "prerequisite_environment_id": "schuss-prerequisite-environment-000001",
+  "revision": 1,
+  "content_hash": "sha256:8c2021ba5cbbcc1cbb63ca5957baeba71cdedf6a987d5f7091f609858539b3e7",
+  "status": "supported",
+  "source_capsule": {
+    "source_id": "patcher",
+    "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c",
+    "tree": "75b75dba0c3734a8a53464ac93cdc20ec7203bb6",
+    "archive_sha256": "2f2d6c9e985e5b8609c847a0b21ad7611e614e7dd2a0cb3c51d9b50a77a36f32",
+    "member_count": 3052,
+    "manifest": {
+      "portable_path": "evidence/task-009-prerequisite-v0/source-capsule-members.json",
+      "byte_sha256": "ce29a6ba66c38b31e13530b20a652a199987c7913afb7849ee2ad5c8875cf5ed",
+      "byte_length": 578917,
+      "portable_locator": "sha256/ce29a6ba66c38b31e13530b20a652a199987c7913afb7849ee2ad5c8875cf5ed"
+    }
+  },
+  "java_closure": {
+    "runtime_version": "openjdk version 21.0.7 2025-04-15 LTS",
+    "java": {
+      "component": "java",
+      "version": "21.0.7+6-LTS",
+      "byte_sha256": "b56748e35a76328d8a33e52d298930806484e39fa4a68a10d7a54debf51a9151",
+      "portable_locator": "sha256/b56748e35a76328d8a33e52d298930806484e39fa4a68a10d7a54debf51a9151"
+    },
+    "javac": {
+      "component": "javac",
+      "version": "21.0.7",
+      "byte_sha256": "7937caa17b49a97957cb0d2cc9ff18d148f4a20f98e49c8278cdc45b43a67ba4",
+      "portable_locator": "sha256/7937caa17b49a97957cb0d2cc9ff18d148f4a20f98e49c8278cdc45b43a67ba4"
+    },
+    "classpath_fingerprint_sha256": "5ebd2f2b7f2aa6dc1d3d10a04edb5f2bbedd97cfb4372dab56dc22c778b17710",
+    "class_count": 896,
+    "jar_count": 69,
+    "classpath_manifest": {
+      "portable_path": "evidence/task-009-prerequisite-v0/java-classpath-members.json",
+      "byte_sha256": "febc2ff3bd80e7e40878d711a512ae5b8922256bfd21ea56cd4e7f61a7c4b164",
+      "byte_length": 170958,
+      "portable_locator": "sha256/febc2ff3bd80e7e40878d711a512ae5b8922256bfd21ea56cd4e7f61a7c4b164"
+    },
+    "runtime_manifest": {
+      "portable_path": "evidence/task-009-prerequisite-v0/java-runtime-members.json",
+      "byte_sha256": "775062e332145c85f3fdf0e82dbdcb50d26ac811f364119b208736ae622e61a1",
+      "byte_length": 62746,
+      "portable_locator": "sha256/775062e332145c85f3fdf0e82dbdcb50d26ac811f364119b208736ae622e61a1"
+    },
+    "excluded_nonsemantic_outputs": ["build/built-jar.properties"],
+    "explicit_configuration_smoke": {
+      "portable_path": "evidence/task-009-prerequisite-v0/explicit-environment-smoke.json",
+      "byte_sha256": "efec1f13603756f312b5c5b7fe0035890bf51e602d39fa7c6451b08acbcaef01",
+      "byte_length": 882,
+      "portable_locator": "sha256/efec1f13603756f312b5c5b7fe0035890bf51e602d39fa7c6451b08acbcaef01"
+    }
+  },
+  "arm_toolchain": {
+    "identity": "GNU Arm Embedded Toolchain 9-2020-q2-update",
+    "target_triple": "arm-none-eabi",
+    "components": [
+      {"component": "as", "version": "2.34.0.20200428", "byte_sha256": "58acc8c96d8fb361c4feb1e04ef73f496b33c788edb39d518a268821c591dfb0", "portable_locator": "sha256/58acc8c96d8fb361c4feb1e04ef73f496b33c788edb39d518a268821c591dfb0"},
+      {"component": "gcc", "version": "9.3.1 20200408", "byte_sha256": "475b81bfcec7787a411e3cb200150c1afb0ccd6d05ab0b1929bd933f2261328f", "portable_locator": "sha256/475b81bfcec7787a411e3cb200150c1afb0ccd6d05ab0b1929bd933f2261328f"},
+      {"component": "gxx", "version": "9.3.1 20200408", "byte_sha256": "69fe197c81592ae356650437e315966cd592b1015ecbda53edddcde494dcc296", "portable_locator": "sha256/69fe197c81592ae356650437e315966cd592b1015ecbda53edddcde494dcc296"},
+      {"component": "ld", "version": "2.34.0.20200428", "byte_sha256": "eaccfd337f8b955665168c8344d301e6441577a72739fc5a4116b9fdb072e67a", "portable_locator": "sha256/eaccfd337f8b955665168c8344d301e6441577a72739fc5a4116b9fdb072e67a"},
+      {"component": "objcopy", "version": "2.34.0.20200428", "byte_sha256": "744e6a4c7b65059f0f4497a01304e7ad1d1edda1defc2af75f28a6574fb77d29", "portable_locator": "sha256/744e6a4c7b65059f0f4497a01304e7ad1d1edda1defc2af75f28a6574fb77d29"},
+      {"component": "objdump", "version": "2.34.0.20200428", "byte_sha256": "d4d9369294ae583393fd9fdaa5ce039acf319c1e78623351f4864e04382b13c6", "portable_locator": "sha256/d4d9369294ae583393fd9fdaa5ce039acf319c1e78623351f4864e04382b13c6"},
+      {"component": "size", "version": "2.34.0.20200428", "byte_sha256": "377e2d38ba57ab5ee5a8e2b6933debeea5cda4249fd1ebc5355deb77c6d365b8", "portable_locator": "sha256/377e2d38ba57ab5ee5a8e2b6933debeea5cda4249fd1ebc5355deb77c6d365b8"}
+    ],
+    "toolchain_manifest": {
+      "portable_path": "evidence/task-009-prerequisite-v0/arm-toolchain-members.json",
+      "byte_sha256": "43e187053d3bd1a616c471991459e62832a8be9d0c455803438b5dd729ad393c",
+      "byte_length": 339884,
+      "portable_locator": "sha256/43e187053d3bd1a616c471991459e62832a8be9d0c455803438b5dd729ad393c"
+    }
+  },
+  "firmware_runtime": {
+    "target_triple": "arm-none-eabi",
+    "build_profile": "board-ksoloti-core-normal",
+    "source_input_manifest": {
+      "portable_path": "evidence/task-009-prerequisite-v0/firmware-source-input-members.json",
+      "byte_sha256": "5383ff90ba44bc5540f48f3fffed38438f58ea81173feaea05608c94721d02aa",
+      "byte_length": 272812,
+      "portable_locator": "sha256/5383ff90ba44bc5540f48f3fffed38438f58ea81173feaea05608c94721d02aa"
+    },
+    "build_command_manifest": {
+      "portable_path": "evidence/task-009-prerequisite-v0/firmware-build-commands.json",
+      "byte_sha256": "bb81bd052948220444830dcfcee7a77140386e8e33599b9a4eb95287a99a7742",
+      "byte_length": 7437,
+      "portable_locator": "sha256/bb81bd052948220444830dcfcee7a77140386e8e33599b9a4eb95287a99a7742"
+    },
+    "firmware_bin": {
+      "portable_path": "content-addressed/firmware/ksoloti.bin",
+      "byte_sha256": "fd61a6a109a234d1c72e445a0542ab59c407a6896b9aafe2bfcbcadaf775e258",
+      "byte_length": 597884,
+      "portable_locator": "sha256/fd61a6a109a234d1c72e445a0542ab59c407a6896b9aafe2bfcbcadaf775e258"
+    },
+    "link_elf": {
+      "portable_path": "content-addressed/firmware/ksoloti-link.elf",
+      "byte_sha256": "df65f2153eb999386cc1bc30b382cafeac63aea8495bf8cb4cdad1c01fca944b",
+      "byte_length": 823980,
+      "portable_locator": "sha256/df65f2153eb999386cc1bc30b382cafeac63aea8495bf8cb4cdad1c01fca944b"
+    },
+    "symbol_manifest": {
+      "portable_path": "evidence/task-009-prerequisite-v0/firmware-symbols.txt",
+      "byte_sha256": "323589fbae0aa6600a417b14c3c764ff6c23c0eb41698e09172ced5419772366",
+      "byte_length": 100391,
+      "portable_locator": "sha256/323589fbae0aa6600a417b14c3c764ff6c23c0eb41698e09172ced5419772366"
+    },
+    "installed_bundle_match": true,
+    "raw_elf_status": "excluded-debug-path-dependent",
+    "determinism": "two-clean-roots-byte-identical"
+  },
+  "task009_evidence_status": [
+    {"level": 1, "status": "not-run"},
+    {"level": 2, "status": "not-run"},
+    {"level": 3, "status": "not-run"},
+    {"level": 4, "status": "not-run"},
+    {"level": 5, "status": "not-run"},
+    {"level": 6, "status": "not-run"},
+    {"level": 7, "status": "not-run"},
+    {"level": 8, "status": "not-run"}
+  ],
+  "limitations": [
+    "Environment reproduction is not Schuss graph lowering evidence.",
+    "No generated patch source was compiled or linked.",
+    "No device, firmware installation, real-time, or audible procedure ran.",
+    "Raw firmware ELF files contain temporary DWARF paths and are excluded from canonical identity."
+  ]
+}

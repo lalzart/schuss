@@ -333,7 +333,7 @@ class TargetBackendBuildContractTest(unittest.TestCase):
 
     def test_build_result_full_shape_and_fail_closed_mutations(self):
         result = copy.deepcopy(self.positive["build_result"])
-        request = {"schema_version":"build-request-v0","build_request_id":"schuss-build-request-900001","revision":1,"content_hash":"sha256:"+"2"*64,"graph_reference":{"graph_id":"schuss-graph-900001","revision":1,"content_hash":"sha256:"+"7"*64},"instrument_reference":{"status":"omitted"},"compute_target_reference":result["compute_target_reference"],"backend_reference":result["backend_reference"],"options":result["options_used"]}
+        request = {"schema_version":"build-request-v0","build_request_id":"schuss-build-request-900001","revision":1,"content_hash":"sha256:"+"2"*64,"graph_reference":{"graph_id":"schuss-graph-900001","revision":1,"content_hash":"sha256:"+"7"*64},"instrument_reference":{"status":"omitted"},"compute_target_reference":result["compute_target_reference"],"backend_reference":result["backend_reference"],"options":result["options_used"],"requested_stopping_stage":"packaging-evidence-recording"}
         graph = {"schema_version":"dsp-graph-v0","graph_id":"schuss-graph-900001","revision":1,"content_hash":"sha256:"+"7"*64,"nodes":[{"node_id":"graph-node-900001"}]}
         target = {"schema_version":"compute-target-v0","compute_target_id":"schuss-compute-target-900001","revision":1,"content_hash":"sha256:"+"3"*64}
         tool = {"schema_version":"build-environment-v0","build_environment_id":"schuss-build-environment-900001","revision":1,"content_hash":"sha256:"+"5"*64}
@@ -361,6 +361,47 @@ class TargetBackendBuildContractTest(unittest.TestCase):
         diagnostics = []
         VALIDATOR._validate_build_results([broken], *args, diagnostics)
         self.assertTrue({"BUILD_RESULT_STAGE_AFTER_TERMINAL", "BUILD_RESULT_OPTIONS_CHANGED", "BUILD_RESULT_NODE_SELECTION_INCOMPLETE"} <= _codes(diagnostics))
+
+    def test_build_result_success_honors_requested_stopping_stage(self):
+        result = copy.deepcopy(self.positive["build_result"])
+        request = {
+            "schema_version": "build-request-v0",
+            "build_request_id": "schuss-build-request-900001",
+            "revision": 1,
+            "content_hash": "sha256:" + "2" * 64,
+            "graph_reference": {"graph_id": "schuss-graph-900001", "revision": 1, "content_hash": "sha256:" + "7" * 64},
+            "instrument_reference": {"status": "omitted"},
+            "compute_target_reference": result["compute_target_reference"],
+            "backend_reference": result["backend_reference"],
+            "options": result["options_used"],
+            "requested_stopping_stage": "target-compile-link",
+        }
+        graph = {"schema_version": "dsp-graph-v0", "graph_id": "schuss-graph-900001", "revision": 1, "content_hash": "sha256:" + "7" * 64, "nodes": [{"node_id": "graph-node-900001"}]}
+        target = {"schema_version": "compute-target-v0", "compute_target_id": "schuss-compute-target-900001", "revision": 1, "content_hash": "sha256:" + "3" * 64}
+        tool = {"schema_version": "build-environment-v0", "build_environment_id": "schuss-build-environment-900001", "revision": 1, "content_hash": "sha256:" + "5" * 64}
+        runtime = {"schema_version": "build-environment-v0", "build_environment_id": "schuss-build-environment-900002", "revision": 1, "content_hash": "sha256:" + "6" * 64}
+        backend = {"schema_version": "backend-v0", "backend_id": "schuss-backend-900001", "revision": 1, "content_hash": "sha256:" + "4" * 64, "toolchain_reference": _ref(tool, "build_environment_id"), "firmware_runtime_reference": _ref(runtime, "build_environment_id"), "artifact_declarations": [{"artifact_kind": "resolution-plan", "media_type": "application/vnd.schuss.resolution-plan+json", "producer_stage": "implementation-resolution"}]}
+        binding = {"implementation_id": "schuss-implementation-900001", "revision": 2, "content_hash": "sha256:" + "8" * 64}
+        eligibility = {"binding_eligibility_id": "schuss-binding-eligibility-900001", "revision": 1, "content_hash": "sha256:" + "9" * 64, "binding_reference": _ref(binding, "implementation_id"), "allowed_pair": {"state": {"status": "supported"}}, "selection_policy": {"policy_id": "schuss-selection-policy-900001"}}
+        artifact = self.positive["artifact"]
+        resource = self.positive["resource_report"]
+        result["stage_outcomes"][9]["status"] = "not-run"
+        result["overall_status"] = "success"
+        stable = VALIDATOR._stable_registry([[request, graph, target, backend, tool, runtime]])
+        args = (
+            {_key(request, "build_request_id"): request}, {_key(graph, "graph_id"): graph}, {_key(target, "compute_target_id"): target},
+            {_key(backend, "backend_id"): backend}, {_key(tool, "build_environment_id"): tool, _key(runtime, "build_environment_id"): runtime},
+            {_key(binding, "implementation_id"): binding}, {_key(eligibility, "binding_eligibility_id"): eligibility},
+            {_key(artifact, "artifact_id"): artifact}, {_key(resource, "resource_report_id"): resource}, stable,
+        )
+        diagnostics = []
+        VALIDATOR._validate_build_results([result], *args, diagnostics)
+        self.assertEqual([], diagnostics)
+
+        result["stage_outcomes"][9]["status"] = "success"
+        diagnostics = []
+        VALIDATOR._validate_build_results([result], *args, diagnostics)
+        self.assertIn("BUILD_RESULT_STAGE_AFTER_REQUESTED_STOP", _codes(diagnostics))
 
     def test_task005_task006_and_phase4a_frozen_hashes(self):
         frozen = [

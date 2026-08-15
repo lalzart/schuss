@@ -1,0 +1,18 @@
+{
+  "schema_version": "conformance-probe-procedure-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "procedure_id": "schuss-procedure-000001",
+  "revision": 1,
+  "content_hash": "sha256:ca1fca9f18bedb533d192aa0e04f56a1b87ccd45188720f413e375025366cc73",
+  "purpose": "non-production-binding-conformance",
+  "candidate_state": "candidate-under-test",
+  "environment_reference": {
+    "prerequisite_environment_id": "schuss-prerequisite-environment-000001",
+    "revision": 1,
+    "content_hash": "sha256:8c2021ba5cbbcc1cbb63ca5957baeba71cdedf6a987d5f7091f609858539b3e7"
+  },
+  "stage_order": ["backend-lowering", "artifact-generation", "target-compile-link"],
+  "first_terminal_behavior": "all-later-stages-not-run",
+  "production_selection_authority": false,
+  "prohibited_actions": ["device-access", "firmware-installation", "flash", "production-selection", "upload"]
+}

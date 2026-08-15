@@ -7,8 +7,101 @@ from typing import Any
 
 import component_graph_rules as component
 import device_instrument_rules as device
+import record_set_rules
 import target_backend_build_rules as target
 import validator_core as core
+
+
+def _component_record_set_validation(
+    selected: record_set_rules.LoadedRecordSet,
+    repository_root: Path,
+) -> component.CoreValidation:
+    overlay_path = repository_root / component.OVERLAY_RELATIVE_PATH
+    snapshot_root = repository_root / component.SNAPSHOT_RELATIVE_PATH
+    manifest_path = snapshot_root / "manifest.json"
+    overlay = core.load_json(overlay_path)
+    return component.validate_component_graph_values(
+        list(selected.records.get("catalog-family", ())),
+        list(selected.records.get("component-contract", ())),
+        list(selected.records.get("implementation-binding", ())),
+        list(selected.records.get("dsp-graph", ())),
+        {
+            "family": selected.schemas[component.FAMILY_SCHEMA_VERSION],
+            "contract": selected.schemas[component.CONTRACT_SCHEMA_VERSION],
+            "binding": selected.schemas[component.BINDING_SCHEMA_VERSION],
+            "graph": selected.schemas[component.GRAPH_SCHEMA_VERSION],
+        },
+        overlay,
+        core.sha256_file(overlay_path),
+        core.sha256_file(manifest_path),
+        component._observations(snapshot_root),
+    )
+
+
+def validate_device_instrument_record_set(
+    selected: record_set_rules.LoadedRecordSet,
+    repository_root: Path,
+) -> dict[str, Any]:
+    component_result = _component_record_set_validation(selected, repository_root)
+    return device.validate_contract_values(
+        list(selected.records.get("device-profile", ())),
+        list(selected.records.get("instrument", ())),
+        selected.schemas[device.DEVICE_SCHEMA_VERSION],
+        selected.schemas[device.INSTRUMENT_SCHEMA_VERSION],
+        component_result.graph_targets,
+    )
+
+
+def validate_all_record_set(
+    selected: record_set_rules.LoadedRecordSet,
+    repository_root: Path,
+) -> dict[str, Any]:
+    component_result = _component_record_set_validation(selected, repository_root)
+    devices = list(selected.records.get("device-profile", ()))
+    instruments = list(selected.records.get("instrument", ()))
+    device_instrument = device.validate_contract_values(
+        devices,
+        instruments,
+        selected.schemas[device.DEVICE_SCHEMA_VERSION],
+        selected.schemas[device.INSTRUMENT_SCHEMA_VERSION],
+        component_result.graph_targets,
+    )
+    return combine_task006_summaries(
+        component_result.summary,
+        device_instrument,
+        len(devices),
+        len(instruments),
+    )
+
+
+def validate_target_backend_build_record_set(
+    selected: record_set_rules.LoadedRecordSet,
+    repository_root: Path,
+) -> target.Task007Validation:
+    upstream_summary = validate_all_record_set(selected, repository_root)
+    loaded = {
+        kind: list(selected.records.get(kind, ()))
+        for kind in target.SCHEMA_SPECS
+    }
+    upstream = {
+        "families": list(selected.records.get("catalog-family", ())),
+        "contracts": list(selected.records.get("component-contract", ())),
+        "bindings": list(selected.records.get("implementation-binding", ())),
+        "graphs": list(selected.records.get("dsp-graph", ())),
+        "devices": list(selected.records.get("device-profile", ())),
+        "instruments": list(selected.records.get("instrument", ())),
+    }
+    schemas = {
+        kind: selected.schemas[specification[1]]
+        for kind, specification in target.SCHEMA_SPECS.items()
+    }
+    return target.validate_target_backend_build_values(
+        loaded,
+        schemas,
+        upstream,
+        repository_root,
+        upstream_summary,
+    )
 
 
 def validate_device_instrument_directory(
@@ -71,8 +164,24 @@ def validate_all_contracts(
         instrument_schema,
         component_result.graph_targets,
     )
+    return combine_task006_summaries(
+        component_result.summary,
+        device_instrument,
+        len(devices),
+        len(instruments),
+    )
+
+
+def combine_task006_summaries(
+    component_summary: dict[str, Any],
+    device_instrument: dict[str, Any],
+    device_count: int,
+    instrument_count: int,
+) -> dict[str, Any]:
+    """Compose byte-compatible Task 006 output from an explicit value closure."""
+
     combined_diagnostics = sorted(
-        component_result.summary["diagnostics"] + device_instrument["diagnostics"],
+        component_summary["diagnostics"] + device_instrument["diagnostics"],
         key=core.diagnostic_sort_key,
     )
     error_count = len(combined_diagnostics)
@@ -85,12 +194,12 @@ def validate_all_contracts(
         if error_count
         else ("valid-with-historical-deferred" if deferred_count else "valid"),
         "record_counts": {
-            **component_result.summary["record_counts"],
-            "device_profiles": len(devices),
-            "instruments": len(instruments),
+            **component_summary["record_counts"],
+            "device_profiles": device_count,
+            "instruments": instrument_count,
         },
         "reference_resolution": {
-            **component_result.summary["reference_resolution"],
+            **component_summary["reference_resolution"],
             "device_profiles": device_instrument["reference_resolution"][
                 "device_profiles_resolved"
             ],
@@ -139,4 +248,3 @@ def validate_target_backend_build_directory(
         repository_root,
         upstream_summary,
     )
-

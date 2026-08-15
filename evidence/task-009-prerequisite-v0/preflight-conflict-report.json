@@ -1,0 +1,37 @@
+{
+  "schema_version": "task009-prerequisite-preflight-conflicts-v0",
+  "directory_glob_conflict": {
+    "method": "temporary copied contracts tree with a deterministic build-request revision 2",
+    "production_tree_mutated": false,
+    "added_record": {
+      "stable_id": "schuss-build-request-000001",
+      "revision": 2,
+      "content_hash": "sha256:cb919fcc1f8d563a2a04d808ae89ff10a2bd086f95b34c11b4716b71766ad485",
+      "raw_sha256": "414b02090d563c44021ad9ab42e7767e24b82089c79d4afd14352fa37748aed7"
+    },
+    "before": {
+      "request_count": 1,
+      "resolution_trace_count": 1,
+      "records_validate_byte_length": 4324,
+      "records_validate_sha256": "cb0735df54a0baade54c8cc16807a94771c1e7cbbc93a6710291084fcb656543"
+    },
+    "after_glob_enumeration": {
+      "request_count": 2,
+      "resolution_trace_count": 2,
+      "records_validate_byte_length": 5293,
+      "records_validate_sha256": "7394396802532cd31cede1febded6fea24446ea6589917141557c2ad7b3ced1a"
+    }
+  },
+  "cross_view_conflict": {
+    "method": "custom enumeration loaded the temporary revision while a previously cached validation summary retained revision 1",
+    "enumerated_request_count": 2,
+    "cached_summary_request_count": 1,
+    "result": "divergent registry and summary views were representable before the explicit record-set boundary"
+  },
+  "v0_schema_conflict": {
+    "probe_input_as_build_request_error_count": 3,
+    "probe_result_as_build_result_error_count": 6,
+    "evidence_claim_v0_probe_result_input_kind": "rejected",
+    "result": "v0 production build contracts cannot truthfully represent an unselected candidate probe and exact probe-result evidence input"
+  }
+}

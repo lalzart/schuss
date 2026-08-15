@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "conformance-probe-result-v0.schema.json",
+  "title": "Schuss non-production conformance probe result v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "conformance_probe_result_id", "revision", "content_hash", "probe_reference", "candidate_state", "binding_reference", "environment_reference", "stage_outcomes", "diagnostics", "artifact_references", "overall_status", "production_selection_authority"],
+  "properties": {
+    "schema_version": {"const": "conformance-probe-result-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "conformance_probe_result_id": {"type": "string", "pattern": "^schuss-conformance-probe-result-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "probe_reference": {"$ref": "#/$defs/probeReference"},
+    "candidate_state": {"const": "candidate-under-test"},
+    "binding_reference": {"$ref": "#/$defs/bindingReference"},
+    "environment_reference": {"$ref": "#/$defs/environmentReference"},
+    "stage_outcomes": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/stageOutcome"}},
+    "diagnostics": {"type": "array", "x-schuss-array-kind": "sequence", "uniqueItems": true, "items": {"$ref": "#/$defs/diagnostic"}},
+    "artifact_references": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/artifactReference"}},
+    "overall_status": {"enum": ["success", "failed", "unsupported", "unresolved", "not-run"]},
+    "production_selection_authority": {"const": false}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "probeReference": {"type": "object", "required": ["conformance_probe_id", "revision", "content_hash"], "properties": {"conformance_probe_id": {"type": "string", "pattern": "^schuss-conformance-probe-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "bindingReference": {"type": "object", "required": ["implementation_id", "revision", "content_hash"], "properties": {"implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "environmentReference": {"type": "object", "required": ["prerequisite_environment_id", "revision", "content_hash"], "properties": {"prerequisite_environment_id": {"type": "string", "pattern": "^schuss-prerequisite-environment-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "stage": {"enum": ["backend-lowering", "artifact-generation", "target-compile-link"]},
+    "stageOutcome": {
+      "type": "object",
+      "required": ["ordinal", "stage", "status", "diagnostic_ids", "artifact_references"],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 1, "maximum": 3},
+        "stage": {"$ref": "#/$defs/stage"},
+        "status": {"enum": ["success", "failed", "unsupported", "unresolved", "not-run"]},
+        "diagnostic_ids": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "pattern": "^diagnostic-[0-9]{6}$"}},
+        "artifact_references": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/artifactReference"}}
+      },
+      "additionalProperties": false
+    },
+    "diagnostic": {"type": "object", "required": ["diagnostic_id", "code", "severity", "stage", "subject"], "properties": {"diagnostic_id": {"type": "string", "pattern": "^diagnostic-[0-9]{6}$"}, "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"}, "severity": {"enum": ["info", "warning", "error"]}, "stage": {"$ref": "#/$defs/stage"}, "subject": {"type": "string", "minLength": 1}}, "additionalProperties": false},
+    "artifactReference": {"type": "object", "required": ["artifact_id", "revision", "content_hash"], "properties": {"artifact_id": {"type": "string", "pattern": "^schuss-artifact-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": "conformance-probe-input-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "conformance_probe_id": "schuss-conformance-probe-000001",
+  "revision": 1,
+  "content_hash": "sha256:6b03c1504b5735ba82a307b69b712b761af9ba31dd262b4c0b013ae70dd47e13",
+  "candidate_state": "candidate-under-test",
+  "binding_reference": {"implementation_id": "schuss-implementation-000028", "revision": 1, "content_hash": "sha256:6f1a0268c40ca192435bcd7a66f201ab0577ff8786590d3c05bace4911726b59"},
+  "contract_reference": {"component_contract_id": "schuss-component-contract-000003", "revision": 1, "content_hash": "sha256:96a29faf58769be5f2ac52de07aa80cae3dcdff28f0f3c158fb1fd12cc234a8d"},
+  "graph_reference": {"graph_id": "schuss-graph-000001", "revision": 1, "content_hash": "sha256:b38562dc2dcf80036e8fc1d78fe8ee425de01f4943495a23375bfb4e7f346e6e"},
+  "environment_reference": {"prerequisite_environment_id": "schuss-prerequisite-environment-000001", "revision": 1, "content_hash": "sha256:8c2021ba5cbbcc1cbb63ca5957baeba71cdedf6a987d5f7091f609858539b3e7"},
+  "procedure_reference": {"procedure_id": "schuss-procedure-000001", "revision": 1, "content_hash": "sha256:ca1fca9f18bedb533d192aa0e04f56a1b87ccd45188720f413e375025366cc73"},
+  "requested_stages": ["backend-lowering", "artifact-generation", "target-compile-link"],
+  "execution_authorization": "not-authorized",
+  "production_selection_authority": false
+}

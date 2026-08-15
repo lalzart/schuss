@@ -761,6 +761,9 @@ def _stable_registry(groups: Iterable[Iterable[dict[str, Any]]]) -> dict[tuple[s
         "build_environment_id", "compute_target_id", "backend_id",
         "binding_eligibility_id", "build_request_id", "build_result_id",
         "artifact_id", "resource_report_id", "evidence_claim_id",
+        "conformance_probe_evidence_id", "conformance_probe_id",
+        "conformance_probe_result_id", "prerequisite_environment_id",
+        "procedure_id",
     )
     for group in groups:
         for record in group:
@@ -930,9 +933,28 @@ def _validate_build_results(
         stages = result["stage_outcomes"]
         if [(item["ordinal"], item["stage"]) for item in stages] != list(enumerate(STAGES, 1)):
             _diagnostic(diagnostics, "BUILD_RESULT_STAGE_SEQUENCE_INVALID", subject, "$.stage_outcomes", "result requires the complete fixed stage sequence")
+        requested_stop_ordinal = STAGES.index(request["requested_stopping_stage"]) + 1
         terminal_seen = False
         first_terminal: str | None = None
         for stage in stages:
+            if stage["ordinal"] > requested_stop_ordinal:
+                if stage["status"] != "not-run":
+                    _diagnostic(
+                        diagnostics,
+                        "BUILD_RESULT_STAGE_AFTER_REQUESTED_STOP",
+                        subject,
+                        "$.stage_outcomes",
+                        "every stage after the immutable request stopping stage must be not-run",
+                    )
+                if stage["diagnostic_ids"] or stage["artifact_references"] or stage["resource_report_references"]:
+                    _diagnostic(
+                        diagnostics,
+                        "BUILD_RESULT_OUTPUT_AFTER_REQUESTED_STOP",
+                        subject,
+                        "$.stage_outcomes",
+                        "a stage after the immutable request stopping stage cannot own outputs",
+                    )
+                continue
             if terminal_seen and stage["status"] != "not-run":
                 _diagnostic(diagnostics, "BUILD_RESULT_STAGE_AFTER_TERMINAL", subject, "$.stage_outcomes", "every stage after the first non-success outcome must be not-run")
             if not terminal_seen and stage["status"] != "success":
@@ -1084,15 +1106,8 @@ def validate_target_backend_build_directory(
     repository_root: Path,
     upstream_summary: dict[str, Any],
 ) -> Task007Validation:
-    diagnostics: list[base.Diagnostic] = []
-    if upstream_summary["status"] == "invalid":
-        for item in upstream_summary["diagnostics"]:
-            diagnostics.append(base.Diagnostic(item["code"], item["severity"], item["subject"], item["location"], item["message"]))
-
     schemas = _schemas(schema_root)
     loaded = _records(contract_root)
-    valid = _validate_structural(loaded, schemas, diagnostics)
-
     upstream = {
         "families": [base.load_json(path) for path in _record_files(contract_root, "catalog-families")],
         "contracts": [base.load_json(path) for path in _record_files(contract_root, "component-contracts")],
@@ -1101,6 +1116,32 @@ def validate_target_backend_build_directory(
         "devices": [base.load_json(path) for path in _record_files(contract_root, "device-profiles")],
         "instruments": [base.load_json(path) for path in _record_files(contract_root, "instruments")],
     }
+    return validate_target_backend_build_values(
+        loaded,
+        schemas,
+        upstream,
+        repository_root,
+        upstream_summary,
+    )
+
+
+def validate_target_backend_build_values(
+    loaded: dict[str, list[dict[str, Any]]],
+    schemas: dict[str, dict[str, Any]],
+    upstream: dict[str, list[dict[str, Any]]],
+    repository_root: Path,
+    upstream_summary: dict[str, Any],
+    additional_semantic_records: Iterable[dict[str, Any]] = (),
+) -> Task007Validation:
+    """Validate one explicitly selected in-memory record-set closure."""
+
+    diagnostics: list[base.Diagnostic] = []
+    semantic_records = list(additional_semantic_records)
+    if upstream_summary["status"] == "invalid":
+        for item in upstream_summary["diagnostics"]:
+            diagnostics.append(base.Diagnostic(item["code"], item["severity"], item["subject"], item["location"], item["message"]))
+
+    valid = _validate_structural(loaded, schemas, diagnostics)
     contract_registry = _registry(upstream["contracts"], "component_contract_id")
     binding_registry = _registry(upstream["bindings"], "implementation_id")
     graph_registry = _registry(upstream["graphs"], "graph_id")
@@ -1123,11 +1164,13 @@ def validate_target_backend_build_directory(
     stable_before_resources = _stable_registry([
         *upstream.values(), valid["capability"], valid["environment"], valid["target"],
         valid["backend"], valid["eligibility"], valid["request"], valid["artifact"],
+        semantic_records,
     ])
     resource_registry = _validate_resource_reports(valid["resource"], target_registry, stable_before_resources, diagnostics)
     stable_before_results = _stable_registry([
         *upstream.values(), valid["capability"], valid["environment"], valid["target"],
         valid["backend"], valid["eligibility"], valid["request"], valid["artifact"], valid["resource"],
+        semantic_records,
     ])
     result_registry = _validate_build_results(
         valid["result"], request_registry, graph_registry, target_registry, backend_registry,
@@ -1135,11 +1178,11 @@ def validate_target_backend_build_directory(
         resource_registry, stable_before_results, diagnostics,
     )
     stable_before_evidence = _stable_registry([
-        *upstream.values(), *valid.values(),
+        *upstream.values(), *valid.values(), semantic_records,
     ])
     evidence_registry = _validate_evidence_claims(valid["evidence"], stable_before_evidence, result_registry, diagnostics)
     _validate_evidence_stratification(valid["eligibility"], evidence_registry, diagnostics)
-    _global_identity_collisions([*upstream.values(), *valid.values()], diagnostics)
+    _global_identity_collisions([*upstream.values(), *valid.values(), semantic_records], diagnostics)
 
     source_lock = base.load_json(repository_root / "catalog/sources.lock.json")
     source_reference_count, locally_verified_count = _verify_source_evidence(
@@ -1180,4 +1223,3 @@ def validate_target_backend_build_directory(
         "diagnostics": [item.as_dict() for item in diagnostics],
     }
     return Task007Validation(summary, tuple(traces), tuple(diagnostics))
-

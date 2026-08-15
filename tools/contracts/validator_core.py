@@ -464,6 +464,11 @@ def record_subject(record: dict[str, Any]) -> str:
         "graph_id",
         "device_profile_id",
         "instrument_id",
+        "conformance_probe_evidence_id",
+        "conformance_probe_id",
+        "conformance_probe_result_id",
+        "prerequisite_environment_id",
+        "procedure_id",
     )
     for field in id_fields:
         if field in record:

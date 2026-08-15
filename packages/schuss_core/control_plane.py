@@ -22,6 +22,7 @@ if str(CONTRACT_TOOLS) not in sys.path:
 import aggregate_validator as aggregate
 import component_graph_rules as component
 import device_instrument_rules as device
+import record_set_rules
 import target_backend_build_rules as target
 import validator_core as core
 
@@ -62,6 +63,7 @@ class OperationContext:
     component_summary: dict[str, Any]
     task006_summary: dict[str, Any]
     task007_summary: dict[str, Any]
+    record_set_reference: dict[str, Any]
 
     def with_records(
         self, **groups: Iterable[dict[str, Any]]
@@ -82,7 +84,9 @@ class OperationContext:
 
 def load_repository_context(
     repository_root: Path = REPOSITORY_ROOT,
-    record_enumerator: Callable[[Path, str], Iterable[Path]] = core.record_files,
+    record_enumerator: Callable[[Path, str], Iterable[Path]] | None = None,
+    record_set_path: Path = record_set_rules.ACCEPTED_RECORD_SET,
+    parent_record_set_path: Path | None = None,
 ) -> OperationContext:
     """Read and validate one accepted repository snapshot before dispatch."""
 
@@ -93,56 +97,76 @@ def load_repository_context(
     snapshot_root = repository_root / component.SNAPSHOT_RELATIVE_PATH
     manifest_path = snapshot_root / "manifest.json"
 
+    selected = record_set_rules.load_record_set(
+        repository_root,
+        record_set_path,
+        accepted_manifest_path=parent_record_set_path,
+    )
+    if record_enumerator is not None:
+        known_directories = {
+            member["portable_path"].split("/")[1]
+            for member in selected.manifest["record_members"]
+            if member["portable_path"].startswith("contracts/")
+            and len(member["portable_path"].split("/")) == 3
+        }
+        for child in sorted(known_directories):
+            actual = {
+                Path(path).resolve()
+                for path in record_enumerator(contract_root, child)
+            }
+            expected = {
+                (repository_root / member["portable_path"]).resolve()
+                for member in selected.manifest["record_members"]
+                if member["portable_path"].startswith(f"contracts/{child}/")
+            }
+            if actual != expected:
+                raise ValueError(
+                    f"custom record enumerator changes explicit record-set membership for {child}"
+                )
+
     records: dict[str, tuple[dict[str, Any], ...]] = {
-        "families": _stable_records(
-            core.load_json(path)
-            for path in record_enumerator(contract_root, "catalog-families")
-        ),
-        "contracts": _stable_records(
-            core.load_json(path)
-            for path in record_enumerator(contract_root, "component-contracts")
-        ),
-        "bindings": _stable_records(
-            core.load_json(path)
-            for path in record_enumerator(contract_root, "implementation-bindings")
-        ),
-        "graphs": _stable_records(
-            core.load_json(path)
-            for path in record_enumerator(contract_root, "graphs")
-        ),
-        "devices": _stable_records(
-            core.load_json(path)
-            for path in record_enumerator(contract_root, "device-profiles")
-        ),
-        "instruments": _stable_records(
-            core.load_json(path)
-            for path in record_enumerator(contract_root, "instruments")
-        ),
+        "families": _stable_records(selected.records.get("catalog-family", ())),
+        "contracts": _stable_records(selected.records.get("component-contract", ())),
+        "bindings": _stable_records(selected.records.get("implementation-binding", ())),
+        "graphs": _stable_records(selected.records.get("dsp-graph", ())),
+        "devices": _stable_records(selected.records.get("device-profile", ())),
+        "instruments": _stable_records(selected.records.get("instrument", ())),
     }
     target_records = {
-        kind: [
-            core.load_json(path)
-            for path in record_enumerator(contract_root, specification[3])
-        ]
-        for kind, specification in target.SCHEMA_SPECS.items()
+        kind: list(selected.records.get(kind, ()))
+        for kind in target.SCHEMA_SPECS
     }
     records.update(
         {name: _stable_records(values) for name, values in target_records.items()}
     )
 
     schemas: dict[str, dict[str, Any]] = {
-        "operation_request": core.load_json(schema_root / REQUEST_SCHEMA_NAME),
-        "operation_result": core.load_json(schema_root / RESULT_SCHEMA_NAME),
-        "device": core.load_json(schema_root / device.DEVICE_SCHEMA_NAME),
-        "instrument": core.load_json(schema_root / device.INSTRUMENT_SCHEMA_NAME),
-        **component._schemas(schema_root),
-        **target._schemas(schema_root),
+        "operation_request": selected.schemas["operation-request-v1"],
+        "operation_result": selected.schemas["operation-result-v1"],
+        "device": selected.schemas[device.DEVICE_SCHEMA_VERSION],
+        "instrument": selected.schemas[device.INSTRUMENT_SCHEMA_VERSION],
+        "family": selected.schemas[component.FAMILY_SCHEMA_VERSION],
+        "contract": selected.schemas[component.CONTRACT_SCHEMA_VERSION],
+        "binding": selected.schemas[component.BINDING_SCHEMA_VERSION],
+        "graph": selected.schemas[component.GRAPH_SCHEMA_VERSION],
+        **{
+            kind: selected.schemas[specification[1]]
+            for kind, specification in target.SCHEMA_SPECS.items()
+        },
     }
 
-    component_result = component.validate_component_graph_directory(
-        contract_root,
-        schema_root,
-        repository_root,
+    overlay = core.load_json(overlay_path)
+    observations = component._observations(snapshot_root)
+    component_result = component.validate_component_graph_values(
+        list(records["families"]),
+        list(records["contracts"]),
+        list(records["bindings"]),
+        list(records["graphs"]),
+        {kind: schemas[kind] for kind in ("family", "contract", "binding", "graph")},
+        overlay,
+        core.sha256_file(overlay_path),
+        core.sha256_file(manifest_path),
+        observations,
     )
     device_summary = device.validate_contract_values(
         list(records["devices"]),
@@ -151,28 +175,50 @@ def load_repository_context(
         schemas["instrument"],
         component_result.graph_targets,
     )
-    task006_summary = aggregate.validate_all_contracts(
-        contract_root,
-        schema_root,
-        repository_root,
+    task006_summary = aggregate.combine_task006_summaries(
+        component_result.summary,
+        device_summary,
+        len(records["devices"]),
+        len(records["instruments"]),
     )
-    task007_result = aggregate.validate_target_backend_build_directory(
-        contract_root,
-        schema_root,
+    task007_result = target.validate_target_backend_build_values(
+        {kind: list(records[kind]) for kind in target.SCHEMA_SPECS},
+        {kind: schemas[kind] for kind in target.SCHEMA_SPECS},
+        {
+            "families": list(records["families"]),
+            "contracts": list(records["contracts"]),
+            "bindings": list(records["bindings"]),
+            "graphs": list(records["graphs"]),
+            "devices": list(records["devices"]),
+            "instruments": list(records["instruments"]),
+        },
         repository_root,
+        task006_summary,
+        additional_semantic_records=[
+            copy.deepcopy(record)
+            for kind in (
+                "conformance-probe-evidence",
+                "conformance-probe-input",
+                "conformance-probe-result",
+                "conformance-probe-procedure",
+                "prerequisite-environment",
+            )
+            for record in selected.records.get(kind, ())
+        ],
     )
 
     return OperationContext(
         records=records,
         schemas=schemas,
-        overlay=core.load_json(overlay_path),
+        overlay=overlay,
         overlay_sha256=core.sha256_file(overlay_path),
         manifest_sha256=core.sha256_file(manifest_path),
-        observations=component._observations(snapshot_root),
+        observations=observations,
         device_summary=copy.deepcopy(device_summary),
         component_summary=copy.deepcopy(component_result.summary),
         task006_summary=copy.deepcopy(task006_summary),
         task007_summary=copy.deepcopy(task007_result.summary),
+        record_set_reference=copy.deepcopy(selected.reference),
     )
 
 

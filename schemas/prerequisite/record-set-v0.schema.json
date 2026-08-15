@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "record-set-v0.schema.json",
+  "title": "Schuss explicit record set v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "record_set_id", "revision", "content_hash", "purpose", "parent_reference", "schema_members", "record_members", "enforced_directories"],
+  "properties": {
+    "schema_version": {"const": "record-set-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "record_set_id": {"type": "string", "pattern": "^schuss-record-set-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "purpose": {"enum": ["accepted-baseline", "prospective-task"]},
+    "parent_reference": {"oneOf": [{"$ref": "#/$defs/recordSetReference"}, {"$ref": "#/$defs/omittedReference"}]},
+    "schema_members": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/schemaMember"}},
+    "record_members": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/recordMember"}},
+    "enforced_directories": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/portablePath"}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "portablePath": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"},
+    "omittedReference": {"type": "object", "required": ["status"], "properties": {"status": {"const": "omitted"}}, "additionalProperties": false},
+    "recordSetReference": {
+      "type": "object",
+      "required": ["status", "record_set_id", "revision", "content_hash"],
+      "properties": {
+        "status": {"const": "included"},
+        "record_set_id": {"type": "string", "pattern": "^schuss-record-set-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "schemaMember": {
+      "type": "object",
+      "required": ["schema_version", "portable_path", "byte_sha256"],
+      "properties": {
+        "schema_version": {"type": "string", "pattern": "^[a-z][a-z0-9-]*-v[0-9]+$"},
+        "portable_path": {"$ref": "#/$defs/portablePath"},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"}
+      },
+      "additionalProperties": false
+    },
+    "recordMember": {
+      "type": "object",
+      "required": ["record_kind", "stable_id", "revision", "content_hash", "portable_path", "byte_sha256"],
+      "properties": {
+        "record_kind": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "stable_id": {"type": "string", "pattern": "^schuss-[a-z0-9-]+-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "portable_path": {"$ref": "#/$defs/portablePath"},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

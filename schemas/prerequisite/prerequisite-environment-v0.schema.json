@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "prerequisite-environment-v0.schema.json",
+  "title": "Schuss Task 009 prerequisite environment v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "prerequisite_environment_id", "revision", "content_hash", "status", "source_capsule", "java_closure", "arm_toolchain", "firmware_runtime", "task009_evidence_status", "limitations"],
+  "properties": {
+    "schema_version": {"const": "prerequisite-environment-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "prerequisite_environment_id": {"type": "string", "pattern": "^schuss-prerequisite-environment-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "status": {"enum": ["supported", "unresolved"]},
+    "source_capsule": {"$ref": "#/$defs/sourceCapsule"},
+    "java_closure": {"$ref": "#/$defs/javaClosure"},
+    "arm_toolchain": {"$ref": "#/$defs/armToolchain"},
+    "firmware_runtime": {"$ref": "#/$defs/firmwareRuntime"},
+    "task009_evidence_status": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 8, "maxItems": 8, "uniqueItems": true, "items": {"$ref": "#/$defs/evidenceStatus"}},
+    "limitations": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "gitCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "portablePath": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"},
+    "artifact": {
+      "type": "object",
+      "required": ["portable_path", "byte_sha256", "byte_length", "portable_locator"],
+      "properties": {
+        "portable_path": {"$ref": "#/$defs/portablePath"},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"},
+        "byte_length": {"type": "integer", "minimum": 0},
+        "portable_locator": {"type": "string", "pattern": "^sha256/[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "component": {
+      "type": "object",
+      "required": ["component", "version", "byte_sha256", "portable_locator"],
+      "properties": {
+        "component": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "version": {"type": "string", "minLength": 1},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"},
+        "portable_locator": {"type": "string", "pattern": "^sha256/[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "sourceCapsule": {
+      "type": "object",
+      "required": ["source_id", "commit", "tree", "archive_sha256", "member_count", "manifest"],
+      "properties": {
+        "source_id": {"const": "patcher"},
+        "commit": {"$ref": "#/$defs/gitCommit"},
+        "tree": {"$ref": "#/$defs/gitCommit"},
+        "archive_sha256": {"$ref": "#/$defs/rawSha256"},
+        "member_count": {"type": "integer", "minimum": 1},
+        "manifest": {"$ref": "#/$defs/artifact"}
+      },
+      "additionalProperties": false
+    },
+    "javaClosure": {
+      "type": "object",
+      "required": ["runtime_version", "java", "javac", "classpath_fingerprint_sha256", "class_count", "jar_count", "classpath_manifest", "runtime_manifest", "excluded_nonsemantic_outputs", "explicit_configuration_smoke"],
+      "properties": {
+        "runtime_version": {"type": "string", "minLength": 1},
+        "java": {"$ref": "#/$defs/component"},
+        "javac": {"$ref": "#/$defs/component"},
+        "classpath_fingerprint_sha256": {"$ref": "#/$defs/rawSha256"},
+        "class_count": {"type": "integer", "minimum": 1},
+        "jar_count": {"type": "integer", "minimum": 1},
+        "classpath_manifest": {"$ref": "#/$defs/artifact"},
+        "runtime_manifest": {"$ref": "#/$defs/artifact"},
+        "excluded_nonsemantic_outputs": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/portablePath"}},
+        "explicit_configuration_smoke": {"$ref": "#/$defs/artifact"}
+      },
+      "additionalProperties": false
+    },
+    "armToolchain": {
+      "type": "object",
+      "required": ["identity", "target_triple", "components", "toolchain_manifest"],
+      "properties": {
+        "identity": {"type": "string", "minLength": 1},
+        "target_triple": {"const": "arm-none-eabi"},
+        "components": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/component"}},
+        "toolchain_manifest": {"$ref": "#/$defs/artifact"}
+      },
+      "additionalProperties": false
+    },
+    "firmwareRuntime": {
+      "type": "object",
+      "required": ["target_triple", "build_profile", "source_input_manifest", "build_command_manifest", "firmware_bin", "link_elf", "symbol_manifest", "installed_bundle_match", "raw_elf_status", "determinism"],
+      "properties": {
+        "target_triple": {"const": "arm-none-eabi"},
+        "build_profile": {"const": "board-ksoloti-core-normal"},
+        "source_input_manifest": {"$ref": "#/$defs/artifact"},
+        "build_command_manifest": {"$ref": "#/$defs/artifact"},
+        "firmware_bin": {"$ref": "#/$defs/artifact"},
+        "link_elf": {"$ref": "#/$defs/artifact"},
+        "symbol_manifest": {"$ref": "#/$defs/artifact"},
+        "installed_bundle_match": {"const": true},
+        "raw_elf_status": {"const": "excluded-debug-path-dependent"},
+        "determinism": {"const": "two-clean-roots-byte-identical"}
+      },
+      "additionalProperties": false
+    },
+    "evidenceStatus": {
+      "type": "object",
+      "required": ["level", "status"],
+      "properties": {
+        "level": {"type": "integer", "minimum": 1, "maximum": 8},
+        "status": {"const": "not-run"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

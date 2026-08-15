@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "conformance-probe-evidence-v0.schema.json",
+  "title": "Schuss conformance probe evidence companion v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "conformance_probe_evidence_id", "revision", "content_hash", "probe_result_reference", "binding_reference", "procedure_reference", "outcome", "evidence_level", "limitations"],
+  "properties": {
+    "schema_version": {"const": "conformance-probe-evidence-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "conformance_probe_evidence_id": {"type": "string", "pattern": "^schuss-conformance-probe-evidence-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "probe_result_reference": {"$ref": "#/$defs/resultReference"},
+    "binding_reference": {"$ref": "#/$defs/bindingReference"},
+    "procedure_reference": {"$ref": "#/$defs/procedureReference"},
+    "outcome": {"enum": ["passed", "failed", "not-run"]},
+    "evidence_level": {"type": "integer", "minimum": 1, "maximum": 5},
+    "limitations": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "resultReference": {"type": "object", "required": ["conformance_probe_result_id", "revision", "content_hash"], "properties": {"conformance_probe_result_id": {"type": "string", "pattern": "^schuss-conformance-probe-result-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "bindingReference": {"type": "object", "required": ["implementation_id", "revision", "content_hash"], "properties": {"implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "procedureReference": {"type": "object", "required": ["procedure_id", "revision", "content_hash"], "properties": {"procedure_id": {"type": "string", "pattern": "^schuss-procedure-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false}
+  }
+}
