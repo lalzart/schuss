@@ -20,9 +20,9 @@ into transparent, typed Schuss models.
 | 11A | Browsable catalog control plane and exact seven-role Gills-slice catalog review | [Complete](tasks/011a-browsable-catalog-control-plane-and-exact-gills-slice-catalog-review.md) |
 | 11B | Six component contracts/bindings, authoritative slice graph, minimal Gills instrument, and unresolved build closure | [Complete](tasks/011b-component-contracts-gills-slice-graph-and-unresolved-build-closure.md) |
 | 11C | Bounded legacy backend expansion and ARM compile/link for the slice | [Complete](tasks/011c-bounded-legacy-backend-expansion-and-arm-evidence.md) |
-| 12A | Durable project/workspace format and persistent CLI graph authoring | [Proposed; immediate next task](tasks/012a-durable-project-workspace-and-cli-graph-authoring.md) |
+| 12A | Durable project/workspace format and persistent CLI graph authoring | [Complete](tasks/012a-durable-project-workspace-and-cli-graph-authoring.md) |
 | 12B | Basic object drawer and transparent graph canvas | Deferred until the headless-backbone readiness gate |
-| 13A | Reusable compiler front half through dependency/resource planning | [Proposed; follows Task 012A](tasks/013a-reusable-compiler-front-half.md) |
+| 13A | Reusable compiler front half through dependency/resource planning | [Proposed; immediate next task](tasks/013a-reusable-compiler-front-half.md) |
 | 13B | Shared build-execution operation and product CLI | Planned |
 | 13C | Normalized DSP representation and minimal direct graph-to-C++ frontend | Planned |
 | 13D | Direct-frontend expansion through the complete Task 011C graph | Planned |
@@ -90,11 +90,13 @@ passed. Connected-device, real-time, and audible gates remain separately
 unauthorized and unproved; the general backend and direct frontend also remain
 future work.
 
-The immediate next execution unit is Task 012A. It separates the durable
-project/workspace and persistent graph-authoring dependency from the old
-combined Phase 12 UI milestone. Task 013A is the second proposed task and owns
-only the reusable compiler front half through deterministic dependency and
-resource planning. Task 012B retains the object drawer and transparent graph
+Task 012A now completes the durable project/workspace and persistent
+graph-authoring dependency formerly combined with Phase 12 UI work. It adds an
+exact portable overlay, immutable graph/project revisions, prior-or-successor
+atomic recovery, shared v3 operations, and explicit persistent CLI commands.
+Task 013A is the immediate proposed task and owns only the reusable compiler
+front half through deterministic dependency and resource planning. Task 012B
+retains the object drawer and transparent graph
 canvas as a deferred client of accepted operations; it owns no independent
 catalog, graph, project, build, or compiler semantics.
 The completed boundaries are in

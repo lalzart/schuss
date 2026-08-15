@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace-lock-v0.schema.json",
+  "title": "Schuss local workspace lock v0",
+  "type": "object",
+  "required": ["schema_version", "owner_pid", "operation", "recovery_locator"],
+  "properties": {
+    "schema_version": {"const": "workspace-lock-v0"},
+    "owner_pid": {"type": "integer", "minimum": 1},
+    "operation": {"const": "project.graph.commit"},
+    "recovery_locator": {"const": ".schuss/recovery/pending.json"}
+  },
+  "additionalProperties": false
+}

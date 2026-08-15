@@ -1,8 +1,8 @@
 # Task 012A: Durable project/workspace and persistent CLI graph authoring
 
-Status: proposed prompt; not started. The user authorized creation of this task
-contract on 2026-08-15 but did not authorize implementation, staging, commit,
-publication, push, or any device action.
+Status: complete locally on 2026-08-15. The user authorized implementation on
+2026-08-15. All acceptance gates pass. The work remains unstaged and
+uncommitted; no publication, push, or device action was authorized or taken.
 
 Work in the Schuss repository. Before implementation, read `AGENTS.md`,
 `docs/PROJECT_CONTEXT.md`, `docs/ARCHITECTURE.md`,
@@ -284,3 +284,168 @@ surface; write acceptance boundary; lock and recovery model; every failure
 injection result; portability and determinism evidence; pre-existing and final
 test counts; accepted-byte preservation; scope confirmation; and the exact
 remaining Task 013A, Task 013B, and deferred Task 012B proof gaps.
+
+## Completion report
+
+Task 012A completed from clean baseline
+`056ca1e09e3a09f8cf10c6e7e330c5cca4aa1981`. It adds one portable project
+manifest, one accepted-head marker, a deterministic write plan, local lock and
+recovery records, additive operation v3 envelopes, a client-neutral
+`ProjectService`, and explicit product commands. The existing ordered
+`graph.transact` edit language and semantic validator remain the sole graph
+mutation boundary.
+
+### Delivered files
+
+The delivered file set is exactly:
+
+- root and normative documentation: `README.md`,
+  `docs/PROJECT_WORKSPACE_CONTRACTS.md`, `docs/PROJECT_CONTEXT.md`,
+  `docs/ARCHITECTURE.md`, `docs/SCHEMA_STRATEGY.md`,
+  `docs/OPERATION_CONTRACTS.md`, `docs/COMPILER_STRATEGY.md`,
+  `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`, `docs/ROADMAP.md`, and this task;
+- package surface and implementation: `packages/README.md`,
+  `packages/schuss_core/__init__.py`, `packages/schuss_core/cli.py`,
+  `packages/schuss_core/control_plane.py`,
+  `packages/schuss_core/product_cli.py`,
+  `packages/schuss_core/project_cli.py`, and
+  `packages/schuss_core/project_service.py`;
+- schema surface: `schemas/README.md`, `schemas/project-v0.schema.json`,
+  `schemas/workspace-head-v0.schema.json`,
+  `schemas/project-write-plan-v0.schema.json`,
+  `schemas/workspace-lock-v0.schema.json`,
+  `schemas/workspace-recovery-v0.schema.json`,
+  `schemas/operation-request-v3.schema.json`, and
+  `schemas/operation-result-v3.schema.json`;
+- retained positive fixture:
+  `fixtures/task012a/minimal-project/schuss-project.json` and
+  `fixtures/task012a/minimal-project/project/revisions/schuss-project-000001-r000001.json`;
+  and
+- retained validation: `tools/contracts/README.md`,
+  `tools/contracts/validate_task012a.py`,
+  `tools/contracts/tests/test_task012a_project.py`, and fixture files
+  `task012a-graph-edits.json`, `task012a-project-negative-fixtures.json`, and
+  `task012a-successor-golden-hashes.json` under
+  `tools/contracts/tests/fixtures/`.
+
+### Exact schemas and retained fixture
+
+The seven schema IDs and their raw-file SHA-256 values are:
+
+| Schema ID | SHA-256 |
+| --- | --- |
+| `project-v0.schema.json` | `3d59925cfbf65adc66376053f034abdb05c47849776f4a4b17de1df69cc4670d` |
+| `workspace-head-v0.schema.json` | `dedf5226819c55dc0159c3860c592459f1501d914f7862b49f4beb3eee8d4ee2` |
+| `project-write-plan-v0.schema.json` | `5de48d139c478325ab5f11c730fb0d70396823dd93c76fb55d6ce66748825cd5` |
+| `workspace-lock-v0.schema.json` | `470375d465f45667e841b7e0a00c168c779671b60c9a9bf59c4334dbfe573b0d` |
+| `workspace-recovery-v0.schema.json` | `21f5c22eeb4e6c62560b5382ab2c0e28c7cc06ce3881d2ab711dfa23f3275c9d` |
+| `operation-request-v3.schema.json` | `5405ad385574706b0c82989e1cbc2e02ef24a443836ec04030eb519075e98a30` |
+| `operation-result-v3.schema.json` | `f1f0c90c95846a4b2a3836fa981000d2f006b1911354afcf0b13f76a5c681802` |
+
+The retained positive manifest is project `schuss-project-000001` revision 1,
+semantic hash
+`sha256:61ebe4b3bb3ddea3a710449205f5aa5fc7bea77ff6462a2b48f2c1b1919e6f47`.
+Its parent is omitted. It pins exact Task 011C record set
+`schuss-record-set-000006` revision 1 at
+`sha256:fcf8f43d4139a16796b17bf2bdb95e5cd03ac279c60c55f8218349ef8a7cc842`,
+graph `schuss-graph-000002` revision 1 at
+`sha256:ea98b4cbf1ecb58d70338e5aaaef02385a6ede707b9b78bbc90fac09d53c7460`,
+instrument `schuss-instrument-000002` revision 1 at
+`sha256:d20e0f108397987a4b102fab35afc8fb00a42acfa33d48522226de2c343e7adb`,
+and build request `schuss-build-request-000002` revision 2 at
+`sha256:dfc54339dc8ce4a243babad40de659437d67aa05c4c2f61be04e39741e4b0351`.
+The 1,065-byte manifest has raw SHA-256
+`ff8d4aba68e2517cd8507416e655854109f9d94063674d07d21e45650a74d556`;
+the revision-1 head has raw SHA-256
+`502782a23485f88f6fd330e41ce1ef07c5ee6edd180eb860eab1e40e5ca5d5d3`.
+
+The retained successor golden names graph `000002` revision 2 at semantic hash
+`sha256:4448a27e4e6913de9ef7a29453e1cd65950f533c4b9001fd984f95095d2ca0a0`,
+project `000001` revision 2 at semantic hash
+`sha256:1468133fea4b40a9086396ec5a3ed6a966d31b69bd824e676f2cfc84811eeef1`,
+and write plan hash
+`sha256:3701f3da7f7d6649adfa0abd8a0c96d8d2a5f24745adc19826ec96e9a5879a88`.
+Its governed raw bytes are graph revision 2: 6,109 bytes,
+`58c92b67a818248930ed627c1893940fcef1dc883b7ad6e5d2e7fdb591083cbc`;
+project revision 2: 1,757 bytes,
+`e0667e3027c6e5c81604e83b818f2256381e5cdb2990ef0a841ae914e76ab9be`;
+and successor head: 436 bytes,
+`ee564e58a08ccf411f2b67d29f74ae34e1af6af9323c81e6d71a8341fe52d0bc`.
+
+### Durable state, local state, operations, and commands
+
+Governed durable files are only `schuss-project.json`, immutable
+`project/revisions/*.json`, explicitly indexed `records/dsp-graphs/*.json`,
+and explicitly owned content-addressed assets. Local `.schuss/lock.json`,
+`.schuss/recovery/pending.json`, `.schuss/tmp/`, and `.schuss/cache/` are
+coordination or convenience state and never canonical identity.
+
+Additive `schuss-operation-request-v3` and `schuss-operation-result-v3` expose
+`project.init`, `project.inspect`, `project.validate`, and
+`project.graph.commit`. Product commands are `project init`, `project inspect`,
+`project validate`, `project transact ... --write`, canonical `project op`, and
+static `project completion` for Bash, Zsh, and Fish. All require an explicit
+workspace. Human and JSON forms derive from the same shared result. The direct
+API, canonical process adapter, ergonomic CLI JSON, and reload paths produced
+the expected equal canonical bytes.
+
+### Atomicity, locking, recovery, and failure injection
+
+Atomic replacement of `schuss-project.json` is the sole acceptance boundary.
+The exact old head bytes are rechecked immediately before replacement.
+Immutable graph and project successors are published before that boundary and
+are not accepted by existence alone. A live writer rejects; a malformed lock
+fails closed; a dead lock without recovery is removed as abandoned local
+state.
+
+Recovery compares the accepted head against the plan's exact old and new head
+bytes. Exact old rolls back only plan-owned unaccepted files; exact new
+verifies and retains the successor; neither produces
+`PROJECT_RECOVERY_AMBIGUOUS`. Each of these injected interruption labels
+recovered to one exact valid revision 1 or revision 2 project, never a mixed
+state: `before:recovery.temp-create`, `during:recovery.temp-write`,
+`after:recovery.publish`, `before:graph.temp-create`,
+`during:graph.temp-write`, `after:graph.publish`,
+`before:project.temp-create`, `during:project.temp-write`,
+`after:project.publish`, `before:head.temp-create`,
+`during:head.temp-write`, `before:head.publish`, `after:head.publish`,
+`before:recovery.remove`, and `before:lock.remove`. Separately tampered recovery
+state failed closed as ambiguous.
+
+### Validation and preservation
+
+Two differently named fresh roots produced identical governed bytes and
+semantic hashes. Copying the fixture to a different absolute path preserved
+identity and validation. Fresh-process and cross-working-directory CLI output
+remained deterministic across locale, `PYTHONHASHSEED`, enumeration order, and
+terminal width. Absolute, parent-traversal, and symlink locators could not
+escape the workspace. Missing, extra, colliding, duplicate, stale-hash,
+changed-old-head, missing-parent, malformed-lock, live-lock, and invalid exact
+references all failed closed.
+
+The pre-task baseline passed 14 inventory, 6 catalog, and 159 contract tests:
+179 total. The final suite passes 14 inventory, 6 catalog, and 177 contract
+tests: 197 total, including 18 focused Task 012A tests. Every retained raw,
+resolved, Phase 3, semantic catalog, Task 011A, Tasks 005-007, Task 009
+prerequisite/check, Task 011B, Task 011C/check, and Task 012A validator passed;
+`git diff --check` passed. The accepted Task 010 CLI golden file remains exact
+at SHA-256
+`2373c57ed53676470eb077b79156c4f7f44b1e21c4f1f3d6bd98393e8c2fc146`,
+and the accepted Task 011A CLI golden remains exact at
+`f4530b7e13e1275df11fdb17a99abaf70758547db36d1025e666cb1aa8c94ed4`.
+Proposal-only `graph.transact` still returns
+`persistence_status: not-written`; accepted v1/v2 operation and CLI bytes,
+schemas, records, fixtures, artifacts, and evidence were not rewritten.
+
+No presentation/UI model, compiler front half, lowering, Java invocation,
+generated artifact, backend execution, build execution, evidence promotion,
+device connection, upload, SD-card write, flash, firmware mutation, real-time
+measurement, listening, upstream-checkout mutation, stage, commit, or push
+occurred.
+
+Task 013A still must prove reusable implementation resolution, compound
+elaboration, dependency/resource planning, and deterministic compiler-front-
+half artifacts without lowering. Task 013B still must define and prove the
+shared executable-backend boundary and product build command. Deferred Task
+012B still owns the object drawer, graph canvas, presentation overlay, and all
+visual interaction behavior. Task 012A makes none of those claims.

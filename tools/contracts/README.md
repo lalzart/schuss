@@ -9,6 +9,7 @@ python3 tools/contracts/validate_task009_prerequisite.py
 python3 tools/contracts/run_task009.py --check
 python3 tools/contracts/validate_task011b.py
 python3 tools/contracts/validate_task011c.py
+python3 tools/contracts/validate_task012a.py
 python3 -m unittest discover -s tools/contracts/tests
 ```
 
@@ -62,3 +63,8 @@ validators for record set `schuss-record-set-000006`. Running
 eight-node proof path: six candidate probes, ordinary resolution, and two
 production runs through deterministic Java generation and authenticated ARM
 compile/link. It does not access hardware or generalize the backend.
+
+`validate_task012a.py` is the read-only retained project/workspace validator.
+It refuses local state requiring recovery, verifies the exact Task 011C base,
+portable project fixture, governed bytes, semantic closure, and schema hashes,
+and confirms the target workspace bytes are unchanged.

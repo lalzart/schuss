@@ -56,7 +56,15 @@ This directory contains only contracts that current Schuss artifacts use:
   companion and Gills-slice review closure, `catalog-projection-v1.schema.json`
   validates its derived client-neutral view, and
   `operation-request-v2.schema.json`/`operation-result-v2.schema.json` add the
-  catalog operations without changing the v1 bytes.
+  catalog operations without changing the v1 bytes; and
+- `project-v0.schema.json` defines the portable exact project overlay,
+  `workspace-head-v0.schema.json` defines its atomic acceptance marker,
+  `project-write-plan-v0.schema.json` binds expected old and proposed new
+  bytes, and `workspace-lock-v0.schema.json` plus
+  `workspace-recovery-v0.schema.json` keep local coordination outside project
+  identity; `operation-request-v3.schema.json` and
+  `operation-result-v3.schema.json` add Task 012A project operations without
+  changing v1/v2 bytes.
 
 The resolved schemas describe factual compatibility-bridge evidence only. The
 semantic overlay is a versioned curation foundation and pilot, not a complete
@@ -75,3 +83,7 @@ Task 011B is the first selected mixed v0/v1 component-and-binding view. Q21 is
 used for semitone-offset legacy `Frac32` seams; Q27 remains the accepted
 normalized/audio representation. The successor schemas do not imply backend
 support or executable evidence.
+
+Task 012A does not revise `dsp-graph-v0`. Project-owned member entries retain
+the exact graph parent while the graph bytes remain authoritative semantic
+records. See `docs/PROJECT_WORKSPACE_CONTRACTS.md`.

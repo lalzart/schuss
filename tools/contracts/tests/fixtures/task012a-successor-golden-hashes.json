@@ -1,0 +1,23 @@
+{
+  "graph_content_hash": "sha256:4448a27e4e6913de9ef7a29453e1cd65950f533c4b9001fd984f95095d2ca0a0",
+  "project_content_hash": "sha256:1468133fea4b40a9086396ec5a3ed6a966d31b69bd824e676f2cfc84811eeef1",
+  "write_plan_content_hash": "sha256:3701f3da7f7d6649adfa0abd8a0c96d8d2a5f24745adc19826ec96e9a5879a88",
+  "governed_files": {
+    "project/revisions/schuss-project-000001-r000001.json": {
+      "byte_length": 1065,
+      "byte_sha256": "ff8d4aba68e2517cd8507416e655854109f9d94063674d07d21e45650a74d556"
+    },
+    "project/revisions/schuss-project-000001-r000002.json": {
+      "byte_length": 1757,
+      "byte_sha256": "e0667e3027c6e5c81604e83b818f2256381e5cdb2990ef0a841ae914e76ab9be"
+    },
+    "records/dsp-graphs/schuss-graph-000002-r000002.json": {
+      "byte_length": 6109,
+      "byte_sha256": "58c92b67a818248930ed627c1893940fcef1dc883b7ad6e5d2e7fdb591083cbc"
+    },
+    "schuss-project.json": {
+      "byte_length": 436,
+      "byte_sha256": "ee564e58a08ccf411f2b67d29f74ae34e1af6af9323c81e6d71a8341fe52d0bc"
+    }
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project-v0.schema.json",
+  "title": "Schuss durable project v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "project_id",
+    "revision",
+    "content_hash",
+    "parent_reference",
+    "base_record_set",
+    "owned_members",
+    "primary_graph_reference",
+    "instrument_references",
+    "build_request_references",
+    "asset_references"
+  ],
+  "properties": {
+    "schema_version": {"const": "project-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "project_id": {"$ref": "#/$defs/projectId"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "parent_reference": {
+      "oneOf": [
+        {"$ref": "#/$defs/projectReference"},
+        {"$ref": "#/$defs/omittedReference"}
+      ]
+    },
+    "base_record_set": {"$ref": "#/$defs/baseRecordSet"},
+    "owned_members": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/ownedMember"}
+    },
+    "primary_graph_reference": {"$ref": "#/$defs/graphReference"},
+    "instrument_references": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/instrumentReference"}
+    },
+    "build_request_references": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/buildRequestReference"}
+    },
+    "asset_references": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/assetReference"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "portableLocator": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"
+    },
+    "projectId": {"type": "string", "pattern": "^schuss-project-[0-9]{6}$"},
+    "stableId": {"type": "string", "pattern": "^schuss-[a-z0-9-]+-[0-9]{6}$"},
+    "omittedReference": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {"status": {"const": "omitted"}},
+      "additionalProperties": false
+    },
+    "projectReference": {
+      "type": "object",
+      "required": ["status", "project_id", "revision", "content_hash"],
+      "properties": {
+        "status": {"const": "included"},
+        "project_id": {"$ref": "#/$defs/projectId"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "recordSetReference": {
+      "type": "object",
+      "required": ["record_set_id", "revision", "content_hash"],
+      "properties": {
+        "record_set_id": {"type": "string", "pattern": "^schuss-record-set-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "baseRecordSet": {
+      "type": "object",
+      "required": ["reference", "portable_locator"],
+      "properties": {
+        "reference": {"$ref": "#/$defs/recordSetReference"},
+        "portable_locator": {"$ref": "#/$defs/portableLocator"}
+      },
+      "additionalProperties": false
+    },
+    "memberReference": {
+      "type": "object",
+      "required": ["status", "record_kind", "stable_id", "revision", "content_hash"],
+      "properties": {
+        "status": {"const": "included"},
+        "record_kind": {"enum": ["dsp-graph", "instrument", "build-request"]},
+        "stable_id": {"$ref": "#/$defs/stableId"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "ownedMember": {
+      "type": "object",
+      "required": [
+        "record_kind",
+        "stable_id",
+        "revision",
+        "content_hash",
+        "schema_version",
+        "portable_locator",
+        "byte_sha256",
+        "parent_reference"
+      ],
+      "properties": {
+        "record_kind": {"enum": ["dsp-graph", "instrument", "build-request"]},
+        "stable_id": {"$ref": "#/$defs/stableId"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "schema_version": {"type": "string", "pattern": "^[a-z][a-z0-9-]*-v[0-9]+$"},
+        "portable_locator": {"$ref": "#/$defs/portableLocator"},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"},
+        "parent_reference": {
+          "oneOf": [
+            {"$ref": "#/$defs/memberReference"},
+            {"$ref": "#/$defs/omittedReference"}
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "graphReference": {
+      "type": "object",
+      "required": ["graph_id", "revision", "content_hash"],
+      "properties": {
+        "graph_id": {"type": "string", "pattern": "^schuss-graph-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "instrumentReference": {
+      "type": "object",
+      "required": ["instrument_id", "revision", "content_hash"],
+      "properties": {
+        "instrument_id": {"type": "string", "pattern": "^schuss-instrument-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "buildRequestReference": {
+      "type": "object",
+      "required": ["build_request_id", "revision", "content_hash"],
+      "properties": {
+        "build_request_id": {"type": "string", "pattern": "^schuss-build-request-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "assetReference": {
+      "type": "object",
+      "required": ["media_type", "byte_length", "content_hash", "portable_locator"],
+      "properties": {
+        "media_type": {"type": "string", "pattern": "^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$"},
+        "byte_length": {"type": "integer", "minimum": 0},
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "portable_locator": {"$ref": "#/$defs/portableLocator"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

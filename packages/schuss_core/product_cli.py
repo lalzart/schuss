@@ -49,6 +49,7 @@ def resolve_locator(
     specifications = {
         "graph": ("graphs", "graph_id", "schuss-graph-"),
         "build-request": ("request", "build_request_id", "schuss-build-request-"),
+        "instrument": ("instruments", "instrument_id", "schuss-instrument-"),
         "family": ("catalog-projection", "family_id", "schuss-family-"),
     }
     if expected_kind not in specifications:

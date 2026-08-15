@@ -74,12 +74,16 @@ of the first non-UI Gills vertical slice:
   eligibilities, expands only the required legacy forms, and produces
   deterministic `.axp`, source-map, C++, ARM object, ELF, link-map, and
   level-1-through-5 evidence for the exact eight-node slice; and
-- no general compiler frontend, persistent graph editor, device runtime, or
+- Task 012A adds a portable exact project manifest, immutable project/graph
+  revision history, deterministic write plans, exclusive local coordination,
+  prior-or-successor recovery, additive v3 project operations, and persistent
+  CLI graph transactions without changing accepted v1/v2 operation bytes; and
+- no general compiler frontend, graphical editor, device runtime, or
   desktop app is implemented yet.
 
-The active roadmap is now headless-backbone-first. Task 012A proposes a durable
-project/workspace plus persistent CLI graph authoring; Task 013A proposes the
-reusable compiler front half through dependency/resource planning. Shared
+The active roadmap is headless-backbone-first. Task 012A is complete; Task 013A
+is the immediate proposed task for the reusable compiler front half through
+dependency/resource planning. Shared
 build execution, the normalized DSP representation, direct frontend expansion,
 and a bounded reviewed-core expansion follow. The object drawer and graph
 canvas remain deferred until those readiness gates pass.
@@ -96,6 +100,9 @@ Task 007 boundary in
 008 dispatcher, atomic transaction, process, and Task 009 seam boundaries.
 [The catalog operation contract](docs/CATALOG_OPERATIONS.md) documents the Task
 011A projection, matching, filters, inspection chain, and evidence limits.
+[The project/workspace contracts](docs/PROJECT_WORKSPACE_CONTRACTS.md) document
+the Task 012A portable closure, persistence, lock, recovery, operation, and CLI
+boundaries.
 The Task 011B component, graph, and unresolved build closure is documented in
 [the component and graph contracts](docs/COMPONENT_GRAPH_CONTRACTS.md) and
 [the target/build contracts](docs/TARGET_BACKEND_BUILD_CONTRACTS.md). The
@@ -113,6 +120,12 @@ bin/schuss catalog inspect FAMILY_ID@REVISION [--record-set MANIFEST] [--json]
 bin/schuss graph inspect GRAPH_ID@REVISION [--record-set MANIFEST] [--json]
 bin/schuss graph transact GRAPH_ID@REVISION --edits FILE_OR_STDIN [--record-set MANIFEST] [--json]
 bin/schuss build resolve REQUEST_ID@REVISION [--record-set MANIFEST] [--json]
+bin/schuss project init --project WORKSPACE --project-id ID --record-set MANIFEST --graph GRAPH_ID@REVISION [--json]
+bin/schuss project inspect --project WORKSPACE [--json]
+bin/schuss project validate --project WORKSPACE [--json]
+bin/schuss project transact GRAPH_ID@REVISION --project WORKSPACE --expected-project PROJECT_ID@REVISION --project-content-hash HASH --graph-content-hash HASH --edits FILE_OR_STDIN --write [--json]
+bin/schuss project op --project WORKSPACE --request REQUEST_FILE_OR_STDIN --json
+bin/schuss project completion {bash|zsh|fish}
 bin/schuss completion {bash|zsh|fish}
 bin/schuss op --request REQUEST_FILE_OR_STDIN --json
 ```
@@ -122,8 +135,9 @@ shared-operation result plus one LF. Catalog commands default to exact successor
 record set `schuss-record-set-000004` revision 1. Every pre-existing command
 keeps accepted record set `schuss-record-set-000001` revision 1 as its default;
 other later sets are explicit opt-ins. `build resolve` stops before backend
-lowering, graph transactions are non-persisted proposals, and no progress
-protocol is exposed.
+lowering. The original `graph transact` remains a non-persisted proposal;
+`project transact` writes only with explicit exact project/graph expectations
+and `--write`. No progress protocol is exposed.
 
 ## Inventory checks
 
@@ -139,6 +153,7 @@ python3 tools/catalog/validate_semantic_catalog.py \
   catalog/overlays/phase-4a-semantic-catalog-v0
 python3 tools/catalog/validate_task011a_catalog.py
 python3 tools/contracts/validate_task011b.py
+python3 tools/contracts/validate_task012a.py
 ```
 
 The raw snapshot records 4,209 candidate files and two retained XML parse

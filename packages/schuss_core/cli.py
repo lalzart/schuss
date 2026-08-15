@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import os
 import sys
 from pathlib import Path
@@ -26,6 +27,17 @@ from .product_cli import (
     render_human_result,
     resolve_locator,
 )
+from .project_cli import (
+    exact_graph_reference,
+    exact_project_reference,
+    project_completion_script,
+    project_graph_commit_request,
+    project_init_request,
+    project_inspect_request,
+    project_validate_request,
+    render_project_result,
+)
+from .project_service import ProjectService
 
 
 DEFAULT_RECORD_SET_REFERENCE = {
@@ -59,6 +71,31 @@ class _HelpRequested(Exception):
         self.help_text = help_text
 
 
+def _stable_help(parser: argparse.ArgumentParser) -> str:
+    """Preserve the accepted root help bytes while adding project commands."""
+
+    if parser.prog != "schuss":
+        return parser.format_help()
+    for action in parser._actions:
+        if not isinstance(action, argparse._SubParsersAction):
+            continue
+        if "project" not in action.choices:
+            break
+        choices = list(action.choices.items())
+        choice_actions = list(action._choices_actions)
+        try:
+            del action.choices["project"]
+            action._choices_actions[:] = [
+                item for item in action._choices_actions if item.dest != "project"
+            ]
+            return parser.format_help()
+        finally:
+            action.choices.clear()
+            action.choices.update(choices)
+            action._choices_actions[:] = choice_actions
+    return parser.format_help()
+
+
 class _FixedHelpFormatter(argparse.HelpFormatter):
     def __init__(self, prog: str) -> None:
         super().__init__(prog, indent_increment=2, max_help_position=28, width=80)
@@ -75,12 +112,12 @@ class _HelpAction(argparse.Action):
         )
 
     def __call__(self, parser, namespace, values, option_string=None) -> None:
-        raise _HelpRequested(parser.format_help())
+        raise _HelpRequested(_stable_help(parser))
 
 
 class _Parser(argparse.ArgumentParser):
     def error(self, message: str) -> None:
-        raise _UsageError(message, self.format_help())
+        raise _UsageError(message, _stable_help(self))
 
 
 def _new_parser(*args, **kwargs) -> _Parser:
@@ -144,6 +181,128 @@ def _parser() -> argparse.ArgumentParser:
         epilog=PRODUCT_HELP_EPILOG,
     )
     _add_product_options(validate)
+
+    project = subcommands.add_parser(
+        "project",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="create, inspect, validate, or revise an explicit durable project",
+        description=(
+            "Task 012A project commands require an explicit workspace path and use "
+            "the shared project service. No nearest-parent discovery is performed."
+        ),
+        epilog="Choose init, inspect, validate, transact, op, or completion.",
+    )
+    _add_help(project)
+    project_commands = project.add_subparsers(
+        dest="project_command", required=True, metavar="COMMAND"
+    )
+    project_init = project_commands.add_parser(
+        "init",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="initialize one portable durable project",
+        description=(
+            "Create project revision 1 from one explicit immutable record set and "
+            "exact selected graph/instrument/build references."
+        ),
+        epilog="Writes only after all explicit inputs validate; --project selects the workspace.",
+    )
+    project_init.add_argument("--project", required=True, metavar="WORKSPACE")
+    project_init.add_argument("--project-id", required=True, metavar="PROJECT_ID")
+    project_init.add_argument("--record-set", required=True, metavar="MANIFEST")
+    project_init.add_argument("--graph", required=True, metavar="GRAPH_ID@REVISION")
+    project_init.add_argument(
+        "--instrument", action="append", default=[], metavar="INSTRUMENT_ID@REVISION"
+    )
+    project_init.add_argument(
+        "--build-request", action="append", default=[], metavar="REQUEST_ID@REVISION"
+    )
+    project_init.add_argument("--json", action="store_true")
+    _add_help(project_init)
+
+    for name, help_text in (
+        ("inspect", "inspect the accepted project and durable/local classification"),
+        ("validate", "validate the exact base-plus-project closure read only"),
+    ):
+        child = project_commands.add_parser(
+            name,
+            add_help=False,
+            allow_abbrev=False,
+            formatter_class=_FixedHelpFormatter,
+            help=help_text,
+            description=help_text.capitalize() + ".",
+            epilog="The workspace must be explicit; no ambient project discovery is used.",
+        )
+        child.add_argument("--project", required=True, metavar="WORKSPACE")
+        child.add_argument("--json", action="store_true")
+        _add_help(child)
+
+    project_transact = project_commands.add_parser(
+        "transact",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="persist one exact graph transaction as successor revisions",
+        description=(
+            "Reuse the existing ordered graph-edit vocabulary and write exactly one "
+            "graph/project transition through the shared project service."
+        ),
+        epilog=(
+            "--write is mandatory explicit intent. Exact project and graph hashes "
+            "reject stale writers before the acceptance boundary."
+        ),
+    )
+    project_transact.add_argument("locator", metavar="GRAPH_ID@REVISION")
+    project_transact.add_argument("--project", required=True, metavar="WORKSPACE")
+    project_transact.add_argument(
+        "--expected-project", required=True, metavar="PROJECT_ID@REVISION"
+    )
+    project_transact.add_argument(
+        "--project-content-hash", required=True, metavar="SHA256"
+    )
+    project_transact.add_argument(
+        "--graph-content-hash", required=True, metavar="SHA256"
+    )
+    project_transact.add_argument(
+        "--edits", required=True, metavar="FILE_OR_STDIN"
+    )
+    project_transact.add_argument(
+        "--write", action="store_true", required=True,
+        help="supply explicit persistence intent",
+    )
+    project_transact.add_argument("--json", action="store_true")
+    _add_help(project_transact)
+
+    project_op = project_commands.add_parser(
+        "op",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="dispatch one canonical v3 project operation",
+        description="Canonical-JSON process adapter over the shared Task 012A service.",
+        epilog="Stdout is the canonical v3 operation result plus one LF.",
+    )
+    project_op.add_argument("--project", required=True, metavar="WORKSPACE")
+    project_op.add_argument("--request", required=True, metavar="FILE_OR_STDIN")
+    project_op.add_argument("--json", action="store_true", required=True)
+    _add_help(project_op)
+
+    project_completion = project_commands.add_parser(
+        "completion",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="emit the additive static Task 012A completion surface",
+        description=(
+            "Emit static project-command completion without changing the accepted "
+            "legacy completion bytes."
+        ),
+    )
+    project_completion.add_argument("shell", choices=("bash", "zsh", "fish"))
+    _add_help(project_completion)
 
     catalog = subcommands.add_parser(
         "catalog",
@@ -490,6 +649,73 @@ def _read_edits(args, stdin: BinaryIO, stderr: TextIO):
         return None, 2
 
 
+def _portable_record_set_locator(manifest: str) -> str:
+    path = Path(manifest).resolve()
+    if path.is_symlink():
+        raise ProductInputError(
+            "CLI_PROJECT_BASE_SYMLINK_INVALID",
+            "project base record-set manifest may not be a symlink",
+        )
+    try:
+        return path.relative_to(Path(__file__).resolve().parents[2]).as_posix()
+    except ValueError as exc:
+        raise ProductInputError(
+            "CLI_PROJECT_BASE_OUTSIDE_INSTALLATION",
+            "project base record-set manifest must be inside this Schuss installation",
+        ) from exc
+
+
+def _project_request(
+    args,
+    context: OperationContext | None,
+    stdin: BinaryIO,
+    stderr: TextIO,
+):
+    if args.project_command == "inspect":
+        return project_inspect_request(), None
+    if args.project_command == "validate":
+        return project_validate_request(), None
+    if args.project_command == "init":
+        assert context is not None
+        graph = resolve_locator(args.graph, expected_kind="graph", context=context)
+        instruments = [
+            resolve_locator(item, expected_kind="instrument", context=context)
+            for item in args.instrument
+        ]
+        build_requests = [
+            resolve_locator(item, expected_kind="build-request", context=context)
+            for item in args.build_request
+        ]
+        request = project_init_request(
+            args.project_id,
+            {
+                "reference": copy.deepcopy(context.record_set_reference),
+                "portable_locator": _portable_record_set_locator(args.record_set),
+            },
+            graph,
+            instruments,
+            build_requests,
+        )
+        return request, None
+    if args.project_command == "transact":
+        edits, exit_code = _read_edits(args, stdin, stderr)
+        if exit_code is not None:
+            return None, exit_code
+        project_reference = exact_project_reference(
+            args.expected_project, args.project_content_hash
+        )
+        graph_reference = exact_graph_reference(
+            args.locator, args.graph_content_hash
+        )
+        return (
+            project_graph_commit_request(
+                project_reference, graph_reference, edits
+            ),
+            None,
+        )
+    raise ValueError("parsed project command has no operation mapping")
+
+
 def _product_request(args, context: OperationContext, stdin: BinaryIO, stderr: TextIO):
     if args.command == "validate":
         return records_validate_request(), None
@@ -562,6 +788,44 @@ def run(
         if args.command == "completion":
             _emit_bytes(stdout, completion_script(args.shell))
             return 0
+
+        if args.command == "project" and args.project_command == "completion":
+            _emit_bytes(stdout, project_completion_script(args.shell))
+            return 0
+
+        if args.command == "project":
+            initial_context = None
+            if args.project_command == "init":
+                initial_context, exit_code = _load_context_or_report(
+                    args.record_set, context_loader, stderr
+                )
+                if exit_code is not None:
+                    return exit_code
+            if args.project_command == "op":
+                request, exit_code = _read_operation_request(args, stdin, stderr)
+            else:
+                try:
+                    request, exit_code = _project_request(
+                        args, initial_context, stdin, stderr
+                    )
+                except ProductInputError as exc:
+                    _write_stderr(stderr, f"schuss: {exc.code}: {exc}\n")
+                    return 2
+            if exit_code is not None:
+                return exit_code
+            service = ProjectService(
+                Path(args.project), initial_context=initial_context
+            )
+            result = dispatch_operation(
+                request, service.context, project_service=service
+            )
+            output = (
+                canonical_result_bytes(result, service.context) + b"\n"
+                if args.json
+                else render_project_result(result)
+            )
+            _emit_bytes(stdout, output)
+            return 0 if result["status"] == "success" else 1
 
         if args.command == "op":
             request, exit_code = _read_operation_request(args, stdin, stderr)

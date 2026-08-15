@@ -128,6 +128,13 @@ an unchanged hash, or make a CLI-specific file representation authoritative.
 Filesystem mutation belongs behind the same client-neutral operations future
 GUI and AI callers will use.
 
+Task 012A implements that boundary with `project-v0`, an exact base-plus-owned
+member closure, immutable project/graph revision files, and
+`workspace-head-v0` as the one atomic acceptance marker. The member index
+retains exact graph parents without changing `dsp-graph-v0` bytes. Local lock,
+temporary, and recovery files are excluded from identity. Recovery accepts
+only an exact old or exact new head; neither state fails closed.
+
 ### Backend
 
 A backend resolves eligible implementation bindings for a compute target,
@@ -270,9 +277,9 @@ handler execution; ARM compile/link establishes level 5 only. The generated
 do not become graph truth or establish device, timing, real-time, audible, or
 release behavior.
 
-ADR 0008 now parks the UI while preserving it as a future client. Task 012A
-owns the durable project/workspace and persistent CLI graph-authoring boundary.
-Task 013A then owns the reusable compiler front half through deterministic
+ADR 0008 parks the UI while preserving it as a future client. Task 012A now
+owns the completed durable project/workspace and persistent CLI graph-authoring
+boundary. Task 013A next owns the reusable compiler front half through deterministic
 dependency/resource planning. Later Task 013 stages add shared build
 execution, the normalized DSP representation, and direct C++ lowering without
 moving any of those semantics into a GUI or the legacy Java bridge.

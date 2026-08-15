@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project-write-plan-v0.schema.json",
+  "title": "Schuss deterministic project write plan v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "content_hash",
+    "project_transition",
+    "graph_transition",
+    "mutations",
+    "acceptance_boundary"
+  ],
+  "properties": {
+    "schema_version": {"const": "project-write-plan-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "project_transition": {"$ref": "#/$defs/projectTransition"},
+    "graph_transition": {"$ref": "#/$defs/graphTransition"},
+    "mutations": {
+      "type": "array",
+      "x-schuss-array-kind": "sequence",
+      "minItems": 3,
+      "items": {"$ref": "#/$defs/mutation"}
+    },
+    "acceptance_boundary": {
+      "type": "object",
+      "required": ["mutation_ordinal", "portable_locator", "meaning"],
+      "properties": {
+        "mutation_ordinal": {"type": "integer", "minimum": 1},
+        "portable_locator": {"$ref": "#/$defs/portableLocator"},
+        "meaning": {"const": "atomic-workspace-head-replacement"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "portableLocator": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"
+    },
+    "projectReference": {
+      "type": "object",
+      "required": ["project_id", "revision", "content_hash"],
+      "properties": {
+        "project_id": {"type": "string", "pattern": "^schuss-project-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "graphReference": {
+      "type": "object",
+      "required": ["graph_id", "revision", "content_hash"],
+      "properties": {
+        "graph_id": {"type": "string", "pattern": "^schuss-graph-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "projectTransition": {
+      "type": "object",
+      "required": ["parent_reference", "successor_reference"],
+      "properties": {
+        "parent_reference": {"$ref": "#/$defs/projectReference"},
+        "successor_reference": {"$ref": "#/$defs/projectReference"}
+      },
+      "additionalProperties": false
+    },
+    "graphTransition": {
+      "type": "object",
+      "required": ["parent_reference", "successor_reference"],
+      "properties": {
+        "parent_reference": {"$ref": "#/$defs/graphReference"},
+        "successor_reference": {"$ref": "#/$defs/graphReference"}
+      },
+      "additionalProperties": false
+    },
+    "absentBytes": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {"status": {"const": "absent"}},
+      "additionalProperties": false
+    },
+    "presentBytes": {
+      "type": "object",
+      "required": ["status", "byte_length", "byte_sha256"],
+      "properties": {
+        "status": {"const": "present"},
+        "byte_length": {"type": "integer", "minimum": 0},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"}
+      },
+      "additionalProperties": false
+    },
+    "newBytes": {
+      "type": "object",
+      "required": ["byte_length", "byte_sha256"],
+      "properties": {
+        "byte_length": {"type": "integer", "minimum": 0},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"}
+      },
+      "additionalProperties": false
+    },
+    "mutation": {
+      "type": "object",
+      "required": ["ordinal", "kind", "portable_locator", "expected_old", "proposed_new"],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 1},
+        "kind": {"enum": ["create-immutable", "replace-acceptance-marker"]},
+        "portable_locator": {"$ref": "#/$defs/portableLocator"},
+        "expected_old": {
+          "oneOf": [
+            {"$ref": "#/$defs/absentBytes"},
+            {"$ref": "#/$defs/presentBytes"}
+          ]
+        },
+        "proposed_new": {"$ref": "#/$defs/newBytes"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

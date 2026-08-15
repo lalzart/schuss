@@ -196,12 +196,19 @@ behavior.
 
 ## Planned project and build-operation sequence
 
-Task 012A is the next owner of persistence. It must preserve the existing
-`graph.transact` proposal semantics and add a client-neutral project/workspace
-boundary that can commit an accepted proposed graph as an explicit new graph
-and project revision. The CLI remains a request constructor and renderer; it
-must not become the only implementation of project loading, locking, atomic
-write, or recovery behavior.
+Task 012A now owns persistence. Additive v3 envelopes expose `project.init`,
+`project.inspect`, `project.validate`, and `project.graph.commit` through an
+explicit client-neutral `ProjectService`. Existing `graph.transact` proposal
+semantics and v1/v2 bytes are unchanged. Persistent commit calls that existing
+edit/validation operation once, writes immutable graph/project successors, and
+accepts them only by atomic workspace-head replacement. The CLI remains a
+request constructor and renderer; project loading, locking, write planning,
+atomic publication, and recovery stay in the shared service.
+
+The separate `schuss project op` adapter carries canonical v3 requests/results.
+Ergonomic project commands use the same results. Static project completion is
+additive, preserving the accepted Task 010 completion bytes. Details are in
+`docs/PROJECT_WORKSPACE_CONTRACTS.md`.
 
 Task 013A then adds only a reusable, deterministic compiler-planning boundary
 through dependency/resource planning. Task 013B separately owns executable

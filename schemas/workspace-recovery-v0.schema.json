@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace-recovery-v0.schema.json",
+  "title": "Schuss local workspace recovery state v0",
+  "type": "object",
+  "required": ["schema_version", "write_plan"],
+  "properties": {
+    "schema_version": {"const": "workspace-recovery-v0"},
+    "write_plan": {"type": "object", "x-schuss-domain-value": true}
+  },
+  "additionalProperties": false
+}

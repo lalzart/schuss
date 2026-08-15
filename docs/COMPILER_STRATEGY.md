@@ -374,6 +374,11 @@ compile/link execution.
 
 ## Planned headless compiler sequence
 
+Task 012A now supplies the portable project closure and crash-safe persistent
+graph-authoring boundary consumed by later compiler work. It creates no compiler
+plan, performs no lowering or generation, and grants no backend-execution
+authority.
+
 ADR 0008 defers the UI and stages the compiler work rather than treating the
 old Phase 13 frontend as one jump:
 

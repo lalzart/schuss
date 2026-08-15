@@ -1,0 +1,14 @@
+{
+  "stale_project": "PROJECT_REVISION_STALE",
+  "stale_graph": "PROJECT_PRIMARY_GRAPH_STALE",
+  "missing_parent": "PROJECT_PARENT_REFERENCE_MISMATCH",
+  "invalid_reference": "PROJECT_INCLUDED_REFERENCE_UNRESOLVED",
+  "path_escape": "PROJECT_LOCATOR_INVALID",
+  "symlink_escape": "PROJECT_SYMLINK_ESCAPE",
+  "duplicate_identity": "PROJECT_OWNED_IDENTITY_DUPLICATE",
+  "base_overlay_collision": "PROJECT_BASE_OVERLAY_COLLISION",
+  "concurrent_writer": "PROJECT_WORKSPACE_LOCKED",
+  "malformed_lock": "PROJECT_GOVERNED_FILE_INVALID",
+  "interrupted_write": "PROJECT_RECOVERY_AMBIGUOUS",
+  "uncommitted_partial_state": "PROJECT_GOVERNED_MEMBERSHIP_MISMATCH"
+}

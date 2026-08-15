@@ -224,6 +224,9 @@ for the eight-node slice.
 
 Task 011C is now complete at level 5 for that exact slice. The revised
 headless-backbone roadmap does not generalize its handler by implication. Task
+012A can retain an exact accepted build-request member in a portable project,
+but it does not resolve or execute that request, revise backend or target
+contracts, or create evidence. Task
 013A is the next compiler owner and stops after reusable implementation
 resolution, compound elaboration, and dependency/resource planning. Task 013B
 separately owns shared executable-backend dispatch and product-CLI execution;

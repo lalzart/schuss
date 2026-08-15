@@ -458,28 +458,32 @@ The following are invalid architecture:
   `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`. Reusable schema families use
   controlled stable processor, ABI, environment, firmware/runtime, backend,
   and bridge identity values rather than Ksoloti constants.
+- Task 012A `project-v0`, `workspace-head-v0`,
+  `project-write-plan-v0`, local lock/recovery schemas, and additive operation
+  v3 envelopes. The project owns an explicit base-plus-overlay closure and
+  exact revision parentage; it does not revise accepted records or make
+  workspace paths semantic identity.
 
 ### Planned next
 
-Tasks 008-011C are complete: the Task 005-007 mechanisms are consolidated
+Tasks 008-012A are complete: the Task 005-007 mechanisms are consolidated
 beneath three sibling rule modules; versioned headless validation, inspection,
 resolution, catalog, and transaction operations are implemented; two bounded
 legacy-backend slices reach ARM compile/link; and the product CLI projects the
-shared operations without adding persistence or general build execution.
+shared operations; Task 012A now adds project persistence without general build
+execution.
 
-The accepted next sequence is:
+The accepted remaining sequence is:
 
-1. **Task 012A:** a durable project/workspace contract and persistent CLI graph
-   authoring through client-neutral operations.
-2. **Task 013A:** the reusable compiler front half through deterministic
+1. **Task 013A:** the reusable compiler front half through deterministic
    implementation resolution, compound elaboration, and dependency/resource
    planning.
-3. **Task 013B:** shared build execution and its product-CLI projection.
-4. **Task 013C:** a normalized DSP representation and minimal direct Schuss
+2. **Task 013B:** shared build execution and its product-CLI projection.
+3. **Task 013C:** a normalized DSP representation and minimal direct Schuss
    graph-to-C++ frontend.
-5. **Task 013D:** direct-frontend expansion through the complete Task 011C
+4. **Task 013D:** direct-frontend expansion through the complete Task 011C
    graph.
-6. **Backbone B6:** a bounded reviewed-core expansion and richer non-UI
+5. **Backbone B6:** a bounded reviewed-core expansion and richer non-UI
    reference instruments; its task number remains unassigned.
 
 Task 012B retains the basic object drawer and transparent graph canvas but is

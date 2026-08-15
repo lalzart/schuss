@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace-head-v0.schema.json",
+  "title": "Schuss workspace accepted project head v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "accepted_project_reference",
+    "project_manifest_locator",
+    "project_manifest_byte_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "workspace-head-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "accepted_project_reference": {"$ref": "#/$defs/projectReference"},
+    "project_manifest_locator": {"$ref": "#/$defs/portableLocator"},
+    "project_manifest_byte_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "portableLocator": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"
+    },
+    "projectReference": {
+      "type": "object",
+      "required": ["project_id", "revision", "content_hash"],
+      "properties": {
+        "project_id": {"type": "string", "pattern": "^schuss-project-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

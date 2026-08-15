@@ -176,10 +176,16 @@ Evidence reaches only level 5. No connected-device execution, real-time
 measurement, listening, firmware action, upload, or flash occurred; levels
 6-8 remain `not-run`.
 
-The active roadmap now prioritizes the headless backbone. Task 012A is the
-immediate proposed task for a durable project/workspace and persistent CLI
-graph-authoring boundary. Task 013A is the second proposed task for a reusable
-compiler front half through dependency/resource planning. Shared build
+Task 012A now completes the first portable project/workspace and persistent
+CLI graph-authoring boundary. Exact Task 011C records remain an immutable base;
+project-owned graph successors and every project revision are retained
+immutably, and one atomic workspace-head marker separates prior from successor
+acceptance. Additive v3 project operations share the headless dispatcher;
+local locks, recovery plans, and temporary files do not enter project identity.
+
+The active roadmap continues the headless backbone. Task 013A is the immediate
+proposed task for a reusable compiler front half through dependency/resource
+planning. Shared build
 execution, a normalized DSP representation, minimal and complete-slice direct
 frontends, and a bounded reviewed-core expansion follow in that order. The
 object drawer and transparent graph canvas remain intended Schuss clients but

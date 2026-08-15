@@ -351,6 +351,7 @@ def canonical_result_bytes(
     result_schema_name = {
         "schuss-operation-result-v1": "operation_result_v1",
         "schuss-operation-result-v2": "operation_result_v2",
+        "schuss-operation-result-v3": "operation_result_v3",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -789,6 +790,35 @@ def _validate_transacted_graph(
 ) -> tuple[component.CoreValidation, dict[str, Any]]:
     graphs = [copy.deepcopy(item) for item in context.records["graphs"]]
     graphs.append(copy.deepcopy(candidate))
+    additional_family_references: list[dict[str, Any]] = []
+    additional_implementations: list[dict[str, Any]] = []
+    if context.catalog_projection is not None:
+        exact_family_ids = {
+            item["family_id"] for item in context.records["families"]
+        }
+        referenced_family_ids = {
+            item["family_reference"]["family_id"]
+            for item in context.records["contracts"]
+        }
+        additional_family_references = [
+            copy.deepcopy(item["family_reference"])
+            for item in context.catalog_projection["families"]
+            if item["family_reference"]["family_id"] in referenced_family_ids
+            and item["family_reference"]["family_id"] not in exact_family_ids
+        ]
+        overlay_implementation_ids = {
+            item["implementation_id"] for item in context.overlay["implementations"]
+        }
+        bound_implementation_ids = {
+            item["implementation_id"] for item in context.records["bindings"]
+        }
+        corpus = context.records["catalog"][0]
+        additional_implementations = [
+            copy.deepcopy(item)
+            for item in corpus["implementation_additions"]
+            if item["implementation_id"] in bound_implementation_ids
+            and item["implementation_id"] not in overlay_implementation_ids
+        ]
     component_result = component.validate_component_graph_values(
         list(copy.deepcopy(context.records["families"])),
         list(copy.deepcopy(context.records["contracts"])),
@@ -806,6 +836,8 @@ def _validate_transacted_graph(
         context.overlay_sha256,
         context.manifest_sha256,
         copy.deepcopy(dict(context.observations)),
+        additional_family_references=additional_family_references,
+        additional_implementations=additional_implementations,
     )
     device_summary = device.validate_contract_values(
         list(copy.deepcopy(context.records["devices"])),
@@ -889,9 +921,22 @@ def _graph_transact(payload: dict[str, Any], context: OperationContext) -> dict[
 
 
 def dispatch_operation(
-    request: dict[str, Any], context: OperationContext
+    request: dict[str, Any],
+    context: OperationContext,
+    *,
+    project_service: Any | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v3"
+    ):
+        if project_service is None:
+            raise ValueError("v3 project operations require an explicit project service")
+        from .project_service import dispatch_project_operation
+
+        return dispatch_project_operation(request, project_service)
 
     operation = request.get("operation") if isinstance(request, dict) else None
     request_version = (
