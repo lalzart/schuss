@@ -473,21 +473,24 @@ legacy-backend slices reach ARM compile/link; and the product CLI projects the
 shared operations; Task 012A now adds project persistence without general build
 execution.
 
-The accepted remaining sequence is:
+The current planned sequence is:
 
-1. **Task 013A:** the reusable compiler front half through deterministic
+1. **Task 012B:** the first object drawer, transparent graph canvas, and
+   separate presentation overlay over accepted shared operations.
+2. **Task 013A:** the reusable compiler front half through deterministic
    implementation resolution, compound elaboration, and dependency/resource
    planning.
-2. **Task 013B:** shared build execution and its product-CLI projection.
-3. **Task 013C:** a normalized DSP representation and minimal direct Schuss
+3. **Task 013B:** shared build execution and its product-CLI projection.
+4. **Task 013C:** a normalized DSP representation and minimal direct Schuss
    graph-to-C++ frontend.
-4. **Task 013D:** direct-frontend expansion through the complete Task 011C
+5. **Task 013D:** direct-frontend expansion through the complete Task 011C
    graph.
-5. **Backbone B6:** a bounded reviewed-core expansion and richer non-UI
+6. **Backbone B6:** a bounded reviewed-core expansion and richer non-UI
    reference instruments; its task number remains unassigned.
 
-Task 012B retains the basic object drawer and transparent graph canvas but is
-deferred until the headless-backbone readiness gate in `docs/ROADMAP.md`.
+Task 012B may define presentation-only state, but it may not make that state
+part of graph identity or introduce client-specific catalog, graph, project,
+build, or compiler semantics.
 
 ### Deliberately deferred
 

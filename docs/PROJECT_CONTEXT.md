@@ -183,13 +183,13 @@ immutably, and one atomic workspace-head marker separates prior from successor
 acceptance. Additive v3 project operations share the headless dispatcher;
 local locks, recovery plans, and temporary files do not enter project identity.
 
-The active roadmap continues the headless backbone. Task 013A is the immediate
-proposed task for a reusable compiler front half through dependency/resource
-planning. Shared build
-execution, a normalized DSP representation, minimal and complete-slice direct
-frontends, and a bounded reviewed-core expansion follow in that order. The
-object drawer and transparent graph canvas remain intended Schuss clients but
-are deferred until those project, CLI, build, and compiler gates pass.
+Task 012A satisfies the project and persistence prerequisite for a real client.
+Task 012B is therefore the immediate proposed task: the first object drawer,
+transparent graph canvas, and separate presentation overlay over the accepted
+shared operations. It does not wait for build execution or the direct compiler
+frontend, and it may expose those capabilities only as unavailable where they
+do not yet exist. Tasks 013A-013D and a bounded reviewed-core expansion remain
+the subsequent compiler/backbone sequence.
 
 ## Terminology
 

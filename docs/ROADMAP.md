@@ -21,8 +21,8 @@ into transparent, typed Schuss models.
 | 11B | Six component contracts/bindings, authoritative slice graph, minimal Gills instrument, and unresolved build closure | [Complete](tasks/011b-component-contracts-gills-slice-graph-and-unresolved-build-closure.md) |
 | 11C | Bounded legacy backend expansion and ARM compile/link for the slice | [Complete](tasks/011c-bounded-legacy-backend-expansion-and-arm-evidence.md) |
 | 12A | Durable project/workspace format and persistent CLI graph authoring | [Complete](tasks/012a-durable-project-workspace-and-cli-graph-authoring.md) |
-| 12B | Basic object drawer and transparent graph canvas | Deferred until the headless-backbone readiness gate |
-| 13A | Reusable compiler front half through dependency/resource planning | [Proposed; immediate next task](tasks/013a-reusable-compiler-front-half.md) |
+| 12B | Basic object drawer and transparent graph canvas | [Proposed; immediate next task](tasks/012b-object-drawer-and-transparent-graph-canvas.md) |
+| 13A | Reusable compiler front half through dependency/resource planning | [Proposed; sequenced after Task 012B](tasks/013a-reusable-compiler-front-half.md) |
 | 13B | Shared build-execution operation and product CLI | Planned |
 | 13C | Normalized DSP representation and minimal direct graph-to-C++ frontend | Planned |
 | 13D | Direct-frontend expansion through the complete Task 011C graph | Planned |
@@ -94,23 +94,24 @@ Task 012A now completes the durable project/workspace and persistent
 graph-authoring dependency formerly combined with Phase 12 UI work. It adds an
 exact portable overlay, immutable graph/project revisions, prior-or-successor
 atomic recovery, shared v3 operations, and explicit persistent CLI commands.
-Task 013A is the immediate proposed task and owns only the reusable compiler
-front half through deterministic dependency and resource planning. Task 012B
-retains the object drawer and transparent graph
-canvas as a deferred client of accepted operations; it owns no independent
-catalog, graph, project, build, or compiler semantics.
+Task 012B is the immediate proposed task and owns the object drawer,
+transparent graph canvas, and a separate presentation overlay as clients of
+accepted operations. It owns no independent catalog, graph, project, build, or
+compiler semantics. Task 013A follows with the reusable compiler front half
+through deterministic dependency and resource planning.
 The completed boundaries are in
 `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and
 `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`, and
 `docs/OPERATION_CONTRACTS.md`.
 
-## Headless-backbone sequence and UI readiness gate
+## Immediate UI slice and subsequent backbone sequence
 
 The active sequence is:
 
 ```text
 Task 012A durable project/workspace + persistent CLI graph authoring
+  -> Task 012B object drawer + transparent graph canvas
   -> Task 013A reusable compiler front half and deterministic plans
   -> Task 013B shared build execution and product CLI
   -> Task 013C normalized DSP representation + minimal direct frontend
@@ -118,18 +119,12 @@ Task 012A durable project/workspace + persistent CLI graph authoring
   -> B6 curated core expansion + richer headless reference instruments
 ```
 
-Task 012B is not on that critical path. UI work remains deferred until all of
-the following are true:
-
-- a portable project can be created, inspected, validated, revised, and
-  reopened through the CLI without repository-owned fixture assumptions;
-- graph persistence is atomic, exact-reference-safe, and recoverable without
-  making a client or filesystem layout authoritative graph truth;
-- compiler planning and build execution use shared client-neutral boundaries;
-- the legacy and direct paths conform for at least one exact graph without
-  silent fallback;
-- the direct frontend reaches level 5 for the complete Task 011C graph; and
-- the reviewed core supports several useful non-UI reference instruments.
+Task 012A has satisfied the only hard prerequisite for the first UI slice: a
+portable, exact, recoverable project and shared persistent graph operation.
+Task 012B can therefore implement useful authoring now. Missing compiler and
+build-execution capabilities remain absent or explicitly unavailable in the
+client; the UI cannot fill those gaps with private semantics. Tasks 013A-013D
+and B6 remain separately accepted work after the bounded Task 012B client.
 
 VS-07 connected-device execution remains an optional, separately authorized
 evidence track. It is not a prerequisite for Tasks 012A-013D or B6 and cannot

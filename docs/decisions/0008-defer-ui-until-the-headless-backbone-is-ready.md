@@ -1,7 +1,11 @@
 # ADR 0008: Defer UI until the headless backbone is ready
 
-- Status: accepted
+- Status: superseded by ADR 0009
 - Date: 2026-08-15
+
+ADR 0009 removes this document's compiler/backbone readiness gate after Task
+012A established the durable shared project boundary. This decision remains as
+historical context only and no longer blocks Task 012B.
 
 ## Context
 

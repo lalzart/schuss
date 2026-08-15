@@ -217,6 +217,7 @@ defaults, canonical bytes, `build.resolve`, and non-persisted transactions stay
 accepted; successor operations are additive and must not infer `latest`, scan
 ambient records, invoke hardware, or make client-specific results authoritative.
 
-The deferred Task 012B UI must consume these same project, graph, catalog,
-build, diagnostic, and compiler operations. It may not define a parallel
-persistence or build path.
+Task 012B is the next GUI client and must consume these same project, graph,
+catalog, and diagnostic operations. Build and compiler behavior that does not
+yet exist remains visibly unavailable; the UI may not define a parallel
+persistence, build, or compiler path.

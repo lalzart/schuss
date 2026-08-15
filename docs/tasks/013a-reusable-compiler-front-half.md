@@ -1,15 +1,17 @@
 # Task 013A: Reusable compiler front half and deterministic planning artifacts
 
-Status: proposed prompt; not started. The user authorized creation of this task
-contract on 2026-08-15 but did not authorize implementation, staging, commit,
-publication, push, compiler/toolchain invocation, or device action.
+Status: proposed prompt; not started; sequenced after Task 012B by ADR 0009.
+The user authorized creation of this task contract on 2026-08-15 but did not
+authorize implementation, staging, commit, publication, push,
+compiler/toolchain invocation, or device action.
 
 Work in the Schuss repository. Before implementation, read `AGENTS.md`,
 `docs/PROJECT_CONTEXT.md`, `docs/ARCHITECTURE.md`,
 `docs/SCHEMA_STRATEGY.md`, `docs/COMPILER_STRATEGY.md`,
 `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`, `docs/OPERATION_CONTRACTS.md`, ADRs
-0005-0008, the completed Task 011C contract, the accepted Task 012A completion
-report, and this complete task. Work only on Task 013A.
+0005-0009, the completed Task 011C contract, the accepted Task 012A completion
+report, the accepted Task 012B completion report when it exists, and this
+complete task. Work only on Task 013A.
 
 ## Goal and why it exists
 

@@ -81,12 +81,12 @@ of the first non-UI Gills vertical slice:
 - no general compiler frontend, graphical editor, device runtime, or
   desktop app is implemented yet.
 
-The active roadmap is headless-backbone-first. Task 012A is complete; Task 013A
-is the immediate proposed task for the reusable compiler front half through
-dependency/resource planning. Shared
-build execution, the normalized DSP representation, direct frontend expansion,
-and a bounded reviewed-core expansion follow. The object drawer and graph
-canvas remain deferred until those readiness gates pass.
+Task 012A is complete, so Task 012B is now the immediate proposed task: the
+first object drawer and transparent graph canvas over the accepted catalog,
+graph, and project operations. It does not wait for compiler or build-execution
+maturity and may not implement those missing semantics in the UI. Tasks
+013A-013D and the bounded reviewed-core expansion remain the subsequent
+compiler/backbone sequence.
 
 Start with [the project context](docs/PROJECT_CONTEXT.md), then read
 [the architecture](docs/ARCHITECTURE.md),
@@ -102,7 +102,8 @@ Task 007 boundary in
 011A projection, matching, filters, inspection chain, and evidence limits.
 [The project/workspace contracts](docs/PROJECT_WORKSPACE_CONTRACTS.md) document
 the Task 012A portable closure, persistence, lock, recovery, operation, and CLI
-boundaries.
+boundaries. [The Task 012B contract](docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md)
+defines the first GUI client slice.
 The Task 011B component, graph, and unresolved build closure is documented in
 [the component and graph contracts](docs/COMPONENT_GRAPH_CONTRACTS.md) and
 [the target/build contracts](docs/TARGET_BACKEND_BUILD_CONTRACTS.md). The

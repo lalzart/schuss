@@ -277,12 +277,14 @@ handler execution; ARM compile/link establishes level 5 only. The generated
 do not become graph truth or establish device, timing, real-time, audible, or
 release behavior.
 
-ADR 0008 parks the UI while preserving it as a future client. Task 012A now
-owns the completed durable project/workspace and persistent CLI graph-authoring
-boundary. Task 013A next owns the reusable compiler front half through deterministic
-dependency/resource planning. Later Task 013 stages add shared build
-execution, the normalized DSP representation, and direct C++ lowering without
-moving any of those semantics into a GUI or the legacy Java bridge.
+ADR 0009 supersedes ADR 0008's UI-readiness gate now that Task 012A owns the
+completed durable project/workspace and persistent graph-authoring boundary.
+Task 012B is the next client slice: an object drawer and transparent graph
+canvas that consume the accepted catalog, graph, and project operations. It
+does not own compiler or build semantics. Task 013A and later Task 013 stages
+still add the reusable compiler front half, shared build execution, normalized
+DSP representation, and direct C++ lowering without moving any of those
+semantics into the GUI or legacy Java bridge.
 
 The projection reference direction remains one way:
 

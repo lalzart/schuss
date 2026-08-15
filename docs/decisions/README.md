@@ -11,3 +11,4 @@ details remain in task files unless they change a durable boundary.
 - `0006-graph-contract-references-and-binding-selection.md`
 - `0007-separate-build-evidence-from-catalog-curation.md`
 - `0008-defer-ui-until-the-headless-backbone-is-ready.md`
+- `0009-resume-task-012b-after-durable-project-authoring.md`
