@@ -16,7 +16,7 @@ into transparent, typed Schuss models.
 | 7 | Compute-target, backend-capability, build, artifact, and evidence schemas | Complete; Task 007 contract gate |
 | 8 | Shared headless validation and typed operation layer | Complete; shared dispatcher and minimal process gate |
 | 9 | One minimal graph through the legacy `.axp` adapter and ARM compiler/linker | Complete; exact Blend slice reaches level 5 |
-| 10 | Deterministic structured CLI over shared operations | Planned |
+| 10 | Deterministic structured CLI over shared operations | [Complete](tasks/010-deterministic-product-cli-over-shared-operations.md) |
 | 4B / 11 | Incremental reviewed-core expansion with actual contracts and bindings | Gated on Phase 6 contract model |
 | 12 | Basic object drawer and transparent graph canvas | Planned |
 | 13 | Direct Schuss graph-to-C++ frontend behind the backend contract | Planned |
@@ -55,7 +55,10 @@ firmware closure, and a closed non-production probe/evidence boundary. Task
 ordinary `build.resolve`, and carries its exact seam through deterministic
 `.axp`, Java generation, and ARM compile/link for the one-node Blend slice.
 Successor record set `schuss-record-set-000003` records levels 1-5 as passed;
-levels 6-8 remain `not-run`. Task 010 is the next planned product-facing gate.
+levels 6-8 remain `not-run`. Task 010 now supplies deterministic product
+commands, exact record-set locator resolution, human/canonical output, fixed
+help, and static completion over the unchanged Task 008 dispatcher. It adds no
+general build execution or persistent graph write.
 The completed boundaries are in
 `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and

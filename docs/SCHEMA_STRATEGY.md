@@ -450,18 +450,16 @@ The following are invalid architecture:
 
 ### Planned next
 
-Task 008 is complete: the Task 005-007 mechanisms are consolidated beneath
-three sibling rule modules, and versioned headless validation, inspection,
-resolution, transaction, and minimal process contracts are implemented without
-lowering.
+Tasks 008-010 are complete: the Task 005-007 mechanisms are consolidated
+beneath three sibling rule modules; versioned headless validation, inspection,
+resolution, and transaction operations are implemented; one exact Task 009
+slice reaches ARM compile/link; and the Task 010 product CLI projects the same
+operations without adding compiler or persistence semantics.
 
-1. **Task 009:** one minimal graph lowered through a deterministic legacy
-   `.axp` adapter and existing ARM compiler/linker.
-2. **Task 010:** deterministic CLI product over the same operations.
-3. **Task 011:** incremental catalog expansion with actual component contracts
+1. **Task 011:** incremental catalog expansion with actual component contracts
    and bindings; Phase 4B must not outrun Task 006.
-4. **Task 012:** basic object drawer and transparent graph canvas.
-5. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
+2. **Task 012:** basic object drawer and transparent graph canvas.
+3. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
    contract.
 
 ### Deliberately deferred

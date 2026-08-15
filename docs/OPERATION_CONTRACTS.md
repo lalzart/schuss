@@ -121,6 +121,44 @@ Task 010 owns ergonomic commands, human output, convenient flags, completion,
 progress, and final CLI UX. Task 009 has completed only its bounded lowering,
 `.axp`, Java/ARM, compile/link, and artifact proof; it adds no product CLI.
 
+## Deterministic product CLI
+
+Task 010 implements the product projection without adding an operation:
+
+```text
+schuss validate [--record-set MANIFEST] [--json]
+schuss graph inspect GRAPH_ID@REVISION [--record-set MANIFEST] [--json]
+schuss graph transact GRAPH_ID@REVISION --edits FILE_OR_STDIN [--record-set MANIFEST] [--json]
+schuss build resolve REQUEST_ID@REVISION [--record-set MANIFEST] [--json]
+schuss completion {bash|zsh|fish}
+```
+
+The original `schuss op --request FILE_OR_STDIN --json` invocation is retained
+byte-for-byte for unchanged requests and context. Its optional
+`--record-set MANIFEST` form selects the same explicit context used by product
+commands; the default remains `schuss-record-set-000001` revision 1.
+
+Graph and request shorthand is resolved only when the selected validated
+manifest contains exactly one member of the required kind and exact revision.
+The pinned member supplies the existing ID/revision/content-hash reference.
+There is no implicit revision, `latest`, display-name lookup, or ambient scan.
+Prospective selections must retain a complete parent chain ending at the
+frozen accepted default.
+
+Without `--json`, a fixed plain-text renderer identifies the selected record
+set, operation status, exact domain references, ordered candidates/reasons,
+ordered graph structure, diagnostics, and the `not-written` transaction state.
+With `--json`, stdout is exactly the canonical operation result plus one LF.
+Usage/input failures remain stderr-only at exit 2; dispatched non-success
+results remain stdout at exit 1. Help and static Bash/Zsh/Fish completion use
+no live record enumeration, network, shell-profile edit, terminal adaptation,
+or client configuration.
+
+No progress UI is exposed. The operations are synchronous and bounded, and
+the shared operation contract defines no progress events. A plain
+`schuss build` is usage failure; only `schuss build resolve` exists, and it
+never invokes the Task 009 exact-slice handler.
+
 ## Evidence boundary
 
 Task 008 proves structural validation, exact reference resolution, deterministic

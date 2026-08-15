@@ -1,0 +1,76 @@
+{
+  "completion": {
+    "bash": {
+      "byte_length": 1021,
+      "byte_sha256": "5ebee4376bea760ad09e2f171b62eb8178c2a9872f5dcc02f6d52294202393e9"
+    },
+    "fish": {
+      "byte_length": 941,
+      "byte_sha256": "ca5610ec9417ae0e07cce6e5103b3d6c407424f162ad87b8ada7418846ec4f8f"
+    },
+    "zsh": {
+      "byte_length": 1044,
+      "byte_sha256": "4ae2913d2cce69c50d7fc7d77384dc8458e05fc7eba9aa0237aaa26cc4189dcb"
+    }
+  },
+  "help": {
+    "build": {
+      "byte_length": 398,
+      "byte_sha256": "2fbc0ab3be00cc5a142557f48e710db20b4b7b5ec0ec3087a1a09e2246ce8c89"
+    },
+    "build-resolve": {
+      "byte_length": 744,
+      "byte_sha256": "ba3e2657382b84b67047c3f90e06254def35348b8590bc3bfd3ab35309ad2447"
+    },
+    "completion": {
+      "byte_length": 353,
+      "byte_sha256": "9aff46f98102c24a96dbd2062803859db326a6ce2813f1a3d93a8bd8eca66bd8"
+    },
+    "graph": {
+      "byte_length": 425,
+      "byte_sha256": "2f4fc0aad233ce821c7768fa2f9a229611cec5da2725a4e4b296c2e378f69739"
+    },
+    "graph-inspect": {
+      "byte_length": 743,
+      "byte_sha256": "7852c9a9c35e22290c4fe870a9184a4a52a846dd4607367878cebf2d5ee666af"
+    },
+    "graph-transact": {
+      "byte_length": 911,
+      "byte_sha256": "645127895ea20e412dc1be9e5f7a0a89203d432b56826c3d2c1349d9868eb7e3"
+    },
+    "op": {
+      "byte_length": 577,
+      "byte_sha256": "7e7939870dc32ed82f05cf4825ec876f0a2bb9a4ec619cbbe48e42ce27dbb138"
+    },
+    "root": {
+      "byte_length": 973,
+      "byte_sha256": "a4b5842627d24cd5b62682737fa4485b37b6e18d8cec1a1fb77c39298b7ed1bb"
+    },
+    "validate": {
+      "byte_length": 642,
+      "byte_sha256": "dbe5bc7cacda777a9f13c83413d938c1ed6551fdac2a1c6be49e00282eb74419"
+    }
+  },
+  "human": {
+    "build-success-successor": {
+      "byte_length": 2652,
+      "byte_sha256": "8f9a7c5352c64dc7b4fbcc5f80458d4af03ef12fcf17476f4ebbe12ff4e047fa"
+    },
+    "build-unresolved-default": {
+      "byte_length": 1933,
+      "byte_sha256": "36e1d353e7d57cdbbcdb71326a0485a7d9fd6ba586e398fd164111b3cb7c1125"
+    },
+    "graph-inspect-default": {
+      "byte_length": 1050,
+      "byte_sha256": "663ae69bcea29725cae697730ad8012c1a9e771602aceca160d0193b8458153c"
+    },
+    "graph-transact-default": {
+      "byte_length": 1109,
+      "byte_sha256": "70c292e32dcae9476d0927f13d0bfeb0850ad96568f747c36bb213f18ef57bc3"
+    },
+    "validate-default": {
+      "byte_length": 5371,
+      "byte_sha256": "bb9171763459ac6c204afa3d1a510f09200b8f35e6003184afdfe31e0c998619"
+    }
+  }
+}

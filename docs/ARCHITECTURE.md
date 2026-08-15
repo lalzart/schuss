@@ -207,6 +207,13 @@ and every later product are boundary artifacts; the Schuss graph remains the
 authority. Compile/link evidence reaches level 5 only. No executable was sent
 to hardware or treated as runtime or audible proof.
 
+Task 010 adds only a deterministic product projection over the four shared
+operations. `GRAPH_ID@REVISION` and `REQUEST_ID@REVISION` are command-line
+locators resolved inside one exact validated record set, never durable semantic
+identities or implicit newest-revision aliases. Human rendering and static
+completion remain presentation concerns; canonical JSON is the unchanged
+operation result. No product command calls the bounded Task 009 handler.
+
 ## Legacy boundary
 
 Only `legacy/ksoloti-bridge/` may depend directly on the legacy Java model. The

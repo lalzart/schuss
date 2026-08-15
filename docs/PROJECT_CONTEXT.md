@@ -117,6 +117,14 @@ separate evidence claims through ARM compile/link level 5. The production
 handler consumes the exact Task 008 seam; it is not a general compiler.
 Connected-device, real-time, and audible levels 6-8 remain `not-run`.
 
+Task 010 now adds the deterministic product CLI over the unchanged Task 008
+dispatcher. Exact graph/build-request locators resolve only through the
+selected validated record set; human output, canonical JSON, fixed help, and
+static Bash/Zsh/Fish completion share one command boundary. The default remains
+record set `schuss-record-set-000001` revision 1, while Task 009 set `000003`
+is explicit opt-in. `build resolve` does not invoke the Task 009 handler, and
+`graph transact` remains an in-memory non-persisted proposal.
+
 ## Terminology
 
 | Term | Meaning |

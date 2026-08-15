@@ -12,8 +12,8 @@ one compatibility backend.
 
 ## Current status
 
-Schuss has completed the Phase 4A semantic-catalog foundation and the bounded
-Task 009 legacy-backend proof:
+Schuss has completed the Phase 4A semantic-catalog foundation, the bounded
+Task 009 legacy-backend proof, and the Task 010 product CLI:
 
 - the project boundaries and terminology are documented;
 - upstream sources are pinned without committing machine-local paths;
@@ -56,9 +56,12 @@ Task 009 legacy-backend proof:
   ARM object, ELF, and link-map artifacts;
 - successor record set `schuss-record-set-000003` revision 1 retains all older
   records byte-identically and records separate evidence levels 1-5; connected
-  device, real-time, and audible levels 6-8 remain `not-run`; and
-- no general compiler frontend, graph editor, device runtime, Task 010 product
-  CLI, or desktop app is implemented yet.
+  device, real-time, and audible levels 6-8 remain `not-run`;
+- Task 010 provides deterministic human and canonical-JSON commands for the
+  four shared operations, exact record-set locator resolution, fixed help, and
+  static Bash/Zsh/Fish completion without adding a backend-execution path; and
+- no general compiler frontend, persistent graph editor, device runtime, or
+  desktop app is implemented yet.
 
 Start with [the project context](docs/PROJECT_CONTEXT.md), then read
 [the architecture](docs/ARCHITECTURE.md),
@@ -72,6 +75,25 @@ Task 007 boundary in
 008 dispatcher, atomic transaction, process, and Task 009 seam boundaries.
 Active
 implementation work is bounded by task files under `docs/tasks/`.
+
+## Command-line interface
+
+`bin/schuss` is the product and machine-operation boundary:
+
+```bash
+bin/schuss validate [--record-set MANIFEST] [--json]
+bin/schuss graph inspect GRAPH_ID@REVISION [--record-set MANIFEST] [--json]
+bin/schuss graph transact GRAPH_ID@REVISION --edits FILE_OR_STDIN [--record-set MANIFEST] [--json]
+bin/schuss build resolve REQUEST_ID@REVISION [--record-set MANIFEST] [--json]
+bin/schuss completion {bash|zsh|fish}
+bin/schuss op --request REQUEST_FILE_OR_STDIN --json
+```
+
+Human output is deterministic plain text. `--json` emits the exact canonical
+shared-operation result plus one LF. Without `--record-set`, commands use
+accepted record set `schuss-record-set-000001` revision 1; later sets are
+explicit opt-ins. `build resolve` stops before backend lowering, graph
+transactions are non-persisted proposals, and no progress protocol is exposed.
 
 ## Inventory checks
 

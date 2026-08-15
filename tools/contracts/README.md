@@ -33,6 +33,21 @@ Task 008 operations and their minimal machine adapter are documented in
 bin/schuss op --request request.json --json
 ```
 
+Task 010 adds deterministic product commands over that same dispatcher:
+
+```bash
+bin/schuss validate
+bin/schuss graph inspect schuss-graph-000001@1
+bin/schuss graph transact schuss-graph-000001@1 --edits edits.json
+bin/schuss build resolve schuss-build-request-000001@1
+bin/schuss completion zsh
+```
+
+Add `--json` for the unchanged canonical operation result, or
+`--record-set contracts/record-sets/task009-executed-prospective-v0.json` for
+the explicit Task 009 successor context. `build resolve` does not execute a
+backend, and transactions are never persisted.
+
 `run_task009.py --check` is read only and validates the explicit Task 009
 successor record set plus retained artifacts. Running it without `--check` is
 the separately authorized executable proof path: it invokes the exact isolated

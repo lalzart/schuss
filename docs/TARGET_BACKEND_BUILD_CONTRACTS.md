@@ -178,4 +178,5 @@ Task 008 completed the bounded validator-core consolidation and shared headless
 operations. Task 009 consumes that boundary without changing accepted Task
 005-008 output bytes. The default accepted view remains unresolved by design;
 the explicit Task 009 successor view resolves only the promoted exact pair.
-Task 010 remains separate and not started.
+Task 010 remains separate and now provides only deterministic product commands
+over those unchanged operations; it does not execute the Task 009 handler.
