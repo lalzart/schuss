@@ -1,0 +1,34 @@
+{
+  "catalog_search_crossfade": {
+    "schema_version": "schuss-operation-request-v2",
+    "canonical_profile": "schuss-canonical-json-v1",
+    "operation": "catalog.search",
+    "payload": {
+      "query": "crossfade",
+      "filters": {
+        "function": [],
+        "abstraction": [],
+        "form": [],
+        "signal_domain": [],
+        "signal_rate": [],
+        "signal_role": [],
+        "capability": [],
+        "technique": [],
+        "readiness": [],
+        "provenance": []
+      }
+    }
+  },
+  "catalog_inspect_crossfader": {
+    "schema_version": "schuss-operation-request-v2",
+    "canonical_profile": "schuss-canonical-json-v1",
+    "operation": "catalog.inspect",
+    "payload": {
+      "family_reference": {
+        "family_id": "schuss-family-000018",
+        "revision": 1,
+        "content_hash": "sha256:710afad6b087d18fb949b9749c9e9dc63d4fd26e94800369d437d90d956eed8d"
+      }
+    }
+  }
+}

@@ -26,12 +26,15 @@ import record_set_rules
 import target_backend_build_rules as target
 import validator_core as core
 
+from . import catalog_projection as catalog
+
 
 REQUEST_SCHEMA_NAME = "operation-request-v1.schema.json"
 RESULT_SCHEMA_NAME = "operation-result-v1.schema.json"
 GRAPH_SCHEMA_NAME = component.GRAPH_SCHEMA_NAME
 
 DOMAIN_GROUPS = (
+    "catalog",
     "families",
     "contracts",
     "bindings",
@@ -64,6 +67,7 @@ class OperationContext:
     task006_summary: dict[str, Any]
     task007_summary: dict[str, Any]
     record_set_reference: dict[str, Any]
+    catalog_projection: dict[str, Any] | None
 
     def with_records(
         self, **groups: Iterable[dict[str, Any]]
@@ -125,6 +129,7 @@ def load_repository_context(
                 )
 
     records: dict[str, tuple[dict[str, Any], ...]] = {
+        "catalog": _stable_records(selected.records.get("catalog-corpus", ())),
         "families": _stable_records(selected.records.get("catalog-family", ())),
         "contracts": _stable_records(selected.records.get("component-contract", ())),
         "bindings": _stable_records(selected.records.get("implementation-binding", ())),
@@ -143,6 +148,8 @@ def load_repository_context(
     schemas: dict[str, dict[str, Any]] = {
         "operation_request": selected.schemas["operation-request-v1"],
         "operation_result": selected.schemas["operation-result-v1"],
+        "operation_request_v1": selected.schemas["operation-request-v1"],
+        "operation_result_v1": selected.schemas["operation-result-v1"],
         "device": selected.schemas[device.DEVICE_SCHEMA_VERSION],
         "instrument": selected.schemas[device.INSTRUMENT_SCHEMA_VERSION],
         "family": selected.schemas[component.FAMILY_SCHEMA_VERSION],
@@ -154,6 +161,14 @@ def load_repository_context(
             for kind, specification in target.SCHEMA_SPECS.items()
         },
     }
+    for version, name in (
+        ("operation-request-v2", "operation_request_v2"),
+        ("operation-result-v2", "operation_result_v2"),
+        ("catalog-corpus-v1", "catalog_corpus"),
+        ("catalog-projection-v1", "catalog_projection"),
+    ):
+        if version in selected.schemas:
+            schemas[name] = selected.schemas[version]
 
     overlay = core.load_json(overlay_path)
     observations = component._observations(snapshot_root)
@@ -206,6 +221,30 @@ def load_repository_context(
             for record in selected.records.get(kind, ())
         ],
     )
+    derived_catalog = None
+    if records["catalog"]:
+        if len(records["catalog"]) != 1:
+            raise ValueError("selected record set must contain exactly one catalog corpus")
+        required_catalog_schemas = {
+            "catalog_corpus",
+            "catalog_projection",
+            "operation_request_v2",
+            "operation_result_v2",
+        }
+        missing = sorted(required_catalog_schemas - set(schemas))
+        if missing:
+            raise ValueError(f"catalog record set is missing schemas {missing}")
+        derived_catalog = catalog.build_catalog_projection(
+            corpus=copy.deepcopy(records["catalog"][0]),
+            corpus_schema=schemas["catalog_corpus"],
+            projection_schema=schemas["catalog_projection"],
+            overlay=copy.deepcopy(overlay),
+            overlay_sha256=core.sha256_file(overlay_path),
+            observations=copy.deepcopy(observations),
+            records=records,
+            record_set_reference=copy.deepcopy(selected.reference),
+            core=core,
+        )
 
     return OperationContext(
         records=records,
@@ -219,6 +258,7 @@ def load_repository_context(
         task006_summary=copy.deepcopy(task006_summary),
         task007_summary=copy.deepcopy(task007_result.summary),
         record_set_reference=copy.deepcopy(selected.reference),
+        catalog_projection=derived_catalog,
     )
 
 
@@ -236,6 +276,8 @@ def _result(
     status: str,
     value: dict[str, Any] | None,
     diagnostics: Iterable[dict[str, str] | core.Diagnostic] = (),
+    *,
+    version: int = 1,
 ) -> dict[str, Any]:
     normalized = [
         item.as_dict() if isinstance(item, core.Diagnostic) else copy.deepcopy(item)
@@ -243,7 +285,7 @@ def _result(
     ]
     normalized.sort(key=core.diagnostic_sort_key)
     return {
-        "schema_version": "schuss-operation-result-v1",
+        "schema_version": f"schuss-operation-result-v{version}",
         "canonical_profile": "schuss-canonical-json-v1",
         "operation": operation,
         "status": status,
@@ -255,14 +297,125 @@ def _result(
 def canonical_result_bytes(
     result: dict[str, Any], context: OperationContext
 ) -> bytes:
+    result_schema_name = {
+        "schuss-operation-result-v1": "operation_result_v1",
+        "schuss-operation-result-v2": "operation_result_v2",
+    }.get(result.get("schema_version"))
+    if result_schema_name is None or result_schema_name not in context.schemas:
+        raise ValueError("operation result uses an unavailable public schema")
+    result_schema = context.schemas[result_schema_name]
     errors = core.schema_errors(
         result,
-        context.schemas["operation_result"],
-        context.schemas["operation_result"],
+        result_schema,
+        result_schema,
     )
     if errors:
         raise ValueError(f"operation result violates its public schema: {errors}")
     return core.canonical_json(result).encode("utf-8")
+
+
+def _catalog_unavailable(operation: str) -> dict[str, Any]:
+    return _result(
+        operation,
+        "invalid",
+        None,
+        [
+            _diagnostic(
+                "CATALOG_CONTEXT_UNAVAILABLE",
+                operation,
+                "$",
+                "the selected record set contains no exact Task 011A catalog corpus",
+            )
+        ],
+        version=2,
+    )
+
+
+def _catalog_search(
+    payload: dict[str, Any], context: OperationContext
+) -> dict[str, Any]:
+    projection = context.catalog_projection
+    if projection is None:
+        return _catalog_unavailable("catalog.search")
+    normalized_filters = catalog.canonical_filters(payload["filters"])
+    invalid = catalog.validate_filter_values(projection, normalized_filters)
+    if invalid:
+        return _result(
+            "catalog.search",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "CATALOG_FILTER_VALUE_UNSUPPORTED",
+                    f"{name}:{value}",
+                    f"$.payload.filters.{name}",
+                    "the filter value is absent from the exact selected catalog projection",
+                )
+                for name, value in invalid
+            ],
+            version=2,
+        )
+    query, filters, results = catalog.search_catalog(
+        projection, payload["query"], normalized_filters
+    )
+    return _result(
+        "catalog.search",
+        "success",
+        {
+            "record_set_reference": copy.deepcopy(
+                projection["record_set_reference"]
+            ),
+            "catalog_reference": copy.deepcopy(projection["catalog_reference"]),
+            "projection_version": projection["projection_version"],
+            "match_algorithm": projection["match_algorithm"],
+            "input_closure_hash": projection["input_closure_hash"],
+            "query": query,
+            "filters": filters,
+            "total_matches": len(results),
+            "results": results,
+        },
+        version=2,
+    )
+
+
+def _catalog_inspect(
+    payload: dict[str, Any], context: OperationContext
+) -> dict[str, Any]:
+    projection = context.catalog_projection
+    if projection is None:
+        return _catalog_unavailable("catalog.inspect")
+    family = catalog.inspect_family(projection, payload["family_reference"])
+    if family is None:
+        reference = payload["family_reference"]
+        return _result(
+            "catalog.inspect",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "OPERATION_REFERENCE_UNRESOLVED",
+                    f"{reference['family_id']}@{reference['revision']}",
+                    "$.payload.family_reference",
+                    "the exact family reference is absent from the selected catalog projection",
+                )
+            ],
+            version=2,
+        )
+    return _result(
+        "catalog.inspect",
+        "success",
+        {
+            "record_set_reference": copy.deepcopy(
+                projection["record_set_reference"]
+            ),
+            "catalog_reference": copy.deepcopy(projection["catalog_reference"]),
+            "projection_version": projection["projection_version"],
+            "match_algorithm": projection["match_algorithm"],
+            "input_closure_hash": projection["input_closure_hash"],
+            "family": family,
+        },
+        version=2,
+    )
 
 
 def _exact_registry(
@@ -688,30 +841,58 @@ def dispatch_operation(
     """Dispatch one parsed request through the public pure operation API."""
 
     operation = request.get("operation") if isinstance(request, dict) else None
+    request_version = (
+        request.get("schema_version") if isinstance(request, dict) else None
+    )
+    is_v2 = request_version == "schuss-operation-request-v2"
+    request_schema_name = "operation_request_v2" if is_v2 else "operation_request_v1"
     request_errors: list[str] = []
     try:
         core.assert_portable_json_value(request)
     except ValueError as exc:
         request_errors.append(str(exc))
     if isinstance(request, dict):
-        request_errors.extend(
-            core.schema_errors(
-                request,
-                context.schemas["operation_request"],
-                context.schemas["operation_request"],
+        if request_schema_name not in context.schemas:
+            request_errors.append(
+                f"$: operation schema {request_version!r} is unavailable in the selected context"
             )
-        )
-    else:
-        request_errors.append("$: operation request must be an object")
-    if request_errors:
-        subject = operation if isinstance(operation, str) else "invalid-request"
-        return _result(
-            operation if operation in {
+        else:
+            request_schema = context.schemas[request_schema_name]
+            request_errors.extend(
+                core.schema_errors(request, request_schema, request_schema)
+            )
+            if is_v2 and operation in {
                 "records.validate",
                 "graph.inspect",
                 "build.resolve",
                 "graph.transact",
-            } else "invalid-request",
+            }:
+                v1_request = copy.deepcopy(request)
+                v1_request["schema_version"] = "schuss-operation-request-v1"
+                request_errors.extend(
+                    core.schema_errors(
+                        v1_request,
+                        context.schemas["operation_request_v1"],
+                        context.schemas["operation_request_v1"],
+                    )
+                )
+    else:
+        request_errors.append("$: operation request must be an object")
+    if request_errors:
+        subject = operation if isinstance(operation, str) else "invalid-request"
+        result_version = (
+            2 if is_v2 and "operation_result_v2" in context.schemas else 1
+        )
+        result_operations = {
+            "records.validate",
+            "graph.inspect",
+            "build.resolve",
+            "graph.transact",
+        }
+        if result_version == 2:
+            result_operations |= {"catalog.search", "catalog.inspect"}
+        result = _result(
+            operation if operation in result_operations else "invalid-request",
             "invalid",
             None,
             [
@@ -723,14 +904,22 @@ def dispatch_operation(
                 )
                 for error in sorted(set(request_errors))
             ],
+            version=result_version,
         )
+        if result["schema_version"] == "schuss-operation-result-v2":
+            canonical_result_bytes(result, context)
+        return result
 
     handlers = {
         "records.validate": lambda payload: _records_validate(context),
         "graph.inspect": lambda payload: _graph_inspect(payload, context),
         "build.resolve": lambda payload: _build_resolve(payload, context),
         "graph.transact": lambda payload: _graph_transact(payload, context),
+        "catalog.search": lambda payload: _catalog_search(payload, context),
+        "catalog.inspect": lambda payload: _catalog_inspect(payload, context),
     }
     result = handlers[operation](request["payload"])
+    if is_v2 and result["schema_version"] == "schuss-operation-result-v1":
+        result["schema_version"] = "schuss-operation-result-v2"
     canonical_result_bytes(result, context)
     return result

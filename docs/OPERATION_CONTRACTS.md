@@ -159,6 +159,33 @@ the shared operation contract defines no progress events. A plain
 `schuss build` is usage failure; only `schuss build resolve` exists, and it
 never invokes the Task 009 exact-slice handler.
 
+## Additive catalog operation v2
+
+Task 011A leaves both v1 schema files and all v1 request/result bytes unchanged.
+The successor `schuss-operation-request-v2` and
+`schuss-operation-result-v2` envelopes retain the four existing operations and
+add only:
+
+- `catalog.search`, with a query string and closed arrays for function,
+  abstraction, form, signal domain/rate/role, capability, technique,
+  readiness, and provenance filters; and
+- `catalog.inspect`, with one exact family ID/revision/content-hash reference.
+
+Existing operations submitted in a v2 envelope are checked against their exact
+v1 payload contracts before dispatch. Catalog payloads are not valid v1
+requests. Unsupported members, filter kinds, filter values, and stale family
+references fail closed with deterministic diagnostics.
+
+Catalog commands default to the exact Task 011A record set because the accepted
+Task 005-008 default contains no catalog corpus or v2 schema. This does not
+change the default context for `validate`, `graph`, `build`, or `op`. Both
+catalog commands call `dispatch_operation` exactly once. Canonical results from
+the direct API, `schuss op`, ergonomic `--json`, and future GUI/AI fixtures are
+byte-identical except for the process adapter's final LF.
+
+The detailed projection, matching, filter, and readiness rules are in
+`docs/CATALOG_OPERATIONS.md`.
+
 ## Evidence boundary
 
 Task 008 proves structural validation, exact reference resolution, deterministic

@@ -45,7 +45,12 @@ This directory contains only contracts that current Schuss artifacts use:
 - `operation-request-v1.schema.json` and `operation-result-v1.schema.json`
   validate the shared Task 008 headless envelope, while
   `backend-invocation-input-v1.schema.json` defines the non-executable Task 009
-  handoff seam.
+  handoff seam; and
+- `catalog-corpus-v1.schema.json` validates the exact Task 011A Phase 4A
+  companion and Gills-slice review closure, `catalog-projection-v1.schema.json`
+  validates its derived client-neutral view, and
+  `operation-request-v2.schema.json`/`operation-result-v2.schema.json` add the
+  catalog operations without changing the v1 bytes.
 
 The resolved schemas describe factual compatibility-bridge evidence only. The
 semantic overlay is a versioned curation foundation and pilot, not a complete

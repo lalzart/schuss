@@ -17,7 +17,9 @@ into transparent, typed Schuss models.
 | 8 | Shared headless validation and typed operation layer | Complete; shared dispatcher and minimal process gate |
 | 9 | One minimal graph through the legacy `.axp` adapter and ARM compiler/linker | Complete; exact Blend slice reaches level 5 |
 | 10 | Deterministic structured CLI over shared operations | [Complete](tasks/010-deterministic-product-cli-over-shared-operations.md) |
-| 4B / 11 | Incremental reviewed-core expansion with actual contracts and bindings | Gated on Phase 6 contract model |
+| 11A | Browsable catalog control plane and exact seven-role Gills-slice catalog review | [Complete](tasks/011a-browsable-catalog-control-plane-and-exact-gills-slice-catalog-review.md) |
+| 11B | Six component contracts/bindings, authoritative slice graph, minimal Gills instrument, and unresolved build closure | Proposed; not started |
+| 11C | Bounded legacy backend expansion and ARM compile/link for the slice | Proposed; not started |
 | 12 | Basic object drawer and transparent graph canvas | Planned |
 | 13 | Direct Schuss graph-to-C++ frontend behind the backend contract | Planned |
 | 14 | Full Gills implementation and parameter/control mapping | Planned |
@@ -59,6 +61,14 @@ levels 6-8 remain `not-run`. Task 010 now supplies deterministic product
 commands, exact record-set locator resolution, human/canonical output, fixed
 help, and static completion over the unchanged Task 008 dispatcher. It adds no
 general build execution or persistent graph write.
+Task 011A now adds the derived 28-family catalog projection, exact inspection,
+deterministic browse/search and approved filters, additive v2 catalog
+operations, and product catalog commands. The seven-role review reuses the
+accepted Sine Oscillator, Crossfader, State-variable Filter, stereo Audio
+Output, and pitch-sequencer family identities; allocates only Square LFO,
+Cyclic Counter, and the distinct four-step implementation; and leaves all
+missing contracts, bindings, graph, instrument, and build work to proposed
+Task 011B.
 The completed boundaries are in
 `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and

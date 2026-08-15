@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catalog-projection-v1.schema.json",
+  "title": "Schuss derived catalog projection v1",
+  "type": "object",
+  "required": [
+    "schema_version", "canonical_profile", "projection_version",
+    "match_algorithm", "input_closure_hash", "record_set_reference",
+    "catalog_reference", "families"
+  ],
+  "properties": {
+    "schema_version": {"const": "catalog-projection-v1"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "projection_version": {"const": "schuss-catalog-projection-v1"},
+    "match_algorithm": {"const": "schuss-catalog-match-v1"},
+    "input_closure_hash": {"$ref": "#/$defs/contentHash"},
+    "record_set_reference": {"$ref": "#/$defs/recordSetReference"},
+    "catalog_reference": {"$ref": "#/$defs/catalogReference"},
+    "families": {
+      "type": "array",
+      "x-schuss-array-kind": "sequence",
+      "minItems": 26,
+      "items": {"$ref": "#/$defs/familyEntry"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "stringSet": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "exactReference": {
+      "type": "object",
+      "required": ["stable_id", "revision", "content_hash"],
+      "properties": {
+        "stable_id": {"type": "string", "pattern": "^schuss-[a-z0-9-]+-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "recordSetReference": {
+      "type": "object",
+      "required": ["record_set_id", "revision", "content_hash"],
+      "properties": {
+        "record_set_id": {"type": "string", "pattern": "^schuss-record-set-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "catalogReference": {
+      "type": "object",
+      "required": ["catalog_id", "revision", "content_hash"],
+      "properties": {
+        "catalog_id": {"const": "schuss-catalog-000001"},
+        "revision": {"const": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "signalFacet": {
+      "type": "object",
+      "required": ["domain", "rate", "role", "channel_count"],
+      "properties": {
+        "domain": {"type": "string", "minLength": 1},
+        "rate": {"type": "string", "minLength": 1},
+        "role": {"type": "string", "minLength": 1},
+        "channel_count": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "implementationSummary": {
+      "type": "object",
+      "required": [
+        "implementation_id", "exact_reference", "display_name", "form",
+        "provenance_sources", "observation_references", "contract_references",
+        "binding_references", "eligibility_references", "target_references",
+        "backend_references", "result_references", "artifact_references",
+        "evidence_references", "readiness_states", "unresolved_facts"
+      ],
+      "properties": {
+        "implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"},
+        "exact_reference": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/exactReference"}]},
+        "display_name": {"type": "string", "minLength": 1},
+        "form": {"type": "string", "minLength": 1},
+        "provenance_sources": {"$ref": "#/$defs/stringSet"},
+        "observation_references": {"$ref": "#/$defs/stringSet"},
+        "contract_references": {
+          "type": "array", "x-schuss-array-kind": "set",
+          "items": {"$ref": "#/$defs/exactReference"}
+        },
+        "binding_references": {
+          "type": "array", "x-schuss-array-kind": "set",
+          "items": {"$ref": "#/$defs/exactReference"}
+        },
+        "eligibility_references": {
+          "type": "array", "x-schuss-array-kind": "set",
+          "items": {"$ref": "#/$defs/exactReference"}
+        },
+        "target_references": {
+          "type": "array", "x-schuss-array-kind": "set",
+          "items": {"$ref": "#/$defs/exactReference"}
+        },
+        "backend_references": {
+          "type": "array", "x-schuss-array-kind": "set",
+          "items": {"$ref": "#/$defs/exactReference"}
+        },
+        "result_references": {
+          "type": "array", "x-schuss-array-kind": "set",
+          "items": {"$ref": "#/$defs/exactReference"}
+        },
+        "artifact_references": {
+          "type": "array", "x-schuss-array-kind": "set",
+          "items": {"$ref": "#/$defs/exactReference"}
+        },
+        "evidence_references": {
+          "type": "array", "x-schuss-array-kind": "set",
+          "items": {"$ref": "#/$defs/exactReference"}
+        },
+        "readiness_states": {"$ref": "#/$defs/stringSet"},
+        "unresolved_facts": {"$ref": "#/$defs/stringSet"}
+      },
+      "additionalProperties": false
+    },
+    "familyEntry": {
+      "type": "object",
+      "required": [
+        "family_reference", "display_name", "aliases", "description",
+        "primary_function", "technique_tags", "abstraction_level",
+        "implementation_forms", "signal_facets", "contract_facet_names", "capability_keys",
+        "provenance_facets", "readiness_states",
+        "contract_facets_available", "implementations", "unresolved_facts"
+      ],
+      "properties": {
+        "family_reference": {
+          "type": "object",
+          "required": ["family_id", "revision", "content_hash"],
+          "properties": {
+            "family_id": {"type": "string", "pattern": "^schuss-family-[0-9]{6}$"},
+            "revision": {"type": "integer", "minimum": 1},
+            "content_hash": {"$ref": "#/$defs/contentHash"}
+          },
+          "additionalProperties": false
+        },
+        "display_name": {"type": "string", "minLength": 1},
+        "aliases": {"$ref": "#/$defs/stringSet"},
+        "description": {"type": "string", "minLength": 1},
+        "primary_function": {"type": "string", "minLength": 1},
+        "technique_tags": {"$ref": "#/$defs/stringSet"},
+        "abstraction_level": {"enum": ["primitive", "compound", "instrument"]},
+        "implementation_forms": {"$ref": "#/$defs/stringSet"},
+        "signal_facets": {
+          "type": "array", "x-schuss-array-kind": "set",
+          "items": {"$ref": "#/$defs/signalFacet"}
+        },
+        "contract_facet_names": {"$ref": "#/$defs/stringSet"},
+        "capability_keys": {"$ref": "#/$defs/stringSet"},
+        "provenance_facets": {"$ref": "#/$defs/stringSet"},
+        "readiness_states": {"$ref": "#/$defs/stringSet"},
+        "contract_facets_available": {"type": "boolean"},
+        "implementations": {
+          "type": "array", "x-schuss-array-kind": "sequence",
+          "items": {"$ref": "#/$defs/implementationSummary"}
+        },
+        "unresolved_facts": {"$ref": "#/$defs/stringSet"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

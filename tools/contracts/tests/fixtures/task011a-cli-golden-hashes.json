@@ -1,0 +1,21 @@
+{
+  "completion": {
+    "bash": {"byte_length": 1463, "byte_sha256": "54b604a3ca4cfd768bc20e21744eb19a175906767e4cdf2f46c2441468c94c51"},
+    "fish": {"byte_length": 1848, "byte_sha256": "17cc15956e4a5b392e209e328badf7fd51fdcb0c1534610f00daf0dff6b1aeda"},
+    "zsh": {"byte_length": 1532, "byte_sha256": "32b548eb3b28b89c84c193bc9de32f1ef2c92ea3d7d1393471fb9fc5e1067f2c"}
+  },
+  "help": {
+    "catalog": {"byte_length": 390, "byte_sha256": "c65555efb0afbde93d56d74c8041af991ac68f7ff712dd847dd84bc103c8691c"},
+    "catalog-inspect": {"byte_length": 550, "byte_sha256": "2463da75a47daebd2fc55f7eef33706efe1e91855a6fb72331d5e69e0bda290b"},
+    "catalog-search": {"byte_length": 1542, "byte_sha256": "ca8108bfdc891e57e125d36ee3e510ae315bd81b1b04a9bea5197138413e2534"},
+    "root": {"byte_length": 1046, "byte_sha256": "f0cfe4c99ace639652c8d127c1def34055510cb8cfcf1990f86427728196aa93"}
+  },
+  "human": {
+    "catalog-inspect-crossfader": {"byte_length": 7461, "byte_sha256": "47aed9d816e2eeeec2f8e8aa7518736e6eff98f017ed3a1fe37e09846093b91a"},
+    "catalog-search-crossfade": {"byte_length": 1306, "byte_sha256": "f15ea0a9fd6f8266efb15cb5327130ccfc53c521e8f708d2eb122c453369966f"}
+  },
+  "json": {
+    "catalog-inspect-crossfader": {"byte_length": 7653, "byte_sha256": "240adb006bb5275da8f64288e82e3593f426be36b076a9a877df083bb09b5517"},
+    "catalog-search-crossfade": {"byte_length": 1523, "byte_sha256": "b69d23004fc79fccacbc8270b0bd91c0be1e563be074c63e7ea12fac6f6779ed"}
+  }
+}

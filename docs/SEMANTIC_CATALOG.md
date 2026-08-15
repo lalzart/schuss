@@ -124,13 +124,33 @@ passing structural export.
 
 ## Deferred design
 
-Overlay v0 still does not define public ports or parameters, the authoritative
-Schuss graph, device profiles, instruments, shared graph operations, target
-capability negotiation, or compiler lowering. Task 004 defines their normative
-ownership and reference direction in `docs/SCHEMA_STRATEGY.md` and the compiler
-stages in `docs/COMPILER_STRATEGY.md`. Task 005 now supplies separate minimal
-production device-profile and instrument schemas; graph, component, binding,
-target, backend, build, and operation schemas remain bounded future work.
-Phase 4B must not expand compiler-facing variants faster than actual component
-contracts and bindings are reviewed. No later contract may infer a stable
-identity from the legacy `.axp` boundary artifact.
+Overlay v0 itself does not define public ports or parameters, the authoritative
+Schuss graph, device profiles, instruments, shared operations, target
+capability negotiation, or compiler lowering. Tasks 005-010 implement bounded
+records and operations in those separate domains without changing the overlay.
+Task 004 defines their normative ownership and reference direction in
+`docs/SCHEMA_STRATEGY.md` and the compiler stages in
+`docs/COMPILER_STRATEGY.md`. Phase 4B must not expand compiler-facing variants
+faster than actual component contracts and bindings are reviewed. No later
+contract may infer a stable identity from the legacy `.axp` boundary artifact.
+
+## Task 011A browsable projection
+
+Task 011A does not mutate this Phase 4A overlay. Its exact catalog corpus gives
+each of the 25 pilot families not already represented by the accepted
+Crossfader contract record a revision/hash companion. Those companions bind
+the frozen overlay member hash and record any successor presentation change;
+they do not claim to be historical Phase 4A revisions. Crossfader reuses its
+accepted exact family record.
+
+The derived projection contains all 26 pilot families plus reviewed Square LFO
+and Cyclic Counter families. It adds the corresponding Square LFO and Cyclic
+Counter implementations and a distinct four-step realization under the
+existing pitch-step-sequencer family. Observation 918 belongs to
+`schuss-implementation-000041`; observation 920 remains the sixteen-step
+`schuss-implementation-000032` realization.
+
+The projection is a client-neutral read model, regenerated in memory from the
+exact corpus, overlay, contract/binding, target/backend, and evidence closure.
+It does not own source facts or readiness truth. See
+`docs/CATALOG_OPERATIONS.md`.

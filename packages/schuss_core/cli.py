@@ -17,6 +17,8 @@ from .control_plane import (
 from .product_cli import (
     ProductInputError,
     build_resolve_request,
+    catalog_inspect_request,
+    catalog_search_request,
     completion_script,
     graph_inspect_request,
     graph_transact_request,
@@ -31,6 +33,11 @@ DEFAULT_RECORD_SET_REFERENCE = {
     "revision": 1,
     "content_hash": "sha256:f3fde23e7410a0a78c79ffdbcf3741995cedbf69f41c5a47e596ac39a2ac62f6",
 }
+
+CATALOG_RECORD_SET_PATH = (
+    Path(__file__).resolve().parents[2]
+    / "contracts/record-sets/task011a-catalog-v1.json"
+)
 
 PRODUCT_HELP_EPILOG = (
     "Default output is deterministic plain text over schuss-record-set-000001@1. "
@@ -113,7 +120,7 @@ def _parser() -> argparse.ArgumentParser:
         prog="schuss",
         description=(
             "Deterministic Schuss product CLI over the shared validation, "
-            "inspection, resolution, and in-memory transaction operations."
+            "catalog, inspection, resolution, and in-memory transaction operations."
         ),
         epilog=(
             "Default operation output is deterministic plain text over "
@@ -137,6 +144,72 @@ def _parser() -> argparse.ArgumentParser:
         epilog=PRODUCT_HELP_EPILOG,
     )
     _add_product_options(validate)
+
+    catalog = subcommands.add_parser(
+        "catalog",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="browse the exact client-neutral component catalog",
+        description="Catalog commands use the Task 011A exact catalog projection.",
+        epilog="Choose search or inspect; both default to schuss-record-set-000004@1.",
+    )
+    _add_help(catalog)
+    catalog_commands = catalog.add_subparsers(
+        dest="catalog_command", required=True, metavar="COMMAND"
+    )
+    search = catalog_commands.add_parser(
+        "search",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="search and filter component families",
+        description=(
+            "Dispatch catalog.search. Repeated values within a filter are ORed; "
+            "different filter kinds are ANDed. An omitted query lists all matches."
+        ),
+        epilog=(
+            "Default context is schuss-record-set-000004@1. Output and exit behavior "
+            "otherwise match the product commands."
+        ),
+    )
+    search.add_argument("query", nargs="?", default="", metavar="QUERY")
+    for option, destination in (
+        ("function", "function"),
+        ("abstraction", "abstraction"),
+        ("form", "form"),
+        ("signal-domain", "signal_domain"),
+        ("signal-rate", "signal_rate"),
+        ("signal-role", "signal_role"),
+        ("capability", "capability"),
+        ("technique", "technique"),
+        ("readiness", "readiness"),
+        ("provenance", "provenance"),
+    ):
+        search.add_argument(
+            f"--{option}",
+            dest=destination,
+            action="append",
+            default=[],
+            metavar="VALUE",
+            help=f"filter by {option.replace('-', ' ')} (repeatable)",
+        )
+    _add_product_options(search)
+
+    catalog_inspect = catalog_commands.add_parser(
+        "inspect",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="inspect one exact component family",
+        description="Dispatch catalog.inspect for one exact family revision.",
+        epilog=(
+            "Default context is schuss-record-set-000004@1. Output and exit behavior "
+            "otherwise match the product commands."
+        ),
+    )
+    catalog_inspect.add_argument("locator", metavar="FAMILY_ID@REVISION")
+    _add_product_options(catalog_inspect)
 
     graph = subcommands.add_parser(
         "graph",
@@ -420,6 +493,34 @@ def _read_edits(args, stdin: BinaryIO, stderr: TextIO):
 def _product_request(args, context: OperationContext, stdin: BinaryIO, stderr: TextIO):
     if args.command == "validate":
         return records_validate_request(), None
+    if args.command == "catalog":
+        if context.catalog_projection is None:
+            raise ProductInputError(
+                "CLI_CATALOG_CONTEXT_UNAVAILABLE",
+                "the selected record set contains no exact Task 011A catalog corpus",
+            )
+        if args.catalog_command == "search":
+            filters = {
+                name: getattr(args, name)
+                for name in (
+                    "function",
+                    "abstraction",
+                    "form",
+                    "signal_domain",
+                    "signal_rate",
+                    "signal_role",
+                    "capability",
+                    "technique",
+                    "readiness",
+                    "provenance",
+                )
+            }
+            return catalog_search_request(args.query, filters), None
+        if args.catalog_command == "inspect":
+            reference = resolve_locator(
+                args.locator, expected_kind="family", context=context
+            )
+            return catalog_inspect_request(reference), None
     if args.command == "graph" and args.graph_command == "inspect":
         reference = resolve_locator(
             args.locator, expected_kind="graph", context=context
@@ -475,9 +576,10 @@ def run(
             _emit_bytes(stdout, canonical_result_bytes(result, context) + b"\n")
             return 0 if result["status"] == "success" else 1
 
-        context, exit_code = _load_context_or_report(
-            args.record_set, context_loader, stderr
-        )
+        manifest = args.record_set
+        if args.command == "catalog" and manifest is None:
+            manifest = str(CATALOG_RECORD_SET_PATH)
+        context, exit_code = _load_context_or_report(manifest, context_loader, stderr)
         if exit_code is not None:
             return exit_code
         try:

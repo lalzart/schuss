@@ -1,6 +1,6 @@
 # Semantic and build-domain contracts
 
-This directory contains authoritative Task 005-007 records organized
+This directory contains authoritative Task 005-011A records organized
 by record family. The schemas are under `schemas/`, the normative boundaries
 are documented in `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and read-only validation is under
@@ -24,9 +24,13 @@ The current pair is deliberately minimal:
 - `binding-eligibility/` adds an exact, unresolved eligibility companion
   without modifying the Task 006 binding; and
 - `build-requests/` pins the exact Blend graph/instrument/target/backend
-  closure and stops at implementation resolution.
+  closure and stops at implementation resolution; and
+- `catalog/task011a-corpus-v1.json` closes exact successor references for all
+  26 Phase 4A pilot families and the bounded seven-role Gills-slice identity
+  review without rewriting the overlay or creating missing DSP contracts.
 
-There is no production build result, artifact, resource report, or evidence
-claim. The production candidate remains unresolved and no legacy patch,
-compiler, GUI, firmware, hardware, real-time, or audible action is implied.
-See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`.
+Task 009 successor records retain one bounded production build/evidence chain
+through compile/link level 5. Task 011A merely projects those exact records;
+it adds no build result or compatibility claim. No GUI, firmware, connected
+hardware, real-time, or audible action is implied. See
+`docs/TARGET_BACKEND_BUILD_CONTRACTS.md` and `docs/CATALOG_OPERATIONS.md`.

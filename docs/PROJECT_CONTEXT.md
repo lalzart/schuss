@@ -125,6 +125,16 @@ record set `schuss-record-set-000001` revision 1, while Task 009 set `000003`
 is explicit opt-in. `build resolve` does not invoke the Task 009 handler, and
 `graph transact` remains an in-memory non-persisted proposal.
 
+Task 011A now adds the first browsable client-neutral catalog projection. It
+retains every Phase 4A byte, resolves all 26 pilot families through exact
+companion references, and adds only the reviewed Square LFO and Cyclic Counter
+families plus their implementations and the distinct four-step pitch-sequencer
+implementation. Successor record set `schuss-record-set-000004` revision 1
+owns the exact corpus and additive operation v2 schemas. `catalog.search` and
+`catalog.inspect` use the same dispatcher for direct, process, CLI, and future
+GUI/AI clients. This task creates no new component contract, binding,
+eligibility, graph, instrument, build, or runtime evidence.
+
 ## Terminology
 
 | Term | Meaning |

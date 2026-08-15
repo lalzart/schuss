@@ -214,6 +214,28 @@ identities or implicit newest-revision aliases. Human rendering and static
 completion remain presentation concerns; canonical JSON is the unchanged
 operation result. No product command calls the bounded Task 009 handler.
 
+Task 011A extends that same operation boundary additively with
+`catalog.search` and `catalog.inspect`. A versioned in-memory projection is
+derived from the exact record-set closure; it is not a second catalog database
+or a family-owned reverse index. Search, scoring, filter normalization,
+readiness derivation, and inspection are shared operation semantics. The CLI
+only constructs requests and renders results. Future GUI and AI clients must
+submit the same requests and consume the same canonical results.
+
+The projection reference direction remains one way:
+
+```text
+exact catalog corpus + frozen Phase 4A overlay + accepted semantic/evidence records
+    -> derived catalog projection
+    -> catalog.search / catalog.inspect
+    -> CLI, future GUI, future AI
+```
+
+Signal facets come only from exact component contracts. Capability, binding,
+eligibility, and evidence states come only from exact accepted records naming
+the implementation chain. Family membership, provenance, and legacy datatype
+observations never manufacture those claims.
+
 ## Legacy boundary
 
 Only `legacy/ksoloti-bridge/` may depend directly on the legacy Java model. The

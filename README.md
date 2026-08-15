@@ -13,7 +13,8 @@ one compatibility backend.
 ## Current status
 
 Schuss has completed the Phase 4A semantic-catalog foundation, the bounded
-Task 009 legacy-backend proof, and the Task 010 product CLI:
+Task 009 legacy-backend proof, the Task 010 product CLI, and the Task 011A
+browsable catalog control plane:
 
 - the project boundaries and terminology are documented;
 - upstream sources are pinned without committing machine-local paths;
@@ -60,6 +61,10 @@ Task 009 legacy-backend proof, and the Task 010 product CLI:
 - Task 010 provides deterministic human and canonical-JSON commands for the
   four shared operations, exact record-set locator resolution, fixed help, and
   static Bash/Zsh/Fish completion without adding a backend-execution path; and
+- Task 011A derives a 28-family client-neutral projection from the frozen
+  26-family pilot plus two reviewed Gills-slice families, adds `catalog.search`
+  and `catalog.inspect` through additive operation v2 contracts, and exposes
+  them through the same dispatcher and product CLI; and
 - no general compiler frontend, persistent graph editor, device runtime, or
   desktop app is implemented yet.
 
@@ -73,6 +78,8 @@ Task 007 boundary in
 [the target, backend, build, and evidence contracts](docs/TARGET_BACKEND_BUILD_CONTRACTS.md).
 [The shared operation contracts](docs/OPERATION_CONTRACTS.md) document the Task
 008 dispatcher, atomic transaction, process, and Task 009 seam boundaries.
+[The catalog operation contract](docs/CATALOG_OPERATIONS.md) documents the Task
+011A projection, matching, filters, inspection chain, and evidence limits.
 Active
 implementation work is bounded by task files under `docs/tasks/`.
 
@@ -82,6 +89,8 @@ implementation work is bounded by task files under `docs/tasks/`.
 
 ```bash
 bin/schuss validate [--record-set MANIFEST] [--json]
+bin/schuss catalog search [QUERY] [FILTER ...] [--record-set MANIFEST] [--json]
+bin/schuss catalog inspect FAMILY_ID@REVISION [--record-set MANIFEST] [--json]
 bin/schuss graph inspect GRAPH_ID@REVISION [--record-set MANIFEST] [--json]
 bin/schuss graph transact GRAPH_ID@REVISION --edits FILE_OR_STDIN [--record-set MANIFEST] [--json]
 bin/schuss build resolve REQUEST_ID@REVISION [--record-set MANIFEST] [--json]
@@ -90,10 +99,12 @@ bin/schuss op --request REQUEST_FILE_OR_STDIN --json
 ```
 
 Human output is deterministic plain text. `--json` emits the exact canonical
-shared-operation result plus one LF. Without `--record-set`, commands use
-accepted record set `schuss-record-set-000001` revision 1; later sets are
-explicit opt-ins. `build resolve` stops before backend lowering, graph
-transactions are non-persisted proposals, and no progress protocol is exposed.
+shared-operation result plus one LF. Catalog commands default to exact successor
+record set `schuss-record-set-000004` revision 1. Every pre-existing command
+keeps accepted record set `schuss-record-set-000001` revision 1 as its default;
+other later sets are explicit opt-ins. `build resolve` stops before backend
+lowering, graph transactions are non-persisted proposals, and no progress
+protocol is exposed.
 
 ## Inventory checks
 
@@ -107,6 +118,7 @@ python3 tools/inventory/validate_phase3_review_packet.py \
   catalog/reviews/phase-3-inventory-review-v0
 python3 tools/catalog/validate_semantic_catalog.py \
   catalog/overlays/phase-4a-semantic-catalog-v0
+python3 tools/catalog/validate_task011a_catalog.py
 ```
 
 The raw snapshot records 4,209 candidate files and two retained XML parse

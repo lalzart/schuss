@@ -49,6 +49,7 @@ def resolve_locator(
     specifications = {
         "graph": ("graphs", "graph_id", "schuss-graph-"),
         "build-request": ("request", "build_request_id", "schuss-build-request-"),
+        "family": ("catalog-projection", "family_id", "schuss-family-"),
     }
     if expected_kind not in specifications:
         raise ValueError(f"unknown product locator kind {expected_kind!r}")
@@ -58,9 +59,18 @@ def resolve_locator(
             "CLI_LOCATOR_WRONG_KIND",
             f"locator is not a {expected_kind} identity",
         )
+    if group == "catalog-projection":
+        families = (
+            context.catalog_projection["families"]
+            if context.catalog_projection is not None
+            else ()
+        )
+        candidates = [record["family_reference"] for record in families]
+    else:
+        candidates = context.records[group]
     matches = [
         record
-        for record in context.records[group]
+        for record in candidates
         if record.get(id_field) == stable_id and record.get("revision") == revision
     ]
     if not matches:
@@ -125,6 +135,45 @@ def build_resolve_request(
     }
 
 
+def catalog_search_request(
+    query: str, filters: dict[str, list[str]]
+) -> dict[str, Any]:
+    filter_names = (
+        "function",
+        "abstraction",
+        "form",
+        "signal_domain",
+        "signal_rate",
+        "signal_role",
+        "capability",
+        "technique",
+        "readiness",
+        "provenance",
+    )
+    return {
+        "schema_version": "schuss-operation-request-v2",
+        "canonical_profile": "schuss-canonical-json-v1",
+        "operation": "catalog.search",
+        "payload": {
+            "query": query,
+            "filters": {
+                name: sorted(set(filters.get(name, ()))) for name in filter_names
+            },
+        },
+    }
+
+
+def catalog_inspect_request(
+    family_reference: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "schema_version": "schuss-operation-request-v2",
+        "canonical_profile": "schuss-canonical-json-v1",
+        "operation": "catalog.inspect",
+        "payload": {"family_reference": family_reference},
+    }
+
+
 def _safe_text(value: Any) -> str:
     if value is None:
         return "none"
@@ -148,6 +197,7 @@ REFERENCE_ID_FIELDS = (
     "build_environment_id",
     "build_request_id",
     "build_result_id",
+    "catalog_id",
     "component_contract_id",
     "compute_target_id",
     "device_profile_id",
@@ -157,6 +207,7 @@ REFERENCE_ID_FIELDS = (
     "implementation_id",
     "instrument_id",
     "resource_report_id",
+    "stable_id",
 )
 
 
@@ -435,6 +486,123 @@ def _append_graph_transact(
     )
 
 
+def _append_catalog_search(lines: list[str], result: dict[str, Any]) -> None:
+    value = result.get("value")
+    if value is None:
+        return
+    _append_reference(lines, "catalog", value["catalog_reference"])
+    lines.append(f"projection_version: {_safe_text(value['projection_version'])}")
+    lines.append(f"match_algorithm: {_safe_text(value['match_algorithm'])}")
+    lines.append(f"input_closure_hash: {_safe_text(value['input_closure_hash'])}")
+    lines.append(f"query: {_safe_text(value['query'])}")
+    lines.append("filters:")
+    _append_tree(lines, value["filters"], "  ")
+    lines.append(f"total_matches: {value['total_matches']}")
+    lines.append("results:")
+    if not value["results"]:
+        lines.append("  none")
+    for item in value["results"]:
+        lines.append("  -")
+        _append_reference(lines, "family", item["family_reference"], "    ")
+        lines.append(f"    display_name: {_safe_text(item['display_name'])}")
+        lines.append(f"    primary_function: {_safe_text(item['primary_function'])}")
+        lines.append(f"    abstraction_level: {_safe_text(item['abstraction_level'])}")
+        _append_list(lines, "technique_tags", item["technique_tags"], "    ")
+        _append_list(
+            lines, "implementation_forms", item["implementation_forms"], "    "
+        )
+        _append_list(lines, "readiness_states", item["readiness_states"], "    ")
+        lines.append(
+            "    contract_facets_available: "
+            + _safe_text(item["contract_facets_available"])
+        )
+        _append_list(
+            lines, "provenance_facets", item["provenance_facets"], "    "
+        )
+
+
+def _append_catalog_inspect(lines: list[str], result: dict[str, Any]) -> None:
+    value = result.get("value")
+    if value is None:
+        return
+    _append_reference(lines, "catalog", value["catalog_reference"])
+    lines.append(f"projection_version: {_safe_text(value['projection_version'])}")
+    lines.append(f"input_closure_hash: {_safe_text(value['input_closure_hash'])}")
+    family = value["family"]
+    _append_reference(lines, "family", family["family_reference"])
+    lines.append(f"display_name: {_safe_text(family['display_name'])}")
+    lines.append(f"description: {_safe_text(family['description'])}")
+    lines.append(f"primary_function: {_safe_text(family['primary_function'])}")
+    lines.append(f"abstraction_level: {_safe_text(family['abstraction_level'])}")
+    _append_list(lines, "aliases", family["aliases"], "")
+    _append_list(lines, "technique_tags", family["technique_tags"], "")
+    _append_list(lines, "implementation_forms", family["implementation_forms"], "")
+    _append_list(lines, "contract_facet_names", family["contract_facet_names"], "")
+    _append_list(lines, "capability_keys", family["capability_keys"], "")
+    _append_list(lines, "readiness_states", family["readiness_states"], "")
+    _append_list(lines, "provenance_facets", family["provenance_facets"], "")
+    _append_list(lines, "unresolved_facts", family["unresolved_facts"], "")
+    lines.append("implementations:")
+    if not family["implementations"]:
+        lines.append("  none")
+    for implementation in family["implementations"]:
+        lines.append(
+            f"  - implementation_id: {_safe_text(implementation['implementation_id'])}"
+        )
+        if implementation["exact_reference"] is None:
+            lines.append("    exact_reference: absent-in-phase-4a-overlay")
+        else:
+            _append_reference(
+                lines,
+                "exact_reference",
+                implementation["exact_reference"],
+                "    ",
+            )
+        lines.append(
+            f"    display_name: {_safe_text(implementation['display_name'])}"
+        )
+        lines.append(f"    form: {_safe_text(implementation['form'])}")
+        _append_list(
+            lines,
+            "observation_references",
+            implementation["observation_references"],
+            "    ",
+        )
+        _append_list(
+            lines,
+            "provenance_sources",
+            implementation["provenance_sources"],
+            "    ",
+        )
+        for label in (
+            "contract_references",
+            "binding_references",
+            "eligibility_references",
+            "target_references",
+            "backend_references",
+            "result_references",
+            "artifact_references",
+            "evidence_references",
+        ):
+            lines.append(f"    {label}:")
+            if not implementation[label]:
+                lines.append("      none")
+            for reference in implementation[label]:
+                _append_reference(lines, "reference", reference, "      ")
+        _append_list(
+            lines,
+            "readiness_states",
+            implementation["readiness_states"],
+            "    ",
+        )
+        _append_list(
+            lines,
+            "unresolved_facts",
+            implementation["unresolved_facts"],
+            "    ",
+        )
+
+
 def _append_diagnostics(lines: list[str], result: dict[str, Any]) -> None:
     lines.append("diagnostics:")
     diagnostics = result["diagnostics"]
@@ -468,6 +636,8 @@ def render_human_result(
         "graph.inspect": lambda: _append_graph_inspect(lines, result),
         "build.resolve": lambda: _append_build_resolve(lines, result, context),
         "graph.transact": lambda: _append_graph_transact(lines, result, request),
+        "catalog.search": lambda: _append_catalog_search(lines, result),
+        "catalog.inspect": lambda: _append_catalog_inspect(lines, result),
     }
     appenders[result["operation"]]()
     _append_diagnostics(lines, result)
@@ -479,10 +649,20 @@ _schuss_complete() {
   local current="${COMP_WORDS[COMP_CWORD]}"
   local choices=""
   if [[ ${COMP_CWORD} -eq 1 ]]; then
-    choices="validate graph build completion op --help"
+    choices="validate catalog graph build completion op --help"
   else
     case "${COMP_WORDS[1]}" in
       validate) choices="--record-set --json --help" ;;
+      catalog)
+        if [[ ${COMP_CWORD} -eq 2 ]]; then
+          choices="search inspect --help"
+        else
+          case "${COMP_WORDS[2]}" in
+            search) choices="--function --abstraction --form --signal-domain --signal-rate --signal-role --capability --technique --readiness --provenance --record-set --json --help" ;;
+            inspect) choices="--record-set --json --help" ;;
+          esac
+        fi
+        ;;
       graph)
         if [[ ${COMP_CWORD} -eq 2 ]]; then
           choices="inspect transact --help"
@@ -513,8 +693,9 @@ complete -F _schuss_complete schuss
 ZSH_COMPLETION = """#compdef schuss
 # Schuss static completion for Zsh
 _schuss() {
-  local -a root_commands graph_commands build_commands shells
-  root_commands=(validate graph build completion op)
+  local -a root_commands catalog_commands graph_commands build_commands shells
+  root_commands=(validate catalog graph build completion op)
+  catalog_commands=(search inspect)
   graph_commands=(inspect transact)
   build_commands=(resolve)
   shells=(bash zsh fish)
@@ -524,6 +705,16 @@ _schuss() {
   fi
   case ${words[2]} in
     validate) _values 'option' --record-set --json --help ;;
+    catalog)
+      if (( CURRENT == 3 )); then
+        _describe 'catalog command' catalog_commands
+      else
+        case ${words[3]} in
+          search) _values 'option' --function --abstraction --form --signal-domain --signal-rate --signal-role --capability --technique --readiness --provenance --record-set --json --help ;;
+          inspect) _values 'option' --record-set --json --help ;;
+        esac
+      fi
+      ;;
     graph)
       if (( CURRENT == 3 )); then
         _describe 'graph command' graph_commands
@@ -552,15 +743,27 @@ _schuss "$@"
 FISH_COMPLETION = """# Schuss static completion for Fish
 complete -c schuss -f
 complete -c schuss -n '__fish_use_subcommand' -a validate
+complete -c schuss -n '__fish_use_subcommand' -a catalog
 complete -c schuss -n '__fish_use_subcommand' -a graph
 complete -c schuss -n '__fish_use_subcommand' -a build
 complete -c schuss -n '__fish_use_subcommand' -a completion
 complete -c schuss -n '__fish_use_subcommand' -a op
 complete -c schuss -n '__fish_seen_subcommand_from graph' -a 'inspect transact'
+complete -c schuss -n '__fish_seen_subcommand_from catalog' -a 'search inspect'
 complete -c schuss -n '__fish_seen_subcommand_from build' -a resolve
 complete -c schuss -n '__fish_seen_subcommand_from completion' -a 'bash zsh fish'
-complete -c schuss -n '__fish_seen_subcommand_from validate inspect transact resolve op' -l record-set -r
-complete -c schuss -n '__fish_seen_subcommand_from validate inspect transact resolve op' -l json
+complete -c schuss -n '__fish_seen_subcommand_from validate search inspect transact resolve op' -l record-set -r
+complete -c schuss -n '__fish_seen_subcommand_from validate search inspect transact resolve op' -l json
+complete -c schuss -n '__fish_seen_subcommand_from search' -l function -r
+complete -c schuss -n '__fish_seen_subcommand_from search' -l abstraction -r
+complete -c schuss -n '__fish_seen_subcommand_from search' -l form -r
+complete -c schuss -n '__fish_seen_subcommand_from search' -l signal-domain -r
+complete -c schuss -n '__fish_seen_subcommand_from search' -l signal-rate -r
+complete -c schuss -n '__fish_seen_subcommand_from search' -l signal-role -r
+complete -c schuss -n '__fish_seen_subcommand_from search' -l capability -r
+complete -c schuss -n '__fish_seen_subcommand_from search' -l technique -r
+complete -c schuss -n '__fish_seen_subcommand_from search' -l readiness -r
+complete -c schuss -n '__fish_seen_subcommand_from search' -l provenance -r
 complete -c schuss -n '__fish_seen_subcommand_from transact' -l edits -r
 complete -c schuss -n '__fish_seen_subcommand_from op' -l request -r
 complete -c schuss -l help

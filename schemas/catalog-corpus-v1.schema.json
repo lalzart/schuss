@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catalog-corpus-v1.schema.json",
+  "title": "Schuss exact reviewed catalog corpus v1",
+  "type": "object",
+  "required": [
+    "schema_version", "canonical_profile", "catalog_id", "revision",
+    "content_hash", "projection_version", "match_algorithm",
+    "overlay_source", "family_companions", "family_additions",
+    "implementation_additions", "slice_review"
+  ],
+  "properties": {
+    "schema_version": {"const": "catalog-corpus-v1"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "catalog_id": {"const": "schuss-catalog-000001"},
+    "revision": {"const": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "projection_version": {"const": "schuss-catalog-projection-v1"},
+    "match_algorithm": {"const": "schuss-catalog-match-v1"},
+    "overlay_source": {"$ref": "#/$defs/overlaySource"},
+    "family_companions": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 25,
+      "maxItems": 25,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/familyCompanion"}
+    },
+    "family_additions": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/familyAddition"}
+    },
+    "implementation_additions": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/implementationAddition"}
+    },
+    "slice_review": {"$ref": "#/$defs/sliceReview"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "familyId": {"type": "string", "pattern": "^schuss-family-[0-9]{6}$"},
+    "implementationId": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"},
+    "evidenceRef": {"type": "string", "pattern": "^legacy-resolved-catalog-v0:object:[0-9]+$"},
+    "portablePath": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._ -]*(?:/[A-Za-z0-9][A-Za-z0-9._ -]*)*$"},
+    "stringSet": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "overlaySource": {
+      "type": "object",
+      "required": [
+        "overlay_id", "schema_version", "portable_path", "byte_sha256",
+        "legacy_manifest_sha256"
+      ],
+      "properties": {
+        "overlay_id": {"const": "phase-4a-semantic-catalog-v0"},
+        "schema_version": {"const": "semantic-catalog-overlay-v0"},
+        "portable_path": {"const": "catalog/overlays/phase-4a-semantic-catalog-v0/catalog.json"},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"},
+        "legacy_manifest_sha256": {"$ref": "#/$defs/rawSha256"}
+      },
+      "additionalProperties": false
+    },
+    "familyCompanion": {
+      "type": "object",
+      "required": [
+        "family_id", "revision", "content_hash", "canonical_member_sha256",
+        "semantics_changed", "presentation_override", "rationale"
+      ],
+      "properties": {
+        "family_id": {"$ref": "#/$defs/familyId"},
+        "revision": {"const": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "canonical_member_sha256": {"$ref": "#/$defs/rawSha256"},
+        "semantics_changed": {"type": "boolean"},
+        "presentation_override": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "required": ["display_name", "aliases", "description"],
+              "properties": {
+                "display_name": {"type": "string", "minLength": 1},
+                "aliases": {"$ref": "#/$defs/stringSet"},
+                "description": {"type": "string", "minLength": 1}
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "rationale": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "observationSource": {
+      "type": "object",
+      "required": [
+        "evidence_ref", "canonical_observation_sha256", "source_id",
+        "source_path", "source_sha256", "legacy_id", "legacy_uuid"
+      ],
+      "properties": {
+        "evidence_ref": {"$ref": "#/$defs/evidenceRef"},
+        "canonical_observation_sha256": {"$ref": "#/$defs/rawSha256"},
+        "source_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "source_path": {"$ref": "#/$defs/portablePath"},
+        "source_sha256": {"$ref": "#/$defs/rawSha256"},
+        "legacy_id": {"type": "string", "minLength": 1},
+        "legacy_uuid": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "familyAddition": {
+      "type": "object",
+      "required": [
+        "family_id", "revision", "content_hash", "display_name", "aliases",
+        "description", "primary_category", "secondary_function_tags",
+        "abstraction_level", "review_status", "classification_confidence",
+        "classification_rationale", "source_observation",
+        "unresolved_questions"
+      ],
+      "properties": {
+        "family_id": {"$ref": "#/$defs/familyId"},
+        "revision": {"const": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "display_name": {"type": "string", "minLength": 1},
+        "aliases": {"$ref": "#/$defs/stringSet"},
+        "description": {"type": "string", "minLength": 1},
+        "primary_category": {"enum": ["modulation-control", "timing-sequencing"]},
+        "secondary_function_tags": {"$ref": "#/$defs/stringSet"},
+        "abstraction_level": {"const": "primitive"},
+        "review_status": {"const": "slice-reviewed"},
+        "classification_confidence": {"enum": ["high", "medium"]},
+        "classification_rationale": {"type": "string", "minLength": 1},
+        "source_observation": {"$ref": "#/$defs/observationSource"},
+        "unresolved_questions": {"$ref": "#/$defs/stringSet"}
+      },
+      "additionalProperties": false
+    },
+    "familyReference": {
+      "type": "object",
+      "required": ["family_id", "revision", "content_hash"],
+      "properties": {
+        "family_id": {"$ref": "#/$defs/familyId"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "implementationAddition": {
+      "type": "object",
+      "required": [
+        "implementation_id", "revision", "content_hash", "family_reference",
+        "display_name", "form", "source_observation", "review_status",
+        "membership_confidence", "membership_rationale",
+        "compatibility_status", "unresolved_questions"
+      ],
+      "properties": {
+        "implementation_id": {"$ref": "#/$defs/implementationId"},
+        "revision": {"const": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "family_reference": {"$ref": "#/$defs/familyReference"},
+        "display_name": {"type": "string", "minLength": 1},
+        "form": {"enum": ["native-object", "generated-object"]},
+        "source_observation": {"$ref": "#/$defs/observationSource"},
+        "review_status": {"const": "slice-reviewed"},
+        "membership_confidence": {"enum": ["high", "medium"]},
+        "membership_rationale": {"type": "string", "minLength": 1},
+        "compatibility_status": {"const": "not-evaluated"},
+        "unresolved_questions": {"$ref": "#/$defs/stringSet"}
+      },
+      "additionalProperties": false
+    },
+    "sliceEntry": {
+      "type": "object",
+      "required": [
+        "role", "family_id", "implementation_id", "evidence_ref",
+        "identity_decision", "later_binding_status"
+      ],
+      "properties": {
+        "role": {"type": "string", "minLength": 1},
+        "family_id": {"$ref": "#/$defs/familyId"},
+        "implementation_id": {"$ref": "#/$defs/implementationId"},
+        "evidence_ref": {"$ref": "#/$defs/evidenceRef"},
+        "identity_decision": {"type": "string", "minLength": 1},
+        "later_binding_status": {"const": "not-established"}
+      },
+      "additionalProperties": false
+    },
+    "sliceReview": {
+      "type": "object",
+      "required": [
+        "review_id", "roles", "observation_918_identity_warning",
+        "later_proof_gaps"
+      ],
+      "properties": {
+        "review_id": {"const": "schuss-gills-slice-review-000001"},
+        "roles": {
+          "type": "array",
+          "x-schuss-array-kind": "sequence",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": {"$ref": "#/$defs/sliceEntry"}
+        },
+        "observation_918_identity_warning": {"type": "string", "minLength": 1},
+        "later_proof_gaps": {"$ref": "#/$defs/stringSet"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

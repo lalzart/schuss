@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "operation-request-v2.schema.json",
+  "title": "Schuss headless operation request v2",
+  "oneOf": [
+    {"$ref": "#/$defs/existingOperation"},
+    {"$ref": "#/$defs/catalogSearch"},
+    {"$ref": "#/$defs/catalogInspect"}
+  ],
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "stringSet": {
+      "type": "array", "x-schuss-array-kind": "set",
+      "uniqueItems": true, "items": {"type": "string", "minLength": 1}
+    },
+    "existingOperation": {
+      "type": "object",
+      "required": ["schema_version", "canonical_profile", "operation", "payload"],
+      "properties": {
+        "schema_version": {"const": "schuss-operation-request-v2"},
+        "canonical_profile": {"const": "schuss-canonical-json-v1"},
+        "operation": {"enum": ["records.validate", "graph.inspect", "build.resolve", "graph.transact"]},
+        "payload": {"type": "object", "x-schuss-domain-value": true}
+      },
+      "additionalProperties": false
+    },
+    "filters": {
+      "type": "object",
+      "required": [
+        "function", "abstraction", "form", "signal_domain", "signal_rate",
+        "signal_role", "capability", "technique", "readiness", "provenance"
+      ],
+      "properties": {
+        "function": {"$ref": "#/$defs/stringSet"},
+        "abstraction": {"$ref": "#/$defs/stringSet"},
+        "form": {"$ref": "#/$defs/stringSet"},
+        "signal_domain": {"$ref": "#/$defs/stringSet"},
+        "signal_rate": {"$ref": "#/$defs/stringSet"},
+        "signal_role": {"$ref": "#/$defs/stringSet"},
+        "capability": {"$ref": "#/$defs/stringSet"},
+        "technique": {"$ref": "#/$defs/stringSet"},
+        "readiness": {"$ref": "#/$defs/stringSet"},
+        "provenance": {"$ref": "#/$defs/stringSet"}
+      },
+      "additionalProperties": false
+    },
+    "catalogSearch": {
+      "type": "object",
+      "required": ["schema_version", "canonical_profile", "operation", "payload"],
+      "properties": {
+        "schema_version": {"const": "schuss-operation-request-v2"},
+        "canonical_profile": {"const": "schuss-canonical-json-v1"},
+        "operation": {"const": "catalog.search"},
+        "payload": {
+          "type": "object",
+          "required": ["query", "filters"],
+          "properties": {
+            "query": {"type": "string"},
+            "filters": {"$ref": "#/$defs/filters"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "catalogInspect": {
+      "type": "object",
+      "required": ["schema_version", "canonical_profile", "operation", "payload"],
+      "properties": {
+        "schema_version": {"const": "schuss-operation-request-v2"},
+        "canonical_profile": {"const": "schuss-canonical-json-v1"},
+        "operation": {"const": "catalog.inspect"},
+        "payload": {
+          "type": "object",
+          "required": ["family_reference"],
+          "properties": {
+            "family_reference": {
+              "type": "object",
+              "required": ["family_id", "revision", "content_hash"],
+              "properties": {
+                "family_id": {"type": "string", "pattern": "^schuss-family-[0-9]{6}$"},
+                "revision": {"type": "integer", "minimum": 1},
+                "content_hash": {"$ref": "#/$defs/contentHash"}
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

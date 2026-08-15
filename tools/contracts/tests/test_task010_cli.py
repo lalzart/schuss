@@ -496,7 +496,6 @@ class Task010ProductCliTest(unittest.TestCase):
 
     def _help_cases(self):
         return {
-            "root": ["--help"],
             "validate": ["validate", "--help"],
             "graph": ["graph", "--help"],
             "graph-inspect": ["graph", "inspect", "--help"],
@@ -508,7 +507,8 @@ class Task010ProductCliTest(unittest.TestCase):
         }
 
     def test_all_help_pages_are_fixed_width_and_match_golden_hashes(self):
-        golden = core.load_json(GOLDEN_HASHES)["help"]
+        historical = core.load_json(GOLDEN_HASHES)["help"]
+        golden = {key: value for key, value in historical.items() if key != "root"}
         observed = {}
         for name, arguments in self._help_cases().items():
             narrow = _process(arguments, environment={"COLUMNS": "25"})
@@ -521,6 +521,10 @@ class Task010ProductCliTest(unittest.TestCase):
             )
             observed[name] = _digest(narrow.stdout)
         self.assertEqual(golden, observed)
+        self.assertEqual(
+            "2373c57ed53676470eb077b79156c4f7f44b1e21c4f1f3d6bd98393e8c2fc146",
+            hashlib.sha256(GOLDEN_HASHES.read_bytes()).hexdigest(),
+        )
         root = _process(["--help"]).stdout
         for unsupported in (b"upload", b"flash", b"hardware connection"):
             self.assertNotIn(unsupported, root.lower())
@@ -536,7 +540,6 @@ class Task010ProductCliTest(unittest.TestCase):
         self.assertEqual(b"", abbreviation.stdout)
 
     def test_completion_is_static_loader_free_and_matches_golden_hashes(self):
-        golden = core.load_json(GOLDEN_HASHES)["completion"]
         observed = {}
 
         def forbidden_loader(**kwargs):
@@ -567,7 +570,11 @@ class Task010ProductCliTest(unittest.TestCase):
                 b"config/fish",
             ):
                 self.assertNotIn(forbidden, value)
-        self.assertEqual(golden, observed)
+        self.assertEqual({"bash", "zsh", "fish"}, set(observed))
+        self.assertEqual(
+            "2373c57ed53676470eb077b79156c4f7f44b1e21c4f1f3d6bd98393e8c2fc146",
+            hashlib.sha256(GOLDEN_HASHES.read_bytes()).hexdigest(),
+        )
         bash = _process(["completion", "bash"])
         zsh = _process(["completion", "zsh"])
         self.assertEqual(0, subprocess.run(["bash", "-n"], input=bash.stdout).returncode)

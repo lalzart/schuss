@@ -19,6 +19,7 @@ ID_FIELDS = (
     "build_environment_id",
     "build_request_id",
     "build_result_id",
+    "catalog_id",
     "capability_vocabulary_id",
     "component_contract_id",
     "compute_target_id",
