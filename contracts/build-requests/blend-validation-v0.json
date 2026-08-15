@@ -1,0 +1,37 @@
+{
+  "schema_version": "build-request-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "build_request_id": "schuss-build-request-000001",
+  "revision": 1,
+  "content_hash": "sha256:0ba7e74977ac7ebcf50cb73826c349040d998541f688bb32cbedf88140259e95",
+  "graph_reference": {
+    "graph_id": "schuss-graph-000001",
+    "revision": 1,
+    "content_hash": "sha256:b38562dc2dcf80036e8fc1d78fe8ee425de01f4943495a23375bfb4e7f346e6e"
+  },
+  "instrument_reference": {
+    "status": "included",
+    "instrument_id": "schuss-instrument-000001",
+    "revision": 2,
+    "content_hash": "sha256:f98290ae5a1b599466ff9429c08442492fb172e94f6012b6ddedecd2bafd6ce5"
+  },
+  "compute_target_reference": {
+    "compute_target_id": "schuss-compute-target-000001",
+    "revision": 1,
+    "content_hash": "sha256:c1fa5a49ab9474068c70ffc03f5bbfc216936d1fcfa1514e257ec7d5361c866d"
+  },
+  "backend_reference": {
+    "backend_id": "schuss-backend-000001",
+    "revision": 1,
+    "content_hash": "sha256:5070f9e9c667d6f16fb5b0022f045a1990243c2acbedf4585e8f41420e7c3178"
+  },
+  "options": {
+    "profile": "schuss-build-options-v0",
+    "determinism": "required",
+    "diagnostic_policy": "collect-all-deterministic",
+    "implicit_discovery": false
+  },
+  "asset_references": [],
+  "binding_overrides": [],
+  "requested_stopping_stage": "implementation-resolution"
+}

@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "backend-v0.schema.json",
+  "title": "Schuss backend capability contract v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "backend_id", "revision", "content_hash", "display_name", "lowering_identity", "accepted_input_schemas", "supported_realization_forms", "capability_vocabulary_reference", "required_target_capabilities", "target_pairings", "stage_contract", "permitted_stopping_stages", "artifact_declarations", "determinism_contract", "diagnostic_contract", "toolchain_reference", "firmware_runtime_reference", "bridge_boundary"],
+  "properties": {
+    "schema_version": {"const": "backend-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "backend_id": {"type": "string", "pattern": "^schuss-backend-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "display_name": {"type": "string", "minLength": 1},
+    "lowering_identity": {"$ref": "#/$defs/loweringIdentity"},
+    "accepted_input_schemas": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"enum": ["dsp-graph-v0", "instrument-v0"]}},
+    "supported_realization_forms": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"enum": ["generated-legacy-object", "legacy-native-object", "legacy-subpatch", "transparent-compound", "native-cpp", "target-service"]}},
+    "capability_vocabulary_reference": {"$ref": "#/$defs/capabilityVocabularyReference"},
+    "required_target_capabilities": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/capabilityRequirement"}},
+    "target_pairings": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/targetPairing"}},
+    "stage_contract": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/stage"}},
+    "permitted_stopping_stages": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/stageKey"}},
+    "artifact_declarations": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/artifactDeclaration"}},
+    "determinism_contract": {"$ref": "#/$defs/determinismContract"},
+    "diagnostic_contract": {"$ref": "#/$defs/diagnosticContract"},
+    "toolchain_reference": {"$ref": "#/$defs/environmentReference"},
+    "firmware_runtime_reference": {"$ref": "#/$defs/environmentReference"},
+    "bridge_boundary": {"$ref": "#/$defs/bridgeBoundary"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "capabilityVocabularyReference": {
+      "type": "object",
+      "required": ["capability_vocabulary_id", "revision", "content_hash"],
+      "properties": {
+        "capability_vocabulary_id": {"type": "string", "pattern": "^schuss-capability-vocabulary-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "targetReference": {
+      "type": "object",
+      "required": ["compute_target_id", "revision", "content_hash"],
+      "properties": {
+        "compute_target_id": {"type": "string", "pattern": "^schuss-compute-target-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "environmentReference": {
+      "type": "object",
+      "required": ["build_environment_id", "revision", "content_hash"],
+      "properties": {
+        "build_environment_id": {"type": "string", "pattern": "^schuss-build-environment-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "loweringIdentity": {
+      "type": "object",
+      "required": ["backend_kind", "contract_version"],
+      "properties": {
+        "backend_kind": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "contract_version": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"}
+      },
+      "additionalProperties": false
+    },
+    "capabilityRequirement": {
+      "type": "object",
+      "required": ["capability_key", "value", "comparison_rule"],
+      "properties": {
+        "capability_key": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "value": {"oneOf": [{"type": "boolean"}, {"type": "integer"}]},
+        "comparison_rule": {"enum": ["exact", "at-least", "at-most"]}
+      },
+      "additionalProperties": false
+    },
+    "targetPairing": {
+      "type": "object",
+      "required": ["target_reference", "contract_state", "rationale"],
+      "properties": {
+        "target_reference": {"$ref": "#/$defs/targetReference"},
+        "contract_state": {"const": "declared"},
+        "rationale": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "stageKey": {
+      "enum": ["schema-identity-validation", "target-independent-graph-validation", "target-backend-validation", "implementation-resolution", "compound-elaboration", "dependency-resource-planning", "backend-lowering", "artifact-generation", "target-compile-link", "packaging-evidence-recording"]
+    },
+    "stage": {
+      "type": "object",
+      "required": ["ordinal", "stage", "stage_kind", "permitted_statuses"],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 1},
+        "stage": {"$ref": "#/$defs/stageKey"},
+        "stage_kind": {"enum": ["validation", "resolution", "planning", "lowering", "generation", "tool-execution", "recording"]},
+        "permitted_statuses": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"enum": ["success", "failed", "unsupported", "unresolved", "not-run"]}}
+      },
+      "additionalProperties": false
+    },
+    "artifactDeclaration": {
+      "type": "object",
+      "required": ["artifact_kind", "media_type", "producer_stage"],
+      "properties": {
+        "artifact_kind": {"enum": ["resolution-plan", "elaboration-map", "resource-plan", "legacy-boundary-patch", "generated-cpp", "arm-object", "link-map", "target-executable", "build-package", "source-map"]},
+        "media_type": {"type": "string", "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$"},
+        "producer_stage": {"$ref": "#/$defs/stageKey"}
+      },
+      "additionalProperties": false
+    },
+    "determinismContract": {
+      "type": "object",
+      "required": ["identical_closure_requires_identical_bytes", "stable_ordering", "timestamps_in_canonical_identity"],
+      "properties": {
+        "identical_closure_requires_identical_bytes": {"const": true},
+        "stable_ordering": {"const": true},
+        "timestamps_in_canonical_identity": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "diagnosticContract": {
+      "type": "object",
+      "required": ["structured_codes", "source_map_required_after_generation", "host_paths_in_identity", "unordered_logs_as_identity"],
+      "properties": {
+        "structured_codes": {"const": true},
+        "source_map_required_after_generation": {"const": true},
+        "host_paths_in_identity": {"const": false},
+        "unordered_logs_as_identity": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "bridgeBoundary": {
+      "type": "object",
+      "required": ["kind", "location", "legacy_boundary_artifact", "execution_status"],
+      "properties": {
+        "kind": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "location": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"},
+        "legacy_boundary_artifact": {"enum": ["resolution-plan", "elaboration-map", "resource-plan", "legacy-boundary-patch", "generated-cpp", "arm-object", "link-map", "target-executable", "build-package", "source-map"]},
+        "execution_status": {"const": "not-run"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

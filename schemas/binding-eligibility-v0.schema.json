@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "binding-eligibility-v0.schema.json",
+  "title": "Schuss binding eligibility companion v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "binding_eligibility_id", "revision", "content_hash", "binding_reference", "contract_reference", "allowed_pair", "realization_form", "capability_requirements", "dependency_requirements", "resource_requirements", "required_evidence_level", "compatibility_evidence", "selection_policy", "unresolved_questions"],
+  "properties": {
+    "schema_version": {"const": "binding-eligibility-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "binding_eligibility_id": {"type": "string", "pattern": "^schuss-binding-eligibility-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "binding_reference": {"$ref": "#/$defs/bindingReference"},
+    "contract_reference": {"$ref": "#/$defs/contractReference"},
+    "allowed_pair": {"$ref": "#/$defs/allowedPair"},
+    "realization_form": {"enum": ["generated-legacy-object", "legacy-native-object", "legacy-subpatch", "transparent-compound", "native-cpp", "target-service"]},
+    "capability_requirements": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/capabilityRequirement"}},
+    "dependency_requirements": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/dependencyRequirement"}},
+    "resource_requirements": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/resourceRequirement"}},
+    "required_evidence_level": {"type": "integer", "minimum": 1, "maximum": 8},
+    "compatibility_evidence": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/evidenceReference"}},
+    "selection_policy": {"$ref": "#/$defs/selectionPolicy"},
+    "unresolved_questions": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/unresolvedQuestion"}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "bindingReference": {
+      "type": "object",
+      "required": ["implementation_id", "revision", "content_hash"],
+      "properties": {
+        "implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "contractReference": {
+      "type": "object",
+      "required": ["component_contract_id", "revision", "content_hash"],
+      "properties": {
+        "component_contract_id": {"type": "string", "pattern": "^schuss-component-contract-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "targetReference": {
+      "type": "object",
+      "required": ["compute_target_id", "revision", "content_hash"],
+      "properties": {
+        "compute_target_id": {"type": "string", "pattern": "^schuss-compute-target-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "backendReference": {
+      "type": "object",
+      "required": ["backend_id", "revision", "content_hash"],
+      "properties": {
+        "backend_id": {"type": "string", "pattern": "^schuss-backend-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "pairState": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "evidence_level", "evidence_refs"],
+          "properties": {
+            "status": {"enum": ["supported", "unsupported"]},
+            "evidence_level": {"type": "integer", "minimum": 1, "maximum": 8},
+            "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/evidenceReference"}}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["status", "code", "rationale"],
+          "properties": {
+            "status": {"enum": ["unresolved", "not-evaluated"]},
+            "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+            "rationale": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "allowedPair": {
+      "type": "object",
+      "required": ["target_reference", "backend_reference", "state"],
+      "properties": {
+        "target_reference": {"$ref": "#/$defs/targetReference"},
+        "backend_reference": {"$ref": "#/$defs/backendReference"},
+        "state": {"$ref": "#/$defs/pairState"}
+      },
+      "additionalProperties": false
+    },
+    "capabilityRequirement": {
+      "type": "object",
+      "required": ["capability_key", "value", "comparison_rule"],
+      "properties": {
+        "capability_key": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "value": {"oneOf": [{"type": "boolean"}, {"type": "integer"}]},
+        "comparison_rule": {"enum": ["exact", "at-least", "at-most"]}
+      },
+      "additionalProperties": false
+    },
+    "requirementState": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "evidence_refs"],
+          "properties": {
+            "status": {"enum": ["supported", "unsupported"]},
+            "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["status", "code", "rationale"],
+          "properties": {
+            "status": {"enum": ["unresolved", "not-evaluated"]},
+            "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+            "rationale": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "dependencyRequirement": {
+      "type": "object",
+      "required": ["dependency_id", "portable_locator", "state"],
+      "properties": {
+        "dependency_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "portable_locator": {"type": "string", "pattern": "^sha256/[0-9a-f]{64}$"},
+        "state": {"$ref": "#/$defs/requirementState"}
+      },
+      "additionalProperties": false
+    },
+    "resourceRequirement": {
+      "type": "object",
+      "required": ["requirement_id", "resource_kind", "region_id", "amount_bytes", "alignment_bytes", "state"],
+      "properties": {
+        "requirement_id": {"type": "string", "pattern": "^binding-resource-requirement-[0-9]{6}$"},
+        "resource_kind": {"enum": ["code", "read-only-data", "data", "stack", "heap", "asset"]},
+        "region_id": {"type": "string", "pattern": "^target-memory-region-[0-9]{6}$"},
+        "amount_bytes": {"type": "integer", "minimum": 0},
+        "alignment_bytes": {"type": "integer", "minimum": 1},
+        "state": {"$ref": "#/$defs/requirementState"}
+      },
+      "additionalProperties": false
+    },
+    "evidenceReference": {
+      "type": "object",
+      "required": ["evidence_claim_id", "revision", "content_hash"],
+      "properties": {
+        "evidence_claim_id": {"type": "string", "pattern": "^schuss-evidence-claim-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "selectionPolicy": {
+      "type": "object",
+      "required": ["policy_id", "version", "priority", "ranking_rule", "tie_behavior", "implicit_fallback"],
+      "properties": {
+        "policy_id": {"type": "string", "pattern": "^schuss-selection-policy-[0-9]{6}$"},
+        "version": {"type": "integer", "minimum": 1},
+        "priority": {"type": "integer"},
+        "ranking_rule": {"const": "higher-explicit-priority"},
+        "tie_behavior": {"const": "ambiguous"},
+        "implicit_fallback": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "unresolvedQuestion": {
+      "type": "object",
+      "required": ["question_id", "code", "owner", "earliest_task", "question", "rationale"],
+      "properties": {
+        "question_id": {"type": "string", "pattern": "^eligibility-question-[0-9]{6}$"},
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "owner": {"enum": ["target-owner", "backend-owner", "build-selection-owner"]},
+        "earliest_task": {"type": "string", "pattern": "^task-[0-9]{3}$"},
+        "question": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

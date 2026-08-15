@@ -1,0 +1,24 @@
+{
+  "schema_version": "build-environment-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "build_environment_id": "schuss-build-environment-000002",
+  "revision": 1,
+  "content_hash": "sha256:4475da81044f40c37e95cd01dcd0a17e3d612c664cc5baa904e0bf1e58e8ae47",
+  "environment_kind": "firmware-runtime-abi",
+  "identity": {
+    "status": "unresolved",
+    "required_identity_kind": "ksoloti-firmware-runtime",
+    "target_triple": "arm-none-eabi",
+    "known_constraints": ["source-declared-firmware-version-1.1.0.0", "legacy-patch-initializer-and-patchmeta-boundary"],
+    "code": "FIRMWARE_RUNTIME_ARTIFACT_IDENTITY_UNRESOLVED",
+    "owner": "target-owner",
+    "earliest_task": "task-009",
+    "rationale": "The pinned sources declare a firmware version and legacy patch interface, but no exact built firmware artifact hash or proven runtime ABI closure is available in Task 007.",
+    "question": "Which exact firmware artifact bytes and source closure define the runtime ABI used by the first Task 009 build and link result?",
+    "evidence_refs": [
+      {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "ai/FIRMWARE_ABI_V1.md", "byte_sha256": "eb6f31629e9eca71ef53285053bc624704886854d562c6efcfb769cecf878ae4", "claim_kind": "limitation-declared"},
+      {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/axoloti_defines.h", "byte_sha256": "325f034f77b83139eabb48c9712fac039773ebef1ccf99ec62c461c8a035cc70", "claim_kind": "source-declared"},
+      {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/patch.h", "byte_sha256": "fe64781fac09b82d6f45eafbb60efcfe7b1af655af5dcccaac232e29c31dad2c", "claim_kind": "source-declared"}
+    ]
+  }
+}

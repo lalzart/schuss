@@ -93,10 +93,13 @@ exact Crossfader family companion, three non-interchangeable component
 contracts and implementation seam maps, one authoritative typed graph, and an
 exactly resolved instrument revision 2 while retaining deferred revision 1.
 Structural, exact-reference, target-independent type, legacy seam-map, and
-graph-target evidence pass. Target/backend, compiler, artifact, device,
-real-time, and audible levels remain `not-run`; Task 007 is next. See
-`docs/COMPONENT_GRAPH_CONTRACTS.md` and
-`docs/tasks/006-component-contract-binding-and-dsp-graph-contracts.md`.
+graph-target evidence pass. Task 007 now adds reusable target/backend/build
+contracts and a Ksoloti-specific production closure. Its pure resolver reports
+the candidate unresolved because compatibility, capabilities, toolchain, and
+runtime identity remain unproved. No backend, artifact-generation, ARM,
+device, real-time, or audible evidence was performed. Task 008 is next and
+begins by consolidating the current one-way validator stack before defining
+shared headless operations. See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`.
 
 ## Terminology
 

@@ -1,0 +1,574 @@
+{
+  "fixture_scope": "non-production-record-shapes-only",
+  "artifact_bytes_utf8": "fixture-resolution-plan\n",
+  "artifact": {
+    "schema_version": "artifact-descriptor-v0",
+    "canonical_profile": "schuss-canonical-json-v1",
+    "artifact_id": "schuss-artifact-900001",
+    "revision": 1,
+    "content_hash": "sha256:fe3bf270259b61d2c97ebe00e9b565903413e0607dc44671cfc19db0350511a1",
+    "artifact_kind": "resolution-plan",
+    "media_type": "application/vnd.schuss.resolution-plan+json",
+    "byte_length": 24,
+    "byte_sha256": "ea910794d769f1fff3844537db834256a8285ca13ee4bc6c446fa3f31a75f954",
+    "producer_stage": "implementation-resolution",
+    "producer_contract": {
+      "producer_id": "schuss-fixture-resolver",
+      "producer_version": "v0"
+    },
+    "input_closure_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+    "portable_locator": "sha256/ea910794d769f1fff3844537db834256a8285ca13ee4bc6c446fa3f31a75f954",
+    "parent_artifact_references": [],
+    "source_map_artifact_references": []
+  },
+  "resource_report": {
+    "schema_version": "resource-report-v0",
+    "canonical_profile": "schuss-canonical-json-v1",
+    "resource_report_id": "schuss-resource-report-900001",
+    "revision": 1,
+    "content_hash": "sha256:5d7045c969f7d8bf23b63474b35fd06b8dbf86a1796e7804818cb298c9a4bca0",
+    "subject_reference": {
+      "subject_kind": "build-request",
+      "stable_id": "schuss-build-request-900001",
+      "revision": 1,
+      "content_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    "compute_target_reference": {
+      "compute_target_id": "schuss-compute-target-900001",
+      "revision": 1,
+      "content_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+    },
+    "observations": [
+      {
+        "observation_id": "resource-observation-900001",
+        "observation_kind": "hard-declared-requirement",
+        "resource_kind": "code",
+        "region_id": "target-memory-region-900001",
+        "amount_bytes": 100,
+        "alignment_bytes": 16,
+        "unit": "bytes",
+        "method": "binding-declaration",
+        "evidence_level": 2
+      }
+    ],
+    "budget_comparisons": [
+      {
+        "comparison_id": "resource-comparison-900001",
+        "observation_ids": [
+          "resource-observation-900001"
+        ],
+        "region_id": "target-memory-region-900001",
+        "budget_bytes": 128,
+        "total_aligned_amount_bytes": 112,
+        "outcome": "within-budget"
+      }
+    ]
+  },
+  "build_result": {
+    "schema_version": "build-result-v0",
+    "canonical_profile": "schuss-canonical-json-v1",
+    "build_result_id": "schuss-build-result-900001",
+    "revision": 1,
+    "content_hash": "sha256:2ad8298982a749551382c9c5489fc579b48603249688d3de78ae697aab27f2db",
+    "request_reference": {
+      "build_request_id": "schuss-build-request-900001",
+      "revision": 1,
+      "content_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    "input_closure": [
+      {
+        "record_kind": "backend",
+        "stable_id": "schuss-backend-900001",
+        "revision": 1,
+        "content_hash": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+      },
+      {
+        "record_kind": "build-environment",
+        "stable_id": "schuss-build-environment-900001",
+        "revision": 1,
+        "content_hash": "sha256:5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      {
+        "record_kind": "build-environment",
+        "stable_id": "schuss-build-environment-900002",
+        "revision": 1,
+        "content_hash": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+      },
+      {
+        "record_kind": "build-request",
+        "stable_id": "schuss-build-request-900001",
+        "revision": 1,
+        "content_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      {
+        "record_kind": "compute-target",
+        "stable_id": "schuss-compute-target-900001",
+        "revision": 1,
+        "content_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+      },
+      {
+        "record_kind": "dsp-graph",
+        "stable_id": "schuss-graph-900001",
+        "revision": 1,
+        "content_hash": "sha256:7777777777777777777777777777777777777777777777777777777777777777"
+      }
+    ],
+    "input_closure_hash": "sha256:c907a6bf98f915208819f72c2e0ebcf6007f27b22e59f576f2c2816346a0cee9",
+    "selected_bindings": [
+      {
+        "node_id": "graph-node-900001",
+        "binding_reference": {
+          "implementation_id": "schuss-implementation-900001",
+          "revision": 2,
+          "content_hash": "sha256:8888888888888888888888888888888888888888888888888888888888888888"
+        },
+        "eligibility_reference": {
+          "binding_eligibility_id": "schuss-binding-eligibility-900001",
+          "revision": 1,
+          "content_hash": "sha256:9999999999999999999999999999999999999999999999999999999999999999"
+        },
+        "selection_policy_id": "schuss-selection-policy-900001"
+      }
+    ],
+    "compute_target_reference": {
+      "compute_target_id": "schuss-compute-target-900001",
+      "revision": 1,
+      "content_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+    },
+    "backend_reference": {
+      "backend_id": "schuss-backend-900001",
+      "revision": 1,
+      "content_hash": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+    },
+    "toolchain_reference": {
+      "build_environment_id": "schuss-build-environment-900001",
+      "revision": 1,
+      "content_hash": "sha256:5555555555555555555555555555555555555555555555555555555555555555"
+    },
+    "firmware_runtime_reference": {
+      "build_environment_id": "schuss-build-environment-900002",
+      "revision": 1,
+      "content_hash": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+    },
+    "options_used": {
+      "profile": "schuss-build-options-v0",
+      "determinism": "required",
+      "diagnostic_policy": "collect-all-deterministic",
+      "implicit_discovery": false
+    },
+    "stage_outcomes": [
+      {
+        "ordinal": 1,
+        "stage": "schema-identity-validation",
+        "status": "success",
+        "diagnostic_ids": [
+          "diagnostic-000001"
+        ],
+        "artifact_references": [],
+        "resource_report_references": []
+      },
+      {
+        "ordinal": 2,
+        "stage": "target-independent-graph-validation",
+        "status": "success",
+        "diagnostic_ids": [],
+        "artifact_references": [],
+        "resource_report_references": []
+      },
+      {
+        "ordinal": 3,
+        "stage": "target-backend-validation",
+        "status": "success",
+        "diagnostic_ids": [],
+        "artifact_references": [],
+        "resource_report_references": []
+      },
+      {
+        "ordinal": 4,
+        "stage": "implementation-resolution",
+        "status": "success",
+        "diagnostic_ids": [],
+        "artifact_references": [
+          {
+            "artifact_id": "schuss-artifact-900001",
+            "revision": 1,
+            "content_hash": "sha256:fe3bf270259b61d2c97ebe00e9b565903413e0607dc44671cfc19db0350511a1"
+          }
+        ],
+        "resource_report_references": [
+          {
+            "resource_report_id": "schuss-resource-report-900001",
+            "revision": 1,
+            "content_hash": "sha256:5d7045c969f7d8bf23b63474b35fd06b8dbf86a1796e7804818cb298c9a4bca0"
+          }
+        ]
+      },
+      {
+        "ordinal": 5,
+        "stage": "compound-elaboration",
+        "status": "success",
+        "diagnostic_ids": [],
+        "artifact_references": [],
+        "resource_report_references": []
+      },
+      {
+        "ordinal": 6,
+        "stage": "dependency-resource-planning",
+        "status": "success",
+        "diagnostic_ids": [],
+        "artifact_references": [],
+        "resource_report_references": []
+      },
+      {
+        "ordinal": 7,
+        "stage": "backend-lowering",
+        "status": "success",
+        "diagnostic_ids": [],
+        "artifact_references": [],
+        "resource_report_references": []
+      },
+      {
+        "ordinal": 8,
+        "stage": "artifact-generation",
+        "status": "success",
+        "diagnostic_ids": [],
+        "artifact_references": [],
+        "resource_report_references": []
+      },
+      {
+        "ordinal": 9,
+        "stage": "target-compile-link",
+        "status": "success",
+        "diagnostic_ids": [],
+        "artifact_references": [],
+        "resource_report_references": []
+      },
+      {
+        "ordinal": 10,
+        "stage": "packaging-evidence-recording",
+        "status": "success",
+        "diagnostic_ids": [],
+        "artifact_references": [],
+        "resource_report_references": []
+      }
+    ],
+    "diagnostics": [
+      {
+        "diagnostic_id": "diagnostic-000001",
+        "code": "FIXTURE_VALIDATION_OBSERVED",
+        "severity": "info",
+        "stage": "schema-identity-validation",
+        "parameters": [
+          {
+            "key": "fixture",
+            "value": "positive"
+          }
+        ],
+        "subject_references": [
+          {
+            "subject_kind": "build-request",
+            "subject_id": "schuss-build-request-900001"
+          }
+        ],
+        "related_diagnostic_ids": []
+      }
+    ],
+    "artifact_references": [
+      {
+        "artifact_id": "schuss-artifact-900001",
+        "revision": 1,
+        "content_hash": "sha256:fe3bf270259b61d2c97ebe00e9b565903413e0607dc44671cfc19db0350511a1"
+      }
+    ],
+    "resource_report_references": [
+      {
+        "resource_report_id": "schuss-resource-report-900001",
+        "revision": 1,
+        "content_hash": "sha256:5d7045c969f7d8bf23b63474b35fd06b8dbf86a1796e7804818cb298c9a4bca0"
+      }
+    ],
+    "overall_status": "success"
+  },
+  "evidence_claims": [
+    {
+      "schema_version": "evidence-claim-v0",
+      "canonical_profile": "schuss-canonical-json-v1",
+      "evidence_claim_id": "schuss-evidence-claim-900001",
+      "revision": 1,
+      "content_hash": "sha256:e4f4af014eab4939a547090d7013500414f81bce6e3db07f5712eb93255c1b55",
+      "level": 1,
+      "level_name": "structural-schema-validation",
+      "subject_reference": {
+        "subject_kind": "semantic-record",
+        "stable_id": "schuss-compute-target-900001",
+        "revision": 1,
+        "content_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "stage": "schema-identity-validation"
+      },
+      "method": "closed-schema-validator",
+      "outcome": "passed",
+      "evidence_inputs": [
+        {
+          "input_kind": "compute-target",
+          "stable_id": "schuss-compute-target-900001",
+          "revision": 1,
+          "content_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+        }
+      ],
+      "limitations": [
+        "Proves only structural validity."
+      ],
+      "producer_identity": {
+        "producer_kind": "validator",
+        "producer_id": "schuss-fixture-validator",
+        "version": "v0",
+        "content_hash": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "schema_version": "evidence-claim-v0",
+      "canonical_profile": "schuss-canonical-json-v1",
+      "evidence_claim_id": "schuss-evidence-claim-900002",
+      "revision": 1,
+      "content_hash": "sha256:f8308099fac4ed1ca980177a3873183a62db5b7c6dfd46142b18c5ada1f8d5a7",
+      "level": 2,
+      "level_name": "component-graph-resolution",
+      "subject_reference": {
+        "subject_kind": "semantic-record",
+        "stable_id": "schuss-implementation-900001",
+        "revision": 1,
+        "content_hash": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "stage": "target-independent-graph-validation"
+      },
+      "method": "exact-graph-resolver",
+      "outcome": "passed",
+      "evidence_inputs": [
+        {
+          "input_kind": "semantic-record",
+          "stable_id": "schuss-implementation-900001",
+          "revision": 1,
+          "content_hash": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        }
+      ],
+      "limitations": [
+        "Does not prove backend lowering."
+      ],
+      "producer_identity": {
+        "producer_kind": "validator",
+        "producer_id": "schuss-fixture-validator",
+        "version": "v0",
+        "content_hash": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "schema_version": "evidence-claim-v0",
+      "canonical_profile": "schuss-canonical-json-v1",
+      "evidence_claim_id": "schuss-evidence-claim-900003",
+      "revision": 1,
+      "content_hash": "sha256:3af1754b0a6937df955a8fafcef0d1af41bec93c775ec6e503e13879ab0b3023",
+      "level": 3,
+      "level_name": "backend-lowering",
+      "subject_reference": {
+        "subject_kind": "build-stage",
+        "stable_id": "schuss-build-result-900001",
+        "revision": 1,
+        "content_hash": "sha256:2ad8298982a749551382c9c5489fc579b48603249688d3de78ae697aab27f2db",
+        "stage": "backend-lowering"
+      },
+      "method": "fixture-backend-lowering",
+      "outcome": "passed",
+      "evidence_inputs": [
+        {
+          "input_kind": "build-result",
+          "stable_id": "schuss-build-result-900001",
+          "revision": 1,
+          "content_hash": "sha256:2ad8298982a749551382c9c5489fc579b48603249688d3de78ae697aab27f2db"
+        }
+      ],
+      "limitations": [
+        "Fixture only; no backend ran in Task 007."
+      ],
+      "producer_identity": {
+        "producer_kind": "backend",
+        "producer_id": "schuss-fixture-backend",
+        "version": "v0",
+        "content_hash": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      }
+    },
+    {
+      "schema_version": "evidence-claim-v0",
+      "canonical_profile": "schuss-canonical-json-v1",
+      "evidence_claim_id": "schuss-evidence-claim-900004",
+      "revision": 1,
+      "content_hash": "sha256:97165eedc435c2dc3453b612ab3ff875b54acf381f28b8f964f1afdee2c8b052",
+      "level": 4,
+      "level_name": "source-artifact-generation",
+      "subject_reference": {
+        "subject_kind": "build-stage",
+        "stable_id": "schuss-build-result-900001",
+        "revision": 1,
+        "content_hash": "sha256:2ad8298982a749551382c9c5489fc579b48603249688d3de78ae697aab27f2db",
+        "stage": "artifact-generation"
+      },
+      "method": "fixture-source-generation",
+      "outcome": "passed",
+      "evidence_inputs": [
+        {
+          "input_kind": "build-result",
+          "stable_id": "schuss-build-result-900001",
+          "revision": 1,
+          "content_hash": "sha256:2ad8298982a749551382c9c5489fc579b48603249688d3de78ae697aab27f2db"
+        }
+      ],
+      "limitations": [
+        "Fixture only; no source was generated in Task 007."
+      ],
+      "producer_identity": {
+        "producer_kind": "backend",
+        "producer_id": "schuss-fixture-backend",
+        "version": "v0",
+        "content_hash": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      }
+    },
+    {
+      "schema_version": "evidence-claim-v0",
+      "canonical_profile": "schuss-canonical-json-v1",
+      "evidence_claim_id": "schuss-evidence-claim-900005",
+      "revision": 1,
+      "content_hash": "sha256:bfbd6cbb559dd5e5e2fcecb1810f55ecad1787e3e8e379b11c77feb526ca0d82",
+      "level": 5,
+      "level_name": "arm-compilation-linking",
+      "subject_reference": {
+        "subject_kind": "build-stage",
+        "stable_id": "schuss-build-result-900001",
+        "revision": 1,
+        "content_hash": "sha256:2ad8298982a749551382c9c5489fc579b48603249688d3de78ae697aab27f2db",
+        "stage": "target-compile-link"
+      },
+      "method": "fixture-toolchain-run",
+      "outcome": "passed",
+      "evidence_inputs": [
+        {
+          "input_kind": "build-result",
+          "stable_id": "schuss-build-result-900001",
+          "revision": 1,
+          "content_hash": "sha256:2ad8298982a749551382c9c5489fc579b48603249688d3de78ae697aab27f2db"
+        }
+      ],
+      "limitations": [
+        "Fixture only; no toolchain ran in Task 007."
+      ],
+      "producer_identity": {
+        "producer_kind": "toolchain",
+        "producer_id": "schuss-fixture-toolchain",
+        "version": "v0",
+        "content_hash": "sha256:1212121212121212121212121212121212121212121212121212121212121212"
+      }
+    },
+    {
+      "schema_version": "evidence-claim-v0",
+      "canonical_profile": "schuss-canonical-json-v1",
+      "evidence_claim_id": "schuss-evidence-claim-900006",
+      "revision": 1,
+      "content_hash": "sha256:3dc1f5be5c9c21563f0838584ce1eca49e58bcb90cc9e2d443bea8b56b2d6c1f",
+      "level": 6,
+      "level_name": "connected-device-execution",
+      "subject_reference": {
+        "subject_kind": "instrument",
+        "stable_id": "schuss-instrument-000001",
+        "revision": 2,
+        "content_hash": "sha256:f98290ae5a1b599466ff9429c08442492fb172e94f6012b6ddedecd2bafd6ce5",
+        "stage": "connected-device-execution"
+      },
+      "method": "fixture-device-procedure",
+      "outcome": "observed",
+      "evidence_inputs": [
+        {
+          "input_kind": "instrument",
+          "stable_id": "schuss-instrument-000001",
+          "revision": 2,
+          "content_hash": "sha256:f98290ae5a1b599466ff9429c08442492fb172e94f6012b6ddedecd2bafd6ce5"
+        }
+      ],
+      "limitations": [
+        "Fixture only; no device was connected in Task 007."
+      ],
+      "producer_identity": {
+        "producer_kind": "device-procedure",
+        "producer_id": "schuss-fixture-device-procedure",
+        "version": "v0",
+        "content_hash": "sha256:3434343434343434343434343434343434343434343434343434343434343434"
+      }
+    },
+    {
+      "schema_version": "evidence-claim-v0",
+      "canonical_profile": "schuss-canonical-json-v1",
+      "evidence_claim_id": "schuss-evidence-claim-900007",
+      "revision": 1,
+      "content_hash": "sha256:662c5b5b40c0d7c1211bb55653d029d8bbf76ba94a9dd578dead42863bed4a64",
+      "level": 7,
+      "level_name": "real-time-resource-validation",
+      "subject_reference": {
+        "subject_kind": "resource-report",
+        "stable_id": "schuss-resource-report-900001",
+        "revision": 1,
+        "content_hash": "sha256:5d7045c969f7d8bf23b63474b35fd06b8dbf86a1796e7804818cb298c9a4bca0",
+        "stage": "real-time-resource-validation"
+      },
+      "method": "fixture-runtime-measurement",
+      "outcome": "observed",
+      "evidence_inputs": [
+        {
+          "input_kind": "resource-report",
+          "stable_id": "schuss-resource-report-900001",
+          "revision": 1,
+          "content_hash": "sha256:5d7045c969f7d8bf23b63474b35fd06b8dbf86a1796e7804818cb298c9a4bca0"
+        }
+      ],
+      "limitations": [
+        "Fixture only; no runtime measurement occurred in Task 007."
+      ],
+      "producer_identity": {
+        "producer_kind": "measurement-procedure",
+        "producer_id": "schuss-fixture-measurement-procedure",
+        "version": "v0",
+        "content_hash": "sha256:5656565656565656565656565656565656565656565656565656565656565656"
+      }
+    },
+    {
+      "schema_version": "evidence-claim-v0",
+      "canonical_profile": "schuss-canonical-json-v1",
+      "evidence_claim_id": "schuss-evidence-claim-900008",
+      "revision": 1,
+      "content_hash": "sha256:88cab02bd901ac5d8dac717fdc91aa50a8b993d8ffefeebb04275c7bb2621e82",
+      "level": 8,
+      "level_name": "audible-listening-validation",
+      "subject_reference": {
+        "subject_kind": "instrument",
+        "stable_id": "schuss-instrument-000001",
+        "revision": 2,
+        "content_hash": "sha256:f98290ae5a1b599466ff9429c08442492fb172e94f6012b6ddedecd2bafd6ce5",
+        "stage": "audible-listening-validation"
+      },
+      "method": "fixture-listening-procedure",
+      "outcome": "observed",
+      "evidence_inputs": [
+        {
+          "input_kind": "instrument",
+          "stable_id": "schuss-instrument-000001",
+          "revision": 2,
+          "content_hash": "sha256:f98290ae5a1b599466ff9429c08442492fb172e94f6012b6ddedecd2bafd6ce5"
+        }
+      ],
+      "limitations": [
+        "Fixture only; no listening occurred in Task 007."
+      ],
+      "producer_identity": {
+        "producer_kind": "listening-procedure",
+        "producer_id": "schuss-fixture-listening-procedure",
+        "version": "v0",
+        "content_hash": "sha256:7878787878787878787878787878787878787878787878787878787878787878"
+      }
+    }
+  ]
+}

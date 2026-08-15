@@ -65,6 +65,9 @@ musical behavior.
 
 `ksoloti-core` is the first target. A successful ARM link is target-build
 evidence, not proof of real-time headroom, physical I/O, or sound quality.
+Task 007 keeps processor, ABI, environment, and backend identity fields
+reusable; only its production records select Ksoloti values. Exact source and
+linker declarations coexist with explicit unresolved runtime/build facts.
 
 ### Device profile
 
@@ -109,6 +112,11 @@ A backend resolves eligible implementation bindings for a compute target,
 checks target capabilities and resources, lowers the graph, and emits build
 diagnostics and artifacts. It must not mutate the authoritative graph to hide
 ambiguity.
+
+Task 007's transitional backend is a declarative contract. Its ordered stages,
+artifact kinds, and Ksoloti bridge boundary are not claims that lowering or
+generation occurred. The production resolver stops unresolved before any
+executable stage. See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`.
 
 ### Build request, result, and evidence
 
@@ -168,6 +176,12 @@ inspection, node/connection mutation, validation, explanation, and build.
 Exact command names and protocol shapes are intentionally deferred until the
 catalog and graph schemas exist. Task 004 fixes the shared domain boundary but
 does not implement operations.
+
+Task 008 must first extract the shared canonical JSON, schema traversal,
+portability, diagnostic, and exact-reference helpers from the current acyclic
+validator chain (Task 007 -> Task 006 -> Task 005). It must preserve record
+bytes and behavior and must not introduce circular validator imports. Typed
+headless operations follow that bounded prerequisite.
 
 ## Legacy boundary
 

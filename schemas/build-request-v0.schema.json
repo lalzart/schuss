@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "build-request-v0.schema.json",
+  "title": "Schuss build request v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "build_request_id", "revision", "content_hash", "graph_reference", "instrument_reference", "compute_target_reference", "backend_reference", "options", "asset_references", "binding_overrides", "requested_stopping_stage"],
+  "properties": {
+    "schema_version": {"const": "build-request-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "build_request_id": {"type": "string", "pattern": "^schuss-build-request-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "graph_reference": {"$ref": "#/$defs/graphReference"},
+    "instrument_reference": {"oneOf": [{"$ref": "#/$defs/instrumentReference"}, {"$ref": "#/$defs/omittedInstrument"}]},
+    "compute_target_reference": {"$ref": "#/$defs/targetReference"},
+    "backend_reference": {"$ref": "#/$defs/backendReference"},
+    "options": {"$ref": "#/$defs/buildOptions"},
+    "asset_references": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/assetReference"}},
+    "binding_overrides": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/bindingOverride"}},
+    "requested_stopping_stage": {"$ref": "#/$defs/stageKey"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "graphReference": {
+      "type": "object",
+      "required": ["graph_id", "revision", "content_hash"],
+      "properties": {"graph_id": {"type": "string", "pattern": "^schuss-graph-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}},
+      "additionalProperties": false
+    },
+    "instrumentReference": {
+      "type": "object",
+      "required": ["status", "instrument_id", "revision", "content_hash"],
+      "properties": {"status": {"const": "included"}, "instrument_id": {"type": "string", "pattern": "^schuss-instrument-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}},
+      "additionalProperties": false
+    },
+    "omittedInstrument": {"type": "object", "required": ["status"], "properties": {"status": {"const": "omitted"}}, "additionalProperties": false},
+    "targetReference": {
+      "type": "object",
+      "required": ["compute_target_id", "revision", "content_hash"],
+      "properties": {"compute_target_id": {"type": "string", "pattern": "^schuss-compute-target-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}},
+      "additionalProperties": false
+    },
+    "backendReference": {
+      "type": "object",
+      "required": ["backend_id", "revision", "content_hash"],
+      "properties": {"backend_id": {"type": "string", "pattern": "^schuss-backend-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}},
+      "additionalProperties": false
+    },
+    "bindingReference": {
+      "type": "object",
+      "required": ["implementation_id", "revision", "content_hash"],
+      "properties": {"implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}},
+      "additionalProperties": false
+    },
+    "buildOptions": {
+      "type": "object",
+      "required": ["profile", "determinism", "diagnostic_policy", "implicit_discovery"],
+      "properties": {"profile": {"const": "schuss-build-options-v0"}, "determinism": {"const": "required"}, "diagnostic_policy": {"const": "collect-all-deterministic"}, "implicit_discovery": {"const": false}},
+      "additionalProperties": false
+    },
+    "assetReference": {
+      "type": "object",
+      "required": ["asset_id", "revision", "content_hash", "byte_sha256", "byte_length", "portable_locator", "resolution_status"],
+      "properties": {
+        "asset_id": {"type": "string", "pattern": "^schuss-asset-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"},
+        "byte_length": {"type": "integer", "minimum": 0},
+        "portable_locator": {"type": "string", "pattern": "^sha256/[0-9a-f]{64}$"},
+        "resolution_status": {"enum": ["resolved", "unresolved"]}
+      },
+      "additionalProperties": false
+    },
+    "bindingOverride": {
+      "type": "object",
+      "required": ["override_id", "node_id", "mode", "binding_reference"],
+      "properties": {
+        "override_id": {"type": "string", "pattern": "^build-override-[0-9]{6}$"},
+        "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "mode": {"const": "select-only-if-eligible"},
+        "binding_reference": {"$ref": "#/$defs/bindingReference"}
+      },
+      "additionalProperties": false
+    },
+    "stageKey": {"enum": ["schema-identity-validation", "target-independent-graph-validation", "target-backend-validation", "implementation-resolution", "compound-elaboration", "dependency-resource-planning", "backend-lowering", "artifact-generation", "target-compile-link", "packaging-evidence-recording"]}
+  }
+}

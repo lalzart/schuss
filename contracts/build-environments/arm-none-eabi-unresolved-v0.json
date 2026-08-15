@@ -1,0 +1,24 @@
+{
+  "schema_version": "build-environment-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "build_environment_id": "schuss-build-environment-000001",
+  "revision": 1,
+  "content_hash": "sha256:b8f87da1147faceb472e464fce0a36e3379b100993540946249d69b7aabf97fc",
+  "environment_kind": "toolchain",
+  "identity": {
+    "status": "unresolved",
+    "required_identity_kind": "gnu-arm-embedded",
+    "target_triple": "arm-none-eabi",
+    "known_constraints": ["cortex-m4", "hard-float", "fpv4-sp-d16", "gcc-g++-objcopy-objdump-size-components-required"],
+    "code": "TOOLCHAIN_BINARY_IDENTITY_UNRESOLVED",
+    "owner": "backend-owner",
+    "earliest_task": "task-009",
+    "rationale": "The pinned sources declare compiler component names and constraints but do not uniquely identify the installed executable bytes used by a future build.",
+    "question": "Which exact GNU Arm Embedded version and component byte hashes will Task 009 use for the first executable backend proof?",
+    "evidence_refs": [
+      {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "build.xml", "byte_sha256": "9b764e0df31d28123e9ef0be7d01e032351f2d6fe348094860692fd8aad634b5", "claim_kind": "build-declared"},
+      {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/Makefile.patch.mk", "byte_sha256": "ab99b15be913083220621a785077945e6b35fe56fc7c2691afe36569a8f29a70", "claim_kind": "build-declared"},
+      {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/compile_patch.sh", "byte_sha256": "fa887b31a4ea4d77c946438b7de04430e89ad5dca7cb46e18620c61efde4b134", "claim_kind": "build-declared"}
+    ]
+  }
+}

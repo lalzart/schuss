@@ -12,9 +12,9 @@ into transparent, typed Schuss models.
 | 4A | Versioned semantic overlay and 20-30-family pilot | Complete |
 | 4 contract gate | Schema ownership, compiler stages, and evidence separation | Complete; accepted Task 004 architecture |
 | 5 | Minimal Gills device-profile and instrument schemas | Complete |
-| 6 | Component-contract, implementation-binding, and DSP-graph schemas | Complete; current Task 006 contract gate |
-| 7 | Compute-target, backend-capability, build, artifact, and evidence schemas | Next bounded task |
-| 8 | Shared headless validation and typed operation layer | Planned |
+| 6 | Component-contract, implementation-binding, and DSP-graph schemas | Complete |
+| 7 | Compute-target, backend-capability, build, artifact, and evidence schemas | Complete; Task 007 contract gate |
+| 8 | Shared headless validation and typed operation layer | Next; begins with validator-core consolidation |
 | 9 | One minimal graph through the legacy `.axp` adapter and ARM compiler/linker | Planned |
 | 10 | Deterministic structured CLI over shared operations | Planned |
 | 4B / 11 | Incremental reviewed-core expansion with actual contracts and bindings | Gated on Phase 6 contract model |
@@ -37,16 +37,19 @@ define the family/contract/binding boundary, one-way references, compiler
 stages, and build-evidence separation without implementing schemas or code
 generation.
 
-Tasks 005 and 006 are complete. Task 005 adds the minimal Gills device-profile
+Tasks 005, 006, and 007 are complete. Task 005 adds the minimal Gills device-profile
 and instrument boundary. Task 006 adds the exact Crossfader family companion,
 three component signatures and legacy seam maps, the authoritative one-node
 `blend` graph, transparent-compound validation, and exactly resolved
-instrument revision 2 while retaining revision 1. It does not define targets,
-backends, builds, operations, firmware, GUI/CLI, or compilation. Task 007 is
-next and is limited to compute-target, backend-capability, build, artifact,
-resource, and evidence contracts. The completed boundaries are in
+instrument revision 2 while retaining revision 1. Task 007 adds reusable
+target/backend/build-domain schemas, the smallest truthful Ksoloti production
+closure, a pure fail-closed resolver, and future result/evidence fixtures. The
+production candidate remains unresolved and no backend stage ran. Task 008 is
+next: first consolidate the one-way validator stack into a lower shared core,
+then define shared headless typed operations. The completed boundaries are in
 `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
-`docs/COMPONENT_GRAPH_CONTRACTS.md`.
+`docs/COMPONENT_GRAPH_CONTRACTS.md`, and
+`docs/TARGET_BACKEND_BUILD_CONTRACTS.md`.
 
 ## Contract sequence constraints
 

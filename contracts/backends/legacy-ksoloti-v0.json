@@ -1,0 +1,84 @@
+{
+  "schema_version": "backend-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "backend_id": "schuss-backend-000001",
+  "revision": 1,
+  "content_hash": "sha256:5070f9e9c667d6f16fb5b0022f045a1990243c2acbedf4585e8f41420e7c3178",
+  "display_name": "Transitional legacy Ksoloti backend",
+  "lowering_identity": {
+    "backend_kind": "legacy-ksoloti",
+    "contract_version": "legacy-ksoloti-lowering-contract-v0"
+  },
+  "accepted_input_schemas": ["dsp-graph-v0", "instrument-v0"],
+  "supported_realization_forms": ["generated-legacy-object"],
+  "capability_vocabulary_reference": {
+    "capability_vocabulary_id": "schuss-capability-vocabulary-000001",
+    "revision": 1,
+    "content_hash": "sha256:37770109d3aff88a67ab031a6ee21c49eb4d301e2933c4659efd38c4496cca92"
+  },
+  "required_target_capabilities": [
+    {"capability_key": "audio-stream-fixed-q27", "value": true, "comparison_rule": "exact"},
+    {"capability_key": "control-stream-fixed-q27", "value": true, "comparison_rule": "exact"}
+  ],
+  "target_pairings": [
+    {
+      "target_reference": {
+        "compute_target_id": "schuss-compute-target-000001",
+        "revision": 1,
+        "content_hash": "sha256:c1fa5a49ab9474068c70ffc03f5bbfc216936d1fcfa1514e257ec7d5361c866d"
+      },
+      "contract_state": "declared",
+      "rationale": "This is the intended transitional target/backend pairing. It declares contract scope only and is not evidence that lowering, generation, linking, or execution succeeds."
+    }
+  ],
+  "stage_contract": [
+    {"ordinal": 1, "stage": "schema-identity-validation", "stage_kind": "validation", "permitted_statuses": ["failed", "success"]},
+    {"ordinal": 2, "stage": "target-independent-graph-validation", "stage_kind": "validation", "permitted_statuses": ["failed", "not-run", "success", "unresolved"]},
+    {"ordinal": 3, "stage": "target-backend-validation", "stage_kind": "validation", "permitted_statuses": ["failed", "not-run", "success", "unsupported", "unresolved"]},
+    {"ordinal": 4, "stage": "implementation-resolution", "stage_kind": "resolution", "permitted_statuses": ["failed", "not-run", "success", "unsupported", "unresolved"]},
+    {"ordinal": 5, "stage": "compound-elaboration", "stage_kind": "planning", "permitted_statuses": ["failed", "not-run", "success", "unsupported", "unresolved"]},
+    {"ordinal": 6, "stage": "dependency-resource-planning", "stage_kind": "planning", "permitted_statuses": ["failed", "not-run", "success", "unsupported", "unresolved"]},
+    {"ordinal": 7, "stage": "backend-lowering", "stage_kind": "lowering", "permitted_statuses": ["failed", "not-run", "success", "unsupported", "unresolved"]},
+    {"ordinal": 8, "stage": "artifact-generation", "stage_kind": "generation", "permitted_statuses": ["failed", "not-run", "success", "unsupported", "unresolved"]},
+    {"ordinal": 9, "stage": "target-compile-link", "stage_kind": "tool-execution", "permitted_statuses": ["failed", "not-run", "success", "unsupported", "unresolved"]},
+    {"ordinal": 10, "stage": "packaging-evidence-recording", "stage_kind": "recording", "permitted_statuses": ["failed", "not-run", "success", "unsupported", "unresolved"]}
+  ],
+  "permitted_stopping_stages": ["implementation-resolution", "schema-identity-validation", "target-backend-validation", "target-independent-graph-validation"],
+  "artifact_declarations": [
+    {"artifact_kind": "arm-object", "media_type": "application/x-elf-object", "producer_stage": "target-compile-link"},
+    {"artifact_kind": "build-package", "media_type": "application/vnd.schuss.build-package+json", "producer_stage": "packaging-evidence-recording"},
+    {"artifact_kind": "generated-cpp", "media_type": "text/x-c++src", "producer_stage": "artifact-generation"},
+    {"artifact_kind": "legacy-boundary-patch", "media_type": "application/vnd.ksoloti.axp+xml", "producer_stage": "artifact-generation"},
+    {"artifact_kind": "link-map", "media_type": "text/plain", "producer_stage": "target-compile-link"},
+    {"artifact_kind": "resolution-plan", "media_type": "application/vnd.schuss.resolution-plan+json", "producer_stage": "implementation-resolution"},
+    {"artifact_kind": "source-map", "media_type": "application/vnd.schuss.source-map+json", "producer_stage": "artifact-generation"},
+    {"artifact_kind": "target-executable", "media_type": "application/x-elf", "producer_stage": "target-compile-link"}
+  ],
+  "determinism_contract": {
+    "identical_closure_requires_identical_bytes": true,
+    "stable_ordering": true,
+    "timestamps_in_canonical_identity": false
+  },
+  "diagnostic_contract": {
+    "structured_codes": true,
+    "source_map_required_after_generation": true,
+    "host_paths_in_identity": false,
+    "unordered_logs_as_identity": false
+  },
+  "toolchain_reference": {
+    "build_environment_id": "schuss-build-environment-000001",
+    "revision": 1,
+    "content_hash": "sha256:b8f87da1147faceb472e464fce0a36e3379b100993540946249d69b7aabf97fc"
+  },
+  "firmware_runtime_reference": {
+    "build_environment_id": "schuss-build-environment-000002",
+    "revision": 1,
+    "content_hash": "sha256:4475da81044f40c37e95cd01dcd0a17e3d612c664cc5baa904e0bf1e58e8ae47"
+  },
+  "bridge_boundary": {
+    "kind": "isolated-compatibility-bridge",
+    "location": "legacy/ksoloti-bridge",
+    "legacy_boundary_artifact": "legacy-boundary-patch",
+    "execution_status": "not-run"
+  }
+}

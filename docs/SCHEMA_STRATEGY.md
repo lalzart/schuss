@@ -441,19 +441,25 @@ The following are invalid architecture:
   `implementation-binding-v0`, and `dsp-graph-v0` schemas, exact Crossfader
   closure, and read-only validators documented in
   `docs/COMPONENT_GRAPH_CONTRACTS.md`.
+- Task 007 capability, environment, compute-target, backend, eligibility,
+  build-request/result, artifact, resource, and evidence schemas; the
+  Ksoloti-specific production closure; and the pure resolver documented in
+  `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`. Reusable schema families use
+  controlled stable processor, ABI, environment, firmware/runtime, backend,
+  and bridge identity values rather than Ksoloti constants.
 
 ### Planned next
 
-1. **Task 007:** compute-target, backend-capability, build-request,
-   build-result, artifact, and evidence schemas.
-2. **Task 008:** shared headless validation and typed operation layer.
-3. **Task 009:** one minimal graph lowered through a deterministic legacy
+1. **Task 008:** first consolidate the acyclic Task 005-007 validator stack
+   into a lower shared core without byte or behavior changes, then add shared
+   headless validation and typed operations.
+2. **Task 009:** one minimal graph lowered through a deterministic legacy
    `.axp` adapter and existing ARM compiler/linker.
-4. **Task 010:** deterministic CLI over the same operations.
-5. **Task 011:** incremental catalog expansion with actual component contracts
+3. **Task 010:** deterministic CLI over the same operations.
+4. **Task 011:** incremental catalog expansion with actual component contracts
    and bindings; Phase 4B must not outrun Task 006.
-6. **Task 012:** basic object drawer and transparent graph canvas.
-7. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
+5. **Task 012:** basic object drawer and transparent graph canvas.
+6. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
    contract.
 
 ### Deliberately deferred

@@ -1,0 +1,21 @@
+{
+  "schema_cases": [
+    {"case_id":"unknown-field","record_kind":"target","pointer":"/presentation_state","value":{},"expected_code":"SCHEMA_INVALID"},
+    {"case_id":"negative-budget","record_kind":"resource","pointer":"/budget_comparisons/0/budget_bytes","value":-1,"expected_code":"SCHEMA_INVALID"},
+    {"case_id":"unknown-option","record_kind":"request","pointer":"/options/fast_mode","value":true,"expected_code":"SCHEMA_INVALID"},
+    {"case_id":"random-diagnostic-id","record_kind":"result","pointer":"/diagnostics/0/diagnostic_id","value":"random","expected_code":"SCHEMA_INVALID"},
+    {"case_id":"unknown-evidence-level","record_kind":"evidence","pointer":"/level","value":9,"expected_code":"SCHEMA_INVALID"},
+    {"case_id":"absolute-artifact-path","record_kind":"artifact","pointer":"/portable_locator","value":"/tmp/output.axp","expected_code":"SCHEMA_INVALID"}
+  ],
+  "semantic_cases": [
+    {"case_id":"target-memory-duplicate","expected_code":"TARGET_MEMORY_REGION_DUPLICATE"},
+    {"case_id":"backend-stage-reordered","expected_code":"BACKEND_STAGE_ORDER_INVALID"},
+    {"case_id":"eligibility-pair-mismatch","expected_code":"ELIGIBILITY_TARGET_BACKEND_PAIR_UNDECLARED"},
+    {"case_id":"request-instrument-graph-mismatch","expected_code":"BUILD_REQUEST_INSTRUMENT_GRAPH_MISMATCH"},
+    {"case_id":"result-stage-after-terminal","expected_code":"BUILD_RESULT_STAGE_AFTER_TERMINAL"},
+    {"case_id":"artifact-hash-conflation","expected_code":"ARTIFACT_DESCRIPTOR_BYTE_HASH_CONFLATED"},
+    {"case_id":"resource-alignment-loss","expected_code":"RESOURCE_BUDGET_COMPARISON_INEXACT"},
+    {"case_id":"evidence-cross-level","expected_code":"EVIDENCE_LEVEL_STAGE_MISMATCH"},
+    {"case_id":"evidence-current-revision","expected_code":"ELIGIBILITY_EVIDENCE_REVISION_NOT_EARLIER"}
+  ]
+}

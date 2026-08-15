@@ -32,14 +32,25 @@ This directory contains only contracts that current Schuss artifacts use:
 - `implementation-binding-v0.schema.json` validates exact realization and
   public-facet seam maps; and
 - `dsp-graph-v0.schema.json` validates exact contract nodes, connections,
-  exposures, parameter bindings, hierarchy, and compound mappings.
+  exposures, parameter bindings, hierarchy, and compound mappings;
+- `capability-vocabulary-v0.schema.json`, `build-environment-v0.schema.json`,
+  `compute-target-v0.schema.json`, and `backend-v0.schema.json` validate the
+  reusable target/backend contract boundary;
+- `binding-eligibility-v0.schema.json` validates exact target/backend
+  eligibility without changing Task 006 bindings; and
+- `build-request-v0.schema.json`, `build-result-v0.schema.json`,
+  `artifact-descriptor-v0.schema.json`, `resource-report-v0.schema.json`, and
+  `evidence-claim-v0.schema.json` validate the one-way future build/evidence
+  record shapes.
 
 The resolved schemas describe factual compatibility-bridge evidence only. The
 semantic overlay is a versioned curation foundation and pilot, not a complete
 catalog census or a final graph, object-facet, instrument, device, or operation
 contract.
 
-Tasks 005 and 006 add the device, instrument, component, binding, graph, and
-exact-family companion schemas. Target, backend, build, artifact, resource,
-evidence, presentation, and asset contracts remain planned in the dependency
-order defined by `docs/SCHEMA_STRATEGY.md`.
+Tasks 005-007 add the device, instrument, component, binding, graph, exact
+family, target, backend, build, artifact, resource, and evidence schemas.
+Presentation and broader asset contracts remain later work. Processor,
+toolchain/runtime, and backend identities are controlled stable values in the
+reusable schemas; the records under `contracts/` choose Ksoloti-specific
+values. See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`.

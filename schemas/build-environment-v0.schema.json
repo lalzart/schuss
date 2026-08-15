@@ -16,6 +16,7 @@
   "additionalProperties": false,
   "$defs": {
     "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "stableValue": {"type": "string", "pattern": "^[a-z0-9]+(?:[-+][a-z0-9]+)*$"},
     "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "portablePath": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"},
     "sourceEvidence": {
@@ -44,7 +45,7 @@
       "required": ["status", "identity_kind", "version", "target_triple", "component_hashes", "compatibility_boundary", "portable_locator", "evidence_refs"],
       "properties": {
         "status": {"const": "supported"},
-        "identity_kind": {"enum": ["gnu-arm-embedded", "ksoloti-firmware-runtime"]},
+        "identity_kind": {"$ref": "#/$defs/stableValue"},
         "version": {"type": "string", "minLength": 1},
         "target_triple": {"type": "string", "pattern": "^[a-z0-9_+-]+$"},
         "component_hashes": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/componentHash"}},
@@ -59,7 +60,7 @@
       "required": ["status", "required_identity_kind", "target_triple", "known_constraints", "code", "owner", "earliest_task", "rationale", "question", "evidence_refs"],
       "properties": {
         "status": {"enum": ["unresolved", "not-evaluated"]},
-        "required_identity_kind": {"enum": ["gnu-arm-embedded", "ksoloti-firmware-runtime"]},
+        "required_identity_kind": {"$ref": "#/$defs/stableValue"},
         "target_triple": {"type": "string", "pattern": "^[a-z0-9_+-]+$"},
         "known_constraints": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
         "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},

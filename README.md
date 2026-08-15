@@ -12,8 +12,8 @@ one compatibility backend.
 
 ## Current status
 
-Schuss has completed the Phase 4A semantic-catalog foundation and the Task 006
-component/binding/graph contract gate:
+Schuss has completed the Phase 4A semantic-catalog foundation and the Task 007
+target/backend/build-record contract gate:
 
 - the project boundaries and terminology are documented;
 - upstream sources are pinned without committing machine-local paths;
@@ -38,9 +38,13 @@ component/binding/graph contract gate:
 - Task 006 is complete: three exact Crossfader component contracts and legacy
   seam-map companions, one authoritative typed graph, transparent-compound
   validation, and instrument revision 2 close the graph reference exactly;
-- historical instrument revision 1 remains byte-identical and truthfully
-  deferred; target/backend selection and every build/runtime evidence level
-  remain reserved for Task 007 and later work;
+- Task 007 is complete: reusable target/backend/build-domain schemas, a
+  Ksoloti-specific production target/backend/request closure, and a pure
+  fail-closed resolver establish the next contract boundary;
+- historical instrument revision 1 and all Task 005/006 records remain
+  byte-identical; the production binding candidate remains unresolved and all
+  lowering, artifact, ARM, connected-device, real-time, and audible levels are
+  `not-run`;
 - no Schuss graph editor, compiler frontend, device runtime, or desktop app is
   implemented yet.
 
@@ -49,7 +53,10 @@ Start with [the project context](docs/PROJECT_CONTEXT.md), then read
 [the schema strategy](docs/SCHEMA_STRATEGY.md),
 [the compiler strategy](docs/COMPILER_STRATEGY.md), and
 [the roadmap](docs/ROADMAP.md). The Task 006 boundary is documented in
-[the component and graph contracts](docs/COMPONENT_GRAPH_CONTRACTS.md). Active
+[the component and graph contracts](docs/COMPONENT_GRAPH_CONTRACTS.md), and the
+Task 007 boundary in
+[the target, backend, build, and evidence contracts](docs/TARGET_BACKEND_BUILD_CONTRACTS.md).
+Active
 implementation work is bounded by task files under `docs/tasks/`.
 
 ## Inventory checks
@@ -83,7 +90,7 @@ connected hardware, or audible behavior.
 | `tools/catalog/` | Semantic-overlay validation tooling |
 | `tools/contracts/` | Contract canonicalization, exact-reference resolution, and read-only validation |
 | `catalog/` | Source locks, frozen evidence, reviews, and semantic overlays |
-| `contracts/` | Versioned authoritative family companions, components, bindings, graphs, devices, and instruments |
+| `contracts/` | Versioned family, component, binding, graph, device, instrument, target, backend, eligibility, environment, and request records |
 | `legacy/ksoloti-bridge/` | Isolated Ksoloti Java compatibility work |
 | `packages/` | Future headless model, compiler, and CLI packages |
 | `apps/` | Future user-facing applications |

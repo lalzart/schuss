@@ -64,8 +64,9 @@ artifact; the result does not point back to those records.
 
 ## Common front half
 
-Both the legacy and future backends use the following conceptual stages. Exact
-record schemas and executable operations are later tasks.
+Both the legacy and future backends use the following conceptual stages. Task
+007 now fixes their closed record representation; executable operations remain
+later tasks.
 
 | Stage | Authoritative input | Derived output | Required failure/diagnostic behavior |
 | --- | --- | --- | --- |
@@ -364,3 +365,9 @@ A backend conforms only if it:
 The transitional legacy backend may rely on Java only inside the isolated
 bridge. The future direct frontend must not require Java or `.axp`. Both remain
 backends beneath the same graph, contract, target, build, and evidence model.
+
+Task 007 validates only the declarative contract and pure selection boundary.
+Task 008 must first consolidate the shared validator core and then expose
+typed headless operations. Task 009 separately owns actual legacy lowering,
+`.axp` serialization/source maps, exact toolchain/runtime closure, and ARM
+compile/link execution.

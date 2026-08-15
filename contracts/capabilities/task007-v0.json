@@ -1,0 +1,33 @@
+{
+  "schema_version": "capability-vocabulary-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "capability_vocabulary_id": "schuss-capability-vocabulary-000001",
+  "revision": 1,
+  "content_hash": "sha256:37770109d3aff88a67ab031a6ee21c49eb4d301e2933c4659efd38c4496cca92",
+  "definitions": [
+    {
+      "key": "audio-stream-fixed-q27",
+      "owner": "target-runtime-owner",
+      "meaning": "The target runtime can carry mono audio-rate signed 32-bit two's-complement fixed-point streams with 27 fractional bits under the declared scheduler lifetime.",
+      "declaration_subject_kinds": ["compute-target"],
+      "requirement_subject_kinds": ["backend", "binding-eligibility"],
+      "value_kind": "boolean",
+      "unit": "none",
+      "comparison_rule": "exact",
+      "unknown_blocks_eligibility": true,
+      "required_evidence_level": 2
+    },
+    {
+      "key": "control-stream-fixed-q27",
+      "owner": "target-runtime-owner",
+      "meaning": "The target runtime can carry control-rate signed 32-bit two's-complement fixed-point streams with 27 fractional bits under the declared scheduler lifetime.",
+      "declaration_subject_kinds": ["compute-target"],
+      "requirement_subject_kinds": ["backend", "binding-eligibility"],
+      "value_kind": "boolean",
+      "unit": "none",
+      "comparison_rule": "exact",
+      "unknown_blocks_eligibility": true,
+      "required_evidence_level": 2
+    }
+  ]
+}

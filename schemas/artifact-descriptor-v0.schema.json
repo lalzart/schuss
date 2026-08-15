@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "artifact-descriptor-v0.schema.json",
+  "title": "Schuss artifact descriptor v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "artifact_id", "revision", "content_hash", "artifact_kind", "media_type", "byte_length", "byte_sha256", "producer_stage", "producer_contract", "input_closure_hash", "portable_locator", "parent_artifact_references", "source_map_artifact_references"],
+  "properties": {
+    "schema_version": {"const": "artifact-descriptor-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "artifact_id": {"type": "string", "pattern": "^schuss-artifact-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "artifact_kind": {"enum": ["resolution-plan", "elaboration-map", "resource-plan", "legacy-boundary-patch", "generated-cpp", "arm-object", "link-map", "target-executable", "build-package", "source-map"]},
+    "media_type": {"type": "string", "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$"},
+    "byte_length": {"type": "integer", "minimum": 0},
+    "byte_sha256": {"$ref": "#/$defs/rawSha256"},
+    "producer_stage": {"$ref": "#/$defs/stageKey"},
+    "producer_contract": {"$ref": "#/$defs/producerContract"},
+    "input_closure_hash": {"$ref": "#/$defs/contentHash"},
+    "portable_locator": {"type": "string", "pattern": "^sha256/[0-9a-f]{64}$"},
+    "parent_artifact_references": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/artifactReference"}},
+    "source_map_artifact_references": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/artifactReference"}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "stageKey": {"enum": ["schema-identity-validation", "target-independent-graph-validation", "target-backend-validation", "implementation-resolution", "compound-elaboration", "dependency-resource-planning", "backend-lowering", "artifact-generation", "target-compile-link", "packaging-evidence-recording"]},
+    "producerContract": {
+      "type": "object",
+      "required": ["producer_id", "producer_version"],
+      "properties": {"producer_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}, "producer_version": {"type": "string", "minLength": 1}},
+      "additionalProperties": false
+    },
+    "artifactReference": {
+      "type": "object",
+      "required": ["artifact_id", "revision", "content_hash"],
+      "properties": {"artifact_id": {"type": "string", "pattern": "^schuss-artifact-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}},
+      "additionalProperties": false
+    }
+  }
+}

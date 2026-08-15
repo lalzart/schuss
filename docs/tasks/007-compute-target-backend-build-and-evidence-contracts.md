@@ -1,8 +1,7 @@
 # Task 007: Compute-target, backend-capability, build, artifact, and evidence contracts
 
-Status: proposed prompt; not started. Creating this task file does not activate
-implementation. Task 006 remains the completed component/binding/graph
-contract gate until the user explicitly starts Task 007.
+Status: complete. Accepted as the target/backend/build-record contract gate;
+no executable backend stage or higher evidence level was performed.
 
 Work in the Schuss repository. Work only on Task 007.
 
@@ -719,3 +718,140 @@ Do not claim completion merely because schema files exist. Check every
 acceptance criterion and record concrete evidence in this task file. Do not
 stage, commit, push, invoke Java, generate `.axp`, run a compiler/linker, access
 hardware, upload, or flash without separate explicit approval.
+
+## Completion evidence
+
+Task 007 is complete within its schema, production-record, pure-resolution,
+fixture, validation, and documentation boundary.
+
+### Final record model and production closure
+
+The accepted closed v0 schema families are:
+
+- `capability-vocabulary-v0`;
+- `build-environment-v0`;
+- `compute-target-v0`;
+- `backend-v0`;
+- `binding-eligibility-v0`;
+- `build-request-v0`;
+- `build-result-v0`;
+- `artifact-descriptor-v0`;
+- `resource-report-v0`; and
+- `evidence-claim-v0`.
+
+Reusable record-family schemas do not const-lock Ksoloti processor, ABI target
+triple, toolchain, firmware/runtime, backend, or bridge identities. Those are
+controlled stable values; tests validate an alternate processor, environment
+identity, and backend identity against the same schemas. The production
+records remain Ksoloti-specific:
+
+| Record | Revision | Content hash |
+| --- | ---: | --- |
+| `schuss-capability-vocabulary-000001` | 1 | `sha256:37770109d3aff88a67ab031a6ee21c49eb4d301e2933c4659efd38c4496cca92` |
+| `schuss-build-environment-000001` | 1 | `sha256:b8f87da1147faceb472e464fce0a36e3379b100993540946249d69b7aabf97fc` |
+| `schuss-build-environment-000002` | 1 | `sha256:4475da81044f40c37e95cd01dcd0a17e3d612c664cc5baa904e0bf1e58e8ae47` |
+| `schuss-compute-target-000001` | 1 | `sha256:c1fa5a49ab9474068c70ffc03f5bbfc216936d1fcfa1514e257ec7d5361c866d` |
+| `schuss-backend-000001` | 1 | `sha256:5070f9e9c667d6f16fb5b0022f045a1990243c2acbedf4585e8f41420e7c3178` |
+| `schuss-binding-eligibility-000001` | 1 | `sha256:7dbfa34a34042af730166e2f1581e2a04b18b9e19a4975234c1b7397bae484f8` |
+| `schuss-build-request-000001` | 1 | `sha256:0ba7e74977ac7ebcf50cb73826c349040d998541f688bb32cbedf88140259e95` |
+
+The shared capability vocabulary contains only
+`audio-stream-fixed-q27` and `control-stream-fixed-q27`, the two stream forms
+required by the exact mixed Crossfader contract and legacy seam map.
+
+Pinned patcher commit `08d3e6e1e2b61230308c20a15ded58ffdaf4656c`
+supports the production STM32F427/Cortex-M4/Thumb/FPv4-SP-D16,
+`arm-none-eabi` hard-float, 48 kHz, 16-frame, and five linker-region
+declarations. Nine unique portable source references resolve and their bytes
+verify against the configured read-only checkout. They prove source/linker
+declarations only.
+
+Endianness, exact installed toolchain identity, exact firmware/runtime ABI,
+usable asset capacity, stream capability support, target/backend binding
+compatibility, and hard binding resources remain unresolved with named owners
+and earliest Task 009 questions. The backend declares its intended forms,
+ten-stage contract, artifact/media declarations including source maps,
+diagnostic/determinism obligations, and isolated bridge. It claims no stage
+execution.
+
+### Eligibility, request, and fixture-only future shapes
+
+Eligibility is a separate exact companion. Task 006 implementation binding
+`schuss-implementation-000028` revision 1 and its public seam map remain
+byte-identical. The pure resolver applies exact contract, supported form,
+target/backend pair, capability/dependency/resource/evidence, narrowing
+override, then explicit priority. It reports selected, unsupported,
+unresolved, ambiguous, and invalid-override distinctly and never selects by
+file or load order.
+
+The production request pins graph `schuss-graph-000001` revision 1,
+instrument `schuss-instrument-000001` revision 2, the production target and
+backend, deterministic options, no assets or override, and the
+`implementation-resolution` stopping stage. Its one candidate is unresolved
+for these deterministic reasons:
+
+- `BINDING_TARGET_BACKEND_PAIR_NOT_EVALUATED`;
+- `CAPABILITY_UNRESOLVED:audio-stream-fixed-q27`;
+- `CAPABILITY_UNRESOLVED:control-stream-fixed-q27`; and
+- `COMPATIBILITY_EVIDENCE_MISSING`.
+
+No production build result, artifact descriptor, resource report, or evidence
+claim was created. Non-production fixtures validate complete future result,
+structured-diagnostic, artifact, resource, and all eight evidence-level
+shapes. They cover descriptor/byte-hash separation, exact artifact bytes in a
+fixture-only checker, same-region aligned budget pass/equality/overflow,
+acyclic artifact and diagnostic references, exact total node selection,
+stage prerequisites and later `not-run`, result-to-evidence direction,
+cross-level rejection, and strictly-earlier binding revision stratification.
+Results cannot embed or rewrite authoritative semantic records because the
+closed result schema permits exact references and derived outputs only.
+
+### Acceptance runs
+
+The following completed successfully after the final changes:
+
+- `python3 -m unittest discover -s tools/inventory/tests`: 14 tests passed;
+- raw inventory validation: 4,209 files and two retained issues, valid;
+- resolved inventory validation: 3,602 objects, 1,157 graphs, and 3,180
+  retained issues, valid;
+- Phase 3 review validation: valid;
+- Phase 4A semantic catalog validation: 26 families and 38 implementations,
+  valid;
+- Task 005 focused validator: valid with the historical deferred graph;
+- Task 006 aggregate validator: valid with the historical deferred instrument;
+- Task 007 aggregate validator: valid, no diagnostics, nine source references
+  locally verified, one unresolved resolver outcome;
+- `python3 -m unittest discover -s tools/contracts/tests`: 42 tests passed;
+  and
+- `git diff --check`: clean.
+
+The Task 007 tests compare every Task 005/006 schema and production record in
+scope, the exact graph/bindings, the source lock, and the Phase 4A overlay
+directly to `HEAD`; all bytes remain identical. Fresh-process aggregate
+summaries and canonical-record emissions are byte-identical. Set reordering is
+canonical-byte invariant and compiler-stage sequence reordering changes bytes
+and fails semantic validation.
+
+Evidence level 1 (structural/schema) and level 2 (component/graph resolution)
+pass. Level 3 backend lowering, level 4 source/artifact generation, level 5 ARM
+compile/link, level 6 connected-device execution, level 7 real-time/resource
+validation, and level 8 audible/listening validation are all `not-run`.
+
+### Next separate scopes
+
+Task 008 must begin with a bounded validator-core consolidation. Extract the
+canonical JSON, schema traversal, portability, structured diagnostic, and
+exact-reference primitives from the current acyclic import chain
+Task 007 -> Task 006 -> Task 005. Preserve all record bytes and validation
+behavior, add no upward/circular imports, then define the shared typed
+headless operation layer. This prerequisite is documented rather than
+implemented here because consolidation is outside Task 007.
+
+Task 009 remains a separate executable-backend task: resolve the remaining
+toolchain/runtime/ABI and capability facts, implement one minimal deterministic
+legacy `.axp` boundary plus source map, invoke the isolated legacy bridge and
+ARM compiler/linker only under its own approval, and record only the evidence
+levels actually reached.
+
+No Java, `.axp`, generator, compiler, linker, device, upload, flash, firmware,
+stage, commit, or push action occurred in Task 007.

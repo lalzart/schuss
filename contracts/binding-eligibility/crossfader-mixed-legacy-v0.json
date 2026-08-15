@@ -1,0 +1,69 @@
+{
+  "schema_version": "binding-eligibility-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "binding_eligibility_id": "schuss-binding-eligibility-000001",
+  "revision": 1,
+  "content_hash": "sha256:7dbfa34a34042af730166e2f1581e2a04b18b9e19a4975234c1b7397bae484f8",
+  "binding_reference": {
+    "implementation_id": "schuss-implementation-000028",
+    "revision": 1,
+    "content_hash": "sha256:6f1a0268c40ca192435bcd7a66f201ab0577ff8786590d3c05bace4911726b59"
+  },
+  "contract_reference": {
+    "component_contract_id": "schuss-component-contract-000003",
+    "revision": 1,
+    "content_hash": "sha256:96a29faf58769be5f2ac52de07aa80cae3dcdff28f0f3c158fb1fd12cc234a8d"
+  },
+  "allowed_pair": {
+    "target_reference": {
+      "compute_target_id": "schuss-compute-target-000001",
+      "revision": 1,
+      "content_hash": "sha256:c1fa5a49ab9474068c70ffc03f5bbfc216936d1fcfa1514e257ec7d5361c866d"
+    },
+    "backend_reference": {
+      "backend_id": "schuss-backend-000001",
+      "revision": 1,
+      "content_hash": "sha256:5070f9e9c667d6f16fb5b0022f045a1990243c2acbedf4585e8f41420e7c3178"
+    },
+    "state": {
+      "status": "not-evaluated",
+      "code": "BINDING_TARGET_BACKEND_PAIR_NOT_EVALUATED",
+      "rationale": "The Task 006 seam map is exact, but Task 007 performs no lowering, tool invocation, or target build that could support a positive compatibility assertion."
+    }
+  },
+  "realization_form": "generated-legacy-object",
+  "capability_requirements": [
+    {"capability_key": "audio-stream-fixed-q27", "value": true, "comparison_rule": "exact"},
+    {"capability_key": "control-stream-fixed-q27", "value": true, "comparison_rule": "exact"}
+  ],
+  "dependency_requirements": [],
+  "resource_requirements": [],
+  "required_evidence_level": 2,
+  "compatibility_evidence": [],
+  "selection_policy": {
+    "policy_id": "schuss-selection-policy-000001",
+    "version": 1,
+    "priority": 100,
+    "ranking_rule": "higher-explicit-priority",
+    "tie_behavior": "ambiguous",
+    "implicit_fallback": false
+  },
+  "unresolved_questions": [
+    {
+      "question_id": "eligibility-question-000001",
+      "code": "BINDING_COMPATIBILITY_EVIDENCE_MISSING",
+      "owner": "backend-owner",
+      "earliest_task": "task-009",
+      "question": "Does the exact transitional backend closure lower and generate the mixed Crossfader realization without changing its public contract?",
+      "rationale": "A legacy observation and seam map establish no backend-lowering or artifact-generation evidence."
+    },
+    {
+      "question_id": "eligibility-question-000002",
+      "code": "BINDING_RESOURCE_REQUIREMENTS_NOT_EVALUATED",
+      "owner": "build-selection-owner",
+      "earliest_task": "task-009",
+      "question": "Which hard resource requirements are required for the generated Crossfader realization before lowering?",
+      "rationale": "Task 007 has no generated source or static analysis result from which to assert nonzero code or data requirements."
+    }
+  ]
+}

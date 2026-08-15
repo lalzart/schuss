@@ -25,6 +25,7 @@
   "additionalProperties": false,
   "$defs": {
     "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "stableValue": {"type": "string", "pattern": "^[a-z0-9]+(?:[-+][a-z0-9]+)*$"},
     "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "portablePath": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$"},
     "sourceEvidence": {
@@ -63,10 +64,10 @@
       "type": "object",
       "required": ["family", "core", "instruction_set", "fpu", "evidence_refs"],
       "properties": {
-        "family": {"const": "stm32f427"},
-        "core": {"const": "cortex-m4"},
-        "instruction_set": {"const": "thumb-2"},
-        "fpu": {"const": "fpv4-sp-d16"},
+        "family": {"$ref": "#/$defs/stableValue"},
+        "core": {"$ref": "#/$defs/stableValue"},
+        "instruction_set": {"$ref": "#/$defs/stableValue"},
+        "fpu": {"$ref": "#/$defs/stableValue"},
         "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
       },
       "additionalProperties": false
@@ -75,12 +76,40 @@
       "type": "object",
       "required": ["target_triple", "float_abi", "endianness", "evidence_refs"],
       "properties": {
-        "target_triple": {"const": "arm-none-eabi"},
-        "float_abi": {"const": "hard"},
-        "endianness": {"const": "little"},
+        "target_triple": {"$ref": "#/$defs/stableValue"},
+        "float_abi": {"enum": ["soft", "softfp", "hard", "not-applicable"]},
+        "endianness": {"$ref": "#/$defs/endiannessFact"},
         "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
       },
       "additionalProperties": false
+    },
+    "endiannessFact": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "value", "evidence_refs"],
+          "properties": {
+            "status": {"const": "supported"},
+            "value": {"enum": ["little", "big"]},
+            "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["status", "code", "owner", "earliest_task", "rationale", "question", "evidence_refs"],
+          "properties": {
+            "status": {"const": "unresolved"},
+            "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+            "owner": {"const": "target-owner"},
+            "earliest_task": {"type": "string", "pattern": "^task-[0-9]{3}$"},
+            "rationale": {"type": "string", "minLength": 1},
+            "question": {"type": "string", "minLength": 1},
+            "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
+          },
+          "additionalProperties": false
+        }
+      ]
     },
     "runtimeAssumption": {
       "type": "object",
@@ -89,7 +118,7 @@
         "key": {"enum": ["audio-sample-rate", "audio-block-frames"]},
         "value": {"type": "integer", "minimum": 1},
         "unit": {"enum": ["hertz", "frames"]},
-        "fact_kind": {"const": "source-declared-maximum"},
+        "fact_kind": {"const": "source-declared-runtime-constant"},
         "evidence_refs": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceEvidence"}}
       },
       "additionalProperties": false

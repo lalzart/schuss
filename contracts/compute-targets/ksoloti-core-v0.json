@@ -1,0 +1,163 @@
+{
+  "schema_version": "compute-target-v0",
+  "canonical_profile": "schuss-canonical-json-v1",
+  "compute_target_id": "schuss-compute-target-000001",
+  "revision": 1,
+  "content_hash": "sha256:c1fa5a49ab9474068c70ffc03f5bbfc216936d1fcfa1514e257ec7d5361c866d",
+  "target_kind": "embedded-audio-processor",
+  "display_name": "Ksoloti Core",
+  "processor": {
+    "family": "stm32f427",
+    "core": "cortex-m4",
+    "instruction_set": "thumb",
+    "fpu": "fpv4-sp-d16",
+    "evidence_refs": [
+      {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/Makefile", "byte_sha256": "dc36aaa514673e88f9e9727e3636be5d662edcf0767948618004edda13b3936b", "claim_kind": "build-declared"},
+      {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/board.h", "byte_sha256": "ccadef5e181c7763030d7da4961f8a090442f3b3058eebd5d759ba517a8e7564", "claim_kind": "source-declared"}
+    ]
+  },
+  "abi_constraints": {
+    "target_triple": "arm-none-eabi",
+    "float_abi": "hard",
+    "endianness": {
+      "status": "unresolved",
+      "code": "TARGET_ENDIANNESS_EXACT_EVIDENCE_UNRESOLVED",
+      "owner": "target-owner",
+      "earliest_task": "task-009",
+      "rationale": "Task 007 does not turn an omitted compiler flag or general Cortex-M convention into pinned target evidence.",
+      "question": "Which exact target and toolchain evidence should establish the endianness used by the first executable build closure?",
+      "evidence_refs": []
+    },
+    "evidence_refs": [
+      {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/Makefile", "byte_sha256": "dc36aaa514673e88f9e9727e3636be5d662edcf0767948618004edda13b3936b", "claim_kind": "build-declared"}
+    ]
+  },
+  "runtime_assumptions": [
+    {
+      "key": "audio-sample-rate",
+      "value": 48000,
+      "unit": "hertz",
+      "fact_kind": "source-declared-runtime-constant",
+      "evidence_refs": [
+        {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/axoloti_defines.h", "byte_sha256": "325f034f77b83139eabb48c9712fac039773ebef1ccf99ec62c461c8a035cc70", "claim_kind": "source-declared"}
+      ]
+    },
+    {
+      "key": "audio-block-frames",
+      "value": 16,
+      "unit": "frames",
+      "fact_kind": "source-declared-runtime-constant",
+      "evidence_refs": [
+        {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/axoloti_defines.h", "byte_sha256": "325f034f77b83139eabb48c9712fac039773ebef1ccf99ec62c461c8a035cc70", "claim_kind": "source-declared"}
+      ]
+    }
+  ],
+  "memory_regions": [
+    {
+      "region_id": "target-memory-region-000001",
+      "address_start": "0x10000000",
+      "length_bytes": 51200,
+      "alignment_bytes": 4,
+      "budget_kind": "linker-region-budget",
+      "resource_kinds": ["data"],
+      "evidence_refs": [
+        {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/ramlink_ksoloti.ld", "byte_sha256": "08ead427e297a4d66ea2b8d830563e7a2d8c683ad399c0809477b584eb70b1eb", "claim_kind": "linker-declared"}
+      ]
+    },
+    {
+      "region_id": "target-memory-region-000002",
+      "address_start": "0x00011000",
+      "length_bytes": 45056,
+      "alignment_bytes": 4,
+      "budget_kind": "linker-region-budget",
+      "resource_kinds": ["code", "data", "read-only-data"],
+      "evidence_refs": [
+        {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/ramlink_ksoloti.ld", "byte_sha256": "08ead427e297a4d66ea2b8d830563e7a2d8c683ad399c0809477b584eb70b1eb", "claim_kind": "linker-declared"}
+      ]
+    },
+    {
+      "region_id": "target-memory-region-000003",
+      "address_start": "0x2001C000",
+      "length_bytes": 8192,
+      "alignment_bytes": 4,
+      "budget_kind": "linker-region-budget",
+      "resource_kinds": ["data"],
+      "evidence_refs": [
+        {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/ramlink_ksoloti.ld", "byte_sha256": "08ead427e297a4d66ea2b8d830563e7a2d8c683ad399c0809477b584eb70b1eb", "claim_kind": "linker-declared"}
+      ]
+    },
+    {
+      "region_id": "target-memory-region-000004",
+      "address_start": "0x20020000",
+      "length_bytes": 65536,
+      "alignment_bytes": 4,
+      "budget_kind": "linker-region-budget",
+      "resource_kinds": ["data", "read-only-data"],
+      "evidence_refs": [
+        {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/ramlink_ksoloti.ld", "byte_sha256": "08ead427e297a4d66ea2b8d830563e7a2d8c683ad399c0809477b584eb70b1eb", "claim_kind": "linker-declared"}
+      ]
+    },
+    {
+      "region_id": "target-memory-region-000005",
+      "address_start": "0xC0000000",
+      "length_bytes": 33554432,
+      "alignment_bytes": 4,
+      "budget_kind": "linker-region-budget",
+      "resource_kinds": ["asset", "data"],
+      "evidence_refs": [
+        {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/ramlink_ksoloti.ld", "byte_sha256": "08ead427e297a4d66ea2b8d830563e7a2d8c683ad399c0809477b584eb70b1eb", "claim_kind": "linker-declared"}
+      ]
+    }
+  ],
+  "asset_storage_limits": [],
+  "firmware_runtime_reference": {
+    "build_environment_id": "schuss-build-environment-000002",
+    "revision": 1,
+    "content_hash": "sha256:4475da81044f40c37e95cd01dcd0a17e3d612c664cc5baa904e0bf1e58e8ae47"
+  },
+  "capability_vocabulary_reference": {
+    "capability_vocabulary_id": "schuss-capability-vocabulary-000001",
+    "revision": 1,
+    "content_hash": "sha256:37770109d3aff88a67ab031a6ee21c49eb4d301e2933c4659efd38c4496cca92"
+  },
+  "capability_declarations": [
+    {
+      "capability_key": "audio-stream-fixed-q27",
+      "state": {
+        "status": "unresolved",
+        "code": "TARGET_AUDIO_STREAM_CAPABILITY_UNPROVED",
+        "owner": "target-owner",
+        "earliest_task": "task-009",
+        "rationale": "Source declarations and a legacy observation do not prove that the exact runtime and build closure supports this contract on the target.",
+        "question": "Does the pinned Task 009 runtime and toolchain closure build and execute the required audio Q27 stream contract?",
+        "evidence_refs": []
+      }
+    },
+    {
+      "capability_key": "control-stream-fixed-q27",
+      "state": {
+        "status": "unresolved",
+        "code": "TARGET_CONTROL_STREAM_CAPABILITY_UNPROVED",
+        "owner": "target-owner",
+        "earliest_task": "task-009",
+        "rationale": "Source declarations and a legacy observation do not prove that the exact runtime and build closure supports this contract on the target.",
+        "question": "Does the pinned Task 009 runtime and toolchain closure build and execute the required control Q27 stream contract?",
+        "evidence_refs": []
+      }
+    }
+  ],
+  "unresolved_facts": [
+    {
+      "fact_id": "target-unresolved-fact-000001",
+      "status": "unresolved",
+      "code": "TARGET_ASSET_STORAGE_LIMITS_NOT_EVALUATED",
+      "owner": "target-owner",
+      "earliest_task": "task-009",
+      "rationale": "The reference graph has no assets, and the linker region alone does not prove a complete runtime or packaged asset limit.",
+      "question": "Which exact asset limits are required by the first executable backend slice after static sections and runtime reservations are accounted for?",
+      "evidence_refs": [
+        {"source_id": "patcher", "commit": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c", "path": "firmware/ramlink_ksoloti.ld", "byte_sha256": "08ead427e297a4d66ea2b8d830563e7a2d8c683ad399c0809477b584eb70b1eb", "claim_kind": "linker-declared"}
+      ]
+    }
+  ]
+}

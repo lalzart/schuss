@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "build-result-v0.schema.json",
+  "title": "Schuss immutable build result v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "build_result_id", "revision", "content_hash", "request_reference", "input_closure", "input_closure_hash", "selected_bindings", "compute_target_reference", "backend_reference", "toolchain_reference", "firmware_runtime_reference", "options_used", "stage_outcomes", "diagnostics", "artifact_references", "resource_report_references", "overall_status"],
+  "properties": {
+    "schema_version": {"const": "build-result-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "build_result_id": {"type": "string", "pattern": "^schuss-build-result-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "request_reference": {"$ref": "#/$defs/requestReference"},
+    "input_closure": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/closureReference"}},
+    "input_closure_hash": {"$ref": "#/$defs/contentHash"},
+    "selected_bindings": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/nodeSelection"}},
+    "compute_target_reference": {"$ref": "#/$defs/targetReference"},
+    "backend_reference": {"$ref": "#/$defs/backendReference"},
+    "toolchain_reference": {"$ref": "#/$defs/environmentReference"},
+    "firmware_runtime_reference": {"$ref": "#/$defs/environmentReference"},
+    "options_used": {"$ref": "#/$defs/buildOptions"},
+    "stage_outcomes": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/stageOutcome"}},
+    "diagnostics": {"type": "array", "x-schuss-array-kind": "sequence", "uniqueItems": true, "items": {"$ref": "#/$defs/diagnostic"}},
+    "artifact_references": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/artifactReference"}},
+    "resource_report_references": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/resourceReportReference"}},
+    "overall_status": {"enum": ["success", "failed", "unsupported", "unresolved", "not-run"]}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "requestReference": {"type": "object", "required": ["build_request_id", "revision", "content_hash"], "properties": {"build_request_id": {"type": "string", "pattern": "^schuss-build-request-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "targetReference": {"type": "object", "required": ["compute_target_id", "revision", "content_hash"], "properties": {"compute_target_id": {"type": "string", "pattern": "^schuss-compute-target-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "backendReference": {"type": "object", "required": ["backend_id", "revision", "content_hash"], "properties": {"backend_id": {"type": "string", "pattern": "^schuss-backend-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "environmentReference": {"type": "object", "required": ["build_environment_id", "revision", "content_hash"], "properties": {"build_environment_id": {"type": "string", "pattern": "^schuss-build-environment-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "bindingReference": {"type": "object", "required": ["implementation_id", "revision", "content_hash"], "properties": {"implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "eligibilityReference": {"type": "object", "required": ["binding_eligibility_id", "revision", "content_hash"], "properties": {"binding_eligibility_id": {"type": "string", "pattern": "^schuss-binding-eligibility-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "closureReference": {
+      "type": "object",
+      "required": ["record_kind", "stable_id", "revision", "content_hash"],
+      "properties": {
+        "record_kind": {"enum": ["catalog-family", "component-contract", "implementation-binding", "dsp-graph", "device-profile", "instrument", "capability-vocabulary", "compute-target", "backend", "build-environment", "binding-eligibility", "build-request"]},
+        "stable_id": {"type": "string", "pattern": "^schuss-[a-z0-9-]+-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "nodeSelection": {
+      "type": "object",
+      "required": ["node_id", "binding_reference", "eligibility_reference", "selection_policy_id"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "binding_reference": {"$ref": "#/$defs/bindingReference"},
+        "eligibility_reference": {"$ref": "#/$defs/eligibilityReference"},
+        "selection_policy_id": {"type": "string", "pattern": "^schuss-selection-policy-[0-9]{6}$"}
+      },
+      "additionalProperties": false
+    },
+    "buildOptions": {"type": "object", "required": ["profile", "determinism", "diagnostic_policy", "implicit_discovery"], "properties": {"profile": {"const": "schuss-build-options-v0"}, "determinism": {"const": "required"}, "diagnostic_policy": {"const": "collect-all-deterministic"}, "implicit_discovery": {"const": false}}, "additionalProperties": false},
+    "stageKey": {"enum": ["schema-identity-validation", "target-independent-graph-validation", "target-backend-validation", "implementation-resolution", "compound-elaboration", "dependency-resource-planning", "backend-lowering", "artifact-generation", "target-compile-link", "packaging-evidence-recording"]},
+    "stageOutcome": {
+      "type": "object",
+      "required": ["ordinal", "stage", "status", "diagnostic_ids", "artifact_references", "resource_report_references"],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 1},
+        "stage": {"$ref": "#/$defs/stageKey"},
+        "status": {"enum": ["success", "failed", "unsupported", "unresolved", "not-run"]},
+        "diagnostic_ids": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "pattern": "^diagnostic-[0-9]{6}$"}},
+        "artifact_references": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/artifactReference"}},
+        "resource_report_references": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/resourceReportReference"}}
+      },
+      "additionalProperties": false
+    },
+    "diagnosticParameter": {"type": "object", "required": ["key", "value"], "properties": {"key": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}, "value": {"type": "string"}}, "additionalProperties": false},
+    "subjectReference": {
+      "type": "object",
+      "required": ["subject_kind", "subject_id"],
+      "properties": {
+        "subject_kind": {"enum": ["build-request", "graph", "node", "facet", "compound-path", "component-contract", "implementation-binding", "compute-target", "backend", "capability", "dependency", "resource", "build-environment", "artifact"]},
+        "subject_id": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "diagnostic": {
+      "type": "object",
+      "required": ["diagnostic_id", "code", "severity", "stage", "parameters", "subject_references", "related_diagnostic_ids"],
+      "properties": {
+        "diagnostic_id": {"type": "string", "pattern": "^diagnostic-[0-9]{6}$"},
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "severity": {"enum": ["info", "warning", "error"]},
+        "stage": {"$ref": "#/$defs/stageKey"},
+        "parameters": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/diagnosticParameter"}},
+        "subject_references": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/subjectReference"}},
+        "related_diagnostic_ids": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "pattern": "^diagnostic-[0-9]{6}$"}}
+      },
+      "additionalProperties": false
+    },
+    "artifactReference": {"type": "object", "required": ["artifact_id", "revision", "content_hash"], "properties": {"artifact_id": {"type": "string", "pattern": "^schuss-artifact-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "resourceReportReference": {"type": "object", "required": ["resource_report_id", "revision", "content_hash"], "properties": {"resource_report_id": {"type": "string", "pattern": "^schuss-resource-report-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false}
+  }
+}
