@@ -41,16 +41,21 @@ This directory contains only contracts that current Schuss artifacts use:
 - `build-request-v0.schema.json`, `build-result-v0.schema.json`,
   `artifact-descriptor-v0.schema.json`, `resource-report-v0.schema.json`, and
   `evidence-claim-v0.schema.json` validate the one-way future build/evidence
-  record shapes.
+  record shapes; and
+- `operation-request-v1.schema.json` and `operation-result-v1.schema.json`
+  validate the shared Task 008 headless envelope, while
+  `backend-invocation-input-v1.schema.json` defines the non-executable Task 009
+  handoff seam.
 
 The resolved schemas describe factual compatibility-bridge evidence only. The
 semantic overlay is a versioned curation foundation and pilot, not a complete
 catalog census or a final graph, object-facet, instrument, device, or operation
 contract.
 
-Tasks 005-007 add the device, instrument, component, binding, graph, exact
-family, target, backend, build, artifact, resource, and evidence schemas.
-Presentation and broader asset contracts remain later work. Processor,
+Tasks 005-008 add the device, instrument, component, binding, graph, exact
+family, target, backend, build, artifact, resource, evidence, and operation
+schemas. Presentation and broader asset contracts remain later work. Processor,
 toolchain/runtime, and backend identities are controlled stable values in the
 reusable schemas; the records under `contracts/` choose Ksoloti-specific
-values. See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`.
+values. See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md` and
+`docs/OPERATION_CONTRACTS.md`.

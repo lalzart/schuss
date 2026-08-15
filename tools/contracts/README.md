@@ -1,7 +1,6 @@
 # Semantic contract tools
 
-Validate the aggregate Task 006 production closure, including Task 005 device
-and instrument records:
+Validate the accepted production closures:
 
 ```bash
 python3 tools/contracts/validate_component_graph_contracts.py
@@ -18,6 +17,16 @@ type-conversion, topology, seam-map, compound, and exact-resolution failures.
 Task 007 adds target/backend/eligibility resolution, future build/result,
 artifact, resource, diagnostic, and eight-level evidence fixtures.
 
-The import direction is Task 007 -> Task 006 -> Task 005. Do not add upward or
-circular imports. Extracting their shared canonical/schema/diagnostic helpers
-into a lower validator core is the first prerequisite of Task 008.
+Task 008 consolidates shared mechanics in `validator_core.py`. The three sibling
+domain modules are `device_instrument_rules.py`,
+`component_graph_rules.py`, and `target_backend_build_rules.py`; none imports a
+sibling. `aggregate_validator.py` is the only composer. The historic
+`validate_*` filenames remain compatible process adapters and retain their
+accepted output bytes.
+
+Task 008 operations and their minimal machine adapter are documented in
+`docs/OPERATION_CONTRACTS.md`. Run the adapter with:
+
+```bash
+bin/schuss op --request request.json --json
+```

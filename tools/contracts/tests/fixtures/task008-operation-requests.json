@@ -1,0 +1,62 @@
+{
+  "fixture_scope": "task-008-non-production-operation-requests",
+  "records_validate": {
+    "schema_version": "schuss-operation-request-v1",
+    "canonical_profile": "schuss-canonical-json-v1",
+    "operation": "records.validate",
+    "payload": {"scope": "accepted-record-closure"}
+  },
+  "graph_inspect": {
+    "schema_version": "schuss-operation-request-v1",
+    "canonical_profile": "schuss-canonical-json-v1",
+    "operation": "graph.inspect",
+    "payload": {
+      "graph_reference": {
+        "graph_id": "schuss-graph-000001",
+        "revision": 1,
+        "content_hash": "sha256:b38562dc2dcf80036e8fc1d78fe8ee425de01f4943495a23375bfb4e7f346e6e"
+      }
+    }
+  },
+  "build_resolve": {
+    "schema_version": "schuss-operation-request-v1",
+    "canonical_profile": "schuss-canonical-json-v1",
+    "operation": "build.resolve",
+    "payload": {
+      "build_request_reference": {
+        "build_request_id": "schuss-build-request-000001",
+        "revision": 1,
+        "content_hash": "sha256:0ba7e74977ac7ebcf50cb73826c349040d998541f688bb32cbedf88140259e95"
+      }
+    }
+  },
+  "graph_transact_noop": {
+    "schema_version": "schuss-operation-request-v1",
+    "canonical_profile": "schuss-canonical-json-v1",
+    "operation": "graph.transact",
+    "payload": {
+      "graph_reference": {
+        "graph_id": "schuss-graph-000001",
+        "revision": 1,
+        "content_hash": "sha256:b38562dc2dcf80036e8fc1d78fe8ee425de01f4943495a23375bfb4e7f346e6e"
+      },
+      "base_content_hash": "sha256:b38562dc2dcf80036e8fc1d78fe8ee425de01f4943495a23375bfb4e7f346e6e",
+      "edits": [
+        {
+          "edit": "add-node",
+          "node": {
+            "node_id": "graph-node-000002",
+            "contract_reference": {
+              "component_contract_id": "schuss-component-contract-000003",
+              "revision": 1,
+              "content_hash": "sha256:96a29faf58769be5f2ac52de07aa80cae3dcdff28f0f3c158fb1fd12cc234a8d"
+            },
+            "parameter_values": [],
+            "attribute_values": []
+          }
+        },
+        {"edit": "remove-node", "node_id": "graph-node-000002"}
+      ]
+    }
+  }
+}

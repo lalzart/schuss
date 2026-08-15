@@ -12,8 +12,8 @@ one compatibility backend.
 
 ## Current status
 
-Schuss has completed the Phase 4A semantic-catalog foundation and the Task 007
-target/backend/build-record contract gate:
+Schuss has completed the Phase 4A semantic-catalog foundation and the Task 008
+shared headless control-plane gate:
 
 - the project boundaries and terminology are documented;
 - upstream sources are pinned without committing machine-local paths;
@@ -41,12 +41,16 @@ target/backend/build-record contract gate:
 - Task 007 is complete: reusable target/backend/build-domain schemas, a
   Ksoloti-specific production target/backend/request closure, and a pure
   fail-closed resolver establish the next contract boundary;
+- Task 008 is complete: a shared validator core, three independent rule
+  modules, one aggregate validator, four versioned headless operations, atomic
+  graph transactions, and a minimal canonical-JSON `schuss op` adapter provide
+  one client-neutral control plane;
 - historical instrument revision 1 and all Task 005/006 records remain
   byte-identical; the production binding candidate remains unresolved and all
   lowering, artifact, ARM, connected-device, real-time, and audible levels are
   `not-run`;
-- no Schuss graph editor, compiler frontend, device runtime, or desktop app is
-  implemented yet.
+- no Schuss graph editor, executable backend/compiler frontend, device runtime,
+  or desktop app is implemented yet.
 
 Start with [the project context](docs/PROJECT_CONTEXT.md), then read
 [the architecture](docs/ARCHITECTURE.md),
@@ -56,6 +60,8 @@ Start with [the project context](docs/PROJECT_CONTEXT.md), then read
 [the component and graph contracts](docs/COMPONENT_GRAPH_CONTRACTS.md), and the
 Task 007 boundary in
 [the target, backend, build, and evidence contracts](docs/TARGET_BACKEND_BUILD_CONTRACTS.md).
+[The shared operation contracts](docs/OPERATION_CONTRACTS.md) document the Task
+008 dispatcher, atomic transaction, process, and Task 009 seam boundaries.
 Active
 implementation work is bounded by task files under `docs/tasks/`.
 
@@ -92,7 +98,7 @@ connected hardware, or audible behavior.
 | `catalog/` | Source locks, frozen evidence, reviews, and semantic overlays |
 | `contracts/` | Versioned family, component, binding, graph, device, instrument, target, backend, eligibility, environment, and request records |
 | `legacy/ksoloti-bridge/` | Isolated Ksoloti Java compatibility work |
-| `packages/` | Future headless model, compiler, and CLI packages |
+| `packages/` | Shared headless control plane and future compiler/CLI packages |
 | `apps/` | Future user-facing applications |
 
 No license has been selected for Schuss yet. Upstream source licenses remain

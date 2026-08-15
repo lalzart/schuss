@@ -170,18 +170,20 @@ contract references and realization details.
 
 ## Operation boundary
 
-The future headless model will expose the same typed operations to GUI, CLI,
-and AI clients. Expected operation families include catalog query, graph
-inspection, node/connection mutation, validation, explanation, and build.
-Exact command names and protocol shapes are intentionally deferred until the
-catalog and graph schemas exist. Task 004 fixes the shared domain boundary but
-does not implement operations.
+Task 008 implements the shared headless model used by GUI, CLI, and AI clients.
+The versioned operations are `records.validate`, `graph.inspect`,
+`build.resolve`, and atomic `graph.transact`. One in-process dispatcher owns
+their semantics; `bin/schuss` is a minimal canonical-JSON process adapter over
+that exact API.
 
-Task 008 must first extract the shared canonical JSON, schema traversal,
-portability, diagnostic, and exact-reference helpers from the current acyclic
-validator chain (Task 007 -> Task 006 -> Task 005). It must preserve record
-bytes and behavior and must not introduce circular validator imports. Typed
-headless operations follow that bounded prerequisite.
+Shared canonical JSON, schema traversal, portability, diagnostic,
+exact-reference, and domain-neutral registry mechanisms now live in a lower
+validator core. Device/instrument, component/graph, and target/backend/build
+rules are siblings that import only the core. The aggregate validator composes
+them. Historic validator summaries and bytes remain unchanged.
+
+The Task 009 invocation seam is data-only and stops before backend lowering;
+Task 008 contains no executable handler. See `docs/OPERATION_CONTRACTS.md`.
 
 ## Legacy boundary
 

@@ -97,9 +97,12 @@ graph-target evidence pass. Task 007 now adds reusable target/backend/build
 contracts and a Ksoloti-specific production closure. Its pure resolver reports
 the candidate unresolved because compatibility, capabilities, toolchain, and
 runtime identity remain unproved. No backend, artifact-generation, ARM,
-device, real-time, or audible evidence was performed. Task 008 is next and
-begins by consolidating the current one-way validator stack before defining
-shared headless operations. See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`.
+device, real-time, or audible evidence was performed. Task 008 now consolidates
+the validator core and provides one shared headless dispatcher for validation,
+inspection, build resolution, and atomic graph transactions, plus a minimal
+canonical-JSON process boundary. It stops before lowering and exposes no
+backend handler. Task 009 is next. See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md`
+and `docs/OPERATION_CONTRACTS.md`.
 
 ## Terminology
 

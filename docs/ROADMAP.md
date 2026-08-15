@@ -14,8 +14,8 @@ into transparent, typed Schuss models.
 | 5 | Minimal Gills device-profile and instrument schemas | Complete |
 | 6 | Component-contract, implementation-binding, and DSP-graph schemas | Complete |
 | 7 | Compute-target, backend-capability, build, artifact, and evidence schemas | Complete; Task 007 contract gate |
-| 8 | Shared headless validation and typed operation layer | Next; begins with validator-core consolidation |
-| 9 | One minimal graph through the legacy `.axp` adapter and ARM compiler/linker | Planned |
+| 8 | Shared headless validation and typed operation layer | Complete; shared dispatcher and minimal process gate |
+| 9 | One minimal graph through the legacy `.axp` adapter and ARM compiler/linker | Next |
 | 10 | Deterministic structured CLI over shared operations | Planned |
 | 4B / 11 | Incremental reviewed-core expansion with actual contracts and bindings | Gated on Phase 6 contract model |
 | 12 | Basic object drawer and transparent graph canvas | Planned |
@@ -44,12 +44,16 @@ three component signatures and legacy seam maps, the authoritative one-node
 instrument revision 2 while retaining revision 1. Task 007 adds reusable
 target/backend/build-domain schemas, the smallest truthful Ksoloti production
 closure, a pure fail-closed resolver, and future result/evidence fixtures. The
-production candidate remains unresolved and no backend stage ran. Task 008 is
-next: first consolidate the one-way validator stack into a lower shared core,
-then define shared headless typed operations. The completed boundaries are in
+production candidate remains unresolved and no backend stage ran. Task 008 now
+adds the lower shared validator core, three sibling rule modules, one aggregate
+validator, four versioned headless operations, atomic in-memory graph
+transactions, a data-only Task 009 seam, and the minimal canonical-JSON
+`schuss op` process boundary. Task 009 is next; no lowering or tool invocation
+occurred in Task 008. The completed boundaries are in
 `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and
-`docs/TARGET_BACKEND_BUILD_CONTRACTS.md`.
+`docs/TARGET_BACKEND_BUILD_CONTRACTS.md`, and
+`docs/OPERATION_CONTRACTS.md`.
 
 ## Contract sequence constraints
 

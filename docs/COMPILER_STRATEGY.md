@@ -367,7 +367,7 @@ bridge. The future direct frontend must not require Java or `.axp`. Both remain
 backends beneath the same graph, contract, target, build, and evidence model.
 
 Task 007 validates only the declarative contract and pure selection boundary.
-Task 008 must first consolidate the shared validator core and then expose
-typed headless operations. Task 009 separately owns actual legacy lowering,
+Task 008 consolidates the shared validator core and exposes typed headless
+operations plus a data-only accepted-request seam. Task 009 separately owns actual legacy lowering,
 `.axp` serialization/source maps, exact toolchain/runtime closure, and ARM
 compile/link execution.

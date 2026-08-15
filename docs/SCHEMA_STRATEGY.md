@@ -450,16 +450,18 @@ The following are invalid architecture:
 
 ### Planned next
 
-1. **Task 008:** first consolidate the acyclic Task 005-007 validator stack
-   into a lower shared core without byte or behavior changes, then add shared
-   headless validation and typed operations.
-2. **Task 009:** one minimal graph lowered through a deterministic legacy
+Task 008 is complete: the Task 005-007 mechanisms are consolidated beneath
+three sibling rule modules, and versioned headless validation, inspection,
+resolution, transaction, and minimal process contracts are implemented without
+lowering.
+
+1. **Task 009:** one minimal graph lowered through a deterministic legacy
    `.axp` adapter and existing ARM compiler/linker.
-3. **Task 010:** deterministic CLI over the same operations.
-4. **Task 011:** incremental catalog expansion with actual component contracts
+2. **Task 010:** deterministic CLI product over the same operations.
+3. **Task 011:** incremental catalog expansion with actual component contracts
    and bindings; Phase 4B must not outrun Task 006.
-5. **Task 012:** basic object drawer and transparent graph canvas.
-6. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
+4. **Task 012:** basic object drawer and transparent graph canvas.
+5. **Task 013:** direct Schuss graph-to-C++ frontend behind the same backend
    contract.
 
 ### Deliberately deferred
@@ -467,7 +469,7 @@ The following are invalid architecture:
 - Complete controlled vocabularies and production schema fields.
 - Full Gills behavior, firmware, and panel implementation.
 - Complete Ksoloti target budgets and measured resource envelopes.
-- Graph mutation transaction semantics and remote protocol transport.
+- Remote protocol transport, queues, cancellation, and progress events.
 - Optimizer, scheduler, instruction-level IR, direct C++ code generation, and
   replacement ABI design.
 - Additional targets/devices, asset pipelines, and complete Phase 4B curation.

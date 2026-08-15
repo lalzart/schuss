@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "backend-invocation-input-v1.schema.json",
+  "title": "Schuss accepted backend invocation input v1",
+  "type": "object",
+  "required": ["schema_version", "status", "accepted_build_request", "resolution_traces", "selected_bindings", "boundary"],
+  "properties": {
+    "schema_version": {"const": "schuss-backend-invocation-input-v1"},
+    "status": {"const": "ready-for-backend-invocation"},
+    "accepted_build_request": {"$ref": "build-request-v0.schema.json"},
+    "resolution_traces": {
+      "type": "array",
+      "x-schuss-array-kind": "sequence",
+      "items": {"$ref": "#/$defs/resolutionTrace"}
+    },
+    "selected_bindings": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/selectedBinding"}
+    },
+    "boundary": {
+      "type": "object",
+      "required": ["completed_stage", "next_stage", "next_stage_status", "executable_handler_status"],
+      "properties": {
+        "completed_stage": {"const": "implementation-resolution"},
+        "next_stage": {"const": "backend-lowering"},
+        "next_stage_status": {"const": "not-run"},
+        "executable_handler_status": {"const": "absent"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "bindingReference": {
+      "type": "object",
+      "required": ["implementation_id", "revision", "content_hash"],
+      "properties": {
+        "implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "selectedBinding": {
+      "type": "object",
+      "required": ["node_id", "binding_reference"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "binding_reference": {"$ref": "#/$defs/bindingReference"}
+      },
+      "additionalProperties": false
+    },
+    "resolutionTrace": {
+      "type": "object",
+      "x-schuss-domain-value": true
+    }
+  }
+}
