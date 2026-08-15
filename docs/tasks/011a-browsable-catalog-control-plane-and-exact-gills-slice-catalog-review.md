@@ -1,14 +1,16 @@
 # Task 011A: Browsable catalog control plane and exact Gills-slice catalog review
 
 Status: complete. The user explicitly authorized Task 011A implementation on
-2026-08-15. All acceptance gates passed locally on 2026-08-15. Staging,
-commit, publication, and push remain unauthorized and were not performed.
+2026-08-15. All acceptance gates passed locally on 2026-08-15. The completed
+implementation was later committed and pushed under separate explicit user
+authorization. The user then explicitly removed the post-task GitHub Actions
+workflow on 2026-08-15; local validation remains the acceptance boundary.
 
 Work in the Schuss repository. Work only on Task 011A after the user explicitly
 approves running it.
 
-This is a bounded catalog-projection, shared-operation, product-CLI, ordinary-
-CI, and reviewed-curation task. It must establish the first source-agnostic
+This is a bounded catalog-projection, shared-operation, product-CLI, and
+reviewed-curation task. It must establish the first source-agnostic
 catalog discovery boundary shared by future CLI, GUI, and AI clients while
 reviewing only the seven component roles needed by the first simple Gills
 vertical slice. It must not define the new component contracts, bindings,
@@ -42,8 +44,8 @@ Before changing implementation, read completely:
 - `packages/schuss_core/control_plane.py` and its public dispatcher;
 - the accepted Task 010 parser, locator, renderer, help, completion, fixtures,
   and tests; and
-- all inventory, catalog, contract, operation, and CLI test entry points that
-  ordinary CI will run.
+- all inventory, catalog, contract, operation, and CLI test entry points used
+  by local validation.
 
 If this task conflicts with an accepted decision, stop and report the conflict
 instead of silently changing the architecture.
@@ -101,13 +103,10 @@ Phase 4A pilot families discoverable, and add only the missing catalog
 identities required by the simple Gills slice.
 
 This task exists so future CLI, Task 012 GUI, and future AI clients do not
-invent separate category, search, provenance, readiness, or ordering truth. It
-also establishes a lightweight ordinary CI gate before broader Phase 4B work.
+invent separate category, search, provenance, readiness, or ordering truth.
 
 ## In scope
 
-- One lightweight GitHub Actions workflow for the existing ordinary Python
-  inventory, catalog, contract, operation, and Task 010 CLI suites.
 - A versioned catalog-projection contract and deterministic derivation from
   exact accepted semantic, provenance, and evidence inputs.
 - An exact family-reference mechanism sufficient for
@@ -147,8 +146,7 @@ also establishes a lightweight ordinary CI gate before broader Phase 4B work.
   undo/redo, or publication.
 - Backend lowering, `.axp`, source-map, Java generation, generated C++, ARM
   compilation/linking, packaging, or deployment.
-- Authenticated Task 009 environment capture, repair, probe, or execution in
-  ordinary CI.
+- Authenticated Task 009 environment capture, repair, probe, or execution.
 - GUI, drawer, graph-canvas, AI prompting, MCP, remote service, or client-
   specific catalog semantics. Representative callers are fixtures only.
 - Complete 3,602-observation classification or the 150-250-family reviewed-
@@ -190,41 +188,6 @@ unchanged. Root help and static completion may gain only the new fixed catalog
 grammar; if they change, Task 011A owns new deterministic golden bytes and must
 retain the Task 010 historical goldens as evidence rather than rewriting the
 Task 010 completion record.
-
-## Ordinary continuous-integration boundary
-
-Add one lightweight workflow under `.github/workflows/`. It must:
-
-- use one explicitly selected supported Python major/minor version rather than
-  a broad version/OS matrix;
-- run the existing inventory tests;
-- run the existing catalog tests;
-- run the existing contract suite, including operation and product-CLI tests;
-- run all read-only inventory, review, semantic-catalog, and contract
-  validators that need only committed repository bytes;
-- run Task 011A catalog-operation/CLI tests and `git diff --check`;
-- use no repository secret, device, network service, mutable cache authority,
-  local source configuration, or absolute checkout path as a test input; and
-- fail closed on a test, validator, schema, canonical-byte, fixture, or
-  preservation mismatch.
-
-Ordinary CI must not invoke:
-
-- `capture_task009_prerequisite_environment.py`;
-- `capture_task009_prerequisite_repair.py` or equivalent repair capture;
-- `run_task009.py` or the Task 009 backend handler;
-- Java, Javac, Ant, GNU Make, `arm-none-eabi-*`, firmware tools, USB, or
-  hardware; or
-- ignored content-addressed Task 009 products that do not exist in a clean
-  GitHub checkout.
-
-Pure tests that validate retained Task 009 schemas, records, fixtures, and
-evidence bytes remain part of the contract suite. Excluding authenticated
-execution must not weaken their semantic or preservation assertions.
-
-The workflow is validation only. It does not publish packages, artifacts,
-releases, branches, pages, images, or deployment output and does not change
-branch protection.
 
 ## Catalog projection architecture
 
@@ -561,7 +524,6 @@ Deliverables are:
 
 - this approved Task 011A contract, updated to active only after authorization
   and complete only after every acceptance gate passes;
-- one lightweight ordinary GitHub Actions workflow;
 - versioned projection schema/contract and deterministic derivation code;
 - exact family companion/successor records needed to inspect the accepted
   pilot without fabricating history;
@@ -571,7 +533,7 @@ Deliverables are:
 - thin product-CLI commands, human rendering, help, and static completion
   updates strictly needed for the new grammar;
 - direct/API/process/CLI/GUI-fixture/AI-fixture equality cases;
-- positive, negative, determinism, preservation, and ordinary-CI tests;
+- positive, negative, determinism, preservation, and local validation tests;
 - updated catalog/operation/CLI documentation; and
 - a completion report with exact hashes, counts, evidence limits, and next
   Task 011B boundary.
@@ -592,69 +554,65 @@ prove all of the following:
 5. Existing Task 010 domain-command JSON and human outputs remain exact for the
    same invocation/context. Any additive root-help/completion change receives
    a Task 011A-owned golden without rewriting Task 010 evidence.
-6. Ordinary CI runs inventory, catalog, contract, operation, and CLI suites
-   from a clean checkout with no secret or authenticated Task 009 environment.
-7. Ordinary CI does not invoke Java, ARM tools, firmware tools, network
-   services, ignored retained products, device APIs, upload, or flash.
-8. The projection is reproducible from its exact input closure, uses a
+6. The projection is reproducible from its exact input closure, uses a
    versioned derivation contract, and rejects stale or mismatched caches.
-9. The projection contains no manually asserted reverse index, readiness,
+7. The projection contains no manually asserted reverse index, readiness,
    compatibility, provenance, signal, or evidence fact that can drift from its
    authoritative input record.
-10. Every accepted 26-family Phase 4A pilot entry is discoverable and exactly
+8. Every accepted 26-family Phase 4A pilot entry is discoverable and exactly
     inspectable without inventing a legacy family revision/hash.
-11. Stable family IDs remain unchanged. Only reviewed missing slice identities
+9. Stable family IDs remain unchanged. Only reviewed missing slice identities
     are allocated, and the four-step realization does not reuse implementation
     `000032`.
-12. Search supports primary function browsing and all approved filters with
+10. Search supports primary function browsing and all approved filters with
     deterministic results and closed invalid-filter diagnostics.
-13. Empty-query browse, exact ID, display-name, alias, description, controlled-
+11. Empty-query browse, exact ID, display-name, alias, description, controlled-
     tag, and contract-facet-name query cases behave under the documented match
     algorithm.
-14. Query normalization, matching, scoring, filtering, and tie-breaking are
+12. Query normalization, matching, scoring, filtering, and tie-breaking are
     byte-deterministic across fresh processes, record enumeration orders,
     working directories, locales, and hash-map insertion orders.
-15. Functional category and provenance remain independent in schemas,
+13. Functional category and provenance remain independent in schemas,
     projection values, filters, ordering, human output, and negative fixtures.
-16. Factory, Mutable Instruments, community, user, demo, legacy, repository,
+14. Factory, Mutable Instruments, community, user, demo, legacy, repository,
     and source labels are rejected as primary musical functions unless a
     separately accepted taxonomy record gives the same token an unrelated
     musical meaning.
-17. Signal facets appear only from exact component contracts; legacy datatype
+15. Signal facets appear only from exact component contracts; legacy datatype
     observations do not silently create graph-safe signal claims.
-18. Capability and readiness states appear only from exact accepted records
+16. Capability and readiness states appear only from exact accepted records
     and evidence, retain their exact subjects, and do not promote sibling
     implementations or whole families by association.
-19. `catalog.inspect` exposes the complete available family -> implementation
+17. `catalog.inspect` exposes the complete available family -> implementation
     -> contract -> binding -> eligibility/evidence -> provenance chain and
     explicitly reports missing/unresolved links.
-20. The Crossfader inspection truthfully exposes its accepted contract,
+18. The Crossfader inspection truthfully exposes its accepted contract,
     binding, eligibility, and level-5 evidence chain without implying levels
     6-8 or support for other Crossfader variants.
-21. Catalogued-only Gills-slice candidates are clearly distinguishable from
+19. Catalogued-only Gills-slice candidates are clearly distinguishable from
     Crossfader and do not acquire compatibility from membership or common use.
-22. Successor operation schemas are closed, canonical, versioned, and reject
+20. Successor operation schemas are closed, canonical, versioned, and reject
     v1/v2 payload mixing and unsupported members.
-23. A valid v1 request still returns the exact v1 result; both catalog
+21. A valid v1 request still returns the exact v1 result; both catalog
     operations exist only through the accepted successor contract.
-24. Direct API, `schuss op`, ergonomic `--json`, GUI fixture, and AI fixture
+22. Direct API, `schuss op`, ergonomic `--json`, GUI fixture, and AI fixture
     return byte-identical canonical catalog results for the same exact request
     and context, except the existing process LF.
-25. Each product catalog command calls the public dispatcher exactly once and
+23. Each product catalog command calls the public dispatcher exactly once and
     does not import validator, catalog, or readiness internals.
-26. CLI exact locator, record-set selection, stdout/stderr, exit, broken-pipe,
+24. CLI exact locator, record-set selection, stdout/stderr, exit, broken-pipe,
     interruption, human rendering, help, and static completion behavior are
     deterministic and tested at their reachable boundaries.
-27. No command performs live completion, fuzzy search, ambient discovery,
+25. No command performs live completion, fuzzy search, ambient discovery,
     persistence, backend invocation, Java/ARM execution, network access, or
     client-specific semantic reshaping.
-28. The complete-census and 150-250-family expansion remain absent; the only
+26. The complete-census and 150-250-family expansion remain absent; the only
     new reviewed scope is the exact seven-role slice.
-29. No component/binding work beyond accepted Crossfader, graph/instrument,
+27. No component/binding work beyond accepted Crossfader, graph/instrument,
     build/promotion, compiler, GUI/AI implementation, device, firmware,
     upload, flash, staging, commit, or push action occurs without separate
     approval.
-30. `git diff --check` and the final clean-process local/ordinary-CI-equivalent
+28. `git diff --check` and the final clean-process local validation
     gate pass, and the completion report names every remaining proof gap.
 
 ## Decisions Task 011A may make
@@ -672,8 +630,6 @@ prove all of the following:
   stable diagnostic codes consistent with the fixed matching principles.
 - Exact deterministic human catalog rendering and new Task 011A help/
   completion goldens.
-- The single supported Python version and minimal workflow/action versions for
-  ordinary CI.
 - Additional focused negative fixtures needed to prove a stated boundary.
 
 ## Decisions Task 011A must not make
@@ -693,7 +649,7 @@ prove all of the following:
 - Task 011B contracts/graph/build closure or Task 011C backend/compiler work.
 - General catalog expansion beyond the exact accepted pilot and seven-role
   slice.
-- Task 009 authenticated execution in ordinary CI.
+- Task 009 authenticated execution.
 - Hardware, firmware, device, upload, flash, runtime, real-time, or audible
   behavior.
 - Staging, committing, publishing, or pushing without separate approval.
@@ -730,8 +686,6 @@ Stop and report rather than broaden or weaken Task 011A if:
   backend/evidence subject that supports it;
 - catalog operations require changing accepted v1 schema or result bytes;
 - CLI catalog commands require a second dispatcher or client-side search truth;
-- ordinary CI requires authenticated Java/ARM inputs, ignored local products,
-  secrets, hardware, or a mutable upstream checkout;
 - observation 918 cannot truthfully join family `000022` without changing
   family meaning;
 - a new slice identity is ambiguous under the frozen evidence;
@@ -747,8 +701,6 @@ no unsupported family membership/readiness claim is published.
 
 On completion, update this status to complete and record:
 
-- exact workflow path, runner/Python/action identities, commands, and ordinary-
-  CI results;
 - pre-existing and final test counts and every validator summary/hash;
 - accepted Task 001-010 preservation hashes and post-task equality checks;
 - exact v1 operation-schema/result preservation evidence;
@@ -776,35 +728,12 @@ On completion, update this status to complete and record:
 
 ## Completion report
 
-### Ordinary CI and final gates
+### Local validation and final gates
 
-The lightweight workflow is `.github/workflows/ordinary-ci.yml`, byte length
-1,601 and SHA-256
-`ce583317a1ffaeee8b388de9cd9b9e254facb2993013acea2e73631d71732346`.
-It uses `ubuntu-latest`, `actions/checkout@v4`, `actions/setup-python@v5`, and
-the single supported Python version 3.10 with read-only `contents` permission
-and a 20-minute timeout. It runs:
-
-```text
-python -m unittest discover -s tools/inventory/tests
-python tools/inventory/validate_raw_inventory.py catalog/snapshots/legacy-catalog-v0
-python tools/inventory/validate_resolved_inventory.py catalog/snapshots/legacy-resolved-catalog-v0
-python tools/inventory/validate_phase3_review_packet.py catalog/reviews/phase-3-inventory-review-v0
-python -m unittest discover -s tools/catalog/tests
-python tools/catalog/validate_semantic_catalog.py catalog/overlays/phase-4a-semantic-catalog-v0
-python tools/catalog/validate_task011a_catalog.py
-python -m unittest discover -s tools/contracts/tests
-python tools/contracts/validate_device_instrument_contracts.py
-python tools/contracts/validate_component_graph_contracts.py
-python tools/contracts/validate_target_backend_build_contracts.py
-python tools/contracts/validate_task009_prerequisite.py
-git diff --check
-```
-
-The exact command set passed in fresh local processes. Hosted GitHub Actions
-was not run because commit/push were not authorized. No secret, authenticated
-Task 009 environment, ignored retained product, Java/ARM/firmware tool,
-network service, device API, upload, or flash is an ordinary-CI input.
+The complete local inventory, catalog, contract, operation, CLI, validator,
+and `git diff --check` command set passed in fresh processes. The user later
+removed the optional GitHub Actions workflow as unnecessary at this stage; it
+is not part of the accepted Task 011A boundary.
 
 Pre-task counts were 14 inventory, 6 catalog, and 117 contract tests. Final
 counts are 14 inventory, 6 catalog, and 135 contract tests; Task 011A adds 18
@@ -1004,9 +933,11 @@ and Fish
 No new component contract or implementation binding was created. No graph,
 instrument, build/promotion record, backend/compiler implementation, GUI/AI
 implementation, authenticated Task 009 execution, Java/ARM invocation, device,
-firmware, upload, flash, SD-card, staging, commit, publication, or push action
-occurred. No command adds persistence, live completion, fuzzy search, ambient
-discovery, backend execution, network access, or client-specific catalog truth.
+firmware, upload, flash, or SD-card action occurred. During the bounded
+implementation, no staging, commit, publication, or push occurred before the
+later separate publication authorization. No command adds persistence, live
+completion, fuzzy search, ambient discovery, backend execution, network access,
+or client-specific catalog truth.
 
 Proposed Task 011B still owns six target-independent component contracts and
 exact bindings, the authoritative seven-node graph, minimal Gills instrument,

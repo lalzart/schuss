@@ -182,9 +182,6 @@ four-step-sequencer identities that the slice actually needs.
 
 ### Deliverables
 
-- A lightweight ordinary GitHub Actions workflow for the existing inventory,
-  catalog, contract, operation, and product-CLI suites, excluding authenticated
-  Task 009 Java/ARM execution.
 - A versioned deterministic catalog projection derived from exact family,
   implementation, contract, binding, taxonomy, provenance, eligibility, and
   evidence records without becoming a parallel source of truth.
@@ -209,7 +206,7 @@ four-step-sequencer identities that the slice actually needs.
 ### Acceptance evidence
 
 - Full inventory, review, catalog, contract, operation, and product-CLI
-  validation passes in ordinary CI and locally.
+  validation passes locally.
 - Frozen Phase 2/3/review and Phase 4A bytes and IDs remain unchanged.
 - Direct API, canonical CLI JSON, and representative GUI/AI fixture callers
   receive byte-identical catalog operation results.
