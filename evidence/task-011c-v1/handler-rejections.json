@@ -1,0 +1,1 @@
+{"all_output_roots_absent":true,"cases":{"ambiguous":"TASK011C_RESOLUTION_TRACE_INVALID","extra":"TASK011C_INVOCATION_SCHEMA_INVALID","missing":"TASK011C_BINDING_NOT_SELECTED","stale":"TASK011C_BUILD_REQUEST_STALE","unselected":"TASK011C_RESOLUTION_TRACE_INVALID","unsupported":"TASK011C_BUILD_REQUEST_STALE"},"schema_version":"task011c-handler-rejections-v0","status":"passed"}

@@ -155,6 +155,24 @@ compile/link, device, real-time, or audible evidence is produced. Task 011C is
 the earliest owner of backend expansion and executable evidence for this
 slice.
 
+Task 011C now closes that bounded executable boundary without changing the
+authoritative graph or instrument. Six separately authorized probe-input
+successors execute the same exact eight-node closure through lowering,
+generated C++, and ARM compile/link before their binding and eligibility
+revision-2 successors are admitted. Backend revision 3 adds only the pinned
+`legacy-native-object` form needed by the four-step sequencer; Crossfader
+eligibility revision 3 carries the already promoted binding across that exact
+additive backend revision.
+
+Successor record set `schuss-record-set-000006` revision 1 preserves `000005`
+exactly. Ordinary `build.resolve` selects eight nodes, including the same Sine
+binding twice, and emits the unchanged Task 008 invocation seam. Two fresh
+production roots produce identical plan, `.axp`, source map, C++, ARM object,
+ELF, link map, bridge result, command vectors, and static resource facts.
+Evidence reaches only level 5. No connected-device execution, real-time
+measurement, listening, firmware action, upload, or flash occurred; levels
+6-8 remain `not-run`.
+
 ## Terminology
 
 | Term | Meaning |

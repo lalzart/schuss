@@ -859,7 +859,9 @@ def _validate_build_results(
     kind_by_schema = {
         "catalog-family-companion-v0": "catalog-family",
         "component-contract-v0": "component-contract",
+        "component-contract-v1": "component-contract",
         "implementation-binding-v0": "implementation-binding",
+        "implementation-binding-v1": "implementation-binding",
         "dsp-graph-v0": "dsp-graph",
         "device-profile-v0": "device-profile",
         "instrument-v0": "instrument",

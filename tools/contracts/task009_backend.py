@@ -599,14 +599,14 @@ def _run_bridge(
 
 def _arm_build(
     config: ExecutionConfig, output_root: Path, source_root: Path,
-    generated: Path,
+    generated: Path, artifact_stem: str = "blend",
 ) -> tuple[Path, Path, Path, dict[str, Any], list[dict[str, Any]]]:
     proof = output_root / "proof"
     build = proof / "build"
     runtime = output_root / "runtime/build"
     build.mkdir(parents=True, exist_ok=True)
     runtime.mkdir(parents=True, exist_ok=True)
-    generated_target = build / "blend.cpp"
+    generated_target = build / f"{artifact_stem}.cpp"
     if generated.resolve() != generated_target.resolve():
         shutil.copyfile(generated, generated_target)
     shutil.copyfile(source_root / "firmware/xpatch.h", build / "xpatch.h")
@@ -622,26 +622,26 @@ def _arm_build(
         "axoloti_link_firmware": "../../runtime",
         "axoloti_libraries": "../../proof",
     })
-    target = "../../proof/build/blend.elf"
+    target = f"../../proof/build/{artifact_stem}.elf"
     make_arguments = [
         "/usr/bin/make", "-f", "Makefile.patch.mk", "BOARDDEF=BOARD_KSOLOTI_CORE",
-        "FWOPTIONDEF=FW_NORMAL", "BUILDFILENAME=blend", target,
+        "FWOPTIONDEF=FW_NORMAL", f"BUILDFILENAME={artifact_stem}", target,
     ]
     _run(
         make_arguments, firmware, environment, "target-compile-link",
-        "TASK009_ARM_COMPILE_LINK_FAILED", "blend.cpp", timeout=300,
+        "TASK009_ARM_COMPILE_LINK_FAILED", f"{artifact_stem}.cpp", timeout=300,
     )
-    object_raw = build / "blend.o"
-    elf_raw = build / "blend.elf"
-    map_path = build / "blend.map"
+    object_raw = build / f"{artifact_stem}.o"
+    elf_raw = build / f"{artifact_stem}.elf"
+    map_path = build / f"{artifact_stem}.map"
     if not all(path.is_file() for path in (object_raw, elf_raw, map_path)):
         raise Task009BackendError(
             "TASK009_ARM_OUTPUT_MISSING", "target-compile-link",
-            "blend.cpp", "ARM build did not emit its exact required outputs",
+            f"{artifact_stem}.cpp", "ARM build did not emit its exact required outputs",
         )
-    object_stripped = build / "blend-stripped.o"
-    elf_relinked = build / "blend-deterministic.elf"
-    elf_stripped = build / "blend-stripped.elf"
+    object_stripped = build / f"{artifact_stem}-stripped.o"
+    elf_relinked = build / f"{artifact_stem}-deterministic.elf"
+    elf_stripped = build / f"{artifact_stem}-stripped.elf"
     objcopy = config.arm_bin / "arm-none-eabi-objcopy"
     gcc = config.arm_bin / "arm-none-eabi-gcc"
     objdump = config.arm_bin / "arm-none-eabi-objdump"
@@ -650,8 +650,8 @@ def _arm_build(
         _portable_command(
             "make", [
                 "make", "-f", "Makefile.patch.mk", "BOARDDEF=BOARD_KSOLOTI_CORE",
-                "FWOPTIONDEF=FW_NORMAL", "BUILDFILENAME=blend",
-                "../../proof/build/blend.elf",
+                "FWOPTIONDEF=FW_NORMAL", f"BUILDFILENAME={artifact_stem}",
+                f"../../proof/build/{artifact_stem}.elf",
             ], "source-capsule/firmware",
         )
     ]
@@ -662,7 +662,7 @@ def _arm_build(
     )
     commands.append(_portable_command(
         "arm-none-eabi-objcopy",
-        ["arm-none-eabi-objcopy", "--strip-debug", "proof/build/blend.o", "proof/build/blend-stripped.o"],
+        ["arm-none-eabi-objcopy", "--strip-debug", f"proof/build/{artifact_stem}.o", f"proof/build/{artifact_stem}-stripped.o"],
         ".",
     ))
     relink_arguments = [
@@ -670,9 +670,9 @@ def _arm_build(
         "-Wl,--print-memory-usage", "-fno-common", "-mcpu=cortex-m4",
         "-mfloat-abi=hard", "-mfpu=fpv4-sp-d16", "-mno-thumb-interwork",
         "-mthumb", "-mtune=cortex-m4", "-nostartfiles",
-        "../../proof/build/blend-stripped.o", "-lm",
-        "-Wl,-Map=../../proof/build/blend.map,--cref,--build-id=none,--just-symbols=../../runtime/build/ksoloti.elf",
-        "-o", "../../proof/build/blend-deterministic.elf",
+        f"../../proof/build/{artifact_stem}-stripped.o", "-lm",
+        f"-Wl,-Map=../../proof/build/{artifact_stem}.map,--cref,--build-id=none,--just-symbols=../../runtime/build/ksoloti.elf",
+        "-o", f"../../proof/build/{artifact_stem}-deterministic.elf",
     ]
     _run(
         relink_arguments, firmware, environment, "target-compile-link",
@@ -690,7 +690,7 @@ def _arm_build(
     )
     commands.append(_portable_command(
         "arm-none-eabi-objcopy",
-        ["arm-none-eabi-objcopy", "--strip-debug", "proof/build/blend-deterministic.elf", "proof/build/blend-stripped.elf"],
+        ["arm-none-eabi-objcopy", "--strip-debug", f"proof/build/{artifact_stem}-deterministic.elf", f"proof/build/{artifact_stem}-stripped.elf"],
         ".",
     ))
     header = _run(
@@ -710,8 +710,8 @@ def _arm_build(
             "target-executable", "linked output is not the required little-endian ARM ELF",
         )
     commands.extend([
-        _portable_command("arm-none-eabi-objdump", ["arm-none-eabi-objdump", "-f", "proof/build/blend-stripped.elf"], "."),
-        _portable_command("arm-none-eabi-size", ["arm-none-eabi-size", "-A", "-x", "proof/build/blend-stripped.elf"], "."),
+        _portable_command("arm-none-eabi-objdump", ["arm-none-eabi-objdump", "-f", f"proof/build/{artifact_stem}-stripped.elf"], "."),
+        _portable_command("arm-none-eabi-size", ["arm-none-eabi-size", "-A", "-x", f"proof/build/{artifact_stem}-stripped.elf"], "."),
     ])
     resource = {
         "schema_version": "task009-static-resource-facts-v0",

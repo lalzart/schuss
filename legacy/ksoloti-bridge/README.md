@@ -48,3 +48,17 @@ ambient registry or call USB, upload, flash, or GUI presentation paths.
 The Python adapter in `tools/contracts/task009_backend.py` compiles and invokes
 this bridge from authenticated retained inputs. The bridge remains a bounded
 compatibility adapter, not the Schuss graph model or a general `.axp` compiler.
+
+Task 011C adds `GillsSliceBridge` for only graph `schuss-graph-000002`. It
+registers the exact Square LFO, Cyclic Counter, four-step Pitch Sequencer, Sine,
+mixed Crossfader, multimode filter, stereo output, and public fractional inlet
+definitions; the two Sine instances share one definition. Generated factory
+objects pass through the same legacy post-processing step and are compared to
+the pinned factory records. The sequencer is loaded only from the pinned
+contrib file and exact definition index/UUID. No ambient library scan, GUI,
+controller, device, upload, flash, or firmware action is reachable.
+
+`tools/contracts/task011c_backend.py` emits the exact Task 011B plan, boundary
+`.axp`, source map, and generated C++, then reuses the authenticated Task 009
+ARM/runtime closure with a task-specific artifact stem. This is still an exact
+slice adapter, not arbitrary graph, object, `.axp`, or backend support.

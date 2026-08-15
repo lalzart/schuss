@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "conformance-probe-input-v1.schema.json",
+  "title": "Schuss non-production conformance probe input v1",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "conformance_probe_id", "revision", "content_hash", "candidate_state", "binding_reference", "contract_reference", "graph_reference", "environment_reference", "procedure_reference", "requested_stages", "execution_authorization", "production_selection_authority"],
+  "properties": {
+    "schema_version": {"const": "conformance-probe-input-v1"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "conformance_probe_id": {"type": "string", "pattern": "^schuss-conformance-probe-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "candidate_state": {"const": "candidate-under-test"},
+    "binding_reference": {"$ref": "#/$defs/bindingReference"},
+    "contract_reference": {"$ref": "#/$defs/contractReference"},
+    "graph_reference": {"$ref": "#/$defs/graphReference"},
+    "environment_reference": {"$ref": "#/$defs/environmentReference"},
+    "procedure_reference": {"$ref": "#/$defs/procedureReference"},
+    "requested_stages": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/stage"}},
+    "execution_authorization": {"enum": ["not-authorized", "task-009-authorized", "task-011c-authorized"]},
+    "production_selection_authority": {"const": false}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "bindingReference": {"type": "object", "required": ["implementation_id", "revision", "content_hash"], "properties": {"implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "contractReference": {"type": "object", "required": ["component_contract_id", "revision", "content_hash"], "properties": {"component_contract_id": {"type": "string", "pattern": "^schuss-component-contract-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "graphReference": {"type": "object", "required": ["graph_id", "revision", "content_hash"], "properties": {"graph_id": {"type": "string", "pattern": "^schuss-graph-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "environmentReference": {"type": "object", "required": ["prerequisite_environment_id", "revision", "content_hash"], "properties": {"prerequisite_environment_id": {"type": "string", "pattern": "^schuss-prerequisite-environment-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "procedureReference": {"type": "object", "required": ["procedure_id", "revision", "content_hash"], "properties": {"procedure_id": {"type": "string", "pattern": "^schuss-procedure-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "stage": {"enum": ["backend-lowering", "artifact-generation", "target-compile-link"]}
+  }
+}

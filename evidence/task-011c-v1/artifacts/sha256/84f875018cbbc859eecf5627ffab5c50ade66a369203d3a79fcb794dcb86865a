@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch-1.0 appVersion="1.0.12">
+   <obj type="lfo/square" uuid="de6909eb64db13af5b43f979a4c130024b3a4793" name="schuss_lfo" x="14" y="28">
+      <params>
+         <frac32.s.map name="pitch" value="-48.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="logic/counter" uuid="7a141ba82230e54e5f5cd12da5dbe5a74ba854a5" name="schuss_counter" x="154" y="28">
+      <params>
+         <int32 name="maximum" value="4"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_4_pitch" uuid="aa0848ea71ef03f595a32f0c14bff9cab097294701" name="schuss_seq" x="294" y="28">
+      <params>
+         <frac32.s.map name="p1" value="0.0"/>
+         <frac32.s.map name="p2" value="5.0"/>
+         <frac32.s.map name="p3" value="7.0"/>
+         <frac32.s.map name="p4" value="12.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="osc/sine" uuid="6e094045cca76a9dbf7ebfa72e44e4700d2b3ba" name="schuss_sine_a" x="448" y="14">
+      <params>
+         <frac32.s.map name="pitch" value="-24.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="osc/sine" uuid="6e094045cca76a9dbf7ebfa72e44e4700d2b3ba" name="schuss_sine_b" x="448" y="126">
+      <params>
+         <frac32.s.map name="pitch" value="-23.875"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="patch/inlet f" uuid="5c585d2dcd9c05631e345ac09626a22a639d7c13" name="schuss_blend" x="448" y="238">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="mix/xfade" uuid="375dc91d218e96cdc9cbc7e92adb48f705ef701a" name="schuss_xfade" x="602" y="70">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="filter/multimode svf m" uuid="71d5f8b2131b691d591a9a9ee28771309f8938d" name="schuss_filter" x="756" y="70">
+      <params>
+         <frac32.s.map name="pitch" value="24.0"/>
+         <frac32.u.map name="reso" value="0.125"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="audio/out stereo" uuid="a1ca7a567f535acc21055669829101d3ee7f0189" name="schuss_output" x="924" y="70">
+      <params/>
+      <attribs/>
+   </obj>
+   <nets>
+      <net><source obj="schuss_lfo" outlet="wave"/><dest obj="schuss_counter" inlet="trig"/></net>
+      <net><source obj="schuss_counter" outlet="o"/><dest obj="schuss_seq" inlet="step"/></net>
+      <net><source obj="schuss_seq" outlet="out"/><dest obj="schuss_sine_a" inlet="pitch"/><dest obj="schuss_sine_b" inlet="pitch"/></net>
+      <net><source obj="schuss_sine_a" outlet="wave"/><dest obj="schuss_xfade" inlet="i1"/></net>
+      <net><source obj="schuss_sine_b" outlet="wave"/><dest obj="schuss_xfade" inlet="i2"/></net>
+      <net><source obj="schuss_blend" outlet="inlet"/><dest obj="schuss_xfade" inlet="c"/></net>
+      <net><source obj="schuss_xfade" outlet="o"/><dest obj="schuss_filter" inlet="in"/></net>
+      <net><source obj="schuss_filter" outlet="lp"/><dest obj="schuss_output" inlet="left"/><dest obj="schuss_output" inlet="right"/></net>
+   </nets>
+   <settings>
+      <subpatchmode>normal</subpatchmode>
+   </settings>
+   <notes><![CDATA[]]></notes>
+</patch-1.0>

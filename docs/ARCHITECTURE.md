@@ -233,6 +233,21 @@ unresolved or unsupported, and no backend invocation exists. Task 011C may
 expand backend support but may not rewrite the graph or infer support from the
 legacy seam maps.
 
+Task 011C implements only that exact graph through the transitional backend.
+The backend registers eight authenticated legacy definitions, resolves nine
+instances including the public `blend` inlet, and represents graph fanout as
+explicit multi-destination legacy nets without changing the graph's nine
+authoritative connections. Generated factory definitions are checked against
+their pinned factory records, while the four-step native definition is loaded
+by exact contrib path, definition index, UUID, commit, and source bytes.
+
+The evidence chain remains stratified: authorized candidate probes precede
+binding and eligibility promotion; ordinary resolution precedes production
+handler execution; ARM compile/link establishes level 5 only. The generated
+`.axp`, C++, object, ELF, and link map remain derived boundary artifacts. They
+do not become graph truth or establish device, timing, real-time, audible, or
+release behavior.
+
 The projection reference direction remains one way:
 
 ```text

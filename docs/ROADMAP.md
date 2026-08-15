@@ -19,7 +19,7 @@ into transparent, typed Schuss models.
 | 10 | Deterministic structured CLI over shared operations | [Complete](tasks/010-deterministic-product-cli-over-shared-operations.md) |
 | 11A | Browsable catalog control plane and exact seven-role Gills-slice catalog review | [Complete](tasks/011a-browsable-catalog-control-plane-and-exact-gills-slice-catalog-review.md) |
 | 11B | Six component contracts/bindings, authoritative slice graph, minimal Gills instrument, and unresolved build closure | [Complete](tasks/011b-component-contracts-gills-slice-graph-and-unresolved-build-closure.md) |
-| 11C | Bounded legacy backend expansion and ARM compile/link for the slice | Proposed; not started |
+| 11C | Bounded legacy backend expansion and ARM compile/link for the slice | [Complete](tasks/011c-bounded-legacy-backend-expansion-and-arm-evidence.md) |
 | 12 | Basic object drawer and transparent graph canvas | Planned |
 | 13 | Direct Schuss graph-to-C++ frontend behind the backend contract | Planned |
 | 14 | Full Gills implementation and parameter/control mapping | Planned |
@@ -77,6 +77,13 @@ the same transport type as both endpoint inlets and cardinality two. The build
 closure is intentionally unresolved, selects only the already promoted mixed
 Crossfader, emits no backend invocation, and leaves lowering and ARM evidence
 to Task 011C.
+Task 011C now executes six candidate probes, promotes only their exact binding
+and eligibility successors, adds the one required native realization form,
+and produces deterministic source and ARM compile/link evidence for the exact
+slice. Record set `000006` selects all eight nodes and records levels 1-5 as
+passed. Connected-device, real-time, and audible gates remain separately
+unauthorized and unproved; the general backend, Phase 12 UI, and Phase 13
+direct frontend also remain future work.
 The completed boundaries are in
 `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and

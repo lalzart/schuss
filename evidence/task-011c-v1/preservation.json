@@ -1,0 +1,35 @@
+{
+  "schema_version": "task011c-preservation-v0",
+  "status": "passed",
+  "pre_task_commit": "9b6eaaca12dd6859fae26533891f23a757d56b85",
+  "tests": {
+    "pre_task": {"inventory": 14, "catalog": 6, "contracts": 148, "total": 168},
+    "final": {"inventory": 14, "catalog": 6, "contracts": 159, "total": 179},
+    "task011c_focused": 11
+  },
+  "validator_stdout_sha256": {
+    "raw_inventory": "3a9ba2256592972c3e104b21b821d9befa9ac2c75c8f69af63020b4765271e80",
+    "resolved_inventory": "bb435d07670ccf4ce7dad5182a75ad9bc2c18dedb5c0b184ce9d6cca3691e738",
+    "phase3_review": "faf90cb359effe3b24f2c68ca66086d1acee813acf0ceacb7c3218e7e9ae62f4",
+    "phase4a_catalog": "8d21352c7265a50a93646f93f9696e4b02ebcfbab3443da53a2cc47c8fc34238",
+    "task011a": "da60081e4fed9e07f243ec906f8e9410c3c88385cc989286d76c0d373ae44c80",
+    "component_graph": "d295106d38cdf9075a85d9e1a803b5df23e3ffbbe934dceb3cec9194b59ce6af",
+    "device_instrument": "254a77c534c911da759a21e438544b4b0e69e16093307e0fc269a0857b6d3af6",
+    "target_backend_build": "7a898b3409e5ad7ef02eab1246f87756cc2af7cbd512d72f9a5eb43b1573a3a2",
+    "task009_prerequisite": "3f8f3df84fd47ab51441ec6b3d30abc43fcfd18b2a69cffc6a508f5f0fe08a8b",
+    "task009": "fef638fd5bc9e2e9d4cc571ed557f6924d0db21dcb8cf112856f43c64e353771",
+    "task011b": "3a06c3ebb9651e7a7e4ffda085117e0555a180a0b96d0277e6ac529383c2d2b0",
+    "task011c": "f3fc1fb1c9634f041a3dd5a89ff2533786c21b67d9faa4a737f0bce9f159462e"
+  },
+  "upstream_checkouts": {
+    "axoloti_factory": {"commit": "25d2615ed5233546d617017666a4ab1e60a8c506", "worktree_clean": true},
+    "axoloti_contrib": {"commit": "2e994478c0ab15fb1daa3bb4b86c88e22952d99c", "worktree_clean": true}
+  },
+  "prohibited_actions": {
+    "device_access": false,
+    "firmware_mutation": false,
+    "upload_or_flash": false,
+    "sd_card_write": false,
+    "stage_commit_push": false
+  }
+}

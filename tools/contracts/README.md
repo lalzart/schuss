@@ -7,6 +7,8 @@ python3 tools/contracts/validate_component_graph_contracts.py
 python3 tools/contracts/validate_target_backend_build_contracts.py
 python3 tools/contracts/validate_task009_prerequisite.py
 python3 tools/contracts/run_task009.py --check
+python3 tools/contracts/validate_task011b.py
+python3 tools/contracts/validate_task011c.py
 python3 -m unittest discover -s tools/contracts/tests
 ```
 
@@ -53,3 +55,10 @@ successor record set plus retained artifacts. Running it without `--check` is
 the separately authorized executable proof path: it invokes the exact isolated
 Java and ARM closure and writes only to its explicit task output roots. It is
 not a general compiler or product CLI.
+
+`validate_task011c.py` and `run_task011c.py --check` are read-only retained
+validators for record set `schuss-record-set-000006`. Running
+`run_task011c.py` without `--check` is the separately authorized exact
+eight-node proof path: six candidate probes, ordinary resolution, and two
+production runs through deterministic Java generation and authenticated ARM
+compile/link. It does not access hardware or generalize the backend.

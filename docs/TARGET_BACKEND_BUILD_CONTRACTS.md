@@ -221,3 +221,25 @@ over those unchanged operations; it does not execute the Task 009 handler.
 Task 011B consumes the same pure dispatcher under explicit record set `000005`;
 Task 011C is the earliest owner of backend expansion and executable evidence
 for the eight-node slice.
+
+## Task 011C executed successor closure
+
+Successor record set `schuss-record-set-000006` revision 1 retains exact
+parent `000005`. Additive probe-input schema v1 names `task-011c-authorized`
+without changing prior authorization values. Probe inputs `000003` through
+`000008` revision 2 remain candidate-only and grant no production authority;
+each has a level-5 result/evidence companion and a strictly-earlier level-2
+promotion claim naming binding revision 1.
+
+The six new bindings and eligibility companions advance to revision 2 only
+after those probes pass. Backend revision 3 adds only
+`legacy-native-object`; the accepted target, toolchain, and runtime remain at
+revision 2. Crossfader eligibility revision 3 names the exact additive backend
+revision without changing Crossfader binding revision 2. Build request `000002`
+revision 2 stops at `target-compile-link`.
+
+Ordinary resolution selects exactly eight nodes. The production handler then
+retains artifact descriptors `000022` through `000028`, build result `000002`,
+resource report `000002`, and independent evidence claims `000013` through
+`000017`. Static link-map observations fit the declared regions. These are
+compile/link facts only: evidence levels 6-8 are explicitly `not-run`.
