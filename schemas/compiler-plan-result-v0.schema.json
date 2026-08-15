@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "compiler-plan-result-v0.schema.json",
+  "title": "Schuss compiler front-half plan result v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "planner", "status", "input_closure", "stages", "artifacts", "diagnostics", "later_stages", "evidence_levels", "build_result_status", "backend_execution_status", "authoritative_records_mutated"],
+  "properties": {
+    "schema_version": {"const": "compiler-plan-result-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "planner": {"type": "object", "required": ["planner_id", "version"], "properties": {"planner_id": {"const": "schuss-compiler-front-half-000001"}, "version": {"const": 1}}, "additionalProperties": false},
+    "status": {"enum": ["success", "invalid", "unresolved", "unsupported", "ambiguous", "budget-failure"]},
+    "input_closure": {"$ref": "#/$defs/inputClosure"},
+    "stages": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/stage"}},
+    "artifacts": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/artifact"}},
+    "diagnostics": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/diagnostic"}},
+    "later_stages": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/laterStage"}},
+    "evidence_levels": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 8, "maxItems": 8, "items": {"$ref": "#/$defs/evidenceLevel"}},
+    "build_result_status": {"const": "not-created"},
+    "backend_execution_status": {"const": "not-run"},
+    "authoritative_records_mutated": {"const": false}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "reference": {"type": "object", "x-schuss-domain-value": true},
+    "closureSource": {
+      "oneOf": [
+        {"type": "object", "required": ["kind", "record_set_reference"], "properties": {"kind": {"const": "record-set"}, "record_set_reference": {"$ref": "#/$defs/reference"}}, "additionalProperties": false},
+        {"type": "object", "required": ["kind", "project_reference", "base_record_set_reference"], "properties": {"kind": {"const": "project"}, "project_reference": {"$ref": "#/$defs/reference"}, "base_record_set_reference": {"$ref": "#/$defs/reference"}}, "additionalProperties": false}
+      ]
+    },
+    "recordMember": {"type": "object", "required": ["record_kind", "stable_id", "revision", "content_hash"], "properties": {"record_kind": {"type": "string", "minLength": 1}, "stable_id": {"type": "string", "minLength": 1}, "revision": {"type": "integer", "minimum": 0}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "schemaMember": {"type": "object", "required": ["schema_version", "byte_sha256"], "properties": {"schema_version": {"type": "string", "minLength": 1}, "byte_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}, "additionalProperties": false},
+    "inputClosure": {"type": "object", "required": ["hash", "build_request_reference", "closure_source", "policy_versions", "record_members", "schema_members"], "properties": {"hash": {"$ref": "#/$defs/contentHash"}, "build_request_reference": {"$ref": "#/$defs/reference"}, "closure_source": {"$ref": "#/$defs/closureSource"}, "policy_versions": {"type": "array", "x-schuss-array-kind": "sequence", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "record_members": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/recordMember"}}, "schema_members": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/schemaMember"}}}, "additionalProperties": false},
+    "stage": {"type": "object", "required": ["ordinal", "stage", "status", "artifact_kinds", "diagnostic_codes"], "properties": {"ordinal": {"type": "integer", "minimum": 1}, "stage": {"enum": ["schema-identity-validation", "target-independent-graph-validation", "target-backend-validation", "implementation-resolution", "compound-elaboration", "dependency-resource-planning"]}, "status": {"enum": ["success", "invalid", "unsupported", "unresolved", "ambiguous", "budget-failure", "not-run"]}, "artifact_kinds": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "diagnostic_codes": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}}}, "additionalProperties": false},
+    "artifact": {"type": "object", "required": ["descriptor", "payload"], "properties": {"descriptor": {"type": "object", "x-schuss-domain-value": true}, "payload": {"type": "object", "x-schuss-domain-value": true}}, "additionalProperties": false},
+    "subject": {"type": "object", "required": ["kind", "id"], "properties": {"kind": {"type": "string", "minLength": 1}, "id": {"type": "string", "minLength": 1}, "revision": {"type": "integer", "minimum": 1}, "graph_id": {"type": "string", "minLength": 1}, "instance_path": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"type": "string", "minLength": 1}}}, "additionalProperties": false},
+    "diagnostic": {"type": "object", "required": ["code", "severity", "stage", "subject", "location", "message", "related_subjects"], "properties": {"code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}, "severity": {"enum": ["error", "warning", "info"]}, "stage": {"type": "string", "minLength": 1}, "subject": {"$ref": "#/$defs/subject"}, "location": {"type": "string", "minLength": 1}, "message": {"type": "string", "minLength": 1}, "related_subjects": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/subject"}}}, "additionalProperties": false},
+    "laterStage": {"type": "object", "required": ["ordinal", "stage", "status"], "properties": {"ordinal": {"type": "integer", "minimum": 7}, "stage": {"enum": ["backend-lowering", "artifact-generation", "target-compile-link", "packaging-evidence-recording"]}, "status": {"const": "not-run"}}, "additionalProperties": false},
+    "evidenceLevel": {"type": "object", "required": ["level", "status"], "properties": {"level": {"type": "integer", "minimum": 1}, "status": {"enum": ["passed", "failed", "not-run"]}}, "additionalProperties": false}
+  }
+}

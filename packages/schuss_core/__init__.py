@@ -7,6 +7,14 @@ from .control_plane import (
     load_repository_context,
 )
 from .project_service import ProjectService, dispatch_project_operation
+from .compiler_front_half import CompilationContext, plan_build
+from .build_execution import (
+    CancellationToken,
+    ExecutionService,
+    HandlerRegistration,
+    execute_build,
+    handler_reference,
+)
 
 __all__ = [
     "OperationContext",
@@ -15,4 +23,11 @@ __all__ = [
     "load_repository_context",
     "ProjectService",
     "dispatch_project_operation",
+    "CompilationContext",
+    "plan_build",
+    "CancellationToken",
+    "ExecutionService",
+    "HandlerRegistration",
+    "execute_build",
+    "handler_reference",
 ]

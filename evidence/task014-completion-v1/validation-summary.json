@@ -1,0 +1,60 @@
+{
+  "schema_version": "task014-validation-summary-v1",
+  "status": "valid",
+  "record_set_reference": {
+    "record_set_id": "schuss-record-set-000008",
+    "revision": 1,
+    "content_hash": "sha256:860810363fc21b54b78197e2dfed7d8541408bd276fad1e4ed54a11e55084643"
+  },
+  "build_request_reference": {
+    "build_request_id": "schuss-build-request-000002",
+    "revision": 2,
+    "content_hash": "sha256:dfc54339dc8ce4a243babad40de659437d67aa05c4c2f61be04e39741e4b0351"
+  },
+  "handler_reference": {
+    "build_handler_id": "schuss-build-handler-000001",
+    "revision": 1,
+    "content_hash": "sha256:31f74bb32eb8203262fd5867545f3ee9be8b75cad2fbcce3fb4434801293e360"
+  },
+  "execution_id": "schuss-build-execution-1a744d76665e5d52",
+  "plan_sha256": "sha256:5068618f705c5ee9159f2e1db270bf6e68c9d5c221c5252989e791cfaed5623d",
+  "cache": {
+    "policy": "disabled",
+    "lookup": "miss",
+    "key": "sha256:49d749a4ad627316b254ba54b56721e39e604e58a1a3b63fe6896386cbfd8fae"
+  },
+  "progress_events": [
+    "planning-started",
+    "planning-completed",
+    "handler-selected",
+    "handler-started",
+    "handler-completed",
+    "output-published"
+  ],
+  "artifacts": [
+    {"artifact_kind": "arm-object", "byte_sha256": "c059b2ee38be7dbca6828dc06b1d5890bb0600ab606dd59786fb1dccbd308c1b", "byte_length": 10208},
+    {"artifact_kind": "generated-cpp", "byte_sha256": "7877897b3112dcbb7ee1239f3187f535d6113875cacbb49c76bd30a0321bcfd3", "byte_length": 18359},
+    {"artifact_kind": "legacy-boundary-patch", "byte_sha256": "84f875018cbbc859eecf5627ffab5c50ade66a369203d3a79fcb794dcb86865a", "byte_length": 3062},
+    {"artifact_kind": "link-map", "byte_sha256": "30357b886ca808d38a61b2ad624d3086e66babb0df169caa5af36eda8c15531f", "byte_length": 152502},
+    {"artifact_kind": "resolution-plan", "byte_sha256": "b9cb83cfb05ae29d9f0f37e5e04c6df6a17d1ce1cbe21395ffa31f0be4fea261", "byte_length": 21256},
+    {"artifact_kind": "source-map", "byte_sha256": "8992679f5d12c5f1d46d1ed0a30220b2ee8dd3511240c7bcaab80d3a95837d7c", "byte_length": 19982},
+    {"artifact_kind": "target-executable", "byte_sha256": "d04cc20d5dc0cfe195ce38ee850857c0b8af8675f7616898f50dd6e77372db2a", "byte_length": 69404}
+  ],
+  "evidence_levels": [
+    {"level": 1, "status": "passed"},
+    {"level": 2, "status": "passed"},
+    {"level": 3, "status": "passed"},
+    {"level": 4, "status": "passed"},
+    {"level": 5, "status": "passed"},
+    {"level": 6, "status": "not-run"},
+    {"level": 7, "status": "not-run"},
+    {"level": 8, "status": "not-run"}
+  ],
+  "fresh_root_runs": 2,
+  "canonical_results_equal": true,
+  "canonical_result_byte_length": 4900,
+  "canonical_result_byte_sha256": "7a983e31a8e0572908a4ffe73b4b54f3346ebdd44f758d4904b1e4cab3725f90",
+  "output_publication": "published",
+  "device_actions_performed": false,
+  "stage_commit_push_performed": false
+}

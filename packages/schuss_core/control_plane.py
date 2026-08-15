@@ -27,11 +27,38 @@ import target_backend_build_rules as target
 import validator_core as core
 
 from . import catalog_projection as catalog
+from . import compiler_front_half as compiler
+from . import build_execution as execution
 
 
 REQUEST_SCHEMA_NAME = "operation-request-v1.schema.json"
 RESULT_SCHEMA_NAME = "operation-result-v1.schema.json"
 GRAPH_SCHEMA_NAME = component.GRAPH_SCHEMA_NAME
+
+TASK013_SCHEMA_NAMES = {
+    "compiler_plan": "compiler-plan-result-v0.schema.json",
+    "compiler_artifact": "compiler-artifact-descriptor-v0.schema.json",
+    "compiler_resolution": "compiler-resolution-plan-v0.schema.json",
+    "compiler_elaborated_graph": "compiler-elaborated-graph-v0.schema.json",
+    "compiler_dependency": "compiler-dependency-plan-v0.schema.json",
+    "compiler_resource": "compiler-resource-plan-v0.schema.json",
+    "compiler_origin_map": "compiler-origin-map-v0.schema.json",
+    "compiler_dependency_facts": "compiler-dependency-facts-v0.schema.json",
+    "operation_request_v4": "operation-request-v4.schema.json",
+    "operation_result_v4": "operation-result-v4.schema.json",
+}
+
+TASK014_SCHEMA_NAMES = {
+    "build_handler_descriptor": "build-handler-descriptor-v0.schema.json",
+    "build_execution_result": "build-execution-result-v0.schema.json",
+    "operation_request_v5": "operation-request-v5.schema.json",
+    "operation_result_v5": "operation-result-v5.schema.json",
+}
+
+TASK015_SCHEMA_NAMES = {
+    "normalized_dsp_module": "normalized-dsp-module-v0.schema.json",
+    "direct_frontend_result": "direct-frontend-result-v0.schema.json",
+}
 
 DOMAIN_GROUPS = (
     "catalog",
@@ -181,6 +208,18 @@ def load_repository_context(
     ):
         if version in selected.schemas:
             schemas[name] = selected.schemas[version]
+    for key, filename in TASK013_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    for key, filename in TASK014_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    for key, filename in TASK015_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
 
     overlay = core.load_json(overlay_path)
     observations = component._observations(snapshot_root)
@@ -313,6 +352,25 @@ def load_repository_context(
     )
 
 
+def with_compiler_schemas(
+    context: OperationContext,
+    repository_root: Path = REPOSITORY_ROOT,
+) -> OperationContext:
+    """Add the Task 013 protocol/artifact schemas without changing records."""
+
+    schemas = dict(context.schemas)
+    schema_root = Path(repository_root) / "schemas"
+    for key, filename in TASK013_SCHEMA_NAMES.items():
+        if key in schemas:
+            continue
+        schema = core.load_json(schema_root / filename)
+        annotations = core.validate_schema_annotations(schema)
+        if annotations:
+            raise ValueError(f"Task 013 schema {filename} is invalid: {annotations}")
+        schemas[key] = schema
+    return replace(context, schemas=schemas)
+
+
 def _diagnostic(
     code: str,
     subject: str,
@@ -352,6 +410,8 @@ def canonical_result_bytes(
         "schuss-operation-result-v1": "operation_result_v1",
         "schuss-operation-result-v2": "operation_result_v2",
         "schuss-operation-result-v3": "operation_result_v3",
+        "schuss-operation-result-v4": "operation_result_v4",
+        "schuss-operation-result-v5": "operation_result_v5",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -726,6 +786,130 @@ def _build_resolve(payload: dict[str, Any], context: OperationContext) -> dict[s
     return _result("build.resolve", status, value)
 
 
+def _build_plan(
+    payload: dict[str, Any],
+    context: OperationContext,
+    closure_source: dict[str, Any],
+) -> dict[str, Any]:
+    compilation_context = compiler.CompilationContext.from_values(
+        build_request_reference=payload["build_request_reference"],
+        closure_source=closure_source,
+        records=context.records,
+        schemas=context.schemas,
+    )
+    plan = compiler.plan_build(compilation_context)
+    return _result(
+        "build.plan",
+        plan["status"],
+        plan,
+        compiler.operation_diagnostics(plan),
+        version=4,
+    )
+
+
+def _dispatch_compiler_operation(
+    request: dict[str, Any],
+    context: OperationContext,
+    closure_source: dict[str, Any],
+) -> dict[str, Any]:
+    operation = request.get("operation") if isinstance(request, dict) else None
+    errors: list[str] = []
+    try:
+        core.assert_portable_json_value(request)
+    except ValueError as exc:
+        errors.append(str(exc))
+    schema = context.schemas.get("operation_request_v4")
+    if schema is None:
+        errors.append("$: operation schema 'schuss-operation-request-v4' is unavailable in the selected context")
+    elif isinstance(request, dict):
+        errors.extend(core.schema_errors(request, schema, schema))
+    else:
+        errors.append("$: operation request must be an object")
+    if errors:
+        result_version = 4 if "operation_result_v4" in context.schemas else 1
+        result = _result(
+            (
+                operation
+                if result_version == 4 and operation == "build.plan"
+                else "invalid-request"
+            ),
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "OPERATION_REQUEST_INVALID",
+                    operation if isinstance(operation, str) else "invalid-request",
+                    "$",
+                    error,
+                )
+                for error in sorted(set(errors))
+            ],
+            version=result_version,
+        )
+        canonical_result_bytes(result, context)
+        return result
+    result = _build_plan(request["payload"], context, closure_source)
+    canonical_result_bytes(result, context)
+    return result
+
+
+def _dispatch_execution_operation(
+    request: dict[str, Any],
+    context: OperationContext,
+    closure_source: dict[str, Any],
+    execution_service: execution.ExecutionService | None,
+) -> dict[str, Any]:
+    operation = request.get("operation") if isinstance(request, dict) else None
+    errors: list[str] = []
+    try:
+        core.assert_portable_json_value(request)
+    except ValueError as exc:
+        errors.append(str(exc))
+    schema = context.schemas.get("operation_request_v5")
+    if schema is None:
+        errors.append("$: operation schema 'schuss-operation-request-v5' is unavailable in the selected context")
+    elif isinstance(request, dict):
+        errors.extend(core.schema_errors(request, schema, schema))
+    else:
+        errors.append("$: operation request must be an object")
+    if errors:
+        result = _result(
+            "build.execute" if operation == "build.execute" else "invalid-request",
+            "invalid",
+            None,
+            [_diagnostic("OPERATION_REQUEST_INVALID", operation if isinstance(operation, str) else "invalid-request", "$", error) for error in sorted(set(errors))],
+            version=5,
+        )
+        canonical_result_bytes(result, context)
+        return result
+    compilation_context = compiler.CompilationContext.from_values(
+        build_request_reference=request["payload"]["build_request_reference"],
+        closure_source=closure_source,
+        records=context.records,
+        schemas=context.schemas,
+    )
+    service = execution_service or execution.ExecutionService.from_values((), Path("."))
+    value = execution.execute_build(
+        compilation_context,
+        request["payload"]["handler_reference"],
+        service,
+        execution_intent=request["payload"]["execution_intent"],
+    )
+    value_schema = context.schemas["build_execution_result"]
+    value_errors = core.schema_errors(value, value_schema, value_schema)
+    if value_errors:
+        raise ValueError(f"build execution result violates its public schema: {value_errors}")
+    diagnostics = [
+        _diagnostic(
+            item["code"], item["subject"], f"$.value.{item['stage']}", item["message"]
+        )
+        for item in value["diagnostics"]
+    ]
+    result = _result("build.execute", value["status"], value, diagnostics, version=5)
+    canonical_result_bytes(result, context)
+    return result
+
+
 class _TransactionEditError(ValueError):
     pass
 
@@ -925,8 +1109,79 @@ def dispatch_operation(
     context: OperationContext,
     *,
     project_service: Any | None = None,
+    execution_service: execution.ExecutionService | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v5"
+    ):
+        if project_service is not None:
+            loaded = project_service.load()
+            project_context = with_compiler_schemas(
+                loaded.context, project_service.repository_root
+            )
+            return _dispatch_execution_operation(
+                request,
+                project_context,
+                {
+                    "kind": "project",
+                    "project_reference": {
+                        "project_id": loaded.manifest["project_id"],
+                        "revision": loaded.manifest["revision"],
+                        "content_hash": loaded.manifest["content_hash"],
+                    },
+                    "base_record_set_reference": copy.deepcopy(
+                        loaded.context.record_set_reference
+                    ),
+                },
+                execution_service,
+            )
+        return _dispatch_execution_operation(
+            request,
+            context,
+            {
+                "kind": "record-set",
+                "record_set_reference": copy.deepcopy(context.record_set_reference),
+            },
+            execution_service,
+        )
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v4"
+    ):
+        if project_service is not None:
+            loaded = project_service.load()
+            project_context = with_compiler_schemas(
+                loaded.context, project_service.repository_root
+            )
+            return _dispatch_compiler_operation(
+                request,
+                project_context,
+                {
+                    "kind": "project",
+                    "project_reference": {
+                        "project_id": loaded.manifest["project_id"],
+                        "revision": loaded.manifest["revision"],
+                        "content_hash": loaded.manifest["content_hash"],
+                    },
+                    "base_record_set_reference": copy.deepcopy(
+                        loaded.context.record_set_reference
+                    ),
+                },
+            )
+        return _dispatch_compiler_operation(
+            request,
+            context,
+            {
+                "kind": "record-set",
+                "record_set_reference": copy.deepcopy(
+                    context.record_set_reference
+                ),
+            },
+        )
 
     if (
         isinstance(request, dict)

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "compiler-origin-map-v0.schema.json",
+  "title": "Schuss compiler origin and source map v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "derived", "input_closure_hash", "entries"],
+  "properties": {
+    "schema_version": {"const": "compiler-origin-map-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "derived": {"const": true},
+    "input_closure_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "entries": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/entry"}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "subject": {"type": "object", "required": ["kind", "id"], "properties": {"kind": {"enum": ["node", "facet", "connection", "public-graph-facet", "public-port-exposure", "public-facet-exposure", "parameter-binding", "compound-interface-mapping", "dependency", "resource", "diagnostic"]}, "id": {"type": "string", "minLength": 1}}, "additionalProperties": false},
+    "origin": {"type": "object", "x-schuss-domain-value": true},
+    "entry": {"type": "object", "required": ["derived_subject", "origin"], "properties": {"derived_subject": {"$ref": "#/$defs/subject"}, "origin": {"$ref": "#/$defs/origin"}}, "additionalProperties": false}
+  }
+}

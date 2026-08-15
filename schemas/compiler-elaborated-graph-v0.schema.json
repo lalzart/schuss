@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "compiler-elaborated-graph-v0.schema.json",
+  "title": "Schuss derived elaborated graph v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "derived", "authoritative", "input_closure_hash", "source_graph_reference", "nodes", "connections", "hierarchy", "public_interface"],
+  "properties": {
+    "schema_version": {"const": "compiler-elaborated-graph-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "derived": {"const": true},
+    "authoritative": {"const": false},
+    "input_closure_hash": {"$ref": "#/$defs/contentHash"},
+    "source_graph_reference": {"$ref": "#/$defs/graphReference"},
+    "nodes": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/node"}},
+    "connections": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/connection"}},
+    "hierarchy": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/hierarchy"}},
+    "public_interface": {"$ref": "#/$defs/publicInterface"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "graphReference": {
+      "type": "object",
+      "required": ["graph_id", "revision", "content_hash"],
+      "properties": {"graph_id": {"type": "string", "pattern": "^schuss-graph-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}},
+      "additionalProperties": false
+    },
+    "contractReference": {
+      "type": "object",
+      "required": ["component_contract_id", "revision", "content_hash"],
+      "properties": {"component_contract_id": {"type": "string", "pattern": "^schuss-component-contract-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}},
+      "additionalProperties": false
+    },
+    "bindingReference": {
+      "type": "object",
+      "required": ["implementation_id", "revision", "content_hash"],
+      "properties": {"implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}},
+      "additionalProperties": false
+    },
+    "facetValue": {
+      "type": "object",
+      "required": ["facet_id", "value"],
+      "properties": {"facet_id": {"type": "string", "minLength": 1}, "value": {"type": "string", "minLength": 1}},
+      "additionalProperties": false
+    },
+    "stateOwnership": {
+      "type": "object",
+      "required": ["state_id", "ownership", "persistence", "reset_policy"],
+      "properties": {"state_id": {"type": "string", "minLength": 1}, "ownership": {"type": "string", "minLength": 1}, "persistence": {"type": "string", "minLength": 1}, "reset_policy": {"type": "string", "minLength": 1}},
+      "additionalProperties": false
+    },
+    "origin": {"type": "object", "x-schuss-domain-value": true},
+    "node": {
+      "type": "object",
+      "required": ["derived_node_id", "contract_reference", "binding_reference", "parameter_values", "attribute_values", "state_ownership", "origin"],
+      "properties": {
+        "derived_node_id": {"type": "string", "pattern": "^derived-node:graph-node-[0-9]{6}(?:/graph-node-[0-9]{6})*$"},
+        "contract_reference": {"$ref": "#/$defs/contractReference"},
+        "binding_reference": {"$ref": "#/$defs/bindingReference"},
+        "parameter_values": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/facetValue"}},
+        "attribute_values": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/facetValue"}},
+        "state_ownership": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/stateOwnership"}},
+        "origin": {"$ref": "#/$defs/origin"}
+      },
+      "additionalProperties": false
+    },
+    "endpoint": {
+      "type": "object",
+      "required": ["derived_node_id", "facet_kind", "facet_id"],
+      "properties": {"derived_node_id": {"type": "string", "minLength": 1}, "facet_kind": {"enum": ["port", "parameter", "action", "display"]}, "facet_id": {"type": "string", "minLength": 1}},
+      "additionalProperties": false
+    },
+    "connection": {
+      "type": "object",
+      "required": ["derived_connection_id", "source", "destination", "origin"],
+      "properties": {"derived_connection_id": {"type": "string", "minLength": 1}, "source": {"$ref": "#/$defs/endpoint"}, "destination": {"$ref": "#/$defs/endpoint"}, "origin": {"$ref": "#/$defs/origin"}},
+      "additionalProperties": false
+    },
+    "compoundAncestor": {
+      "type": "object",
+      "required": ["instance_path", "binding_reference", "graph_reference"],
+      "properties": {"instance_path": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"type": "string", "minLength": 1}}, "binding_reference": {"$ref": "#/$defs/bindingReference"}, "graph_reference": {"$ref": "#/$defs/graphReference"}},
+      "additionalProperties": false
+    },
+    "hierarchy": {
+      "type": "object",
+      "required": ["derived_node_id", "instance_path", "compound_ancestors"],
+      "properties": {"derived_node_id": {"type": "string", "minLength": 1}, "instance_path": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"type": "string", "minLength": 1}}, "compound_ancestors": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/compoundAncestor"}}},
+      "additionalProperties": false
+    },
+    "publicInterface": {
+      "type": "object",
+      "required": ["ports", "parameters", "actions", "displays", "port_exposures", "facet_exposures", "parameter_bindings", "compound_interface_mappings"],
+      "properties": {
+        "ports": {"type": "array", "x-schuss-array-kind": "set", "items": {"type": "object", "x-schuss-domain-value": true}},
+        "parameters": {"type": "array", "x-schuss-array-kind": "set", "items": {"type": "object", "x-schuss-domain-value": true}},
+        "actions": {"type": "array", "x-schuss-array-kind": "set", "items": {"type": "object", "x-schuss-domain-value": true}},
+        "displays": {"type": "array", "x-schuss-array-kind": "set", "items": {"type": "object", "x-schuss-domain-value": true}},
+        "port_exposures": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/publicPortExposure"}},
+        "facet_exposures": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/publicFacetExposure"}},
+        "parameter_bindings": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/parameterBinding"}},
+        "compound_interface_mappings": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/compoundInterfaceMapping"}}
+      },
+      "additionalProperties": false
+    },
+    "publicPortExposure": {"type": "object", "required": ["exposure_id", "graph_facet_id", "derived_target"], "properties": {"exposure_id": {"type": "string", "pattern": "^graph-exposure-[0-9]{6}$"}, "graph_facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"}, "derived_target": {"$ref": "#/$defs/endpoint"}}, "additionalProperties": false},
+    "publicFacetExposure": {"type": "object", "required": ["exposure_id", "graph_facet_kind", "graph_facet_id", "derived_target"], "properties": {"exposure_id": {"type": "string", "pattern": "^graph-exposure-[0-9]{6}$"}, "graph_facet_kind": {"enum": ["action", "display"]}, "graph_facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"}, "derived_target": {"$ref": "#/$defs/endpoint"}}, "additionalProperties": false},
+    "parameterBinding": {"type": "object", "required": ["binding_id", "source_graph_parameter_id", "binding", "derived_destination"], "properties": {"binding_id": {"type": "string", "pattern": "^graph-binding-[0-9]{6}$"}, "source_graph_parameter_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"}, "binding": {"type": "object", "x-schuss-domain-value": true}, "derived_destination": {"$ref": "#/$defs/endpoint"}}, "additionalProperties": false},
+    "compoundInterfaceMapping": {"type": "object", "required": ["mapping_key", "derived_target"], "properties": {"mapping_key": {"type": "string", "pattern": "^compound-mapping-key-[0-9]{6}$"}, "derived_target": {"$ref": "#/$defs/endpoint"}}, "additionalProperties": false}
+  }
+}

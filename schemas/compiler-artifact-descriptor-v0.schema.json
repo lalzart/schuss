@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "compiler-artifact-descriptor-v0.schema.json",
+  "title": "Schuss compiler front-half artifact descriptor v0",
+  "type": "object",
+  "required": ["schema_version", "artifact_id", "artifact_kind", "producer", "input_closure_hash", "media_type", "byte_length", "byte_sha256", "portable_locator"],
+  "properties": {
+    "schema_version": {"const": "compiler-artifact-descriptor-v0"},
+    "artifact_id": {"type": "string", "pattern": "^schuss-compiler-artifact-[0-9a-f]{16}$"},
+    "artifact_kind": {"enum": ["resolution-plan", "elaborated-graph", "dependency-plan", "resource-plan", "origin-source-map"]},
+    "producer": {
+      "type": "object",
+      "required": ["stage", "version"],
+      "properties": {
+        "stage": {"enum": ["implementation-resolution", "compound-elaboration", "dependency-resource-planning"]},
+        "version": {"const": 1}
+      },
+      "additionalProperties": false
+    },
+    "input_closure_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "media_type": {"type": "string", "pattern": "^application/vnd[.]schuss[.]compiler-[a-z-]+[+]json$"},
+    "byte_length": {"type": "integer", "minimum": 1},
+    "byte_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "portable_locator": {"type": "string", "pattern": "^compiler-plans/sha256/[0-9a-f]{64}[.]json$"}
+  },
+  "additionalProperties": false
+}

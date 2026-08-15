@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import importlib.util
 import os
 import sys
 from pathlib import Path
@@ -18,6 +19,9 @@ from .control_plane import (
 from .product_cli import (
     ProductInputError,
     build_resolve_request,
+    build_plan_request,
+    build_execute_request,
+    build_completion_script,
     catalog_inspect_request,
     catalog_search_request,
     completion_script,
@@ -25,6 +29,7 @@ from .product_cli import (
     graph_transact_request,
     records_validate_request,
     render_human_result,
+    resolve_build_handler_locator,
     resolve_locator,
 )
 from .project_cli import (
@@ -50,6 +55,10 @@ CATALOG_RECORD_SET_PATH = (
     Path(__file__).resolve().parents[2]
     / "contracts/record-sets/task011a-catalog-v1.json"
 )
+BUILD_RECORD_SET_PATH = (
+    Path(__file__).resolve().parents[2]
+    / "contracts/record-sets/task014-build-execution-v1.json"
+)
 
 PRODUCT_HELP_EPILOG = (
     "Default output is deterministic plain text over schuss-record-set-000001@1. "
@@ -74,6 +83,25 @@ class _HelpRequested(Exception):
 def _stable_help(parser: argparse.ArgumentParser) -> str:
     """Preserve the accepted root help bytes while adding project commands."""
 
+    if parser.prog == "schuss build":
+        for action in parser._actions:
+            if not isinstance(action, argparse._SubParsersAction):
+                continue
+            hidden = {name for name in ("plan", "execute", "completion") if name in action.choices}
+            choices = list(action.choices.items())
+            choice_actions = list(action._choices_actions)
+            try:
+                for name in hidden:
+                    del action.choices[name]
+                action._choices_actions[:] = [
+                    item for item in action._choices_actions if item.dest not in hidden
+                ]
+                return parser.format_help()
+            finally:
+                action.choices.clear()
+                action.choices.update(choices)
+                action._choices_actions[:] = choice_actions
+        return parser.format_help()
     if parser.prog != "schuss":
         return parser.format_help()
     for action in parser._actions:
@@ -441,6 +469,38 @@ def _parser() -> argparse.ArgumentParser:
     resolve.add_argument("locator", metavar="REQUEST_ID@REVISION")
     _add_product_options(resolve)
 
+    plan = build_commands.add_parser(
+        "plan", add_help=False, allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="plan one exact build through compiler stage 6",
+        description="Dispatch build.plan through the shared compiler front half.",
+        epilog="Defaults to the Task 014 exact record set and never invokes a handler.",
+    )
+    plan.add_argument("locator", metavar="REQUEST_ID@REVISION")
+    _add_product_options(plan)
+
+    execute = build_commands.add_parser(
+        "execute", add_help=False, allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="execute one exact successful plan through a registered handler",
+        description="Plan once, select one exact handler, and publish one fresh output root.",
+        epilog="--execute is mandatory explicit intent. Existing output roots are rejected.",
+    )
+    execute.add_argument("locator", metavar="REQUEST_ID@REVISION")
+    execute.add_argument("--handler", default="schuss-build-handler-000001@1", metavar="HANDLER_ID@REVISION")
+    execute.add_argument("--output-root", required=True, metavar="DIRECTORY")
+    execute.add_argument("--execute", action="store_true", required=True)
+    _add_product_options(execute)
+
+    build_completion = build_commands.add_parser(
+        "completion", add_help=False, allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="emit the additive Task 014 build completion surface",
+        description="Emit static build plan/execute completion without changing legacy completion bytes.",
+    )
+    build_completion.add_argument("shell", choices=("bash", "zsh", "fish"))
+    _add_help(build_completion)
+
     completion = subcommands.add_parser(
         "completion",
         add_help=False,
@@ -665,6 +725,28 @@ def _portable_record_set_locator(manifest: str) -> str:
         ) from exc
 
 
+def _task011c_execution_service(output_root: Path):
+    """Load the exact transitional adapter only for explicit product execution."""
+
+    from .build_execution import ExecutionService
+
+    adapter_path = (
+        Path(__file__).resolve().parents[2]
+        / "legacy/ksoloti-bridge/task011c_adapter.py"
+    )
+    specification = importlib.util.spec_from_file_location(
+        "schuss_task011c_product_adapter", adapter_path
+    )
+    if specification is None or specification.loader is None:
+        raise ProductInputError(
+            "CLI_EXECUTION_ADAPTER_UNAVAILABLE",
+            "exact Task 011C adapter cannot be loaded",
+        )
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return ExecutionService.from_values((module.registration(),), output_root)
+
+
 def _project_request(
     args,
     context: OperationContext | None,
@@ -716,7 +798,7 @@ def _project_request(
     raise ValueError("parsed project command has no operation mapping")
 
 
-def _product_request(args, context: OperationContext, stdin: BinaryIO, stderr: TextIO):
+def _product_request(args, context: OperationContext, stdin: BinaryIO, stderr: TextIO, execution_service=None):
     if args.command == "validate":
         return records_validate_request(), None
     if args.command == "catalog":
@@ -765,6 +847,19 @@ def _product_request(args, context: OperationContext, stdin: BinaryIO, stderr: T
             args.locator, expected_kind="build-request", context=context
         )
         return build_resolve_request(reference), None
+    if args.command == "build" and args.build_command == "plan":
+        reference = resolve_locator(
+            args.locator, expected_kind="build-request", context=context
+        )
+        return build_plan_request(reference), None
+    if args.command == "build" and args.build_command == "execute":
+        if execution_service is None:
+            raise ProductInputError("CLI_EXECUTION_SERVICE_UNAVAILABLE", "build execution service is unavailable")
+        reference = resolve_locator(
+            args.locator, expected_kind="build-request", context=context
+        )
+        handler = resolve_build_handler_locator(args.handler, execution_service)
+        return build_execute_request(reference, handler), None
     raise ValueError("parsed command has no product operation mapping")
 
 
@@ -787,6 +882,10 @@ def run(
 
         if args.command == "completion":
             _emit_bytes(stdout, completion_script(args.shell))
+            return 0
+
+        if args.command == "build" and args.build_command == "completion":
+            _emit_bytes(stdout, build_completion_script(args.shell))
             return 0
 
         if args.command == "project" and args.project_command == "completion":
@@ -843,17 +942,29 @@ def run(
         manifest = args.record_set
         if args.command == "catalog" and manifest is None:
             manifest = str(CATALOG_RECORD_SET_PATH)
+        if args.command == "build" and args.build_command in {"plan", "execute"} and manifest is None:
+            manifest = str(BUILD_RECORD_SET_PATH)
         context, exit_code = _load_context_or_report(manifest, context_loader, stderr)
         if exit_code is not None:
             return exit_code
         try:
-            request, exit_code = _product_request(args, context, stdin, stderr)
+            execution_service = None
+            if args.command == "build" and args.build_command == "execute":
+                execution_service = _task011c_execution_service(Path(args.output_root))
+            request, exit_code = _product_request(
+                args, context, stdin, stderr, execution_service
+            )
         except ProductInputError as exc:
             _write_stderr(stderr, f"schuss: {exc.code}: {exc}\n")
             return 2
         if exit_code is not None:
             return exit_code
-        result = dispatch_operation(request, context)
+        if execution_service is None:
+            result = dispatch_operation(request, context)
+        else:
+            result = dispatch_operation(
+                request, context, execution_service=execution_service
+            )
         output = (
             canonical_result_bytes(result, context) + b"\n"
             if args.json

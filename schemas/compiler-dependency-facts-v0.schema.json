@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "compiler-dependency-facts-v0.schema.json",
+  "title": "Schuss compiler dependency planning facts v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "compiler_dependency_facts_id", "revision", "content_hash", "providers"],
+  "properties": {
+    "schema_version": {"const": "compiler-dependency-facts-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "compiler_dependency_facts_id": {"type": "string", "pattern": "^schuss-compiler-dependency-facts-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "providers": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/provider"}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "provider": {
+      "type": "object",
+      "required": ["provider_id", "dependency_id", "version", "portable_locator", "availability", "requires", "exclusive_service"],
+      "properties": {
+        "provider_id": {"type": "string", "pattern": "^dependency-provider-[0-9]{6}$"},
+        "dependency_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "version": {"type": "string", "pattern": "^[0-9]+(?:[.][0-9]+)*$"},
+        "portable_locator": {"type": "string", "pattern": "^sha256/[0-9a-f]{64}$"},
+        "availability": {"enum": ["available", "missing"]},
+        "requires": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}},
+        "exclusive_service": {"oneOf": [{"type": "null"}, {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}]}
+      },
+      "additionalProperties": false
+    }
+  }
+}

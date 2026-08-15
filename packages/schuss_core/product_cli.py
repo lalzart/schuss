@@ -12,6 +12,7 @@ import re
 from typing import Any, Iterable
 
 from .control_plane import OperationContext
+from .build_execution import ExecutionService, handler_reference
 
 
 LOCATOR_RE = re.compile(
@@ -136,6 +137,47 @@ def build_resolve_request(
     }
 
 
+def build_plan_request(build_request_reference: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "schema_version": "schuss-operation-request-v4",
+        "canonical_profile": "schuss-canonical-json-v1",
+        "operation": "build.plan",
+        "payload": {"build_request_reference": build_request_reference},
+    }
+
+
+def resolve_build_handler_locator(
+    locator: str, service: ExecutionService
+) -> dict[str, Any]:
+    stable_id, revision = _locator_parts(locator)
+    if not stable_id.startswith("schuss-build-handler-"):
+        raise ProductInputError(
+            "CLI_LOCATOR_WRONG_KIND", "locator is not a build-handler identity"
+        )
+    try:
+        descriptor = service.descriptor_for_locator(stable_id, revision)
+    except ValueError as exc:
+        raise ProductInputError("CLI_HANDLER_NOT_FOUND", str(exc)) from exc
+    return handler_reference(descriptor)
+
+
+def build_execute_request(
+    build_request_reference: dict[str, Any],
+    exact_handler_reference: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "schema_version": "schuss-operation-request-v5",
+        "canonical_profile": "schuss-canonical-json-v1",
+        "operation": "build.execute",
+        "payload": {
+            "build_request_reference": build_request_reference,
+            "handler_reference": exact_handler_reference,
+            "output_locator": "build-output",
+            "execution_intent": True,
+        },
+    }
+
+
 def catalog_search_request(
     query: str, filters: dict[str, list[str]]
 ) -> dict[str, Any]:
@@ -196,6 +238,7 @@ REFERENCE_ID_FIELDS = (
     "backend_id",
     "binding_eligibility_id",
     "build_environment_id",
+    "build_handler_id",
     "build_request_id",
     "build_result_id",
     "catalog_id",
@@ -604,6 +647,43 @@ def _append_catalog_inspect(lines: list[str], result: dict[str, Any]) -> None:
         )
 
 
+def _append_build_plan(lines: list[str], result: dict[str, Any]) -> None:
+    value = result.get("value")
+    if value is None:
+        return
+    lines.append(f"plan_status: {_safe_text(value['status'])}")
+    lines.append(f"input_closure_hash: {_safe_text(value['input_closure']['hash'])}")
+    lines.append("stages:")
+    for stage in value["stages"]:
+        lines.append(f"  - {stage['ordinal']} {stage['stage']}: {stage['status']}")
+    lines.append("evidence_levels:")
+    for item in value["evidence_levels"]:
+        lines.append(f"  - {item['level']}: {item['status']}")
+
+
+def _append_build_execute(lines: list[str], result: dict[str, Any]) -> None:
+    value = result.get("value")
+    if value is None:
+        return
+    lines.append(f"execution: {_safe_text(value['execution_id'])}")
+    lines.append(f"plan_sha256: {_safe_text(value['plan_sha256'])}")
+    _append_reference(lines, "handler", value["handler_reference"])
+    lines.append(f"cache_policy: {_safe_text(value['cache']['policy'])}")
+    lines.append(f"cache_lookup: {_safe_text(value['cache']['lookup'])}")
+    lines.append(f"output_publication: {_safe_text(value['output_publication'])}")
+    lines.append("artifacts:")
+    if not value["artifacts"]:
+        lines.append("  none")
+    for item in value["artifacts"]:
+        lines.append(f"  - kind: {_safe_text(item['artifact_kind'])}")
+        lines.append(f"    byte_sha256: {_safe_text(item['byte_sha256'])}")
+        lines.append(f"    byte_length: {item['byte_length']}")
+        lines.append(f"    portable_locator: {_safe_text(item['portable_locator'])}")
+    lines.append("evidence_levels:")
+    for item in value["evidence_levels"]:
+        lines.append(f"  - {item['level']}: {item['status']}")
+
+
 def _append_diagnostics(lines: list[str], result: dict[str, Any]) -> None:
     lines.append("diagnostics:")
     diagnostics = result["diagnostics"]
@@ -636,6 +716,8 @@ def render_human_result(
         "records.validate": lambda: _append_records_validate(lines, result),
         "graph.inspect": lambda: _append_graph_inspect(lines, result),
         "build.resolve": lambda: _append_build_resolve(lines, result, context),
+        "build.plan": lambda: _append_build_plan(lines, result),
+        "build.execute": lambda: _append_build_execute(lines, result),
         "graph.transact": lambda: _append_graph_transact(lines, result, request),
         "catalog.search": lambda: _append_catalog_search(lines, result),
         "catalog.inspect": lambda: _append_catalog_inspect(lines, result),
@@ -776,6 +858,24 @@ COMPLETION_SCRIPTS = {
     "zsh": ZSH_COMPLETION,
     "fish": FISH_COMPLETION,
 }
+
+
+BUILD_COMPLETION_SCRIPTS = {
+    "bash": "# Schuss Task 014 build completion for Bash\ncomplete -W 'resolve plan execute completion --help' schuss\n",
+    "zsh": "#compdef schuss\n# Schuss Task 014 build completion for Zsh\n_arguments '2:build command:(resolve plan execute completion)'\n",
+    "fish": "# Schuss Task 014 build completion for Fish\ncomplete -c schuss -n '__fish_seen_subcommand_from build' -a 'resolve plan execute completion'\n",
+}
+
+
+def build_completion_script(shell: str) -> bytes:
+    try:
+        value = BUILD_COMPLETION_SCRIPTS[shell]
+    except KeyError as exc:
+        raise ProductInputError(
+            "CLI_COMPLETION_SHELL_UNSUPPORTED",
+            f"unsupported completion shell {shell!r}",
+        ) from exc
+    return value.encode("utf-8")
 
 
 def completion_script(shell: str) -> bytes:

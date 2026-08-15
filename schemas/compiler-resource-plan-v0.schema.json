@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "compiler-resource-plan-v0.schema.json",
+  "title": "Schuss typed resource plan v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "derived", "input_closure_hash", "requirements", "declarations", "estimates", "measurements", "unknowns", "budgets"],
+  "properties": {
+    "schema_version": {"const": "compiler-resource-plan-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "derived": {"const": true},
+    "input_closure_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "requirements": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/requirement"}},
+    "declarations": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/declaration"}},
+    "estimates": {"type": "array", "x-schuss-array-kind": "sequence", "maxItems": 0, "items": {"type": "object", "x-schuss-domain-value": true}},
+    "measurements": {"type": "array", "x-schuss-array-kind": "sequence", "maxItems": 0, "items": {"type": "object", "x-schuss-domain-value": true}},
+    "unknowns": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/unknown"}},
+    "budgets": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/budget"}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "bindingReference": {"type": "object", "required": ["implementation_id", "revision", "content_hash"], "properties": {"implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "consumer": {"type": "object", "required": ["instance_path", "binding_reference"], "properties": {"instance_path": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"type": "string", "minLength": 1}}, "binding_reference": {"$ref": "#/$defs/bindingReference"}}, "additionalProperties": false},
+    "state": {"type": "object", "x-schuss-domain-value": true},
+    "requirement": {
+      "type": "object",
+      "required": ["requirement_id", "resource_kind", "region_id", "fact_kind", "amount_bytes", "alignment_bytes", "aligned_amount_bytes", "state", "decision", "consumer"],
+      "properties": {
+        "requirement_id": {"type": "string", "pattern": "^binding-resource-requirement-[0-9]{6}$"},
+        "resource_kind": {"enum": ["code", "read-only-data", "data", "stack", "heap", "asset"]},
+        "region_id": {"type": "string", "pattern": "^target-memory-region-[0-9]{6}$"},
+        "fact_kind": {"const": "hard-requirement"},
+        "amount_bytes": {"type": "integer", "minimum": 0},
+        "alignment_bytes": {"type": "integer", "minimum": 1},
+        "aligned_amount_bytes": {"type": "integer", "minimum": 0},
+        "state": {"$ref": "#/$defs/state"},
+        "decision": {"enum": ["included", "unresolved", "unsupported"]},
+        "consumer": {"$ref": "#/$defs/consumer"}
+      },
+      "additionalProperties": false
+    },
+    "declaration": {"type": "object", "required": ["region_id", "fact_kind", "length_bytes", "alignment_bytes", "budget_kind"], "properties": {"region_id": {"type": "string", "minLength": 1}, "fact_kind": {"const": "target-declaration"}, "length_bytes": {"type": "integer", "minimum": 1}, "alignment_bytes": {"type": "integer", "minimum": 1}, "budget_kind": {"type": "string", "minLength": 1}}, "additionalProperties": false},
+    "unknown": {"type": "object", "required": ["requirement_id", "code", "consumer"], "properties": {"requirement_id": {"type": "string", "minLength": 1}, "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"}, "consumer": {"$ref": "#/$defs/consumer"}}, "additionalProperties": false},
+    "budget": {"type": "object", "required": ["region_id", "budget_kind", "declared_bytes", "planned_hard_requirement_bytes", "decision"], "properties": {"region_id": {"type": "string", "minLength": 1}, "budget_kind": {"type": "string", "minLength": 1}, "declared_bytes": {"type": "integer", "minimum": 1}, "planned_hard_requirement_bytes": {"type": "integer", "minimum": 0}, "decision": {"enum": ["within-budget", "exceeded"]}}, "additionalProperties": false}
+  }
+}

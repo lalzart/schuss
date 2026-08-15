@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "build-execution-result-v0.schema.json",
+  "title": "Schuss portable build execution result v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "execution_id", "status", "build_request_reference", "plan_sha256", "handler_reference", "cache", "progress", "stage_outcomes", "artifacts", "evidence_levels", "output_publication", "diagnostics", "authoritative_records_mutated", "device_actions_performed"],
+  "properties": {
+    "schema_version": {"const": "build-execution-result-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "execution_id": {"type": "string", "pattern": "^schuss-build-execution-[0-9a-f]{16}$"},
+    "status": {"enum": ["success", "failed", "cancelled", "unavailable", "invalid", "unresolved", "unsupported", "ambiguous", "budget-failure"]},
+    "build_request_reference": {"$ref": "#/$defs/requestReference"},
+    "plan_sha256": {"$ref": "#/$defs/contentHash"},
+    "handler_reference": {"$ref": "#/$defs/handlerReference"},
+    "cache": {"type": "object", "required": ["policy", "lookup", "key"], "properties": {"policy": {"const": "disabled"}, "lookup": {"const": "miss"}, "key": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "progress": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/progress"}},
+    "stage_outcomes": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/stage"}},
+    "artifacts": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"$ref": "#/$defs/artifact"}},
+    "evidence_levels": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 8, "maxItems": 8, "items": {"$ref": "#/$defs/evidence"}},
+    "output_publication": {"enum": ["published", "not-published"]},
+    "diagnostics": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/diagnostic"}},
+    "authoritative_records_mutated": {"const": false},
+    "device_actions_performed": {"const": false}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "requestReference": {"type": "object", "required": ["build_request_id", "revision", "content_hash"], "properties": {"build_request_id": {"type": "string", "pattern": "^schuss-build-request-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "handlerReference": {"type": "object", "required": ["build_handler_id", "revision", "content_hash"], "properties": {"build_handler_id": {"type": "string", "pattern": "^schuss-build-handler-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "progress": {"type": "object", "required": ["ordinal", "event", "subject"], "properties": {"ordinal": {"type": "integer", "minimum": 1}, "event": {"enum": ["planning-started", "planning-completed", "handler-selected", "handler-started", "handler-completed", "output-published"]}, "subject": {"type": "string", "minLength": 1}}, "additionalProperties": false},
+    "stage": {"type": "object", "required": ["stage", "status"], "properties": {"ordinal": {"type": "integer", "minimum": 1}, "stage": {"enum": ["schema-identity-validation", "target-independent-graph-validation", "target-backend-validation", "implementation-resolution", "compound-elaboration", "dependency-resource-planning", "backend-lowering", "artifact-generation", "target-compile-link", "packaging-evidence-recording"]}, "status": {"enum": ["success", "failed", "invalid", "unresolved", "unsupported", "ambiguous", "budget-failure", "not-run"]}, "artifact_kinds": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "diagnostic_codes": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}}}, "additionalProperties": false},
+    "artifact": {"type": "object", "required": ["artifact_kind", "media_type", "producer_stage", "byte_sha256", "byte_length", "portable_locator"], "properties": {"artifact_kind": {"type": "string", "minLength": 1}, "media_type": {"type": "string", "minLength": 1}, "producer_stage": {"type": "string", "minLength": 1}, "byte_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "byte_length": {"type": "integer", "minimum": 0}, "portable_locator": {"type": "string", "pattern": "^sha256/[0-9a-f]{64}$"}}, "additionalProperties": false},
+    "evidence": {"type": "object", "required": ["level", "status"], "properties": {"level": {"type": "integer", "minimum": 1, "maximum": 8}, "status": {"enum": ["passed", "not-run"]}}, "additionalProperties": false},
+    "diagnostic": {"type": "object", "required": ["code", "severity", "stage", "subject", "message"], "properties": {"code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}, "severity": {"const": "error"}, "stage": {"type": "string", "minLength": 1}, "subject": {"type": "string", "minLength": 1}, "message": {"type": "string", "minLength": 1}}, "additionalProperties": false}
+  }
+}

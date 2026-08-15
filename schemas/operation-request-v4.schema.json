@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "operation-request-v4.schema.json",
+  "title": "Schuss additive compiler planning operation request v4",
+  "oneOf": [
+    {"$ref": "#/$defs/buildPlan"}
+  ],
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "buildRequestReference": {
+      "type": "object",
+      "required": ["build_request_id", "revision", "content_hash"],
+      "properties": {
+        "build_request_id": {"type": "string", "pattern": "^schuss-build-request-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "buildPlan": {
+      "type": "object",
+      "required": ["schema_version", "canonical_profile", "operation", "payload"],
+      "properties": {
+        "schema_version": {"const": "schuss-operation-request-v4"},
+        "canonical_profile": {"const": "schuss-canonical-json-v1"},
+        "operation": {"const": "build.plan"},
+        "payload": {
+          "type": "object",
+          "required": ["build_request_reference"],
+          "properties": {
+            "build_request_reference": {"$ref": "#/$defs/buildRequestReference"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "compiler-resolution-plan-v0.schema.json",
+  "title": "Schuss deterministic implementation resolution plan v0",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "derived", "input_closure_hash", "build_request_reference", "selection_policy_version", "status", "traces"],
+  "properties": {
+    "schema_version": {"const": "compiler-resolution-plan-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "derived": {"const": true},
+    "input_closure_hash": {"$ref": "#/$defs/contentHash"},
+    "build_request_reference": {"$ref": "#/$defs/buildRequestReference"},
+    "selection_policy_version": {"const": "schuss-binding-selection-v1"},
+    "status": {"enum": ["success", "invalid", "unresolved", "unsupported", "ambiguous"]},
+    "traces": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/trace"}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "buildRequestReference": {
+      "type": "object",
+      "required": ["build_request_id", "revision", "content_hash"],
+      "properties": {
+        "build_request_id": {"type": "string", "pattern": "^schuss-build-request-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "contractReference": {
+      "type": "object",
+      "required": ["component_contract_id", "revision", "content_hash"],
+      "properties": {
+        "component_contract_id": {"type": "string", "pattern": "^schuss-component-contract-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "bindingReference": {
+      "type": "object",
+      "required": ["implementation_id", "revision", "content_hash"],
+      "properties": {
+        "implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "eligibilityReference": {
+      "type": "object",
+      "required": ["binding_eligibility_id", "revision", "content_hash"],
+      "properties": {
+        "binding_eligibility_id": {"type": "string", "pattern": "^schuss-binding-eligibility-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "candidate": {
+      "type": "object",
+      "required": ["binding_reference", "eligibility_reference", "priority", "selection_policy_id", "exclusion_reasons", "unresolved_reasons"],
+      "properties": {
+        "binding_reference": {"$ref": "#/$defs/bindingReference"},
+        "eligibility_reference": {"$ref": "#/$defs/eligibilityReference"},
+        "priority": {"type": "integer"},
+        "selection_policy_id": {"type": "string", "pattern": "^schuss-selection-policy-[0-9]{6}$"},
+        "exclusion_reasons": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "unresolved_reasons": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    "trace": {
+      "type": "object",
+      "required": ["node_id", "contract_reference", "status", "selected_binding_reference", "selection_policy_id", "candidates"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "contract_reference": {"$ref": "#/$defs/contractReference"},
+        "status": {"enum": ["selected", "unsupported", "unresolved", "ambiguous", "invalid-override"]},
+        "selected_binding_reference": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/bindingReference"}]},
+        "selection_policy_id": {"oneOf": [{"type": "null"}, {"type": "string", "pattern": "^schuss-selection-policy-[0-9]{6}$"}]},
+        "candidates": {"type": "array", "x-schuss-array-kind": "sequence", "items": {"$ref": "#/$defs/candidate"}}
+      },
+      "additionalProperties": false
+    }
+  }
+}

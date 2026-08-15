@@ -22,6 +22,7 @@ from .control_plane import (
     _diagnostic,
     dispatch_operation,
     load_repository_context,
+    with_compiler_schemas,
 )
 
 from .control_plane import aggregate, component, core, device, record_set_rules, target
@@ -189,7 +190,9 @@ def with_project_schemas(
                 f"{filename}: {annotations}",
             )
         schemas[key] = schema
-    return replace(context, schemas=schemas)
+    return with_compiler_schemas(
+        replace(context, schemas=schemas), repository_root
+    )
 
 
 def _operation_result(

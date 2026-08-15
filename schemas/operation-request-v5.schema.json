@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "operation-request-v5.schema.json",
+  "title": "Schuss additive build execution operation request v5",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "operation", "payload"],
+  "properties": {
+    "schema_version": {"const": "schuss-operation-request-v5"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "operation": {"const": "build.execute"},
+    "payload": {"type": "object", "required": ["build_request_reference", "handler_reference", "output_locator", "execution_intent"], "properties": {"build_request_reference": {"$ref": "#/$defs/requestReference"}, "handler_reference": {"$ref": "#/$defs/handlerReference"}, "output_locator": {"const": "build-output"}, "execution_intent": {"const": true}}, "additionalProperties": false}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "requestReference": {"type": "object", "required": ["build_request_id", "revision", "content_hash"], "properties": {"build_request_id": {"type": "string", "pattern": "^schuss-build-request-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "handlerReference": {"type": "object", "required": ["build_handler_id", "revision", "content_hash"], "properties": {"build_handler_id": {"type": "string", "pattern": "^schuss-build-handler-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false}
+  }
+}
