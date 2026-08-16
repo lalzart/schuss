@@ -60,6 +60,12 @@ TASK015_SCHEMA_NAMES = {
     "direct_frontend_result": "direct-frontend-result-v0.schema.json",
 }
 
+TASK016_SCHEMA_NAMES = {
+    "direct_operation_spec": "direct-operation-spec-v0.schema.json",
+    "normalized_dsp_module_v1": "normalized-dsp-module-v1.schema.json",
+    "direct_frontend_result_v1": "direct-frontend-result-v1.schema.json",
+}
+
 DOMAIN_GROUPS = (
     "catalog",
     "families",
@@ -68,6 +74,7 @@ DOMAIN_GROUPS = (
     "graphs",
     "devices",
     "instruments",
+    "direct_operation_specs",
     *tuple(target.SCHEMA_SPECS),
 )
 
@@ -133,6 +140,25 @@ def load_repository_context(
         record_set_path,
         accepted_manifest_path=parent_record_set_path,
     )
+
+    catalog_records = _stable_records(selected.records.get("catalog-corpus", ()))
+    catalog_selectors = _stable_records(selected.records.get("catalog-selection", ()))
+    if catalog_selectors:
+        if len(catalog_selectors) != 1:
+            raise ValueError("selected record set must contain exactly one catalog selector")
+        reference = catalog_selectors[0]["corpus_reference"]
+        matches = [
+            record
+            for record in catalog_records
+            if record["catalog_id"] == reference["catalog_id"]
+            and record["revision"] == reference["revision"]
+            and record["content_hash"] == reference["content_hash"]
+        ]
+        if len(matches) != 1:
+            raise ValueError("catalog selector must resolve exactly one corpus")
+        catalog_records = _stable_records(matches)
+    elif len(catalog_records) > 1:
+        raise ValueError("multiple catalog corpora require one exact catalog selector")
     if record_enumerator is not None:
         known_directories = {
             member["portable_path"].split("/")[1]
@@ -156,7 +182,7 @@ def load_repository_context(
                 )
 
     records: dict[str, tuple[dict[str, Any], ...]] = {
-        "catalog": _stable_records(selected.records.get("catalog-corpus", ())),
+        "catalog": catalog_records,
         "families": _stable_records(selected.records.get("catalog-family", ())),
         "contracts": _stable_records(selected.records.get("component-contract", ())),
         "bindings": _stable_records(selected.records.get("implementation-binding", ())),
@@ -171,6 +197,10 @@ def load_repository_context(
     records.update(
         {name: _stable_records(values) for name, values in target_records.items()}
     )
+    if selected.records.get("direct-operation-spec"):
+        records["direct_operation_specs"] = _stable_records(
+            selected.records["direct-operation-spec"]
+        )
 
     schemas: dict[str, dict[str, Any]] = {
         "operation_request": selected.schemas["operation-request-v1"],
@@ -208,6 +238,15 @@ def load_repository_context(
     ):
         if version in selected.schemas:
             schemas[name] = selected.schemas[version]
+    if records["catalog"]:
+        catalog_schema_version = records["catalog"][0]["schema_version"]
+        if catalog_schema_version not in selected.schemas:
+            raise ValueError("selected catalog corpus schema is absent")
+        schemas["catalog_corpus"] = selected.schemas[catalog_schema_version]
+        if catalog_schema_version == "catalog-corpus-v2":
+            if "catalog-projection-v2" not in selected.schemas:
+                raise ValueError("selected catalog corpus v2 requires projection schema v2")
+            schemas["catalog_projection"] = selected.schemas["catalog-projection-v2"]
     for key, filename in TASK013_SCHEMA_NAMES.items():
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
@@ -217,6 +256,10 @@ def load_repository_context(
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
     for key, filename in TASK015_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    for key, filename in TASK016_SCHEMA_NAMES.items():
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
@@ -332,6 +375,7 @@ def load_repository_context(
                 "conformance-probe-result",
                 "conformance-probe-procedure",
                 "prerequisite-environment",
+                "direct-operation-spec",
             )
             for record in selected.records.get(kind, ())
         ],

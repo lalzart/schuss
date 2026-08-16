@@ -1,6 +1,7 @@
 # Task 016 direct-semantics decision brief
 
-Decision status: required. No option is accepted by this brief.
+Decision status: accepted on 2026-08-16. The user selected option 1,
+legacy-equivalent direct semantics.
 
 ## Why one decision remains
 
@@ -120,11 +121,10 @@ Counter and four-step selection behavior already have exact component rules;
 the retained source provides their initialization and within-cycle ordering.
 Task 015 remains the normative direct Crossfader arithmetic contract.
 
-## What remains prohibited before a decision
+## Constraints after the accepted decision
 
-- No direct binding, backend, eligibility, or compatibility promotion.
-- No Task 016 normalized IR, generated C++, ARM object, ELF, or evidence claim.
 - No assumption that compile/link evidence proves device, real-time, audible,
   or release behavior.
 - No Java or `.axp` fallback disguised as the direct backend.
 - No UI, hardware action, stage, commit, push, or external publication.
+- No Schuss-native behavioral substitution inside the legacy-equivalent path.

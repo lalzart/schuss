@@ -37,6 +37,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             ["013", "014", "015", "016", "017", "018", "019", "020"],
             summary["active_task_sequence"],
         )
+        self.assertEqual("ready-not-started", summary["task_statuses"]["018"])
 
     def test_negative_governance_fixtures_fail_closed(self):
         self.assertEqual("backbone-governance-negative-fixtures-v1", self.fixtures["schema_version"])

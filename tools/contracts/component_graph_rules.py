@@ -31,6 +31,7 @@ BINDING_SCHEMA_VERSION = "implementation-binding-v0"
 BINDING_SCHEMA_VERSIONS = (
     "implementation-binding-v0",
     "implementation-binding-v1",
+    "implementation-binding-v2",
 )
 GRAPH_SCHEMA_VERSION = "dsp-graph-v0"
 
@@ -1191,10 +1192,15 @@ def _validate_bindings(
                 _diagnostic(diagnostics, "LEGACY_OBSERVATION_HASH_MISMATCH", subject, "$.realization.observation.manifest_sha256", "binding cites the wrong frozen manifest")
             expected_locator = {
                 "variant_index": observation["variant_index"],
-                "legacy_uuid": observation["uuid"]["durable_value"],
                 "source_id": _source_id(observation),
                 "source_sha256": _source_sha256(observation),
             }
+            if binding["schema_version"] == "implementation-binding-v2":
+                expected_locator["legacy_uuid_sha256"] = "sha256:" + hashlib.sha256(
+                    observation["uuid"]["durable_value"].encode("utf-8")
+                ).hexdigest()
+            else:
+                expected_locator["legacy_uuid"] = observation["uuid"]["durable_value"]
             for field, expected in expected_locator.items():
                 if locator[field] != expected:
                     _diagnostic(diagnostics, "LEGACY_OBSERVATION_MISMATCH", subject, f"$.realization.observation.{field}", f"expected {expected!r}")

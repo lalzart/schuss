@@ -473,16 +473,20 @@ legacy-backend slices reach ARM compile/link; and the product CLI projects the
 shared operations; Task 012A now adds project persistence without general build
 execution.
 
-Tasks 013-015 are complete. The remaining gated sequence is:
+Tasks 013-017 are complete. The completed gated sequence was:
 
 1. **Task 016:** direct-frontend expansion through the complete Task 011C
    graph after legacy-equivalent versus Schuss-native behavior is selected.
 2. **Task 017:** a bounded reviewed-core expansion and richer non-UI reference
    instruments after Task 016 completes.
+3. **Task 018:** full Gills implementation and parameter/control mapping after
+   both completed dependencies.
 
-Task 016 and Task 017 have validated contracts. Neither implementation has
-started: Task 016 has a complete conditional pinned-source specification but is
-stopped on the one compatibility-mode choice, and Task 017 depends on Task 016.
+Task 016 is accepted through local evidence level 5 under the selected
+legacy-equivalent route. Task 017 is accepted through levels 1-2 with exact
+unsupported diagnostics for direct semantics not established by its review.
+Task 018's dependency gate is satisfied; its contract is complete and the
+implementation is ready to begin with authenticated Gills panel evidence.
 
 Task 012B is retired. UI and presentation work remain an unnumbered future
 milestone and cannot introduce client-specific catalog, graph, project, build,
@@ -491,7 +495,6 @@ or compiler semantics.
 ### Deliberately deferred
 
 - Complete controlled vocabularies and production schema fields.
-- Full Gills behavior, firmware, and panel implementation.
 - Complete Ksoloti target budgets and measured resource envelopes.
 - Remote protocol transport, queues, cancellation, and progress events.
 - General optimizer, instruction-level IR, and replacement ABI design beyond

@@ -398,11 +398,15 @@ old Phase 13 frontend as one jump:
    vectors through evidence level 4.
 4. Task 016 expands that direct path to the complete Task 011C graph and only
    the scheduling, state, control, and native-realization semantics required by
-   that exact closure. Its contract is complete, but implementation is stopped
-   on one compatibility-mode decision. A pinned-source audit supplies all eight
-   prerequisite specifications conditionally for the recommended
-   legacy-equivalent route; Schuss-native behavior requires a separate musical
-   specification.
+   that exact closure. This task is complete under the explicitly selected
+   legacy-equivalent route: seven operation specifications, exact native
+   bindings/eligibilities, nine scheduled operations, one registered direct
+   handler, and deterministic ARM compile/link evidence through level 5.
+   Schuss-native behavior still requires a separate musical specification.
+5. Task 017 adds a bounded twelve-family reviewed core and two immutable
+   headless reference instruments. Transparent compound elaboration is the
+   only new supported direct realization form; unimplemented legacy operations
+   stop at deterministic unsupported diagnostics before lowering.
 
 Each stage preserves the authoritative graph and exact semantic-record closure.
 The direct path must coexist with the legacy backend and must fail explicitly

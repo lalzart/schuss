@@ -129,12 +129,46 @@ def _validate_observation_source(
         "source_path": origin["path"],
         "source_sha256": origin["sha256"],
         "legacy_id": observation["legacy_id"],
-        "legacy_uuid": observation["uuid"]["durable_value"],
     }
+    if "legacy_uuid_sha256" in source:
+        expected["legacy_uuid_sha256"] = "sha256:" + hashlib.sha256(
+            observation["uuid"]["durable_value"].encode("utf-8")
+        ).hexdigest()
+    else:
+        expected["legacy_uuid"] = observation["uuid"]["durable_value"]
     if source != expected:
         raise CatalogProjectionError(
             f"catalog source observation closure is stale: {evidence_ref}"
         )
+
+
+def _authority_values(
+    value: dict[str, Any],
+    observations: Mapping[str, dict[str, Any]],
+    core: Any,
+) -> tuple[list[str], set[str]]:
+    """Validate and project either one legacy observation or Schuss design authority."""
+
+    has_observation = "source_observation" in value
+    has_authority = "source_authority" in value
+    if has_observation == has_authority:
+        raise CatalogProjectionError(
+            "catalog addition must have exactly one source authority"
+        )
+    if has_observation:
+        source = value["source_observation"]
+        _validate_observation_source(source, observations, core)
+        return [source["evidence_ref"]], {source["source_id"]}
+    authority = value.get("source_authority")
+    if not isinstance(authority, dict):
+        raise CatalogProjectionError("catalog addition has no source authority")
+    if authority["kind"] == "legacy-observation":
+        source = authority["observation"]
+        _validate_observation_source(source, observations, core)
+        return [source["evidence_ref"]], {source["source_id"]}
+    if authority["kind"] == "schuss-transparent-compound":
+        return [authority["evidence_ref"]], {"schuss"}
+    raise CatalogProjectionError("catalog addition source authority is unsupported")
 
 
 def _validate_corpus(
@@ -211,9 +245,7 @@ def _validate_corpus(
             raise CatalogProjectionError(
                 f"catalog family addition content hash is stale: {family['family_id']}"
             )
-        _validate_observation_source(
-            family["source_observation"], observations, core
-        )
+        _authority_values(family, observations, core)
         additions[family["family_id"]] = family
 
     exact_refs = {
@@ -254,10 +286,8 @@ def _validate_corpus(
             raise CatalogProjectionError(
                 f"catalog implementation family reference is stale: {identifier}"
             )
-        _validate_observation_source(
-            implementation["source_observation"], observations, core
-        )
-    if implementation_ids != {
+        _authority_values(implementation, observations, core)
+    if corpus["schema_version"] == "catalog-corpus-v1" and implementation_ids != {
         "schuss-implementation-000039",
         "schuss-implementation-000040",
         "schuss-implementation-000041",
@@ -518,8 +548,9 @@ def build_catalog_projection(
                 exact_reference = _generic_reference(
                     addition, "implementation_id"
                 )
-                evidence_refs = [addition["source_observation"]["evidence_ref"]]
-                sources = {addition["source_observation"]["source_id"]}
+                evidence_refs, sources = _authority_values(
+                    addition, observations, core
+                )
                 unresolved = set(addition["unresolved_questions"])
             forms.add(implementation["form"])
             provenance.update(sources)
@@ -727,9 +758,9 @@ def build_catalog_projection(
         },
     }
     projection = {
-        "schema_version": "catalog-projection-v1",
+        "schema_version": projection_schema["properties"]["schema_version"]["const"],
         "canonical_profile": "schuss-canonical-json-v1",
-        "projection_version": PROJECTION_VERSION,
+        "projection_version": projection_schema["properties"]["projection_version"]["const"],
         "match_algorithm": MATCH_ALGORITHM,
         "input_closure_hash": "sha256:"
         + hashlib.sha256(

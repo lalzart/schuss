@@ -1,7 +1,8 @@
 # Task 017: Curated core expansion and richer headless reference instruments
 
-Status: contract complete on 2026-08-16; implementation not started because
-Task 016 is an unmet dependency.
+Status: complete on 2026-08-16; accepted locally through evidence level 2;
+new direct realizations remain explicitly unsupported except for transparent
+compound elaboration.
 
 ## Goal and why it exists
 
@@ -14,10 +15,11 @@ bindings, and executable evidence.
 ## Dependency
 
 Task 016 must be complete with accepted direct DSP/runtime specifications,
-full-slice lowering, and exact handler evidence. Its current contract is valid
-but implementation is stopped on one compatibility-mode decision documented
-in its prerequisite brief, so Task 017 may not begin semantic promotion or
-implementation.
+full-slice lowering, and exact handler evidence. Task 016 satisfied this
+dependency through the accepted legacy-equivalent route and local evidence
+level 5 before Task 017 records were created. Task 017 may not begin semantic
+promotion or implementation without separate task authorization; that
+authorization was supplied for this completed implementation.
 
 ## In scope after the dependency closes
 
@@ -36,7 +38,7 @@ implementation.
 
 ## Out of scope
 
-- Starting before Task 016, choosing families by source/provenance category,
+- Reopening Task 016 semantics, choosing families by source/provenance category,
   bulk import, unreviewed compatibility, complete catalog coverage, sampling
   assets, additional targets/devices, full Gills mapping, UI, AI/MCP, hardware,
   audible claims, commit, or push.
@@ -80,8 +82,25 @@ CLI fixtures; tests/validator; documentation; and a completion report.
   DSP/runtime/license specifications, implicit compatibility, uncontrolled bulk
   expansion, UI design, hardware proof, commit, or push.
 
-## Stop condition reached
+## Completion report
 
-Implementation is stopped because Task 016 is not implemented or accepted.
-The contract is ready to execute after that dependency closes; no Task 017
-semantic record, graph, instrument, compiler result, or evidence is claimed.
+Task 017 accepts `schuss-record-set-000011@1`, twelve reviewed family additions,
+and exactly two immutable headless reference instruments. Eleven legacy-backed
+families retain exact source/seam review but no invented direct implementation;
+their direct eligibility is `not-evaluated`. The Schuss-authored Dual
+Percussion Voice is supported only as a transparent compound form, and its
+unsupported internal legacy bindings stop planning with deterministic
+diagnostics. The second effects graph stops with deterministic unsupported
+binding diagnostics.
+
+Structural/schema and component/graph evidence levels 1-2 pass. Backend
+lowering, source generation, ARM compile/link, connected-device, real-time,
+and audible evidence levels 3-8 are `not-run` for the two Task 017 instruments.
+No UI, device, hardware, publication, stage, commit, or push action occurred.
+The detailed report and retained CLI/planning evidence are under
+`evidence/task017-completion-v1/`.
+
+All ten dedicated Task 017 tests pass. Ordinary repository discovery retains
+the same six inherited baseline failures documented by Task 016; none names
+Task 017. The completion report keeps that repository-wide green-status gap
+explicit rather than changing unrelated historical goldens or ignored inputs.

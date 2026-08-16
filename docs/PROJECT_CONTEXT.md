@@ -188,11 +188,22 @@ consumes either that exact project closure or an explicit record set through
 one immutable compiler context, and completes deterministic planning through
 stage 6 without executing a backend. ADR 0010 retires the misinterpreted Task
 012B UI contract. Task 014 now supplies the exact shared execution/CLI
-boundary through the retained Task 011C handler. Task 015 now proves the
-minimal normalized-DSP/direct-C++ path for the one-node Blend graph. Task 016's
-contract and pinned-source prerequisite audit are complete, but implementation
-is stopped until legacy-equivalent versus Schuss-native direct behavior is
-chosen; Task 017 waits for that dependency.
+boundary through exact registered handlers. Task 015 proves the minimal
+normalized-DSP/direct-C++ path for the one-node Blend graph. Task 016 now
+extends that path to the complete accepted eight-node Gills graph using the
+explicitly selected legacy-equivalent semantics, with deterministic local ARM
+compile/link evidence through level 5.
+
+Task 017 now adds a balanced twelve-family reviewed core and exactly two
+headless reference instruments. Its structural/component evidence reaches
+levels 1-2; unsupported new legacy semantics stop deterministically before
+direct lowering, and levels 3-8 remain `not-run`.
+
+Task 018's contract is complete and its Task 016/017 dependency gate is now
+satisfied. The next implementation begins with an authenticated, portable
+evidence packet for one exact Gills hardware/panel revision; no Task 018
+semantic successor, runtime realization, or mapping has been created yet.
+
 The object drawer and transparent graph canvas remain an unnumbered future
 milestone requiring new explicit authorization.
 

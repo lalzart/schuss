@@ -72,6 +72,8 @@ def _diagnostic(
 
 
 def _subject(record: dict[str, Any]) -> str:
+    if "direct_operation_spec_id" in record:
+        return f"{record['direct_operation_spec_id']}@{record.get('revision', '?')}"
     for _, (_, _, id_field, _) in SCHEMA_SPECS.items():
         if id_field in record:
             return f"{record.get(id_field, '<unknown>')}@{record.get('revision', '?')}"
@@ -765,6 +767,7 @@ def _stable_registry(groups: Iterable[Iterable[dict[str, Any]]]) -> dict[tuple[s
         "build_environment_id", "compute_target_id", "backend_id",
         "binding_eligibility_id", "build_request_id", "build_result_id",
         "artifact_id", "resource_report_id", "evidence_claim_id",
+        "direct_operation_spec_id",
         "conformance_probe_evidence_id", "conformance_probe_id",
         "conformance_probe_result_id", "prerequisite_environment_id",
         "procedure_id",

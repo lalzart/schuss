@@ -26,6 +26,7 @@ TASK_015 = "docs/tasks/015-normalized-dsp-and-minimal-direct-frontend.md"
 TASK_016 = "docs/tasks/016-complete-gills-slice-direct-frontend.md"
 TASK_016_BRIEF = "docs/tasks/016-direct-semantics-decision-brief.md"
 TASK_017 = "docs/tasks/017-curated-core-and-headless-reference-instruments.md"
+TASK_018 = "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md"
 
 DOCUMENT_PATHS = (
     README,
@@ -42,6 +43,7 @@ DOCUMENT_PATHS = (
     TASK_016,
     TASK_016_BRIEF,
     TASK_017,
+    TASK_018,
 )
 
 ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 21))
@@ -180,18 +182,24 @@ def validate_documents(
         "016": _leading_status(documents.get(TASK_016, "")),
         "016-decision": _leading_status(documents.get(TASK_016_BRIEF, ""), "Decision status:"),
         "017": _leading_status(documents.get(TASK_017, "")),
+        "018": _leading_status(documents.get(TASK_018, "")),
     }
     expected_status_fragments = {
         "013": ("complete on 2026-08-16", "accepted locally through compiler stage 6"),
         "014": ("complete on 2026-08-16", "accepted locally through evidence level 5"),
         "015": ("complete on 2026-08-16", "accepted locally through evidence level 4"),
         "016": (
-            "contract and prerequisite evidence audit complete on 2026-08-16",
-            "implementation not started because one explicit compatibility-mode decision is still required",
+            "complete on 2026-08-16",
+            "accepted locally through evidence level 5",
         ),
         "017": (
+            "complete on 2026-08-16",
+            "accepted locally through evidence level 2",
+        ),
+        "018": (
             "contract complete on 2026-08-16",
-            "implementation not started because Task 016 is an unmet dependency",
+            "Tasks 016 and 017 are complete",
+            "implementation is ready but not started",
         ),
     }
     for task, fragments in expected_status_fragments.items():
@@ -228,12 +236,12 @@ def validate_documents(
                 "Task 012B cannot carry runnable, deferred, or UI implementation semantics",
             )
         )
-    if statuses["016-decision"] != "required. No option is accepted by this brief.":
+    if statuses["016-decision"] != "accepted on 2026-08-16. The user selected option 1, legacy-equivalent direct semantics.":
         diagnostics.append(
             _diagnostic(
                 "TASK_016_DECISION_STATUS_DRIFT",
                 TASK_016_BRIEF,
-                "compatibility-mode decision must remain required and unselected",
+                "compatibility-mode decision must remain explicitly accepted as legacy-equivalent",
             )
         )
 
@@ -250,23 +258,40 @@ def validate_documents(
             )
         )
 
+    task18_dependencies = _normalized(_section(documents.get(TASK_018, ""), "## Dependencies"))
+    if (
+        "Task 017 must be complete before Task 018 may create" not in task18_dependencies
+        or "Task 017 itself depends on Task 016" not in task18_dependencies
+        or "Task 018 may not bypass either dependency" not in task18_dependencies
+    ):
+        diagnostics.append(
+            _diagnostic(
+                "TASK_018_DEPENDENCY_INVALID",
+                TASK_018,
+                "Task 018 must fail closed until Tasks 016 and 017 are complete",
+            )
+        )
+
     current_status_rules = {
         README: (
-            "Tasks 013-015 are complete.",
+            "Tasks 013-017 are complete.",
             "ADR 0010 retires the misinterpreted Task 012B UI contract.",
-            "Task 017 has a concrete contract and waits for Task 016.",
+            "Task 017 preserves that boundary",
+            "Task 018's contract is complete",
         ),
         PROJECT_CONTEXT: (
             "ADR 0010 retires the misinterpreted Task 012B UI contract.",
             "Task 013 now consumes either that exact project closure",
             "Task 014 now supplies the exact shared execution/CLI boundary",
-            "Task 015 now proves the minimal normalized-DSP/direct-C++ path",
-            "Task 017 waits for that dependency.",
+            "Task 015 proves the minimal normalized-DSP/direct-C++ path",
+            "Task 017 now adds a balanced twelve-family reviewed core",
+            "Task 018's contract is complete",
         ),
         ROADMAP: (
-            "Tasks 013-015 are complete.",
+            "Tasks 013-017 are complete.",
             "Task 012B is retired and must not be run.",
-            "Task 017 waits for it.",
+            "Task 017 adds the bounded reviewed core",
+            "Task 018 is the active ready task",
         ),
     }
     for document, phrases in current_status_rules.items():
@@ -329,9 +354,9 @@ def validate_documents(
         "13": "complete",
         "14": "complete",
         "15": "complete",
-        "16": "awaits one compatibility-mode choice",
-        "17": "waits for Task 016",
-        "18": "deferred behind the backbone sequence",
+        "16": "complete",
+        "17": "complete",
+        "18": "contract complete; ready to start",
         "19": "deferred behind the backbone sequence",
         "20": "deferred behind the backbone sequence",
     }
@@ -379,6 +404,7 @@ def validate_documents(
         TASK_016: documents.get(TASK_016, ""),
         TASK_016_BRIEF: documents.get(TASK_016_BRIEF, ""),
         TASK_017: documents.get(TASK_017, ""),
+        TASK_018: documents.get(TASK_018, ""),
     }
     for document, scope in alias_scopes.items():
         matches = sorted(set(LETTERED_ALIAS.findall(scope)))
@@ -414,8 +440,9 @@ def validate_documents(
         "013": "complete",
         "014": "complete",
         "015": "complete",
-        "016": "awaiting-explicit-compatibility-mode-decision",
-        "017": "blocked-by-task-016",
+        "016": "complete-legacy-equivalent-level-5",
+        "017": "complete-level-2",
+        "018": "ready-not-started",
     }
     return {
         "active_task_sequence": list(ACTIVE_SEQUENCE),
@@ -423,7 +450,7 @@ def validate_documents(
         "checked_documents": len([path for path in DOCUMENT_PATHS if path in documents]),
         "diagnostics": diagnostics,
         "historical_context_policy": "superseded-adrs-and-completion-reports-excluded-from-current-alias-scan",
-        "schema_version": "backbone-governance-summary-v1",
+        "schema_version": "backbone-governance-summary-v3",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": task_statuses,
         "ui_milestone_status": "unnumbered-explicit-authorization-required",

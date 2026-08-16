@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the Task 016 contract, decision brief, and fail-closed gate."""
+"""Validate the Task 016 accepted decision and completed evidence boundary."""
 
 from pathlib import Path
 import hashlib
@@ -10,18 +10,20 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT_PATH = ROOT / "docs/tasks/016-complete-gills-slice-direct-frontend.md"
 BRIEF_PATH = ROOT / "docs/tasks/016-direct-semantics-decision-brief.md"
+COMPLETION_PATH = ROOT / "evidence/task016-completion-v1/completion-report.md"
+SUMMARY_PATH = ROOT / "evidence/task016-completion-v1/validation-summary.json"
 
 REQUIRED_CONTRACT_SECTIONS = (
     "## Goal and why it exists",
     "## In scope",
     "## Required prerequisite specifications",
-    "## Evidence audit and exact decision needed",
+    "## Evidence audit and accepted decision",
     "## Out of scope",
     "## Inputs and deliverables",
     "## Acceptance tests",
     "## Decisions Task 016 may make",
     "## Decisions Task 016 must not make",
-    "## Stop condition reached",
+    "## Completion report",
 )
 
 REQUIRED_BRIEF_SECTIONS = (
@@ -29,7 +31,7 @@ REQUIRED_BRIEF_SECTIONS = (
     "## Exact decision requested",
     "## Authenticated evidence base",
     "## Conditional specification for the recommended route",
-    "## What remains prohibited before a decision",
+    "## Constraints after the accepted decision",
 )
 
 PINNED_FACTS = (
@@ -37,8 +39,8 @@ PINNED_FACTS = (
     "7877897b3112dcbb7ee1239f3187f535d6113875cacbb49c76bd30a0321bcfd3",
     "Legacy-equivalent direct semantics (recommended)",
     "Schuss-native direct semantics",
-    "Decision status: required",
-    "No option is accepted by this brief",
+    "Decision status: accepted on 2026-08-16",
+    "The user selected option 1",
 )
 
 PATCHER_COMMIT = "08d3e6e1e2b61230308c20a15ded58ffdaf4656c"
@@ -110,6 +112,8 @@ def authenticate_evidence() -> list[str]:
 def main() -> int:
     contract = CONTRACT_PATH.read_text(encoding="utf-8")
     brief = BRIEF_PATH.read_text(encoding="utf-8")
+    completion = COMPLETION_PATH.read_text(encoding="utf-8")
+    summary = json.loads(SUMMARY_PATH.read_text(encoding="utf-8"))
     missing_contract = [
         heading for heading in REQUIRED_CONTRACT_SECTIONS if heading not in contract
     ]
@@ -124,9 +128,12 @@ def main() -> int:
         or missing_facts
         or evidence_errors
         or not all(numbered_specs)
-        or "implementation not started" not in contract
-        or "No Task 016 implementation" not in contract
-        or "No direct binding" not in brief
+        or "accepted locally through evidence level 5" not in contract
+        or "schuss-build-request-000002@3" not in contract
+        or "Two fresh local roots" not in completion
+        or [item["status"] for item in summary.get("evidence_levels", [])]
+        != ["passed"] * 5 + ["not-run"] * 3
+        or summary.get("device_actions_performed") is not False
     )
     if invalid:
         print(
@@ -147,17 +154,17 @@ def main() -> int:
     print(
         json.dumps(
             {
-                "decision_status": "required",
+                "decision_status": "accepted-legacy-equivalent",
                 "authenticated_evidence_members": 13,
                 "evidence_characterization_status": "complete",
-                "evidence_status": "not-claimed",
-                "implementation_status": "not-started",
+                "evidence_status": "levels-1-through-5-passed",
+                "implementation_status": "complete",
                 "prerequisite_specifications": 8,
                 "required_brief_sections": len(REQUIRED_BRIEF_SECTIONS),
                 "required_contract_sections": len(REQUIRED_CONTRACT_SECTIONS),
-                "schema_version": "task016-contract-validator-v2",
+                "schema_version": "task016-contract-validator-v3",
                 "status": "valid",
-                "unresolved_product_decisions": 1,
+                "unresolved_product_decisions": 0,
             },
             sort_keys=True,
         )

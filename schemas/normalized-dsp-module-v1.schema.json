@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "normalized-dsp-module-v1.schema.json",
+  "title": "Schuss complete Gills normalized DSP module v1",
+  "type": "object",
+  "required": [
+    "schema_version", "canonical_profile", "derived", "authoritative",
+    "module_id", "frontend", "source_plan_sha256", "graph_reference",
+    "runtime_contract", "numeric_contracts", "parameter_values",
+    "state_layout", "connections", "operations", "schedule", "outputs"
+  ],
+  "properties": {
+    "schema_version": {"const": "normalized-dsp-module-v1"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "derived": {"const": true},
+    "authoritative": {"const": false},
+    "module_id": {
+      "type": "string",
+      "pattern": "^schuss-normalized-dsp-module-[0-9]{6}$"
+    },
+    "frontend": {"type": "object", "x-schuss-domain-value": true},
+    "source_plan_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "graph_reference": {"type": "object", "x-schuss-domain-value": true},
+    "runtime_contract": {"type": "object", "x-schuss-domain-value": true},
+    "numeric_contracts": {
+      "type": "array", "x-schuss-array-kind": "sequence",
+      "items": {"type": "object", "x-schuss-domain-value": true}
+    },
+    "parameter_values": {
+      "type": "array", "x-schuss-array-kind": "sequence",
+      "items": {"type": "object", "x-schuss-domain-value": true}
+    },
+    "state_layout": {
+      "type": "array", "x-schuss-array-kind": "sequence",
+      "items": {"type": "object", "x-schuss-domain-value": true}
+    },
+    "connections": {
+      "type": "array", "x-schuss-array-kind": "sequence", "minItems": 9,
+      "items": {"type": "object", "x-schuss-domain-value": true}
+    },
+    "operations": {
+      "type": "array", "x-schuss-array-kind": "sequence", "minItems": 9,
+      "items": {"type": "object", "x-schuss-domain-value": true}
+    },
+    "schedule": {"type": "object", "x-schuss-domain-value": true},
+    "outputs": {
+      "type": "array", "x-schuss-array-kind": "sequence", "minItems": 2,
+      "items": {"type": "object", "x-schuss-domain-value": true}
+    }
+  },
+  "additionalProperties": false
+}

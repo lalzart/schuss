@@ -18,8 +18,8 @@
     {
       "name": "lettered-task-alias",
       "path": "README.md",
-      "old": "Task 016 contract and pinned-source prerequisite audit",
-      "new": "Task 016A contract and pinned-source prerequisite audit",
+      "old": "Task 016 directly lowers the complete accepted eight-node Gills graph",
+      "new": "Task 016A directly lowers the complete accepted eight-node Gills graph",
       "expected_code": "LETTERED_TASK_ALIAS_PRESENT"
     },
     {
@@ -42,6 +42,13 @@
       "old": "Task 016 must be complete with accepted direct DSP/runtime specifications,",
       "new": "Task 016 may complete later; its direct DSP/runtime specifications are optional,",
       "expected_code": "TASK_017_DEPENDENCY_INVALID"
+    },
+    {
+      "name": "task018-dependency-loss",
+      "path": "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md",
+      "old": "Task 017 must be complete before Task 018 may create a Gills evidence packet,",
+      "new": "Task 017 may complete later; Task 018 can create a Gills evidence packet now,",
+      "expected_code": "TASK_018_DEPENDENCY_INVALID"
     }
   ]
 }

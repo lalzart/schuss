@@ -24,9 +24,9 @@ into transparent, typed Schuss models.
 | 13 | Reusable compiler front half through dependency/resource planning | [Complete](tasks/013-reusable-compiler-front-half.md) |
 | 14 | Shared build-execution operation and product CLI | [Complete](tasks/014-shared-build-execution-and-product-cli.md) |
 | 15 | Normalized DSP representation and minimal direct graph-to-C++ frontend | [Complete](tasks/015-normalized-dsp-and-minimal-direct-frontend.md) |
-| 16 | Direct-frontend expansion through the complete Task 011C graph | Contract and evidence audit complete; awaits one compatibility-mode choice |
-| 17 | Curated core expansion and richer headless reference instruments | Contract complete; waits for Task 016 |
-| 18 | Full Gills implementation and parameter/control mapping | Deferred behind the backbone sequence |
+| 16 | Direct-frontend expansion through the complete Task 011C graph | Complete; legacy-equivalent route reaches local evidence level 5 |
+| 17 | Curated core expansion and richer headless reference instruments | Complete; local evidence levels 1-2 |
+| 18 | Full Gills implementation and parameter/control mapping | Contract complete; ready to start |
 | 19 | Sampling and asset management | Deferred behind the backbone sequence |
 | 20 | Additional compute targets and devices | Deferred behind the backbone sequence |
 | Deferred UI | Object drawer and transparent graph canvas | Unnumbered; requires new explicit user authorization |
@@ -104,10 +104,13 @@ progress/cancellation/cache policy, operation v5, and product `build plan` and
 local ARM compile/link with byte-identical portable results across fresh
 roots. Task 015 now defines the first normalized Q27 DSP module and lowers the
 one-node Blend graph directly to deterministic standalone C++ with source-map
-and compiled arithmetic-vector evidence through level 4. Task 016's pinned
-source audit now supplies a complete conditional legacy-equivalent
-specification; implementation awaits the explicit legacy-equivalent versus
-Schuss-native choice. UI work remains unnumbered and deferred.
+and compiled arithmetic-vector evidence through level 4. Task 016 now applies
+the explicitly selected legacy-equivalent specification to the complete
+eight-node slice and retains deterministic direct source and ARM compile/link
+evidence through level 5. Task 017 completes the bounded reviewed core and two
+headless reference instruments. Task 018's dependency gate is satisfied and
+its authenticated Gills evidence/mapping implementation is ready but not
+started. UI work remains unnumbered and deferred.
 The completed boundaries are in
 `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
 `docs/COMPONENT_GRAPH_CONTRACTS.md`, and
@@ -125,16 +128,19 @@ Task 012A durable project/workspace + persistent CLI graph authoring
   -> Task 015 normalized DSP representation + minimal direct frontend
   -> Task 016 direct frontend for the complete Task 011C graph
   -> Task 017 curated core expansion + richer headless reference instruments
+  -> Task 018 full Gills implementation + parameter/control mapping
 ```
 
 Task 012B is retired and must not be run. The object drawer and transparent
 graph canvas remain a future client milestone, but they receive no task number
-until the user explicitly resumes UI work. Tasks 013-015 are complete. Task 016
-is the active compiler gate, with implementation stopped on one explicit
-compatibility-mode choice; Task 017 waits for it.
+until the user explicitly resumes UI work. Tasks 013-017 are complete. Task 016
+uses the explicitly selected legacy-equivalent compatibility mode; Task 017
+adds the bounded reviewed core and two headless reference instruments without
+inventing unsupported direct semantics. Task 018 is the active ready task; it
+starts at the authenticated Gills hardware/panel evidence gate.
 
 VS-07 connected-device execution remains an optional, separately authorized
-evidence track. It is not a prerequisite for Tasks 014-017 and cannot
+evidence track. It is not a prerequisite for Tasks 014-018 and cannot
 substitute for their structural, persistence, compiler, or CLI acceptance
 gates.
 

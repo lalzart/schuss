@@ -16,9 +16,16 @@ python3 tools/contracts/generate_task014_record_set.py --check
 python3 tools/contracts/validate_task014.py
 python3 tools/contracts/generate_task015_record_set.py --check
 python3 tools/contracts/validate_task015.py
+python3 tools/contracts/generate_task016_records.py --check
+python3 tools/contracts/run_task016.py --check
+python3 tools/contracts/validate_task016.py
+python3 tools/contracts/generate_task017_records.py --check
+python3 tools/contracts/run_task017.py --check
+python3 tools/contracts/validate_task017.py
 python3 tools/contracts/compiler_determinism_matrix.py
 python3 tools/contracts/validate_task016_contract.py
 python3 tools/contracts/validate_task017_contract.py
+python3 tools/contracts/validate_task018_contract.py
 python3 tools/contracts/validate_backbone_governance.py
 python3 -m unittest discover -s tools/contracts/tests
 ```
@@ -113,15 +120,21 @@ prerequisite validates. Use `--task014-execution require` to fail instead of
 skip when that local closure is unavailable, or `skip` for a structural and
 host-only run.
 
-`validate_task016_contract.py` and `validate_task017_contract.py` validate the
-two later task contracts and their dependency/stop conditions. They claim no
-implementation or evidence: Task 016's pinned-source brief characterizes all
-eight prerequisites conditionally but awaits one compatibility-mode choice,
-and Task 017 awaits Task 016.
+`validate_task016_contract.py` validates the accepted decision and completion
+boundary; `validate_task016.py` checks the exact semantic records, direct
+frontend, authenticated inputs, two fresh ARM build roots, retained artifacts,
+and unchanged Task 015 output. `generate_task017_records.py --check` validates
+the bounded reviewed-core successor bytes, `run_task017.py --check` reproduces
+the deterministic catalog/graph/build CLI evidence without execution, and
+`validate_task017.py` checks all family joins, the exact two headless
+instruments, fail-closed plans, preserved earlier results, and evidence-level
+separation. `validate_task017_contract.py` retains the completed Task 017 scope.
+`validate_task018_contract.py` validates that both dependencies are complete
+and that the bounded full-Gills implementation is ready but not yet started.
 
 `validate_backbone_governance.py` is the read-only, fail-closed current-routing
 guard. It checks ADR 0010 authority and ADR 0009 supersession, the ordinary
-Task 013-020 sequence, live Task 012B-017 status/dependency gates, and the
+Task 013-020 sequence, live Task 012B-018 status/dependency gates, and the
 unnumbered explicitly authorized UI milestone across the README, project
 context, roadmap, decisions index, and task contracts. Superseded ADR bodies
 and completed-task report sections remain valid historical evidence and are

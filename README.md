@@ -88,16 +88,24 @@ of the first non-UI Gills vertical slice:
 - Task 015 adds the first closed normalized Q27 DSP module and directly lowers
   the exact one-node Blend graph to deterministic standalone C++17, with source
   mapping and compiled arithmetic-vector evidence through level 4; and
-- no complete multi-node direct frontend, graphical editor, device runtime, or
-  desktop app is implemented yet.
+- Task 016 directly lowers the complete accepted eight-node Gills graph through
+  an exact native handler to deterministic C++ and ARM link artifacts, preserving
+  the reviewed Task 011C integer semantics through evidence level 5; and
+- Task 017 adds a balanced twelve-family reviewed core and exactly two richer
+  headless reference instruments, with transparent compounds supported and all
+  unimplemented direct semantics reported deterministically as unsupported; and
+- no general direct frontend, graphical editor, device runtime, or desktop app
+  is implemented yet.
 
-Tasks 013-015 are complete. ADR 0010 retires the misinterpreted Task 012B UI
-contract. The Task 016 contract and pinned-source prerequisite audit are
-complete, but implementation awaits one explicit choice between recommended
-legacy-equivalent behavior and a separately designed Schuss-native sound. Task
-017 has a concrete contract and waits for Task 016. The object drawer and
-transparent graph canvas remain an unnumbered later UI milestone requiring new
-explicit authorization.
+Tasks 013-017 are complete. ADR 0010 retires the misinterpreted Task 012B UI
+contract. Task 016 used the explicitly selected legacy-equivalent route; it
+does not authorize a Schuss-native alternative sound. Task 017 preserves that
+boundary: eleven added legacy families remain direct-unsupported, while one
+Schuss-authored transparent compound is structurally supported. Task 018's
+contract is complete and its Task 016/017 dependency gate is satisfied; its
+full Gills evidence and mapping implementation is ready but not started. The
+object drawer and transparent graph canvas remain an unnumbered later UI
+milestone requiring new explicit authorization.
 
 Start with [the project context](docs/PROJECT_CONTEXT.md), then read
 [the architecture](docs/ARCHITECTURE.md),
@@ -121,8 +129,8 @@ retirement notice, not an implementation contract.
 The Task 011B component, graph, and unresolved build closure is documented in
 [the component and graph contracts](docs/COMPONENT_GRAPH_CONTRACTS.md) and
 [the target/build contracts](docs/TARGET_BACKEND_BUILD_CONTRACTS.md). The
-completed Task 011C-015 work and the gated Task 016-017 contracts are bounded
-by their task files under `docs/tasks/`.
+completed Task 011C-017 work and ready Task 018 contract are bounded by their
+task files under `docs/tasks/`.
 
 ## Command-line interface
 
@@ -178,8 +186,15 @@ python3 tools/contracts/validate_task012a.py
 python3 tools/contracts/validate_task013.py
 python3 tools/contracts/validate_task014.py
 python3 tools/contracts/validate_task015.py
+python3 tools/contracts/generate_task016_records.py --check
+python3 tools/contracts/run_task016.py --check
 python3 tools/contracts/validate_task016_contract.py
+python3 tools/contracts/validate_task016.py
+python3 tools/contracts/generate_task017_records.py --check
+python3 tools/contracts/run_task017.py --check
 python3 tools/contracts/validate_task017_contract.py
+python3 tools/contracts/validate_task017.py
+python3 tools/contracts/validate_task018_contract.py
 python3 tools/contracts/validate_backbone_governance.py
 ```
 

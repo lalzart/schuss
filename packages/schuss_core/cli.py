@@ -725,8 +725,8 @@ def _portable_record_set_locator(manifest: str) -> str:
         ) from exc
 
 
-def _task011c_execution_service(output_root: Path):
-    """Load the exact transitional adapter only for explicit product execution."""
+def _registered_execution_service(output_root: Path):
+    """Register the exact transitional and direct handlers without fallback."""
 
     from .build_execution import ExecutionService
 
@@ -744,7 +744,11 @@ def _task011c_execution_service(output_root: Path):
         )
     module = importlib.util.module_from_spec(specification)
     specification.loader.exec_module(module)
-    return ExecutionService.from_values((module.registration(),), output_root)
+    from .gills_direct_backend import registration as direct_registration
+
+    return ExecutionService.from_values(
+        (module.registration(), direct_registration()), output_root
+    )
 
 
 def _project_request(
@@ -950,7 +954,7 @@ def run(
         try:
             execution_service = None
             if args.command == "build" and args.build_command == "execute":
-                execution_service = _task011c_execution_service(Path(args.output_root))
+                execution_service = _registered_execution_service(Path(args.output_root))
             request, exit_code = _product_request(
                 args, context, stdin, stderr, execution_service
             )

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "direct-frontend-result-v1.schema.json",
+  "title": "Schuss complete Gills direct frontend result v1",
+  "type": "object",
+  "required": [
+    "schema_version", "canonical_profile", "status", "frontend",
+    "input_plan_sha256", "module", "artifacts", "generated_cpp",
+    "source_map", "semantic_goldens", "diagnostics", "evidence_levels",
+    "java_used", "legacy_boundary_patch_used", "ambient_discovery_used",
+    "authoritative_records_mutated"
+  ],
+  "properties": {
+    "schema_version": {"const": "direct-frontend-result-v1"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "status": {"const": "success"},
+    "frontend": {"type": "object", "x-schuss-domain-value": true},
+    "input_plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "module": {"type": "object", "x-schuss-domain-value": true},
+    "artifacts": {
+      "type": "array", "x-schuss-array-kind": "set", "uniqueItems": true,
+      "items": {"type": "object", "x-schuss-domain-value": true}
+    },
+    "generated_cpp": {"type": "object", "x-schuss-domain-value": true},
+    "source_map": {"type": "object", "x-schuss-domain-value": true},
+    "semantic_goldens": {"type": "object", "x-schuss-domain-value": true},
+    "diagnostics": {
+      "type": "array", "x-schuss-array-kind": "sequence",
+      "items": {"type": "object", "x-schuss-domain-value": true}
+    },
+    "evidence_levels": {
+      "type": "array", "x-schuss-array-kind": "sequence",
+      "minItems": 8, "maxItems": 8,
+      "items": {"type": "object", "x-schuss-domain-value": true}
+    },
+    "java_used": {"const": false},
+    "legacy_boundary_patch_used": {"const": false},
+    "ambient_discovery_used": {"const": false},
+    "authoritative_records_mutated": {"const": false}
+  },
+  "additionalProperties": false
+}

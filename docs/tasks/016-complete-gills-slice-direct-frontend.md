@@ -1,8 +1,7 @@
 # Task 016: Complete Task 011C graph direct frontend
 
-Status: contract and prerequisite evidence audit complete on 2026-08-16;
-implementation not started because one explicit compatibility-mode decision
-is still required.
+Status: complete on 2026-08-16; accepted locally through evidence level 5 for
+the exact Task 011C eight-node graph. Evidence levels 6-8 remain not run.
 
 ## Goal and why it exists
 
@@ -50,7 +49,7 @@ These are musical DSP and runtime-contract decisions, not compiler mechanics.
 They must be supplied by a reviewed direct-implementation specification or a
 separately authorized clean-room characterization task.
 
-## Evidence audit and exact decision needed
+## Evidence audit and accepted decision
 
 The read-only pinned-source audit in
 `docs/tasks/016-direct-semantics-decision-brief.md` shows that all eight items
@@ -58,10 +57,10 @@ have an authenticated conditional specification if the direct frontend is
 required to preserve the exact Task 011C integer behavior and existing Ksoloti
 runtime ABI. It does not select that behavior automatically.
 
-One product decision remains: choose **legacy-equivalent direct semantics**
-(recommended for the accepted incremental migration strategy) or require a
-separate **Schuss-native musical-DSP specification**. No direct implementation,
-binding, or evidence may begin until that choice is explicit.
+The user explicitly selected **legacy-equivalent direct semantics** on
+2026-08-16. Task 016 therefore preserves the authenticated Task 011C integer
+DSP behavior and runtime ABI. It does not define a Schuss-native alternative
+sound.
 
 ## Out of scope
 
@@ -72,13 +71,12 @@ binding, or evidence may begin until that choice is explicit.
 
 ## Inputs and deliverables
 
-Inputs are Tasks 011B-015, the eight-node graph, and the prerequisite direct
-implementation/runtime specs. The completed prerequisite decision brief is an
-input, not an implementation artifact. Deliverables, once the compatibility
-mode is selected, are versioned operation specs, direct bindings/backend/
-eligibility, expanded IR and frontend, registered direct handler,
-deterministic source/ARM artifacts, goldens, tests, validator, evidence, and
-completion report.
+Inputs are Tasks 011B-015, the eight-node graph, and the accepted
+legacy-equivalent direct implementation/runtime specs. Delivered outputs are
+seven versioned operation specs, candidate and promoted direct bindings, one
+direct backend, seven exact eligibility records, the expanded IR/frontend,
+registered exact handler, deterministic source/ARM artifacts, semantic
+goldens, tests, validator, retained evidence, and completion report.
 
 ## Acceptance tests
 
@@ -110,11 +108,28 @@ completion report.
   compatibility-mode choice, a hidden legacy fallback, new compatibility truth
   without evidence, firmware/device behavior, UI, commit, or push.
 
-## Stop condition reached
+## Completion report
 
-Implementation is stopped before code or semantic-record changes. The pinned
-evidence now supplies a complete conditional legacy-equivalent specification,
-but selecting legacy-equivalent versus Schuss-native behavior remains a
-material product decision. Task 015 proves the compiler mechanics are ready;
-proceeding without that choice would manufacture compatibility truth outside
-the task's authority. No Task 016 implementation or evidence level is claimed.
+The accepted decision removes the former stop condition. Exact direct request
+`schuss-build-request-000002@3` resolves all eight nodes to native bindings;
+the two Sine nodes reuse one binding identity with independent state. The
+frontend emits nine ordered operations, explicit state/latches, and origins
+for every node, contract facet, connection, and public parameter binding.
+
+Two fresh local execution roots produced identical normalized IR, direct C++,
+ARM object, ELF, link map, command vector, and portable operation results. The
+retained C++ SHA-256 is
+`a29078fef3bb46ad34c9a0175dad2312d765490bbd92e2d0fdc8e5b4c77958af`;
+the ARM object is
+`0d5d63ab75f6e1fda79b9dcc89ee977f22dfe9d96f96824d74e40d99ba3a75bf`;
+and the linked ELF is
+`60bac66986b21e083fb8372ce229157c8d6a0867aff4efe3c00fa0a0396902cc`.
+See `evidence/task016-completion-v1/completion-report.md` and
+`validation-summary.json`. No device, real-time, audible, UI, firmware-write,
+upload, or flash action occurred.
+
+All Task 016 and affected Task 013-016/governance tests pass. The ordinary
+246-test repository discovery gate still reports six inherited failures in
+legacy output-golden checks and the absent ignored Task 009 artifact store;
+none names Task 016. The completion report records this repository-wide proof
+gap rather than changing unrelated historical goldens or user-owned evidence.

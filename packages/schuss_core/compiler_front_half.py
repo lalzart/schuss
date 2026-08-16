@@ -54,6 +54,7 @@ RELEVANT_GROUPS = (
     "request",
     "evidence",
     "dependency_facts",
+    "direct_operation_specs",
 )
 
 ID_FIELDS = {
@@ -71,6 +72,7 @@ ID_FIELDS = {
     "request": "build_request_id",
     "evidence": "evidence_claim_id",
     "dependency_facts": "compiler_dependency_facts_id",
+    "direct_operation_specs": "direct_operation_spec_id",
 }
 
 SCHEMA_KEYS = {
@@ -86,6 +88,7 @@ SCHEMA_KEYS = {
     "request": "request",
     "evidence": "evidence",
     "dependency_facts": "compiler_dependency_facts",
+    "direct_operation_specs": "direct_operation_spec",
 }
 
 PLANNING_SCHEMA_KEYS = {
