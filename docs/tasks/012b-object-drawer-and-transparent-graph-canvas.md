@@ -10,9 +10,9 @@ The object drawer and transparent graph canvas remain an unnumbered future
 milestone. They require new explicit user authorization and a new task contract
 after the headless-backbone work.
 
-The immediate next task is
-[`Task 013: Reusable compiler front half and deterministic planning artifacts`](013-reusable-compiler-front-half.md).
-The active sequence is maintained in `docs/ROADMAP.md` and ADR 0010.
+The compiler tasks that followed this retirement are complete and indexed in
+`docs/HISTORY.md`. Current routing is maintained only in `docs/STATUS.md` and
+`docs/ROADMAP.md`.
 
 If asked to run Task 012B, stop and report that the identifier is retired. Do
 not reinterpret it as UI, compiler, backend, or any other implementation work.

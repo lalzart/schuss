@@ -1,5 +1,5 @@
 {
-  "schema_version": "backbone-governance-negative-fixtures-v1",
+  "schema_version": "backbone-governance-negative-fixtures-v2",
   "cases": [
     {
       "name": "ui-resurrection",
@@ -11,23 +11,23 @@
     {
       "name": "informal-b6-alias",
       "path": "docs/ROADMAP.md",
-      "old": "## Active backbone sequence and deferred UI",
-      "new": "## Active B6 sequence and deferred UI",
+      "old": "## Current task sequence",
+      "new": "## Current B6 task sequence",
       "expected_code": "INFORMAL_TASK_ALIAS_PRESENT"
     },
     {
       "name": "lettered-task-alias",
-      "path": "README.md",
-      "old": "Task 016 directly lowers the complete accepted eight-node Gills graph",
-      "new": "Task 016A directly lowers the complete accepted eight-node Gills graph",
+      "path": "docs/STATUS.md",
+      "old": "Task 018 is the only ready product task.",
+      "new": "Task 018A is the only ready product task.",
       "expected_code": "LETTERED_TASK_ALIAS_PRESENT"
     },
     {
-      "name": "status-drift",
-      "path": "docs/tasks/015-normalized-dsp-and-minimal-direct-frontend.md",
-      "old": "Status: complete on 2026-08-16; accepted locally through evidence level 4.",
-      "new": "Status: planned; implementation not started.",
-      "expected_code": "TASK_015_STATUS_DRIFT"
+      "name": "current-status-drift",
+      "path": "docs/STATUS.md",
+      "old": "Tasks 019 and 020 are deferred and not automatically activated",
+      "new": "Task 019 is active and Task 020 is deferred",
+      "expected_code": "CURRENT_STATUS_DRIFT"
     },
     {
       "name": "bad-supersession",
@@ -37,18 +37,32 @@
       "expected_code": "ADR_0009_NOT_HISTORICAL"
     },
     {
-      "name": "task017-dependency-loss",
-      "path": "docs/tasks/017-curated-core-and-headless-reference-instruments.md",
-      "old": "Task 016 must be complete with accepted direct DSP/runtime specifications,",
-      "new": "Task 016 may complete later; its direct DSP/runtime specifications are optional,",
-      "expected_code": "TASK_017_DEPENDENCY_INVALID"
-    },
-    {
       "name": "task018-dependency-loss",
       "path": "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md",
       "old": "Task 017 must be complete before Task 018 may create a Gills evidence packet,",
       "new": "Task 017 may complete later; Task 018 can create a Gills evidence packet now,",
       "expected_code": "TASK_018_DEPENDENCY_INVALID"
+    },
+    {
+      "name": "task018-executable-gate-loss",
+      "path": "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md",
+      "old": "does not satisfy this executable promotion gate.",
+      "new": "is sufficient for this optional promotion gate.",
+      "expected_code": "TASK_018_EXECUTABLE_GATE_INVALID"
+    },
+    {
+      "name": "adr0012-not-accepted",
+      "path": "docs/decisions/0012-require-executable-gills-promotion.md",
+      "old": "- Status: accepted",
+      "new": "- Status: proposed",
+      "expected_code": "ADR_0012_NOT_ACCEPTED"
+    },
+    {
+      "name": "roadmap-task018-status-drift",
+      "path": "docs/ROADMAP.md",
+      "old": "Contract revised; ready to start at evidence gate",
+      "new": "Complete",
+      "expected_code": "BACKBONE_SEQUENCE_STATUS_DRIFT"
     }
   ]
 }

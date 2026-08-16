@@ -69,7 +69,8 @@ and trace manifest prove only deterministic serialization of the supported
 legacy subset. Java resolution/code generation, ARM link, device execution,
 real-time behavior, and listening require separate stage results and evidence.
 
-The future direct frontend consumes the same graph without Java or `.axp`.
+The direct frontend consumes the same authoritative graph without Java or
+`.axp`; its accepted bounded semantics are recorded in ADR 0011.
 See `docs/COMPILER_STRATEGY.md`.
 
 ## Known legacy hazards

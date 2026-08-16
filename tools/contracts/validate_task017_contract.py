@@ -1,10 +1,48 @@
 #!/usr/bin/env python3
-"""Validate the completed Task 017 contract boundary."""
+"""Validate the retained Task 017 completion boundary."""
+
+from __future__ import annotations
+
+import json
 from pathlib import Path
-import json,sys
-ROOT=Path(__file__).resolve().parents[2];PATH=ROOT/'docs/tasks/017-curated-core-and-headless-reference-instruments.md'
-def main():
- t=PATH.read_text(encoding='utf-8');required=['## Goal and why it exists','## Dependency','## In scope after the dependency closes','## Out of scope','## Inputs and deliverables','## Acceptance tests','## Decisions Task 017 may make','## Decisions Task 017 must not make','## Completion report'];missing=[x for x in required if x not in t]
- if missing or '12 new families' not in t or 'exactly two reference instruments' not in t or 'accepted locally through evidence level 2' not in t or 'levels 3-8 are `not-run`' not in t:print('Task 017 contract validation failed',file=sys.stderr);return 1
- print(json.dumps({'schema_version':'task017-contract-validator-v1','status':'valid','required_sections':len(required),'dependency':'task-016-complete','implementation_status':'complete','selected_families':12,'reference_instruments':2},sort_keys=True));return 0
-if __name__=='__main__':raise SystemExit(main())
+import sys
+
+
+ROOT = Path(__file__).resolve().parents[2]
+COMPLETION_PATH = ROOT / "evidence/task017-completion-v1/completion-report.md"
+SUMMARY_PATH = ROOT / "evidence/task017-completion-v1/validation-summary.json"
+
+
+def main() -> int:
+    completion = COMPLETION_PATH.read_text(encoding="utf-8")
+    summary = json.loads(SUMMARY_PATH.read_text(encoding="utf-8"))
+    evidence_statuses = [
+        item.get("status") for item in summary.get("evidence_levels", [])
+    ]
+    invalid = (
+        summary.get("status") != "valid"
+        or summary.get("selected_family_count") != 12
+        or summary.get("reference_instrument_count") != 2
+        or summary.get("direct_execution_performed") is not False
+        or summary.get("record_set_reference", {}).get("record_set_id")
+        != "schuss-record-set-000011"
+        or evidence_statuses != ["passed"] * 2 + ["not-run"] * 6
+        or "exactly two immutable" not in completion
+        or "twelve families" not in completion
+    )
+    result = {
+        "dependency": "task-016-complete",
+        "evidence_status": "levels-1-through-2-passed",
+        "implementation_status": "complete",
+        "record_set": "schuss-record-set-000011@1",
+        "reference_instruments": summary.get("reference_instrument_count"),
+        "schema_version": "task017-contract-validator-v2",
+        "selected_families": summary.get("selected_family_count"),
+        "status": "invalid" if invalid else "valid",
+    }
+    print(json.dumps(result, sort_keys=True), file=sys.stderr if invalid else sys.stdout)
+    return 1 if invalid else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

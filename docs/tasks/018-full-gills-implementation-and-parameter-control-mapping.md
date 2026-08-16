@@ -1,15 +1,18 @@
 # Task 018: Full Gills implementation and parameter/control mapping
 
-Status: contract complete on 2026-08-16; Tasks 016 and 017 are complete, so
-implementation is ready but not started.
+Status: contract revised on 2026-08-16; Tasks 016 and 017 are complete, so
+implementation is ready but not started. ADR 0012 adds the executable mapped-
+instrument promotion gate.
 
 ## Goal and why it exists
 
 Replace the deliberately minimal one-knob Gills contract with an authenticated,
 complete panel model and prove the explicit runtime-facing chain from physical
-Gills slots through instrument facets into exact graph facets. This task exists
-to make Gills a fully described device and performance surface without making
-the device profile, instrument, graph, compute target, or backend share identity.
+Gills slots through instrument facets into exact graph facets. At least one
+exact mapped reference must also build through the accepted direct path. This
+task exists to make Gills a fully described and locally executable device and
+performance surface without making the device profile, instrument, graph,
+compute target, or backend share identity.
 
 For this task, complete means complete against one pinned and reviewed Gills
 hardware/panel revision: every physical input, gesture source, feedback output,
@@ -28,6 +31,11 @@ through local evidence level 5, and Task 017 is complete through local evidence
 level 2. Task 018 may not bypass either dependency or reopen Task 016's accepted
 compatibility-mode choice.
 
+ADR 0011 owns that legacy-equivalent choice. ADR 0012 additionally requires one
+exact mapped Gills reference to reach evidence level 5. The accepted Task 016
+eight-node graph may satisfy the DSP side of that closure; stable unsupported
+or invalid Task 017 plans do not satisfy the executable promotion gate.
+
 The implementation phase also requires portable, pinned, license/provenance-
 reviewed evidence for the exact Gills hardware/panel revision. A sibling
 checkout, remembered panel layout, mutable path, display label, or historical
@@ -41,6 +49,9 @@ instrument file may guide the evidence review but is not durable proof.
   fact.
 - Immutable successors to the accepted Gills device profile and the two exact
   Task 017 reference instruments, retaining all earlier record bytes.
+- An exact mapped executable reference that reuses the accepted Task 016 graph,
+  direct semantics, target, backend, and build boundary without inventing new
+  DSP behavior.
 - Explicit device-control/gesture-to-instrument and instrument-to-graph
   mappings, plus instrument-to-device feedback/display mappings where the
   accepted panel and instrument contracts require them.
@@ -55,6 +66,9 @@ instrument file may guide the evidence review but is not durable proof.
 - Shared headless validation, inspection, planning, and build execution through
   the accepted operation/compiler boundaries, with deterministic host vectors
   and ARM compile/link evidence where the exact handler supports the closure.
+- A successful level-5 build for at least one exact mapped Gills reference,
+  including the runtime realization needed by its accepted mappings. A graph-
+  only build that omits that runtime closure does not satisfy this requirement.
 - A successor exact record set, focused positive and negative fixtures,
   deterministic validators, documentation, and a completion report.
 
@@ -68,8 +82,9 @@ instrument file may guide the evidence review but is not durable proof.
 - Making Gills synonymous with Ksoloti Core, embedding graph behavior in the
   device profile, mapping a device slot directly to a graph facet, or hiding a
   client/backend-specific mapping path.
-- New DSP semantics or catalog expansion, sampling/assets, additional compute
-  targets or devices, UI, AI/MCP, firmware replacement, or a new transport.
+- New DSP semantics or catalog expansion merely to make a reference build;
+  sampling/assets, additional compute targets or devices, UI, AI/MCP, firmware
+  replacement, or a new transport.
 - Connected-device execution, panel operation, real-time/resource measurement,
   listening, upload, flash, SD-card writes, or hardware access without separate
   explicit authorization and procedures.
@@ -77,16 +92,17 @@ instrument file may guide the evidence review but is not durable proof.
 
 ## Inputs and deliverables
 
-Inputs are ADR 0010; the accepted Tasks 005-015 records and ownership rules;
-the completed Task 016 direct frontend and Task 017 curated-core/reference-
-instrument closure; and an authenticated Gills evidence packet.
+Inputs are ADRs 0010-0012; the accepted Tasks 005-015 records and ownership
+rules; the completed Task 016 direct frontend and Task 017 curated-core/
+reference-instrument closure; and an authenticated Gills evidence packet.
 
 The completed planning deliverables are this executable contract, a read-only
-contract validator, and current-routing documentation. The remaining
+contract validator, ADR 0012, and current-routing documentation. The remaining
 implementation deliverables are the evidence packet, any additive schema
 revision required by reviewed facts, device/instrument/runtime records, exact
-mappings and coverage report, record set, compiler/operation integration,
-fixtures, tests, validators, evidence, and completion report described above.
+mappings and coverage report, one exact executable mapped reference, record
+set, compiler/operation integration, fixtures, tests, validators, evidence, and
+completion report described above.
 
 ## Acceptance tests
 
@@ -111,15 +127,19 @@ fixtures, tests, validators, evidence, and completion report described above.
 8. The two exact Task 017 reference instruments validate, plan, and either
    build through one exact supported handler or return stable unsupported
    diagnostics without fallback.
-9. Existing Task 011C and Tasks 013-017 accepted bytes and test results remain
+9. At least one exact mapped Gills reference, including its runtime-realization
+   closure, builds through the accepted direct path and reaches evidence level
+   5 in two fresh roots. A graph-only build or stable unsupported diagnostic
+   does not satisfy this executable promotion gate.
+10. Existing Task 011C and Tasks 013-017 accepted bytes and test results remain
    unchanged, including all direct-frontend semantic vectors.
-10. Structural, compiler, ARM, connected-device, real-time, and audible
+11. Structural, compiler, ARM, connected-device, real-time, and audible
     evidence are reported separately. Levels 6-8 remain `not-run` unless
     separately authorized and actually performed.
-11. Two fresh roots and fresh processes produce byte-identical canonical
+12. Two fresh roots and fresh processes produce byte-identical canonical
     records, coverage reports, operation results, plans, diagnostics, and all
     generated artifacts within the performed evidence boundary.
-12. Full validators, focused negative fixtures, schema checks, path/link
+13. Full validators, focused negative fixtures, schema checks, path/link
     checks, and `git diff --check` pass.
 
 ## Decisions Task 018 may make
@@ -134,6 +154,8 @@ fixtures, tests, validators, evidence, and completion report described above.
 - Exact mapping assignments, transforms, pickup/smoothing responsibility, and
   feedback/display policies supported by the accepted Task 017 instruments and
   authenticated Gills evidence.
+- The exact successor of the accepted Task 016 instrument/graph closure used
+  to prove the mapped level-5 runtime path.
 
 ## Decisions Task 018 must not make
 
@@ -142,6 +164,8 @@ fixtures, tests, validators, evidence, and completion report described above.
 - Unsupported physical, electrical, timing, gesture, display, firmware, or
   runtime facts; unresolved evidence never becomes a default.
 - New musical DSP behavior hidden inside a mapping or runtime adapter.
+- New direct DSP semantics introduced solely to turn an unsupported Task 017
+  reference into the required executable reference.
 - Device/target/backend identity collapse, direct device-to-graph mapping, or
   a Gills-specific private control plane.
 - Compatibility, connected-device, real-time, audible, safety, or release
@@ -154,7 +178,9 @@ fixtures, tests, validators, evidence, and completion report described above.
 The former dependency stop condition is resolved. Task 016 accepted the
 legacy-equivalent route and completed, then Task 017 completed its bounded
 curated core and two reference instruments. Task 018 may now start at the
-authenticated Gills evidence-packet gate.
+authenticated Gills evidence-packet gate. Completion additionally requires one
+exact mapped Gills runtime closure to build through evidence level 5 under ADR
+0012; unsupported Task 017 results alone cannot complete the task.
 
 No Task 018 implementation has occurred yet: no complete Gills census,
 additive schema, semantic record, runtime code, mapping, build record, or

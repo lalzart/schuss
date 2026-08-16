@@ -32,7 +32,12 @@ class BackboneGovernanceTest(unittest.TestCase):
         summary = governance.validate_documents(self.documents, self.task_filenames)
         self.assertEqual("valid", summary["status"])
         self.assertEqual([], summary["diagnostics"])
-        self.assertEqual("ADR 0010", summary["authoritative_decision"])
+        self.assertEqual(
+            ["ADR 0010", "ADR 0011", "ADR 0012"],
+            summary["authoritative_decisions"],
+        )
+        self.assertEqual("018", summary["active_product_task"])
+        self.assertEqual("mapped-gills-level-5-required", summary["promotion_gate"])
         self.assertEqual(
             ["013", "014", "015", "016", "017", "018", "019", "020"],
             summary["active_task_sequence"],
@@ -40,7 +45,7 @@ class BackboneGovernanceTest(unittest.TestCase):
         self.assertEqual("ready-not-started", summary["task_statuses"]["018"])
 
     def test_negative_governance_fixtures_fail_closed(self):
-        self.assertEqual("backbone-governance-negative-fixtures-v1", self.fixtures["schema_version"])
+        self.assertEqual("backbone-governance-negative-fixtures-v2", self.fixtures["schema_version"])
         for fixture in self.fixtures["cases"]:
             with self.subTest(case=fixture["name"]):
                 documents = copy.deepcopy(self.documents)
@@ -63,21 +68,21 @@ class BackboneGovernanceTest(unittest.TestCase):
         self.assertNotIn("TASK_012B_UI_RESURRECTED", codes)
 
         documents = copy.deepcopy(self.documents)
-        documents[governance.TASK_013] += (
-            "\nHistorical note after completion: Task 013A and B6 were old labels.\n"
+        documents[governance.HISTORY] += (
+            "\nHistorical note: Task 013A and B6 were superseded planning labels.\n"
         )
         summary = governance.validate_documents(documents, self.task_filenames)
         self.assertEqual("valid", summary["status"])
 
     def test_missing_document_and_aliased_filename_fail_closed(self):
         documents = copy.deepcopy(self.documents)
-        documents.pop(governance.ADR_0010)
+        documents.pop(governance.ADR_0012)
         summary = governance.validate_documents(
             documents, [*self.task_filenames, "013a-reintroduced-compiler-task.md"]
         )
         codes = {diagnostic["code"] for diagnostic in summary["diagnostics"]}
         self.assertIn("GOVERNANCE_DOCUMENT_MISSING", codes)
-        self.assertIn("ALIASED_TASK_FILENAME_PRESENT", codes)
+        self.assertIn("TASK_ARCHIVE_POLICY_VIOLATION", codes)
 
     def test_cli_summary_is_deterministic_one_line_and_read_only(self):
         governed_paths = [ROOT / path for path in governance.DOCUMENT_PATHS]

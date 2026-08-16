@@ -1,170 +1,86 @@
 # Roadmap
 
-The phases are ordered to preserve legacy capability while moving authority
-into transparent, typed Schuss models.
+Schuss advances by closing product outcomes in order while keeping semantic,
+compiler, device, and evidence claims independent. Completed detail belongs in
+`HISTORY.md`; current truth belongs in `STATUS.md`.
+
+## Completed foundation
+
+| Foundation | Outcome |
+| --- | --- |
+| Evidence and catalog | Frozen raw/Java-resolved inventories, accepted review packet, source locks, semantic overlay, and reviewed catalog projection |
+| Domain contracts | Exact component, binding, graph, instrument, device, target, backend, build, and evidence records |
+| Authoring control plane | Shared deterministic operations, product CLI, portable projects, and atomic persistent graph authoring |
+| Compiler and execution | Reusable front half, exact-handler execution, retained legacy backend, and direct C++ frontend |
+| First executable slice | Exact eight-node Gills graph reaches deterministic local ARM compile/link level 5 |
+| Curated core | Twelve additional reviewed families and two headless references reach structural level 2 with unsupported semantics explicit |
+
+## Current task sequence
+
+The ordinary task numbers established by ADR 0010 remain stable. Completion of
+one row does not authorize the next.
 
 | Phase | Outcome | Status |
 | --- | --- | --- |
-| 1 | Project context and source locking | Established in this scaffold |
-| 2 | Raw physical source inventory | Existing baseline migrated; validator retained |
-| 3 | Java-resolved object and graph inventory | Established; resolved snapshot frozen |
-| 3 review gate | Deterministic inventory review and impact packet | Complete; accepted frozen evidence |
-| 4A | Versioned semantic overlay and 20-30-family pilot | Complete |
-| 4 contract gate | Schema ownership, compiler stages, and evidence separation | Complete; accepted Task 004 architecture |
-| 5 | Minimal Gills device-profile and instrument schemas | Complete |
-| 6 | Component-contract, implementation-binding, and DSP-graph schemas | Complete |
-| 7 | Compute-target, backend-capability, build, artifact, and evidence schemas | Complete; Task 007 contract gate |
-| 8 | Shared headless validation and typed operation layer | Complete; shared dispatcher and minimal process gate |
-| 9 | One minimal graph through the legacy `.axp` adapter and ARM compiler/linker | Complete; exact Blend slice reaches level 5 |
-| 10 | Deterministic structured CLI over shared operations | [Complete](tasks/010-deterministic-product-cli-over-shared-operations.md) |
-| 11A | Browsable catalog control plane and exact seven-role Gills-slice catalog review | [Complete](tasks/011a-browsable-catalog-control-plane-and-exact-gills-slice-catalog-review.md) |
-| 11B | Six component contracts/bindings, authoritative slice graph, minimal Gills instrument, and unresolved build closure | [Complete](tasks/011b-component-contracts-gills-slice-graph-and-unresolved-build-closure.md) |
-| 11C | Bounded legacy backend expansion and ARM compile/link for the slice | [Complete](tasks/011c-bounded-legacy-backend-expansion-and-arm-evidence.md) |
-| 12A | Durable project/workspace format and persistent CLI graph authoring | [Complete](tasks/012a-durable-project-workspace-and-cli-graph-authoring.md) |
-| 13 | Reusable compiler front half through dependency/resource planning | [Complete](tasks/013-reusable-compiler-front-half.md) |
-| 14 | Shared build-execution operation and product CLI | [Complete](tasks/014-shared-build-execution-and-product-cli.md) |
-| 15 | Normalized DSP representation and minimal direct graph-to-C++ frontend | [Complete](tasks/015-normalized-dsp-and-minimal-direct-frontend.md) |
-| 16 | Direct-frontend expansion through the complete Task 011C graph | Complete; legacy-equivalent route reaches local evidence level 5 |
-| 17 | Curated core expansion and richer headless reference instruments | Complete; local evidence levels 1-2 |
-| 18 | Full Gills implementation and parameter/control mapping | Contract complete; ready to start |
-| 19 | Sampling and asset management | Deferred behind the backbone sequence |
-| 20 | Additional compute targets and devices | Deferred behind the backbone sequence |
-| Deferred UI | Object drawer and transparent graph canvas | Unnumbered; requires new explicit user authorization |
+| 13 | Reusable compiler front half through dependency/resource planning | Complete |
+| 14 | Shared build execution and product CLI | Complete |
+| 15 | Minimal normalized DSP and direct graph-to-C++ frontend | Complete |
+| 16 | Direct frontend for the complete accepted eight-node graph | Complete; legacy-equivalent level 5 |
+| 17 | Curated core and two richer headless reference instruments | Complete; structural level 2 |
+| 18 | Authenticated full Gills model, mapping/runtime closure, and one executable mapped reference | Contract revised; ready to start at evidence gate |
+| 19 | Sampling and asset management | Deferred; not scheduled |
+| 20 | Additional compute targets and devices | Deferred; not scheduled |
+| Deferred UI | Object drawer and transparent graph canvas | Unnumbered; explicit authorization required |
 
-## Current architectural gate and next task
+## Task 018 gates
 
-Phases 2 and 3 and their review gate are complete. Phase 2 remains an immutable
-raw snapshot with two explicit source parse issues. Phase 3 retains the loaded
-and post-construction legacy model, including partial, failed, ambiguous,
-zombie, and unresolved outcomes. ADR 0004 accepts that evidence with known
-limitations. Phase 4A is complete with a separate semantic overlay and a
-validated 26-family manual pilot. Task 004 remains the accepted architecture:
-`docs/SCHEMA_STRATEGY.md`, `docs/COMPILER_STRATEGY.md`, and ADRs 0005-0007
-define the family/contract/binding boundary, one-way references, compiler
-stages, and build-evidence separation without implementing schemas or code
-generation.
+Task 018 is not a single “model complete” checkbox. It must close these gates
+in order:
 
-Tasks 005, 006, and 007 are complete. Task 005 adds the minimal Gills device-profile
-and instrument boundary. Task 006 adds the exact Crossfader family companion,
-three component signatures and legacy seam maps, the authoritative one-node
-`blend` graph, transparent-compound validation, and exactly resolved
-instrument revision 2 while retaining revision 1. Task 007 adds reusable
-target/backend/build-domain schemas, the smallest truthful Ksoloti production
-closure, a pure fail-closed resolver, and future result/evidence fixtures. The
-production candidate remains unresolved and no backend stage ran. Task 008 now
-adds the lower shared validator core, three sibling rule modules, one aggregate
-validator, four versioned headless operations, atomic in-memory graph
-transactions, a data-only Task 009 seam, and the minimal canonical-JSON
-`schuss op` process boundary. The Task 009 prerequisite now adds exact accepted
-and prospective record-set views, an authenticated pinned Java/source/ARM/
-firmware closure, and a closed non-production probe/evidence boundary. Task
-009 then executes an authorized probe, promotes only new exact revisions, runs
-ordinary `build.resolve`, and carries its exact seam through deterministic
-`.axp`, Java generation, and ARM compile/link for the one-node Blend slice.
-Successor record set `schuss-record-set-000003` records levels 1-5 as passed;
-levels 6-8 remain `not-run`. Task 010 now supplies deterministic product
-commands, exact record-set locator resolution, human/canonical output, fixed
-help, and static completion over the unchanged Task 008 dispatcher. It adds no
-general build execution or persistent graph write.
-Task 011A now adds the derived 28-family catalog projection, exact inspection,
-deterministic browse/search and approved filters, additive v2 catalog
-operations, and product catalog commands. The seven-role review reuses the
-accepted Sine Oscillator, Crossfader, State-variable Filter, stereo Audio
-Output, and pitch-sequencer family identities; allocates only Square LFO,
-Cyclic Counter, and the distinct four-step implementation; and leaves all
-missing contracts, bindings, graph, instrument, and build work to Task 011B.
-Task 011B now closes that exact target-independent boundary with additive Q21
-pitch/behavior contracts, exact legacy seam maps, an eight-node and
-nine-connection graph, the minimal Gills blend mapping, and successor record
-set `000005`. Both mandatory joins need no adapter: the Boolean clock transport
-is exact and the counter owns rising-edge reception; the low-pass outlet has
-the same transport type as both endpoint inlets and cardinality two. The build
-closure is intentionally unresolved, selects only the already promoted mixed
-Crossfader, emits no backend invocation, and leaves lowering and ARM evidence
-to Task 011C.
-Task 011C now executes six candidate probes, promotes only their exact binding
-and eligibility successors, adds the one required native realization form,
-and produces deterministic source and ARM compile/link evidence for the exact
-slice. Record set `000006` selects all eight nodes and records levels 1-5 as
-passed. Connected-device, real-time, and audible gates remain separately
-unauthorized and unproved; the general backend and direct frontend also remain
-future work.
+1. **Authenticated panel evidence:** pin one exact Gills hardware/panel
+   revision and account for every physical slot and asserted fact.
+2. **Mapping and runtime closure:** represent every mapping, intentionally
+   unused facet, unresolved fact, transform, pickup/smoothing rule, gesture,
+   action, feedback, display, state, and I/O responsibility without collapsing
+   device, instrument, graph, target, or backend identity.
+3. **Executable promotion:** at least one exact mapped Gills reference must use
+   the accepted direct path and reach evidence level 5. Unsupported Task 017
+   references remain valid diagnostics but cannot satisfy this gate.
 
-Task 012A now completes the durable project/workspace and persistent
-graph-authoring dependency formerly combined with Phase 12 UI work. It adds an
-exact portable overlay, immutable graph/project revisions, prior-or-successor
-atomic recovery, shared v3 operations, and explicit persistent CLI commands.
-ADR 0010 retires the misinterpreted Task 012B UI contract. Task 013 now
-completes the reusable compiler front half through deterministic dependency
-and resource planning, operation v4, and five derived artifact kinds without
-executing a backend. Task 014 now adds the exact handler registry, plan-once
-execution service, atomic fresh-root publication, portable
-progress/cancellation/cache policy, operation v5, and product `build plan` and
-`build execute` commands. The retained Task 011C adapter succeeds through
-local ARM compile/link with byte-identical portable results across fresh
-roots. Task 015 now defines the first normalized Q27 DSP module and lowers the
-one-node Blend graph directly to deterministic standalone C++ with source-map
-and compiled arithmetic-vector evidence through level 4. Task 016 now applies
-the explicitly selected legacy-equivalent specification to the complete
-eight-node slice and retains deterministic direct source and ARM compile/link
-evidence through level 5. Task 017 completes the bounded reviewed core and two
-headless reference instruments. Task 018's dependency gate is satisfied and
-its authenticated Gills evidence/mapping implementation is ready but not
-started. UI work remains unnumbered and deferred.
-The completed boundaries are in
-`docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
-`docs/COMPONENT_GRAPH_CONTRACTS.md`, and
-`docs/TARGET_BACKEND_BUILD_CONTRACTS.md`, and
-`docs/OPERATION_CONTRACTS.md`.
+Task 018 performs no connected-device, real-time, audible, upload, or flash
+action without separate authorization.
 
-## Active backbone sequence and deferred UI
+## Post-Task 018 product evidence gate
 
-The active sequence is:
+Task 018 completion does not automatically activate Task 019 or Task 020. The
+next decision starts with a separately authorized product-evidence proposal for
+the exact mapped Gills closure:
 
-```text
-Task 012A durable project/workspace + persistent CLI graph authoring
-  -> Task 013 reusable compiler front half and deterministic plans
-  -> Task 014 shared build execution and product CLI
-  -> Task 015 normalized DSP representation + minimal direct frontend
-  -> Task 016 direct frontend for the complete Task 011C graph
-  -> Task 017 curated core expansion + richer headless reference instruments
-  -> Task 018 full Gills implementation + parameter/control mapping
-```
+- level 6: connected-device and panel operation;
+- level 7: measured real-time/resource behavior; and
+- level 8: controlled audible/listening evidence.
 
-Task 012B is retired and must not be run. The object drawer and transparent
-graph canvas remain a future client milestone, but they receive no task number
-until the user explicitly resumes UI work. Tasks 013-017 are complete. Task 016
-uses the explicitly selected legacy-equivalent compatibility mode; Task 017
-adds the bounded reviewed core and two headless reference instruments without
-inventing unsupported direct semantics. Task 018 is the active ready task; it
-starts at the authenticated Gills hardware/panel evidence gate.
+Those results determine the next bounded task. Plausible outcomes include
+expanding only the direct semantics needed by a chosen instrument, beginning
+sampling/assets for a proven runtime, adding another target/device, or later
+authorizing the client milestone. No option is pre-authorized by this roadmap.
 
-VS-07 connected-device execution remains an optional, separately authorized
-evidence track. It is not a prerequisite for Tasks 014-018 and cannot
-substitute for their structural, persistence, compiler, or CLI acceptance
-gates.
+## Staying on track
 
-## Contract sequence constraints
-
-- Introduce a minimal Gills device-profile and instrument reference contract
-  before graph/editor contracts harden; full Gills implementation may remain
-  later.
-- Define component-contract, implementation-binding, and authoritative graph
-  schemas before lowering a new Schuss graph through any backend.
-- Define compute-target, backend-capability, and build/evidence schemas before
-  invoking a compiler as Schuss.
-- Treat the legacy compilation adapter as a backend/passthrough proof. Legacy
-  `.axp` is an emitted boundary artifact and never the authoritative Schuss
-  graph.
-- Expose future catalog and graph operations through one typed operation layer.
-  CLI output must be deterministic and structured, and GUI and AI clients must
-  use the same operations.
-- Do not let Phase 4B catalog expansion outrun component-contract and binding
-  review. Additional families may be curated incrementally, but compiler-facing
-  variants require the Phase 6 boundaries.
+- Prefer an end-to-end executable musical outcome over accumulating catalog or
+  schema breadth without a consumer.
+- Do not call structural completeness, mapping completeness, ARM link, device
+  execution, real-time safety, and audible behavior equivalent.
+- Do not expand catalog breadth faster than component contracts, bindings, and
+  explicit executable support.
+- Preserve exact record-set membership and immutable accepted evidence.
+- Keep UI, CLI, and AI clients behind the same operations; a client may expose
+  a missing capability but may not invent it privately.
+- Treat sampling, additional targets/devices, and UI as separate product
+  choices after the Gills evidence gate, not automatic continuation.
 
 ## Promotion rule
 
-A phase advances when its task acceptance tests pass and its unresolved content
-is named. Later work may refine a versioned schema but may not rewrite retained
-raw evidence or erase diagnostics to make a gate appear clean.
+A task advances only when its declared acceptance tests pass and every
+unresolved result is named. Later work may add versioned successors but may not
+rewrite retained evidence or erase diagnostics to make a gate appear complete.

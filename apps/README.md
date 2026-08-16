@@ -1,7 +1,9 @@
 # Applications
 
 Future Schuss user-facing applications live here. Applications are clients of
-the headless model; they do not own graph semantics, catalog resolution, or
-compiler behavior.
+the shared catalog, graph, project, compiler, build, and diagnostic operations;
+they do not own alternate semantics or persistence.
 
-No desktop application is implemented in the inventory phase.
+No application is currently implemented. The object drawer and transparent
+graph canvas remain an unnumbered milestone requiring explicit authorization;
+see `docs/STATUS.md`.

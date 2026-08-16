@@ -194,7 +194,7 @@ canonical bytes. It does not prove backend lowering, artifact generation, ARM
 compile/link, connected hardware, real-time resource behavior, or audible
 behavior.
 
-## Planned project and build-operation sequence
+## Implemented project and build-operation sequence
 
 Task 012A now owns persistence. Additive v3 envelopes expose `project.init`,
 `project.inspect`, `project.validate`, and `project.graph.commit` through an

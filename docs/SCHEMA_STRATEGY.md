@@ -464,33 +464,22 @@ The following are invalid architecture:
   exact revision parentage; it does not revise accepted records or make
   workspace paths semantic identity.
 
-### Current compiler sequence
+### Implemented schema boundary
 
-Tasks 008-012A are complete: the Task 005-007 mechanisms are consolidated
-beneath three sibling rule modules; versioned headless validation, inspection,
-resolution, catalog, and transaction operations are implemented; two bounded
-legacy-backend slices reach ARM compile/link; and the product CLI projects the
-shared operations; Task 012A now adds project persistence without general build
-execution.
+The accepted schema family now covers inventory and review, catalog and
+component semantics, device and instrument ownership, graphs, target/backend
+selection, build and evidence records, shared operations, durable projects,
+compiler planning, normalized DSP, and the bounded direct frontend. Each
+successor remains additive; frozen v0 and v1 records are not rewritten.
 
-Tasks 013-017 are complete. The completed gated sequence was:
+ADR 0011 preserves legacy-equivalent direct semantics for the bounded Gills
+slice. ADR 0012 requires the current Gills promotion task to carry at least one
+exact mapped reference through local evidence level 5. Neither decision turns
+ARM compile/link into device or audible evidence.
 
-1. **Task 016:** direct-frontend expansion through the complete Task 011C
-   graph after legacy-equivalent versus Schuss-native behavior is selected.
-2. **Task 017:** a bounded reviewed-core expansion and richer non-UI reference
-   instruments after Task 016 completes.
-3. **Task 018:** full Gills implementation and parameter/control mapping after
-   both completed dependencies.
-
-Task 016 is accepted through local evidence level 5 under the selected
-legacy-equivalent route. Task 017 is accepted through levels 1-2 with exact
-unsupported diagnostics for direct semantics not established by its review.
-Task 018's dependency gate is satisfied; its contract is complete and the
-implementation is ready to begin with authenticated Gills panel evidence.
-
-Task 012B is retired. UI and presentation work remain an unnumbered future
-milestone and cannot introduce client-specific catalog, graph, project, build,
-or compiler semantics.
+Live sequencing and proof gaps are maintained in `docs/STATUS.md`; completed
+milestones and their immutable retrieval points are indexed in
+`docs/HISTORY.md`.
 
 ### Deliberately deferred
 
@@ -501,7 +490,7 @@ or compiler semantics.
   the bounded Tasks 013-016 compiler stages.
 - Additional targets/devices, asset pipelines, and complete Phase 4B curation.
 
-The remaining device questions and Task 006's target/backend/build deferrals
-have named owners and earliest tasks in `docs/DEVICE_INSTRUMENT_CONTRACTS.md`
-and `docs/COMPONENT_GRAPH_CONTRACTS.md`; the wider deferred decision set
-remains in `docs/tasks/004-schema-and-compiler-contract-strategy.md`.
+Remaining device questions and target/backend/build deferrals retain named
+owners in `docs/DEVICE_INSTRUMENT_CONTRACTS.md` and
+`docs/COMPONENT_GRAPH_CONTRACTS.md`. Current scheduling belongs only in
+`docs/STATUS.md` and `docs/ROADMAP.md`.

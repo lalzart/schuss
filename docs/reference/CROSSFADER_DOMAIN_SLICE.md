@@ -219,13 +219,13 @@ This result cannot change the Crossfader family, the component contracts, the
 binding's compatibility status, or its preferred status. A later reviewed
 curation revision may cite the immutable evidence.
 
-## Same graph, future direct frontend
+## Same graph, direct frontend
 
-A future request can keep the exact graph and instrument references while
-changing only the backend reference to a direct Schuss C++ backend. Resolution
-then requires native/direct bindings for the same exact component contracts.
-The frontend elaborates the same graph into the normalized DSP representation,
-generates C++, lowers to the Ksoloti runtime ABI, and invokes the existing ARM
+The accepted direct request keeps the exact graph and instrument references
+while changing only the backend reference to the Schuss C++ backend.
+Resolution requires native/direct bindings for the same exact component
+contracts. The frontend elaborates the graph into normalized DSP, generates
+C++, lowers to the Ksoloti runtime ABI, and invokes the existing ARM
 compiler/linker without Java or `.axp`.
 
 If a native binding is missing, that backend reports an explicit resolution

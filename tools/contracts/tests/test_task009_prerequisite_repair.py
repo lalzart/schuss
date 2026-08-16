@@ -97,6 +97,10 @@ class Task009PrerequisiteRepairTest(unittest.TestCase):
         self.assertIn("CLASSPATH=", command["environment"])
         self.assertIn("PATH=system-tools/bin", command["environment"])
 
+    @unittest.skipUnless(
+        STORE.is_dir(),
+        "authenticated local Task 009 content store is unavailable; validate it separately when present",
+    )
     def test_retained_content_addresses_are_present_and_exact(self):
         document = load("retained-products.json")
         self.assertEqual(6, len(document["products"]))

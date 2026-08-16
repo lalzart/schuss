@@ -205,7 +205,7 @@ It does not select a binding or backend, lower or generate an artifact, invoke
 Java, compile or link ARM code, access hardware, measure real-time resources,
 or establish audible behavior. Those evidence levels remain `not-run`.
 
-## Deferred decisions
+## Ownership boundaries retained from the initial graph contract
 
 | Decision | Owner | Earliest task |
 | --- | --- | --- |
@@ -217,7 +217,8 @@ or establish audible behavior. Those evidence levels remain `not-run`.
 | Task 011B slice lowering, generated source, and ARM compile/link | Compiler/backend owner | Task 011C |
 | Physical Gills facts, real-time validation, and listening evidence | Device/evidence owners | Later bounded hardware tasks |
 
-Task 007 should add only compute-target, backend-capability, build-request,
-build-result, artifact, resource-report, and level-specific evidence schemas
-and validators. It must consume the exact Task 006 contracts without adding
-compiler lowering, graph operations, GUI/CLI behavior, or hardware claims.
+The later target, build, operation, backend, and curated-core milestones closed
+the named boundaries additively. They consume these exact graph contracts and
+do not retroactively add compiler, UI, or hardware claims to them. See
+`docs/HISTORY.md` for the completed sequence and `docs/STATUS.md` for the live
+boundary.

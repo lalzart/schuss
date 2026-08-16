@@ -363,7 +363,7 @@ A backend conforms only if it:
 - can run headlessly without implicit device access or firmware mutation.
 
 The transitional legacy backend may rely on Java only inside the isolated
-bridge. The future direct frontend must not require Java or `.axp`. Both remain
+bridge. The direct frontend must not require Java or `.axp`. Both remain
 backends beneath the same graph, contract, target, build, and evidence model.
 
 Task 007 validates only the declarative contract and pure selection boundary.
@@ -372,45 +372,28 @@ operations plus a data-only accepted-request seam. Task 009 separately owns actu
 `.axp` serialization/source maps, exact toolchain/runtime closure, and ARM
 compile/link execution.
 
-## Planned headless compiler sequence
+## Implemented headless compiler boundary
 
-Task 012A now supplies the portable project closure and crash-safe persistent
-graph-authoring boundary consumed by later compiler work. It creates no compiler
-plan, performs no lowering or generation, and grants no backend-execution
-authority.
+The compiler path is now staged and reusable rather than a single frontend
+jump:
 
-ADR 0008 defers the UI and stages the compiler work rather than treating the
-old Phase 13 frontend as one jump:
+1. durable projects preserve an explicit base-plus-overlay closure;
+2. the common front half resolves and elaborates exact records, dependencies,
+   resources, and origin maps without backend lowering;
+3. shared build execution selects an exact backend descriptor and publishes
+   only fresh successful output roots;
+4. normalized DSP and the direct frontend lower the bounded accepted closure;
+5. the reviewed core admits richer graphs but stops deterministically where
+   native semantics have not been established.
 
-1. Task 013 implements the reusable common front half through stage 6. It
-   emits deterministic resolution, elaboration, dependency, resource, and
-   source-map artifacts, but performs no backend lowering or code generation.
-   This task is complete through the pure `plan_build` API and additive
-   `build.plan` operation v4; see `docs/COMPILER_FRONT_HALF.md`.
-2. Task 014 completes a client-neutral build-execution boundary and product
-   CLI, initially invoking only the exact conforming Task 011C transitional
-   handler. It plans once, selects an exact descriptor, reports portable
-   progress/cancellation/cache state, and atomically publishes only a fresh
-   successful output root.
-3. Task 015 defines the first bounded normalized DSP representation and
-   direct graph-to-C++ frontend for the smallest accepted graph. This task is
-   complete for the exact one-node Blend closure with host-compiled arithmetic
-   vectors through evidence level 4.
-4. Task 016 expands that direct path to the complete Task 011C graph and only
-   the scheduling, state, control, and native-realization semantics required by
-   that exact closure. This task is complete under the explicitly selected
-   legacy-equivalent route: seven operation specifications, exact native
-   bindings/eligibilities, nine scheduled operations, one registered direct
-   handler, and deterministic ARM compile/link evidence through level 5.
-   Schuss-native behavior still requires a separate musical specification.
-5. Task 017 adds a bounded twelve-family reviewed core and two immutable
-   headless reference instruments. Transparent compound elaboration is the
-   only new supported direct realization form; unimplemented legacy operations
-   stop at deterministic unsupported diagnostics before lowering.
+ADR 0011 fixes the accepted direct route as legacy-equivalent for its bounded
+closure. Missing direct bindings or lowering rules remain explicit unsupported
+results; the implementation may not silently fall back to Java or `.axp`.
+General optimization, replacement firmware/ABI work, connected-device
+execution, and audible validation remain separate authorization and evidence
+levels.
 
-Each stage preserves the authoritative graph and exact semantic-record closure.
-The direct path must coexist with the legacy backend and must fail explicitly
-when a direct binding or lowering rule is absent; it may not silently fall back
-to Java or `.axp`. General optimization, a complete scheduler, replacement
-firmware/ABI work, device execution, and audible validation remain separately
-authorized later work.
+The current Gills promotion gate is defined by ADR 0012 and
+`docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md`.
+Live status and later decision gates belong in `docs/STATUS.md` and
+`docs/ROADMAP.md`, not in this stable architecture document.

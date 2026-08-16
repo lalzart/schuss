@@ -8,39 +8,21 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parents[2]
-CONTRACT_PATH = ROOT / "docs/tasks/016-complete-gills-slice-direct-frontend.md"
-BRIEF_PATH = ROOT / "docs/tasks/016-direct-semantics-decision-brief.md"
+DECISION_PATH = ROOT / "docs/decisions/0011-preserve-legacy-equivalent-direct-semantics.md"
 COMPLETION_PATH = ROOT / "evidence/task016-completion-v1/completion-report.md"
 SUMMARY_PATH = ROOT / "evidence/task016-completion-v1/validation-summary.json"
 
-REQUIRED_CONTRACT_SECTIONS = (
-    "## Goal and why it exists",
-    "## In scope",
-    "## Required prerequisite specifications",
-    "## Evidence audit and accepted decision",
-    "## Out of scope",
-    "## Inputs and deliverables",
-    "## Acceptance tests",
-    "## Decisions Task 016 may make",
-    "## Decisions Task 016 must not make",
-    "## Completion report",
-)
-
-REQUIRED_BRIEF_SECTIONS = (
-    "## Why one decision remains",
-    "## Exact decision requested",
-    "## Authenticated evidence base",
-    "## Conditional specification for the recommended route",
-    "## Constraints after the accepted decision",
+REQUIRED_DECISION_SECTIONS = (
+    "## Context",
+    "## Decision",
+    "## Consequences",
 )
 
 PINNED_FACTS = (
-    "08d3e6e1e2b61230308c20a15ded58ffdaf4656c",
-    "7877897b3112dcbb7ee1239f3187f535d6113875cacbb49c76bd30a0321bcfd3",
-    "Legacy-equivalent direct semantics (recommended)",
-    "Schuss-native direct semantics",
-    "Decision status: accepted on 2026-08-16",
-    "The user selected option 1",
+    "legacy-equivalent semantics",
+    "may not silently substitute Schuss-native behavior",
+    "may never fall back invisibly to the Java bridge",
+    "levels 6-8 are independent and remain `not-run`",
 )
 
 PATCHER_COMMIT = "08d3e6e1e2b61230308c20a15ded58ffdaf4656c"
@@ -110,38 +92,34 @@ def authenticate_evidence() -> list[str]:
 
 
 def main() -> int:
-    contract = CONTRACT_PATH.read_text(encoding="utf-8")
-    brief = BRIEF_PATH.read_text(encoding="utf-8")
+    decision = DECISION_PATH.read_text(encoding="utf-8")
     completion = COMPLETION_PATH.read_text(encoding="utf-8")
     summary = json.loads(SUMMARY_PATH.read_text(encoding="utf-8"))
-    missing_contract = [
-        heading for heading in REQUIRED_CONTRACT_SECTIONS if heading not in contract
+    missing_sections = [
+        heading for heading in REQUIRED_DECISION_SECTIONS if heading not in decision
     ]
-    missing_brief = [heading for heading in REQUIRED_BRIEF_SECTIONS if heading not in brief]
-    numbered_specs = [f"{number}." in contract for number in range(1, 9)]
-    missing_facts = [fact for fact in PINNED_FACTS if fact not in brief]
+    missing_facts = [fact for fact in PINNED_FACTS if fact not in decision]
     evidence_errors = authenticate_evidence()
 
     invalid = (
-        missing_contract
-        or missing_brief
+        missing_sections
         or missing_facts
         or evidence_errors
-        or not all(numbered_specs)
-        or "accepted locally through evidence level 5" not in contract
-        or "schuss-build-request-000002@3" not in contract
+        or "- Status: accepted" not in decision
         or "Two fresh local roots" not in completion
         or [item["status"] for item in summary.get("evidence_levels", [])]
         != ["passed"] * 5 + ["not-run"] * 3
         or summary.get("device_actions_performed") is not False
+        or summary.get("status") != "valid"
+        or summary.get("record_set_reference", {}).get("record_set_id")
+        != "schuss-record-set-000010"
     )
     if invalid:
         print(
             json.dumps(
                 {
-                    "missing_brief_facts": missing_facts,
-                    "missing_brief_sections": missing_brief,
-                    "missing_contract_sections": missing_contract,
+                    "missing_decision_facts": missing_facts,
+                    "missing_decision_sections": missing_sections,
                     "evidence_errors": evidence_errors,
                     "status": "invalid",
                 },
@@ -154,15 +132,14 @@ def main() -> int:
     print(
         json.dumps(
             {
+                "decision_document": "ADR 0011",
                 "decision_status": "accepted-legacy-equivalent",
                 "authenticated_evidence_members": 13,
-                "evidence_characterization_status": "complete",
                 "evidence_status": "levels-1-through-5-passed",
                 "implementation_status": "complete",
-                "prerequisite_specifications": 8,
-                "required_brief_sections": len(REQUIRED_BRIEF_SECTIONS),
-                "required_contract_sections": len(REQUIRED_CONTRACT_SECTIONS),
-                "schema_version": "task016-contract-validator-v3",
+                "record_set": "schuss-record-set-000010@1",
+                "required_decision_sections": len(REQUIRED_DECISION_SECTIONS),
+                "schema_version": "task016-contract-validator-v4",
                 "status": "valid",
                 "unresolved_product_decisions": 0,
             },

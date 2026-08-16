@@ -10,217 +10,112 @@ a transparent DSP graph.
 
 ## The problem
 
-Ksoloti's embedded runtime and DSP ecosystem are valuable, but its current
-authoring model makes the filesystem and source library act as navigation. The
-patcher hides objects behind a difficult library/search structure, while DSP
-graphs, editor state, Java resolution, code generation, device communication,
-and UI concerns are tightly coupled.
+Ksoloti's runtime and DSP ecosystem are valuable, but its authoring model makes
+the filesystem and source library act as navigation. Graph state, Java object
+resolution, code generation, device communication, and UI concerns are tightly
+coupled. A physical Gills instrument is consequently assembled as a patch with
+panel behavior attached afterward instead of being expressed through stable,
+headless contracts.
 
-This is especially awkward when designing a coherent physical instrument.
-Today, a Gills instrument is assembled as a pseudo-modular patch and its panel
-is attached afterward. There is no stable headless model through which a GUI,
-CLI, and AI agent can inspect and perform the same operations.
+Schuss separates those concerns so a CLI, future GUI, and future AI client can
+inspect and perform the same operations without making any client the source
+of semantic truth.
 
 ## Intended result
 
 Schuss should provide:
 
-- a persistent, immediate DSP-object drawer;
 - functional, source-agnostic catalog navigation;
 - inspectable primitive and compound DSP graphs;
-- stable, versioned object, graph, and instrument contracts;
-- a CLI that is as authoritative as the GUI;
+- stable, versioned component, graph, project, and instrument contracts;
+- persistent authoring through shared client-neutral operations;
+- a CLI that is as authoritative as any future GUI;
 - a Gills abstraction that designs an instrument from the physical device
   inward;
 - access to existing Ksoloti objects and patches through a compatibility
-  bridge; and
-- a compiler architecture that can grow beyond the first hardware target.
+  backend; and
+- a compiler architecture that can grow beyond the first target.
 
 ## Independent layers
 
-1. **Catalog family** describes the musician-facing discovery item, not a node
-   type or compiler input.
-2. **Component contract** describes one target-independent typed public node
-   interface.
-3. **Implementation binding** realizes one exact component-contract revision
-   for named backend and target requirements.
-4. **Compute target** describes the processor, memory, audio runtime, and
-   compiler constraints.
-5. **Device profile** describes physical pots, buttons, encoders, displays,
-   I/O, and gestures.
-6. **Instrument** describes musical identity, public controls, state, and
+1. **Catalog family** owns musician-facing discovery and presentation.
+2. **Component contract** owns one target-independent typed node interface.
+3. **Implementation binding** realizes one exact component contract for named
+   backend and target requirements.
+4. **DSP graph** owns the complete signal/control implementation through exact
+   component-contract references.
+5. **Device profile** owns physical controls, gestures, feedback, display, and
+   I/O slots.
+6. **Instrument** owns musical identity, public facets, state, mappings, and
    behavior.
-7. **DSP graph** describes the complete signal and control implementation by
-   referencing exact component-contract revisions.
-8. **Project/workspace** durably groups exact graph, instrument, build-request,
-   record-set, and asset references for authoring. It does not replace the
-   identities or ownership of those records.
-9. **Backend** resolves implementation bindings and lowers the graph into an
-   executable form for a compute target.
+7. **Project/workspace** groups exact graph, instrument, build-request,
+   record-set, and asset references for durable authoring.
+8. **Compute target** owns processor, memory, audio-runtime, and toolchain
+   constraints.
+9. **Backend** resolves implementations and lowers an exact graph for a target.
+10. **Build and evidence** record exact requests, outputs, diagnostics, and the
+    proof level actually reached.
 
-No layer may silently borrow identity from another. A Gills instrument can
-target Ksoloti Core initially without making Gills synonymous with that board,
-and a Ksoloti object can be cataloged without making its source directory a
-musical category.
+No layer silently borrows identity from another. Gills can initially target
+Ksoloti Core without becoming synonymous with it, and a legacy object can be
+cataloged without making its source directory a musical category.
 
 ## Non-negotiable principles
 
-- Browse by function; filter by form; inspect provenance.
-- Factory, Mutable Instruments, user, and community are never primary
-  categories.
-- Primitive, compound, and instrument describe abstraction level, not
-  function.
-- The complete DSP graph remains accessible.
-- GUI, CLI, and AI clients use the same graph operations.
-- Stable IDs never contain category paths.
+- Browse by function, filter by form, and inspect provenance.
+- Factory, Mutable Instruments, user, and community are provenance facets,
+  never primary categories.
+- Primitive, compound, and instrument are abstraction levels, not functions.
+- The complete DSP graph, including compound internals, remains accessible.
+- GUI, CLI, and AI clients use the same graph and project operations.
+- Stable IDs never contain category paths or mutable display names.
 - Ports, parameters, attributes, actions, and displays remain distinct.
-- Ksoloti Java is an isolated compatibility bridge, not the new domain model.
-- Existing firmware and the ARM compiler are retained initially.
-- A new compiler frontend is introduced incrementally.
-- Raw inventory records facts and does not invent semantics.
-- Dirty upstream trees are never cleaned or modified unexpectedly.
-- Generated artifacts are deterministic and reproducible.
-- Uncertainty and unresolved content are reported explicitly.
+- Ksoloti Java stays inside the compatibility bridge and never becomes the
+  Schuss domain model.
+- Existing firmware and the ARM compiler are retained initially while the new
+  compiler frontend grows incrementally.
+- Raw inventory records facts and does not invent semantics, quality, license,
+  or compatibility.
+- Generated artifacts are deterministic, portable, and content-addressed.
+- Ambiguity, unsupported behavior, schema drift, and missing evidence fail
+  closed.
+
+## Evidence boundary
+
+Schuss reports evidence independently:
+
+1. schema and identity;
+2. component and graph resolution;
+3. backend lowering;
+4. source/artifact generation;
+5. target compile/link;
+6. connected-device execution;
+7. real-time/resource behavior; and
+8. audible/listening behavior.
+
+One level never implies another. A generated legacy `.axp` is a derived
+boundary artifact, not authoritative graph truth, and a linked ARM executable
+does not prove panel behavior or sound.
 
 ## Present boundary
 
-The raw and Java-resolved inventories and the Phase 3 review packet are
-accepted frozen evidence with documented limitations. Phase 4A is complete: a
-separate versioned family/implementation overlay, draft functional taxonomy,
-and manually reviewed 26-family pilot pass their validation gates. Phase 4B is
-gated so catalog expansion cannot outrun typed component contracts. Task 004
-remains the accepted architecture for schema ownership, reference direction,
-compiler stages, and evidence separation. Task 005 implements the first
-production device-profile and instrument contracts. Task 006 now adds the
-exact Crossfader family companion, three non-interchangeable component
-contracts and implementation seam maps, one authoritative typed graph, and an
-exactly resolved instrument revision 2 while retaining deferred revision 1.
-Structural, exact-reference, target-independent type, legacy seam-map, and
-graph-target evidence pass. Task 007 now adds reusable target/backend/build
-contracts and a Ksoloti-specific revision-1 production closure. Its default
-pure resolver still reports that frozen candidate unresolved. Task 008 now consolidates
-the validator core and provides one shared headless dispatcher for validation,
-inspection, build resolution, and atomic graph transactions, plus a minimal
-canonical-JSON process boundary. Its operation layer remains pure and stops
-before lowering. See `docs/TARGET_BACKEND_BUILD_CONTRACTS.md` and
-`docs/OPERATION_CONTRACTS.md`.
-
-The Task 009 prerequisite is complete. Default validation and operations now
-load the exact frozen Task 005-008 record set, while the prerequisite view is an
-explicit exact superset. A pinned source/Java/classpath/GNU Arm/firmware closure
-and a closed `candidate-under-test` probe contract are established. The
-retained prerequisite probe remains `not-authorized` and `not-run`.
-
-Task 009 is now complete for the exact Blend/mixed-Crossfader slice. Successor
-record set `schuss-record-set-000003` revision 1 adds an authorized probe,
-strictly-earlier binding evidence, promoted revision-2 target/backend/
-environment/binding/eligibility/request records, one successful build result,
-14 probe/production artifact descriptors, a static resource report, and
-separate evidence claims through ARM compile/link level 5. The production
-handler consumes the exact Task 008 seam; it is not a general compiler.
-Connected-device, real-time, and audible levels 6-8 remain `not-run`.
-
-Task 010 now adds the deterministic product CLI over the unchanged Task 008
-dispatcher. Exact graph/build-request locators resolve only through the
-selected validated record set; human output, canonical JSON, fixed help, and
-static Bash/Zsh/Fish completion share one command boundary. The default remains
-record set `schuss-record-set-000001` revision 1, while Task 009 set `000003`
-is explicit opt-in. `build resolve` does not invoke the Task 009 handler, and
-`graph transact` remains an in-memory non-persisted proposal.
-
-Task 011A now adds the first browsable client-neutral catalog projection. It
-retains every Phase 4A byte, resolves all 26 pilot families through exact
-companion references, and adds only the reviewed Square LFO and Cyclic Counter
-families plus their implementations and the distinct four-step pitch-sequencer
-implementation. Successor record set `schuss-record-set-000004` revision 1
-owns the exact corpus and additive operation v2 schemas. `catalog.search` and
-`catalog.inspect` use the same dispatcher for direct, process, CLI, and future
-GUI/AI clients. This task creates no new component contract, binding,
-eligibility, graph, instrument, build, or runtime evidence.
-
-Task 011B now closes the target-independent graph boundary for that exact
-seven-role catalog slice. Additive component-contract v1 records distinguish
-Q21 semitone offsets from Q27 normalized/audio values and declare rising-edge,
-parameter-plus-inlet, indexed-selection, and bounded-counter behavior.
-Implementation-binding v1 preserves exact null legacy parameter datatypes and
-the frozen durable UUID widths without changing v0. Six contracts and six
-exact bindings feed one authoritative eight-node, nine-connection graph; two
-oscillator nodes share one contract/binding. The existing Gills knob maps
-through instrument `blend` and graph `blend` to the accepted mixed
-Crossfader.
-
-Successor record set `schuss-record-set-000005` revision 1 is an exact superset
-of `000004`. Its six new eligibility companions remain not evaluated, its six
-probe inputs remain `not-authorized`, and its exact build request resolves to
-one selected Crossfader node, six unresolved new nodes, and one unsupported
-native-object sequencer node. No backend invocation, lowering, artifact,
-compile/link, device, real-time, or audible evidence is produced. Task 011C is
-the earliest owner of backend expansion and executable evidence for this
-slice.
-
-Task 011C now closes that bounded executable boundary without changing the
-authoritative graph or instrument. Six separately authorized probe-input
-successors execute the same exact eight-node closure through lowering,
-generated C++, and ARM compile/link before their binding and eligibility
-revision-2 successors are admitted. Backend revision 3 adds only the pinned
-`legacy-native-object` form needed by the four-step sequencer; Crossfader
-eligibility revision 3 carries the already promoted binding across that exact
-additive backend revision.
-
-Successor record set `schuss-record-set-000006` revision 1 preserves `000005`
-exactly. Ordinary `build.resolve` selects eight nodes, including the same Sine
-binding twice, and emits the unchanged Task 008 invocation seam. Two fresh
-production roots produce identical plan, `.axp`, source map, C++, ARM object,
-ELF, link map, bridge result, command vectors, and static resource facts.
-Evidence reaches only level 5. No connected-device execution, real-time
-measurement, listening, firmware action, upload, or flash occurred; levels
-6-8 remain `not-run`.
-
-Task 012A now completes the first portable project/workspace and persistent
-CLI graph-authoring boundary. Exact Task 011C records remain an immutable base;
-project-owned graph successors and every project revision are retained
-immutably, and one atomic workspace-head marker separates prior from successor
-acceptance. Additive v3 project operations share the headless dispatcher;
-local locks, recovery plans, and temporary files do not enter project identity.
-
-Task 012A satisfies the durable project and persistence boundary. Task 013 now
-consumes either that exact project closure or an explicit record set through
-one immutable compiler context, and completes deterministic planning through
-stage 6 without executing a backend. ADR 0010 retires the misinterpreted Task
-012B UI contract. Task 014 now supplies the exact shared execution/CLI
-boundary through exact registered handlers. Task 015 proves the minimal
-normalized-DSP/direct-C++ path for the one-node Blend graph. Task 016 now
-extends that path to the complete accepted eight-node Gills graph using the
-explicitly selected legacy-equivalent semantics, with deterministic local ARM
-compile/link evidence through level 5.
-
-Task 017 now adds a balanced twelve-family reviewed core and exactly two
-headless reference instruments. Its structural/component evidence reaches
-levels 1-2; unsupported new legacy semantics stop deterministically before
-direct lowering, and levels 3-8 remain `not-run`.
-
-Task 018's contract is complete and its Task 016/017 dependency gate is now
-satisfied. The next implementation begins with an authenticated, portable
-evidence packet for one exact Gills hardware/panel revision; no Task 018
-semantic successor, runtime realization, or mapping has been created yet.
-
-The object drawer and transparent graph canvas remain an unnumbered future
-milestone requiring new explicit authorization.
+The exact current implementation, active task, and proof gaps are maintained
+only in [Development status](STATUS.md). Completed milestones and their retained
+authority are indexed in [Development history](HISTORY.md). This document
+deliberately contains no task-by-task status chronicle.
 
 ## Terminology
 
 | Term | Meaning |
 | --- | --- |
-| Schuss | The complete authoring, graph, catalog, and compilation platform |
-| Gills | A physical device profile and instrument platform |
+| Schuss | The complete catalog, authoring, graph, compilation, and evidence platform |
+| Gills | A physical device profile and instrument platform within Schuss |
 | Ksoloti Core | The initial compute target |
-| Legacy bridge | The isolated adapter around the Ksoloti Java model and tools |
-| Object | A graph node type with a stable identity and explicit facets |
-| Family | The category-independent item a musician discovers in the catalog |
-| Component contract | One target-independent typed public node interface belonging to a family |
-| Implementation binding | A concrete realization of one exact component-contract revision for named backend/target requirements |
-| Legacy observation | A snapshot-scoped evidence record, not a Schuss ID |
-| Compound | A reusable graph presented as one object without hiding internals |
-| Instrument | A musical contract that maps a device profile onto behavior and a DSP graph |
-| Project/workspace | A portable exact authoring manifest plus its non-authoritative local coordination directory |
-| Build evidence | An immutable, level-specific observation about exact build inputs or runtime validation; never catalog truth by side effect |
+| Legacy bridge | The isolated adapter around Ksoloti Java and existing tools |
+| Family | The category-independent item a musician discovers |
+| Component contract | One target-independent typed public node interface |
+| Implementation binding | A concrete realization of one exact component-contract revision |
+| DSP graph | The authoritative complete signal/control implementation |
+| Instrument | Musical identity and mappings over a device profile and graph |
+| Project/workspace | Portable exact authoring manifest plus local coordination state |
+| Build evidence | An immutable level-specific observation about exact inputs and outputs |

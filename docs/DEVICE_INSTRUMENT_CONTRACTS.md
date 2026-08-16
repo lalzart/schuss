@@ -221,6 +221,7 @@ listening remain `not-run`.
 
 Task 006 completed the component-contract, implementation-binding, DSP-graph,
 and exact `blend` target boundary documented in
-`docs/COMPONENT_GRAPH_CONTRACTS.md`. Task 007 is next; it should add only
-compute-target, backend-capability, build, artifact, resource, and evidence
-contracts, not GUI/CLI, firmware, or hardware behavior.
+`docs/COMPONENT_GRAPH_CONTRACTS.md`. Later target/build and compiler work closed
+their own boundaries additively; none changes this document into proof of a
+complete Gills panel, mapped runtime, connected device, or audible behavior.
+The live Gills boundary is maintained in `docs/STATUS.md`.

@@ -119,9 +119,9 @@ Both catalog operations use additive operation v2 schemas and the same pure
 ergonomic CLI, and future GUI/AI callers receive the same canonical result.
 Human output and static Bash/Zsh/Fish completion are CLI presentation only.
 
-No catalog operation persists state, discovers ambient records, invokes the
-Task 009 handler, lowers a graph, runs Java or ARM tools, accesses hardware, or
-claims connected-device, real-time, or audible behavior. Proposed Task 011B
-owns the missing six component contracts/bindings, slice graph, minimal Gills
-instrument, and unresolved build closure. Proposed Task 011C owns bounded
-backend expansion and compile/link evidence.
+No catalog operation persists state, discovers ambient records, invokes a
+backend handler, lowers a graph, runs Java or ARM tools, accesses hardware, or
+claims connected-device, real-time, or audible behavior. Later accepted
+component, graph, and backend records remain separate inputs to the projection;
+they do not change this operation boundary. Current readiness and proof gaps
+are maintained in `docs/STATUS.md`.

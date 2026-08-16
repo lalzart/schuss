@@ -7,5 +7,6 @@
 - `resolved-catalog-spec.md` specifies the Java-resolved object and graph
   observation snapshot.
 
-These documents were migrated with the existing raw inventory and remain the
-technical input to `docs/tasks/001-legacy-inventory.md`.
+These documents were migrated with the existing raw inventory and remain its
+technical basis. The completed inventory milestone and its exact Git retrieval
+point are indexed in `docs/HISTORY.md`.

@@ -277,21 +277,16 @@ handler execution; ARM compile/link establishes level 5 only. The generated
 do not become graph truth or establish device, timing, real-time, audible, or
 release behavior.
 
-ADR 0010 supersedes ADR 0009, retires Task 012B, and restores the backend-first
-sequence. Task 013 now supplies the reusable compiler front half through
-deterministic stage-6 planning without running a backend. Task 014 now supplies
-shared exact-handler build execution and its product CLI. Task 015 now supplies
-the first normalized DSP representation and deterministic direct C++ lowering
-for the one-node Blend graph. Task 016 now supplies complete-graph direct
-lowering for the accepted eight-node slice under the explicitly selected
-legacy-equivalent semantics. It calls the authenticated runtime ABI without
-Java, `.axp`, or legacy-object dispatch and proves only local levels 1-5. Task
-017 now expands the reviewed core through twelve balanced families and two
-richer headless reference instruments, while unsupported direct semantics fail
-closed. Task 018 is now ready to begin its authenticated Gills panel/runtime
-closure and explicit device-to-instrument-to-graph mappings; its implementation
-has not started. UI remains an unnumbered future client and cannot move these
-semantics into a GUI or the legacy Java bridge.
+The implemented backbone now includes portable projects, deterministic
+compiler planning, exact-handler build execution, normalized DSP, and direct
+ARM lowering for the accepted eight-node slice. ADR 0011 fixes that direct
+slice to legacy-equivalent semantics; unsupported operations still fail closed.
+ADR 0012 requires the next full-Gills closure to include at least one mapped
+level-5 executable reference rather than stopping at structural mapping.
+
+Exact current status and proof gaps live only in `docs/STATUS.md`. UI remains a
+future client and cannot move catalog, graph, project, build, compiler, or
+device semantics into a GUI or the legacy Java bridge.
 
 The projection reference direction remains one way:
 
