@@ -1,5 +1,5 @@
 {
-  "schema_version": "backbone-governance-negative-fixtures-v3",
+  "schema_version": "backbone-governance-negative-fixtures-v4",
   "cases": [
     {
       "name": "ui-resurrection",
@@ -11,8 +11,8 @@
     {
       "name": "informal-b6-alias",
       "path": "docs/ROADMAP.md",
-      "old": "## Current task sequence",
-      "new": "## Current B6 task sequence",
+      "old": "## Accepted task sequence",
+      "new": "## Accepted B6 task sequence",
       "expected_code": "INFORMAL_TASK_ALIAS_PRESENT"
     },
     {
@@ -63,6 +63,20 @@
       "old": "Complete; mapped local level 5",
       "new": "Ready",
       "expected_code": "BACKBONE_SEQUENCE_STATUS_DRIFT"
+    },
+    {
+      "name": "ui-implementation-gate-loss",
+      "path": "docs/APPLICATION_SPINE_PLAN.md",
+      "old": "UI implementation remains separately gated.",
+      "new": "UI implementation is authorized immediately.",
+      "expected_code": "APPLICATION_SPINE_PLAN_INVALID"
+    },
+    {
+      "name": "parallel-ownership-ceiling-loss",
+      "path": "docs/APPLICATION_SPINE_PLAN.md",
+      "old": "The default concurrency ceiling is two implementation lanes plus one\nread-only/design lane.",
+      "new": "Every implementation lane may write every shared surface concurrently.",
+      "expected_code": "APPLICATION_SPINE_PLAN_INVALID"
     }
   ]
 }

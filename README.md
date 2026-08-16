@@ -30,6 +30,14 @@ OLED, LEDs, all ten pot slots, and approximate full pot travel were observed,
 but ADC jitter destabilized last-moved telemetry; promotion stopped before
 level 6 and the Task 021 replacement gate is closed.
 
+[ADR 0014](docs/decisions/0014-sequence-application-spine-and-authorize-ui-architecture.md)
+now accepts the [application-spine plan](docs/APPLICATION_SPINE_PLAN.md): Task
+023 is the next planned contract, followed by catalog coverage, a broader
+direct-compiler tranche, complete authoring operations, application jobs, and
+transparent-compound expansion. No Task 023 implementation has started. UI
+architecture is authorized as an unnumbered planning milestone; UI
+implementation remains separately gated.
+
 The reviewed Task 017 core remains structurally useful but not yet generally
 executable. Its two full-panel successors retain stable unsupported
 diagnostics. Complete connected control-panel proof was not earned; real-time
@@ -43,6 +51,8 @@ and audible proof also remain `not-run` and require new authorization.
   gaps.
 - [Architecture](docs/ARCHITECTURE.md): ownership and dependency direction.
 - [Roadmap](docs/ROADMAP.md): current gate and later decisions.
+- [Application-spine plan](docs/APPLICATION_SPINE_PLAN.md): Tasks 023-028,
+  lettered children, dependencies, and safe parallel lanes.
 - [Decision log](docs/decisions/README.md): accepted and superseded choices.
 - [Development history](docs/HISTORY.md): concise completed-work index and Git
   retrieval instructions.
@@ -53,8 +63,11 @@ and compiler-front-half documents under `docs/`.
 
 ## Command line
 
-`bin/schuss` is the product and machine-operation boundary. Use
-`bin/schuss --help` and subcommand help for the complete fixed grammar.
+`bin/schuss` is the product and machine-operation boundary. The current root
+help and completion preserve earlier accepted bytes and therefore do not list
+every additive project and build command even though their explicit
+subcommands exist. Task 023 owns a coherent versioned successor rather than
+silently rewriting that historical contract.
 
 Representative read-only commands are:
 

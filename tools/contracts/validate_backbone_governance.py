@@ -16,6 +16,7 @@ README = "README.md"
 PROJECT_CONTEXT = "docs/PROJECT_CONTEXT.md"
 STATUS = "docs/STATUS.md"
 ROADMAP = "docs/ROADMAP.md"
+APPLICATION_SPINE_PLAN = "docs/APPLICATION_SPINE_PLAN.md"
 HISTORY = "docs/HISTORY.md"
 TASKS_INDEX = "docs/tasks/README.md"
 DECISIONS_INDEX = "docs/decisions/README.md"
@@ -25,6 +26,7 @@ ADR_0010 = "docs/decisions/0010-restore-backend-first-sequence-and-retire-task-0
 ADR_0011 = "docs/decisions/0011-preserve-legacy-equivalent-direct-semantics.md"
 ADR_0012 = "docs/decisions/0012-require-executable-gills-promotion.md"
 ADR_0013 = "docs/decisions/0013-version-gills-runtime-correction-and-level6-evidence.md"
+ADR_0014 = "docs/decisions/0014-sequence-application-spine-and-authorize-ui-architecture.md"
 TASK_012B = "docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md"
 TASK_018 = "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md"
 TASK_021 = "docs/tasks/021-gills-dma-safe-oled-and-connected-device-evidence.md"
@@ -35,6 +37,7 @@ DOCUMENT_PATHS = (
     PROJECT_CONTEXT,
     STATUS,
     ROADMAP,
+    APPLICATION_SPINE_PLAN,
     HISTORY,
     TASKS_INDEX,
     DECISIONS_INDEX,
@@ -44,13 +47,15 @@ DOCUMENT_PATHS = (
     ADR_0011,
     ADR_0012,
     ADR_0013,
+    ADR_0014,
     TASK_012B,
     TASK_018,
     TASK_021,
     TASK_022,
 )
 
-ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 22))
+ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 29))
+PLANNED_SEQUENCE = tuple(f"{number:03d}" for number in range(23, 29))
 EXPECTED_TASK_FILENAMES = {
     "README.md",
     "012b-object-drawer-and-transparent-graph-canvas.md",
@@ -151,6 +156,7 @@ def validate_documents(
         ADR_0011: "accepted",
         ADR_0012: "accepted",
         ADR_0013: "accepted",
+        ADR_0014: "accepted",
     }
     for path, expected in expected_adr_statuses.items():
         if _metadata(documents.get(path, ""), "Status") != expected:
@@ -177,6 +183,7 @@ def validate_documents(
         "`0011-preserve-legacy-equivalent-direct-semantics.md` - accepted; current direct-semantics authority",
         "`0012-require-executable-gills-promotion.md` - accepted; current Task 018 promotion authority",
         "`0013-version-gills-runtime-correction-and-level6-evidence.md` - accepted; current Task 021 corrective and level-6 authority",
+        "`0014-sequence-application-spine-and-authorize-ui-architecture.md` - accepted; current Task 023-028 sequence and UI-architecture authority",
     )
     _require_phrases(
         diagnostics,
@@ -328,6 +335,12 @@ def validate_documents(
         "The retained result is `POT_EVENT_FOCUS_UNSTABLE`",
         "promotion stopped before a complete sweep and level 6 was not earned",
         "Approval gate 2 is closed",
+        "ADR 0014 accepts the application-spine sequence",
+        "Task 023, CLI v2 and application-surface consolidation, is the next planned task",
+        "no Task 023 implementation is active",
+        "UI architecture planning is now explicitly authorized by ADR 0014",
+        "UI implementation remains separately gated",
+        "The next implementation gate is creation and acceptance of the complete Task 023 contract.",
     )
     _require_phrases(
         diagnostics,
@@ -335,6 +348,30 @@ def validate_documents(
         document=STATUS,
         scope=documents.get(STATUS, ""),
         phrases=status_rules,
+    )
+
+    _require_phrases(
+        diagnostics,
+        code="APPLICATION_SPINE_PLAN_INVALID",
+        document=APPLICATION_SPINE_PLAN,
+        scope=documents.get(APPLICATION_SPINE_PLAN, ""),
+        phrases=(
+            "Status: accepted planning authority under ADR 0014. No Task 023-028 implementation contract has been created or activated.",
+            "Task 023: CLI v2 and application-surface consolidation",
+            "Task 024: Complete catalog coverage and deterministic curation",
+            "Task 025: Direct-compiler core-library tranche",
+            "Task 026: Complete authoring operations and CLI workflow",
+            "Task 027: Application sessions, jobs, and diagnostics",
+            "Task 028: Second catalog/compiler tranche and transparent compounds",
+            "UI architecture is explicitly authorized now.",
+            "UI implementation remains separately gated.",
+            "`023A`, `023B`, and `023C`",
+            "The default concurrency ceiling is two implementation lanes plus one read-only/design lane.",
+            "operation and schema version allocation",
+            "stable semantic IDs, record-set revisions, and manifest publication",
+            "This plan does not itself start Task 023",
+            "Tasks 019 and 020 remain deferred.",
+        ),
     )
 
     history_rules = (
@@ -378,7 +415,7 @@ def validate_documents(
             )
 
     roadmap_rows = _roadmap_rows(documents.get(ROADMAP, ""))
-    for number in range(13, 22):
+    for number in range(13, 29):
         label = str(number)
         if len(roadmap_rows.get(label, [])) != 1:
             diagnostics.append(
@@ -398,6 +435,13 @@ def validate_documents(
         "19": "deferred; not scheduled",
         "20": "deferred; not scheduled",
         "21": "complete; corrected level 6",
+        "22": "stopped; failed before level 6",
+        "23": "planned next; contract not created",
+        "24": "planned; depends on task 023",
+        "25": "planned; depends on task 024 selection",
+        "26": "planned; depends on tasks 023 and 025",
+        "27": "planned; depends on task 026",
+        "28": "planned; depends on tasks 024 and 025",
     }
     for label, expected in expected_roadmap_status.items():
         rows = roadmap_rows.get(label, [])
@@ -410,12 +454,17 @@ def validate_documents(
                 )
             )
     deferred_ui = roadmap_rows.get("Deferred UI", [])
-    if len(deferred_ui) != 1 or "unnumbered" not in deferred_ui[0][2].lower():
+    if (
+        len(deferred_ui) != 1
+        or "unnumbered" not in deferred_ui[0][2].lower()
+        or "architecture authorized" not in deferred_ui[0][2].lower()
+        or "implementation separately gated" not in deferred_ui[0][2].lower()
+    ):
         diagnostics.append(
             _diagnostic(
                 "UI_MILESTONE_NUMBERED",
                 ROADMAP,
-                "roadmap must contain one unnumbered Deferred UI row",
+                "roadmap must contain one unnumbered architecture-authorized, implementation-gated Deferred UI row",
             )
         )
 
@@ -427,7 +476,9 @@ def validate_documents(
         phrases=(
             "Executable promotion",
             "reach evidence level 5",
-            "does not automatically activate Task 019 or Task 020",
+            "Tasks 019 and 020 remain deferred.",
+            "Task 023 is next, but no implementation contract has been created.",
+            "two implementation lanes plus one read-only or design lane",
         ),
     )
     _require_phrases(
@@ -441,6 +492,23 @@ def validate_documents(
             "dedicated two-byte command buffer in `.sram2`",
             "separate exact evidence claim",
             "does not activate Task 019, Task 020, or UI work",
+        ),
+    )
+    _require_phrases(
+        diagnostics,
+        code="ADR_0014_APPLICATION_SPINE_DRIFT",
+        document=ADR_0014,
+        scope=_section(documents.get(ADR_0014, ""), "## Decision"),
+        phrases=(
+            "Task 023: CLI v2 and application-surface consolidation",
+            "Task 028: second catalog/compiler tranche and transparent compounds",
+            "Task 023 is the next planned task",
+            "UI architecture is explicitly authorized as an unnumbered planning milestone",
+            "UI implementation remains separately gated",
+            "does not revive retired Task 012B",
+            "`023A`, `023B`, and `023C`",
+            "two implementation lanes plus one read-only or design lane",
+            "Tasks 019 and 020 remain deferred",
         ),
     )
 
@@ -489,6 +557,8 @@ def validate_documents(
         ADR_0011: documents.get(ADR_0011, ""),
         ADR_0012: documents.get(ADR_0012, ""),
         ADR_0013: documents.get(ADR_0013, ""),
+        ADR_0014: documents.get(ADR_0014, ""),
+        APPLICATION_SPINE_PLAN: documents.get(APPLICATION_SPINE_PLAN, ""),
         TASK_012B: documents.get(TASK_012B, ""),
         TASK_018: documents.get(TASK_018, ""),
         TASK_021: documents.get(TASK_021, ""),
@@ -530,13 +600,15 @@ def validate_documents(
         "active_product_task": "none",
         "active_evidence_task": "022-failed-diagnostic-promotion-stopped",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
-        "authoritative_decisions": ["ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013"],
+        "authoritative_decisions": ["ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014"],
         "checked_documents": len([path for path in DOCUMENT_PATHS if path in documents]),
         "current_status_source": STATUS,
         "diagnostics": diagnostics,
         "historical_context_policy": "completed-task-contracts-indexed-in-history-and-git",
-        "promotion_gate": "task022-failed-no-promotion",
-        "schema_version": "backbone-governance-summary-v8",
+        "next_planned_task": "023-contract-not-created",
+        "planned_task_sequence": list(PLANNED_SEQUENCE),
+        "promotion_gate": "task023-contract-creation-pending",
+        "schema_version": "backbone-governance-summary-v9",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -550,8 +622,14 @@ def validate_documents(
             "020": "deferred-not-scheduled",
             "021": "complete-corrected-connected-level-6",
             "022": "failed-connected-diagnostic-level-6-not-earned",
+            "023": "planned-contract-not-created",
+            "024": "planned-depends-on-023",
+            "025": "planned-depends-on-024",
+            "026": "planned-depends-on-023-and-025",
+            "027": "planned-depends-on-026",
+            "028": "planned-depends-on-024-and-025",
         },
-        "ui_milestone_status": "unnumbered-explicit-authorization-required",
+        "ui_milestone_status": "unnumbered-architecture-authorized-implementation-gated",
     }
 
 

@@ -15,10 +15,11 @@ compiler, device, and evidence claims independent. Completed detail belongs in
 | First executable slice | Exact eight-node Gills graph reaches deterministic local ARM compile/link level 5 |
 | Curated core | Twelve additional reviewed families and two headless references reach structural level 2 with unsupported semantics explicit |
 
-## Current task sequence
+## Accepted task sequence
 
-The ordinary task numbers established by ADR 0010 remain stable. Completion of
-one row does not authorize the next.
+The ordinary task numbers established by ADR 0010 remain stable. ADR 0014 adds
+the application-spine sequence after the retained Task 022 result. Completion
+of one row does not authorize the next.
 
 | Phase | Outcome | Status |
 | --- | --- | --- |
@@ -31,7 +32,14 @@ one row does not authorize the next.
 | 19 | Sampling and asset management | Deferred; not scheduled |
 | 20 | Additional compute targets and devices | Deferred; not scheduled |
 | 21 | Versioned DMA-safe Gills OLED runtime and exact connected-device evidence | Complete; corrected level 6 |
-| Deferred UI | Object drawer and transparent graph canvas | Unnumbered; explicit authorization required |
+| 22 | Connected Gills control-panel diagnostic and evidence | Stopped; failed before level 6 |
+| 23 | CLI v2 and application-surface consolidation | Planned next; contract not created |
+| 24 | Complete catalog coverage and deterministic curation | Planned; depends on Task 023 |
+| 25 | Direct-compiler core-library tranche | Planned; depends on Task 024 selection |
+| 26 | Complete authoring operations and CLI workflow | Planned; depends on Tasks 023 and 025 |
+| 27 | Application sessions, jobs, and diagnostics | Planned; depends on Task 026 |
+| 28 | Second catalog/compiler tranche and transparent compounds | Planned; depends on Tasks 024 and 025 |
+| Deferred UI | Object drawer and transparent graph canvas | Unnumbered; architecture authorized, implementation separately gated |
 
 ## Completed Task 018 gates
 
@@ -63,10 +71,7 @@ automatically activate Task 019 or Task 020.
 - level 7: `not-run` for measured real-time/resource behavior; and
 - level 8: `not-run` for controlled audible/listening evidence.
 
-Further results require another explicit bounded task. Plausible outcomes include
-expanding only the direct semantics needed by a chosen instrument, beginning
-sampling/assets for a proven runtime, adding another target/device, or later
-authorizing the client milestone. No option is pre-authorized by this roadmap.
+Further implementation still requires an explicit bounded task contract.
 
 Task 022 is the separately authorized bounded control-panel evidence task. Its
 offline diagnostic candidate reaches level 5. Exactly one approved
@@ -74,8 +79,26 @@ volatile-RAM upload retained `POT_EVENT_FOCUS_UNSTABLE`: the board, OLED, LED
 channels, pot identities, and approximate full pot travel were observed, but
 the last-moved telemetry surface could not retain the exact per-pot matrix.
 Promotion stopped before level 6 and the Task 021 replacement gate is closed.
-This result does not alter the ordinary product sequence above or activate
-Tasks 019, 020, or the UI milestone.
+The panel diagnostic successor is not on the application-spine critical path;
+it remains a proof gap before complete hardware-control or release claims.
+
+## Accepted application-spine plan
+
+ADR 0014 selects Tasks 023-028 and the unnumbered UI-architecture milestone.
+The normative dependency, child-task, ownership, and parallel-work rules are
+in `APPLICATION_SPINE_PLAN.md`.
+
+Task 023 is next, but no implementation contract has been created. After Task
+023 is accepted, Task 024 and design-only UI architecture may run concurrently.
+After Task 026, Task 027 and Task 028 may form two implementation lanes, with
+shared status, schemas, stable IDs, record sets, and publication integrated
+serially. The default ceiling is two implementation lanes plus one read-only
+or design lane.
+
+A parent may declare children such as `023A`, `023B`, and `023C`. Those are
+exact parent-owned work packages, not aliases or independent roadmap entries;
+the parent fixes their dependencies, write ownership, and integration order.
+Tasks 019 and 020 remain deferred. UI implementation remains separately gated.
 
 ## Staying on track
 

@@ -34,11 +34,22 @@ event focus and exact per-pot low/middle/high telemetry could not be retained.
 The retained result is `POT_EVENT_FOCUS_UNSTABLE`; promotion stopped before a
 complete sweep and level 6 was not earned. Approval gate 2 is closed. No Task
 021 replacement upload, second upload, reset, flash, SD-card write, persistent
-install, staging, commit, or push occurred.
+install, or other connected-device action occurred. The retained Task 022
+result is published on `main` at commit `a5fa328`.
+
+ADR 0014 accepts the application-spine sequence in
+`docs/APPLICATION_SPINE_PLAN.md`. Task 023, CLI v2 and application-surface
+consolidation, is the next planned task; its implementation contract has not
+been created and no Task 023 implementation is active. Tasks 024-028 remain
+ordered planned successors rather than ambient authorization. Exact lettered
+children such as `023A`, `023B`, and `023C` may exist only when their accepted
+parent contract declares their scopes, dependencies, write ownership, and
+integration order.
 
 Task 012B remains retired. The object drawer and transparent graph canvas are
-an unnumbered future client milestone that requires explicit user
-authorization.
+an unnumbered future client milestone. UI architecture planning is now
+explicitly authorized by ADR 0014, but UI implementation remains separately
+gated and must consume the shared client-neutral operations.
 
 Tasks 019 and 020 are deferred and not automatically activated by completion
 of Task 018 or Task 021.
@@ -56,6 +67,7 @@ of Task 018 or Task 021.
 | Full Gills panel/runtime | Authenticated 63-slot census, total mappings/coverage, exact runtime closure, and one mapped direct build | Level 5 |
 | Corrected Gills OLED/runtime | Versioned DMA-safe command transport plus one exact volatile-RAM board/OLED observation | Level 6 |
 | Gills panel diagnostic | Separate omitted-instrument telemetry source, deterministic host vectors, exact ARM artifacts, and one retained failed connected observation | Level 5; connected attempt failed before level 6 |
+| Application-spine plan | Accepted Task 023-028 dependency sequence, subtask rules, and bounded parallel lanes | Planning authority only; implementation not started |
 
 The accepted Task 018 result proves deterministic local ARM compile/link for
 one exact mapped graph/instrument/device/runtime closure. Its exact original
@@ -119,11 +131,17 @@ Task 021 established all of the following:
   historical golden; Task 022 also preserves it and does not claim to repair
   it.
 
-## Current failed gate and next decision
+## Current planning boundary
 
 Task 022 is stopped at the failed diagnostic result. Approval gate 2 is closed;
 the contract does not authorize a corrected diagnostic, another upload, the
 Task 021 product-binary replacement, firmware flash, SD-card write, persistent
-installation, reset, or Git publication. Any diagnostic successor or repeated
-hardware procedure requires a new bounded decision and explicit approval.
-Tasks 019, Task 020, and the future client milestone remain deferred.
+installation, or reset. Any diagnostic successor or repeated hardware
+procedure requires a new bounded decision and explicit approval.
+
+The next implementation gate is creation and acceptance of the complete Task
+023 contract. The application-spine plan does not start Task 023, authorize a
+lettered child, or authorize staging, commit, push, or publication. Task 024
+and the unnumbered UI-architecture milestone may overlap only after Task 023
+fixes the application capability boundary. UI implementation remains gated;
+Tasks 019 and 020 remain deferred.
