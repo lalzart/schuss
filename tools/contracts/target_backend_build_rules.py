@@ -770,7 +770,8 @@ def _stable_registry(groups: Iterable[Iterable[dict[str, Any]]]) -> dict[tuple[s
         "direct_operation_spec_id",
         "conformance_probe_evidence_id", "conformance_probe_id",
         "conformance_probe_result_id", "prerequisite_environment_id",
-        "procedure_id",
+        "procedure_id", "coverage_report_id", "panel_evidence_packet_id",
+        "runtime_realization_id",
     )
     for group in groups:
         for record in group:

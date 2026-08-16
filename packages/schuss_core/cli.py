@@ -726,7 +726,7 @@ def _portable_record_set_locator(manifest: str) -> str:
 
 
 def _registered_execution_service(output_root: Path):
-    """Register the exact transitional and direct handlers without fallback."""
+    """Register exact retained, direct, and mapped handlers without fallback."""
 
     from .build_execution import ExecutionService
 
@@ -745,9 +745,15 @@ def _registered_execution_service(output_root: Path):
     module = importlib.util.module_from_spec(specification)
     specification.loader.exec_module(module)
     from .gills_direct_backend import registration as direct_registration
+    from .gills_mapped_backend import registration as mapped_registration
 
     return ExecutionService.from_values(
-        (module.registration(), direct_registration()), output_root
+        (
+            module.registration(),
+            direct_registration(),
+            mapped_registration(),
+        ),
+        output_root,
     )
 
 

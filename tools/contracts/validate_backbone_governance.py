@@ -198,9 +198,9 @@ def validate_documents(
 
     task18_status = _leading_status(documents.get(TASK_018, "")) or ""
     for fragment in (
-        "contract revised on 2026-08-16",
-        "Tasks 016 and 017 are complete",
-        "implementation is ready but not started",
+        "completed on 2026-08-16",
+        "Tasks 016 and 017 remain exact dependencies",
+        "deterministic local evidence level 5",
         "ADR 0012",
     ):
         if fragment not in task18_status:
@@ -241,10 +241,10 @@ def validate_documents(
 
     status_rules = (
         "This document is the single authority for Schuss's current development state.",
-        "Task 018 is the only ready product task.",
-        "implementation is not started",
-        "At least one exact mapped Gills reference instrument must reach evidence level 5",
-        "Levels 6-8 remain `not-run`",
+        "Task 018 is complete for exact record set `schuss-record-set-000012@1`.",
+        "No product task is automatically active after this completion.",
+        "reaches evidence level 5 through the exact mapped handler",
+        "levels 6-8 remain `not-run`",
         "Tasks 019 and 020 are deferred and not automatically activated",
     )
     _require_phrases(
@@ -258,7 +258,7 @@ def validate_documents(
     history_rules = (
         "Completed task contracts are not live scheduling authority",
         "Git retains their exact bytes",
-        "Task 018 is the only current product-task contract.",
+        "no later product task is automatically active.",
     )
     _require_phrases(
         diagnostics,
@@ -312,7 +312,7 @@ def validate_documents(
         "15": "complete",
         "16": "complete",
         "17": "complete",
-        "18": "contract revised; ready to start at evidence gate",
+        "18": "complete; mapped local level 5",
         "19": "deferred; not scheduled",
         "20": "deferred; not scheduled",
     }
@@ -428,15 +428,15 @@ def validate_documents(
 
     diagnostics.sort(key=lambda item: (item["code"], item["document"], item["detail"]))
     return {
-        "active_product_task": "018",
+        "active_product_task": "none",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
         "authoritative_decisions": ["ADR 0010", "ADR 0011", "ADR 0012"],
         "checked_documents": len([path for path in DOCUMENT_PATHS if path in documents]),
         "current_status_source": STATUS,
         "diagnostics": diagnostics,
         "historical_context_policy": "completed-task-contracts-indexed-in-history-and-git",
-        "promotion_gate": "mapped-gills-level-5-required",
-        "schema_version": "backbone-governance-summary-v4",
+        "promotion_gate": "mapped-gills-level-5-satisfied",
+        "schema_version": "backbone-governance-summary-v5",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -445,7 +445,7 @@ def validate_documents(
             "015": "complete",
             "016": "complete-legacy-equivalent-level-5",
             "017": "complete-level-2",
-            "018": "ready-not-started",
+            "018": "complete-mapped-local-level-5",
             "019": "deferred-not-scheduled",
             "020": "deferred-not-scheduled",
         },

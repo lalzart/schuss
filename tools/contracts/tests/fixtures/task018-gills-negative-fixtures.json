@@ -1,0 +1,25 @@
+{
+  "schema_version": "task018-gills-negative-fixtures-v1",
+  "cases": [
+    {
+      "case_id": "missing-device-slot-coverage",
+      "mutation": "remove-first-device-slot-coverage",
+      "expected_diagnostic": "GILLS_DEVICE_COVERAGE_INCOMPLETE"
+    },
+    {
+      "case_id": "direct-device-to-graph-shortcut",
+      "mutation": "replace-instrument-destination-with-graph-facet",
+      "expected_diagnostic": "SCHEMA_STRUCTURE_INVALID"
+    },
+    {
+      "case_id": "unresolved-runtime-evidence",
+      "mutation": "replace-runtime-evidence-source-with-absent-source",
+      "expected_diagnostic": "GILLS_RUNTIME_BINDING_EVIDENCE_UNRESOLVED"
+    },
+    {
+      "case_id": "ambiguous-runtime-selection",
+      "mutation": "duplicate-supported-runtime-under-new-exact-identity",
+      "expected_diagnostic": "COMPILER_RUNTIME_REALIZATION_NOT_EXACT"
+    }
+  ]
+}

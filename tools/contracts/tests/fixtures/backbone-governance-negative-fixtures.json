@@ -1,5 +1,5 @@
 {
-  "schema_version": "backbone-governance-negative-fixtures-v2",
+  "schema_version": "backbone-governance-negative-fixtures-v3",
   "cases": [
     {
       "name": "ui-resurrection",
@@ -18,8 +18,8 @@
     {
       "name": "lettered-task-alias",
       "path": "docs/STATUS.md",
-      "old": "Task 018 is the only ready product task.",
-      "new": "Task 018A is the only ready product task.",
+      "old": "Task 018 is complete for exact record set",
+      "new": "Task 018A is complete for exact record set",
       "expected_code": "LETTERED_TASK_ALIAS_PRESENT"
     },
     {
@@ -60,8 +60,8 @@
     {
       "name": "roadmap-task018-status-drift",
       "path": "docs/ROADMAP.md",
-      "old": "Contract revised; ready to start at evidence gate",
-      "new": "Complete",
+      "old": "Complete; mapped local level 5",
+      "new": "Ready",
       "expected_code": "BACKBONE_SEQUENCE_STATUS_DRIFT"
     }
   ]

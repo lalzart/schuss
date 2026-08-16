@@ -27,6 +27,7 @@ ID_FIELDS = (
     "conformance_probe_evidence_id",
     "conformance_probe_id",
     "conformance_probe_result_id",
+    "coverage_report_id",
     "device_profile_id",
     "direct_operation_spec_id",
     "evidence_claim_id",
@@ -34,10 +35,12 @@ ID_FIELDS = (
     "graph_id",
     "implementation_id",
     "instrument_id",
+    "panel_evidence_packet_id",
     "selection_packet_id",
     "prerequisite_environment_id",
     "procedure_id",
     "resource_report_id",
+    "runtime_realization_id",
 )
 
 

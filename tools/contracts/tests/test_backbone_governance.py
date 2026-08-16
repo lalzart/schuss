@@ -36,16 +36,16 @@ class BackboneGovernanceTest(unittest.TestCase):
             ["ADR 0010", "ADR 0011", "ADR 0012"],
             summary["authoritative_decisions"],
         )
-        self.assertEqual("018", summary["active_product_task"])
-        self.assertEqual("mapped-gills-level-5-required", summary["promotion_gate"])
+        self.assertEqual("none", summary["active_product_task"])
+        self.assertEqual("mapped-gills-level-5-satisfied", summary["promotion_gate"])
         self.assertEqual(
             ["013", "014", "015", "016", "017", "018", "019", "020"],
             summary["active_task_sequence"],
         )
-        self.assertEqual("ready-not-started", summary["task_statuses"]["018"])
+        self.assertEqual("complete-mapped-local-level-5", summary["task_statuses"]["018"])
 
     def test_negative_governance_fixtures_fail_closed(self):
-        self.assertEqual("backbone-governance-negative-fixtures-v2", self.fixtures["schema_version"])
+        self.assertEqual("backbone-governance-negative-fixtures-v3", self.fixtures["schema_version"])
         for fixture in self.fixtures["cases"]:
             with self.subTest(case=fixture["name"]):
                 documents = copy.deepcopy(self.documents)

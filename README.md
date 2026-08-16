@@ -16,14 +16,15 @@ and independently versioned.
 [Development status](docs/STATUS.md) is the sole current-status authority.
 Schuss has a persistent project model, shared CLI operations, a reusable
 compiler front half, exact build execution, and deterministic direct ARM
-compile/link evidence for one eight-node Gills slice. The next ready product
-task is the revised [Task 018 Gills contract](docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md),
-whose implementation has not started.
+compile/link evidence for one eight-node Gills slice. The
+[Task 018 Gills contract](docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md)
+is complete for a 63-slot authenticated panel model, explicit mappings, and
+one exact mapped level-5 runtime closure.
 
-The reviewed Task 017 core is structurally useful but not yet generally
-executable. Task 018 therefore requires one exact mapped Gills reference to
-reach compile/link evidence level 5; connected-device, real-time, and audible
-proof remain separate.
+The reviewed Task 017 core remains structurally useful but not yet generally
+executable. Its two full-panel successors retain stable unsupported
+diagnostics. Connected-device, real-time, and audible proof for the successful
+mapped reference remain separate and require new authorization.
 
 ## Start here
 
@@ -55,6 +56,8 @@ bin/schuss graph inspect schuss-graph-000002@1 \
   --record-set contracts/record-sets/task011c-executed-v1.json
 bin/schuss build plan schuss-build-request-000002@3 \
   --record-set contracts/record-sets/task016-complete-gills-direct-v1.json
+bin/schuss build plan schuss-build-request-000002@4 \
+  --record-set contracts/record-sets/task018-full-gills-v1.json
 ```
 
 Build execution requires an exact registered handler, a fresh output root, and

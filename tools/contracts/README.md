@@ -58,9 +58,11 @@ The public product boundary is `packages/schuss_core/control_plane.py`, and the
 CLI must not import validator internals.
 
 The compiler front half plans through stage 6. `build_execution.py` invokes
-only an exact registered handler. The retained legacy handlers and the direct
-Gills handler remain separate backends beneath the same graph/target/build
-contracts, with no silent fallback.
+only an exact registered handler. The retained legacy handler, direct graph
+handler, and mapped Gills panel handler remain exact boundaries beneath the
+same graph/target/build contracts, with no silent fallback. Task 018 adds
+`gills.inspect`, total panel/coverage validation, and a separate runtime
+realization without making the device profile a graph or backend.
 
 Every check must keep structural, lowering, generation, ARM compile/link,
 connected-device, real-time, and audible evidence distinct. See

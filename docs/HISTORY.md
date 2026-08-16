@@ -35,6 +35,7 @@ level.
 | Task 015 | Minimal normalized DSP and direct C++ frontend | `ff835a0` | record set `schuss-record-set-000009@1`, `evidence/task015-completion-v1/` |
 | Task 016 | Complete accepted graph through the direct ARM path | `b28c7b6` | record set `schuss-record-set-000010@1`, ADR 0011, `evidence/task016-completion-v1/` |
 | Task 017 | Twelve-family curated core and two headless references | `b28c7b6` | record set `schuss-record-set-000011@1`, `evidence/task017-completion-v1/` |
+| Task 018 | Authenticated full Gills panel, total mappings/runtime closure, and one mapped direct ARM build | Not committed | record set `schuss-record-set-000012@1`, `GILLS_PANEL_RUNTIME_CONTRACTS.md`, `evidence/task018-completion-v1/` |
 | Compiler determinism matrix | Fresh-root/process determinism across Tasks 013-015 | `796dd52` | `tools/contracts/compiler_determinism_matrix.py` |
 | Backbone governance guard | Backend-first routing and explicit UI deferral | `4a578de` | ADR 0010 and `tools/contracts/validate_backbone_governance.py` |
 
@@ -67,5 +68,6 @@ level.
 | `docs/tasks/017-curated-core-and-headless-reference-instruments.md` | `b28c7b6` |
 | `docs/tasks/compiler-determinism-matrix.md` | `b28c7b6` |
 
-Task 012B is retained in `docs/tasks/` as a retirement guard. Task 018 is the
-only current product-task contract.
+Task 012B is retained in `docs/tasks/` as a retirement guard. The completed
+Task 018 contract remains present until its normal archival step; no later
+product task is automatically active.

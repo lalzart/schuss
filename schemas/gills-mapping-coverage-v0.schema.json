@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gills-mapping-coverage-v0.schema.json",
+  "title": "Schuss Gills mapping coverage v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "coverage_report_id",
+    "revision",
+    "content_hash",
+    "device_profile_reference",
+    "instrument_reference",
+    "panel_evidence_reference",
+    "device_slot_coverage",
+    "instrument_facet_coverage",
+    "summary"
+  ],
+  "properties": {
+    "schema_version": {"const": "gills-mapping-coverage-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "coverage_report_id": {
+      "type": "string",
+      "pattern": "^schuss-coverage-report-[0-9]{6}$"
+    },
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "device_profile_reference": {"$ref": "#/$defs/deviceReference"},
+    "instrument_reference": {"$ref": "#/$defs/instrumentReference"},
+    "panel_evidence_reference": {"$ref": "#/$defs/panelEvidenceReference"},
+    "device_slot_coverage": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/deviceCoverage"}
+    },
+    "instrument_facet_coverage": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/facetCoverage"}
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "device_slots_total",
+        "instrument_facets_total",
+        "mapped",
+        "intentionally_unused",
+        "unresolved",
+        "absence_is_coverage"
+      ],
+      "properties": {
+        "device_slots_total": {"type": "integer", "minimum": 1},
+        "instrument_facets_total": {"type": "integer", "minimum": 1},
+        "mapped": {"type": "integer", "minimum": 0},
+        "intentionally_unused": {"type": "integer", "minimum": 0},
+        "unresolved": {"type": "integer", "minimum": 0},
+        "absence_is_coverage": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "exactReferenceBase": {
+      "type": "object",
+      "x-schuss-domain-value": true
+    },
+    "deviceReference": {
+      "type": "object",
+      "required": ["device_profile_id", "revision", "content_hash"],
+      "properties": {
+        "device_profile_id": {"type": "string", "pattern": "^schuss-device-profile-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "instrumentReference": {
+      "type": "object",
+      "required": ["instrument_id", "revision", "content_hash"],
+      "properties": {
+        "instrument_id": {"type": "string", "pattern": "^schuss-instrument-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "panelEvidenceReference": {
+      "type": "object",
+      "required": ["panel_evidence_packet_id", "revision", "content_hash"],
+      "properties": {
+        "panel_evidence_packet_id": {"type": "string", "pattern": "^schuss-panel-evidence-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "mappingReference": {
+      "type": "object",
+      "required": ["mapping_kind", "mapping_id"],
+      "properties": {
+        "mapping_kind": {
+          "enum": ["device-input", "device-feedback", "graph", "runtime"]
+        },
+        "mapping_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*-[0-9]{6}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "deviceCoverage": {
+      "type": "object",
+      "required": ["slot_kind", "slot_id", "outcome", "mapping_refs", "rationale"],
+      "properties": {
+        "slot_kind": {
+          "enum": ["input-control", "gesture", "feedback-output", "display", "physical-io"]
+        },
+        "slot_id": {"type": "string", "pattern": "^device-[a-z-]+-[0-9]{6}$"},
+        "outcome": {"enum": ["mapped", "intentionally-unused", "unresolved"]},
+        "mapping_refs": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/mappingReference"}
+        },
+        "rationale": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "facetCoverage": {
+      "type": "object",
+      "required": ["facet_kind", "facet_id", "outcome", "mapping_refs", "rationale"],
+      "properties": {
+        "facet_kind": {"enum": ["parameter", "action", "display", "state"]},
+        "facet_id": {"type": "string", "pattern": "^instrument-(parameter|action|display|state)-[0-9]{6}$"},
+        "outcome": {"enum": ["mapped", "intentionally-unused", "unresolved"]},
+        "mapping_refs": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/mappingReference"}
+        },
+        "rationale": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

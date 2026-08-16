@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gills-panel-evidence-v0.schema.json",
+  "title": "Schuss authenticated Gills panel evidence v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "panel_evidence_packet_id",
+    "revision",
+    "content_hash",
+    "reviewed_configuration",
+    "sources",
+    "slot_evidence",
+    "unresolved_facts",
+    "evidence_boundaries"
+  ],
+  "properties": {
+    "schema_version": {"const": "gills-panel-evidence-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "panel_evidence_packet_id": {
+      "type": "string",
+      "pattern": "^schuss-panel-evidence-[0-9]{6}$"
+    },
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "reviewed_configuration": {
+      "type": "object",
+      "required": [
+        "product",
+        "hardware_revision",
+        "panel_revision",
+        "assembly_scope",
+        "compute_module",
+        "excluded_options"
+      ],
+      "properties": {
+        "product": {"const": "Ksoloti Gills"},
+        "hardware_revision": {"const": "v0.6"},
+        "panel_revision": {"const": "v0.6"},
+        "assembly_scope": {"const": "base-gills-main-board-and-panel"},
+        "compute_module": {"const": "Ksoloti Core required but independently identified"},
+        "excluded_options": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "additionalProperties": false
+    },
+    "sources": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/source"}
+    },
+    "slot_evidence": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/slotEvidence"}
+    },
+    "unresolved_facts": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/unresolvedFact"}
+    },
+    "evidence_boundaries": {
+      "type": "array",
+      "x-schuss-array-kind": "sequence",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {"$ref": "#/$defs/evidenceBoundary"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "rawSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "source_id",
+        "repository_url",
+        "commit",
+        "path",
+        "byte_sha256",
+        "authority",
+        "license_observation",
+        "limitations"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "pattern": "^panel-source-[0-9]{6}$"
+        },
+        "repository_url": {
+          "type": "string",
+          "pattern": "^https://github\\.com/ksoloti/[a-z0-9-]+$"
+        },
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "path": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._ /-]*$"
+        },
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"},
+        "authority": {
+          "enum": [
+            "hardware-design-source",
+            "assembly-source",
+            "runtime-object-source",
+            "repository-license-source"
+          ]
+        },
+        "license_observation": {"type": "string", "minLength": 1},
+        "limitations": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidenceReference": {
+      "type": "object",
+      "required": ["source_id", "locator"],
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "pattern": "^panel-source-[0-9]{6}$"
+        },
+        "locator": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "fact": {
+      "type": "object",
+      "required": ["key", "value", "status", "evidence_refs"],
+      "properties": {
+        "key": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "value": {"type": "string", "minLength": 1},
+        "status": {"enum": ["observed", "task-policy", "unresolved"]},
+        "evidence_refs": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/evidenceReference"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "slotEvidence": {
+      "type": "object",
+      "required": [
+        "slot_kind",
+        "slot_id",
+        "physical_reference",
+        "configuration_status",
+        "facts",
+        "limitations"
+      ],
+      "properties": {
+        "slot_kind": {
+          "enum": [
+            "input-control",
+            "gesture",
+            "feedback-output",
+            "display",
+            "physical-io"
+          ]
+        },
+        "slot_id": {
+          "type": "string",
+          "pattern": "^device-(input|gesture|feedback|display|physical-io)-[0-9]{6}$"
+        },
+        "physical_reference": {"type": "string", "minLength": 1},
+        "configuration_status": {
+          "enum": ["installed", "compute-module", "optional-unpopulated", "internal-header"]
+        },
+        "facts": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/fact"}
+        },
+        "limitations": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "additionalProperties": false
+    },
+    "unresolvedFact": {
+      "type": "object",
+      "required": ["fact_id", "code", "affected_slots", "question", "evidence_refs"],
+      "properties": {
+        "fact_id": {"type": "string", "pattern": "^panel-unresolved-[0-9]{6}$"},
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "affected_slots": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^device-[a-z-]+-[0-9]{6}$"}
+        },
+        "question": {"type": "string", "minLength": 1},
+        "evidence_refs": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/evidenceReference"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidenceBoundary": {
+      "type": "object",
+      "required": ["level", "name", "status"],
+      "properties": {
+        "level": {"type": "integer", "minimum": 1},
+        "name": {"type": "string", "minLength": 1},
+        "status": {"enum": ["passed", "not-run"]}
+      },
+      "additionalProperties": false
+    }
+  }
+}

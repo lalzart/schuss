@@ -46,6 +46,9 @@ RELEVANT_GROUPS = (
     "graphs",
     "devices",
     "instruments",
+    "panel_evidence",
+    "mapping_coverage",
+    "runtime_realizations",
     "capability",
     "environment",
     "target",
@@ -64,6 +67,9 @@ ID_FIELDS = {
     "graphs": "graph_id",
     "devices": "device_profile_id",
     "instruments": "instrument_id",
+    "panel_evidence": "panel_evidence_packet_id",
+    "mapping_coverage": "coverage_report_id",
+    "runtime_realizations": "runtime_realization_id",
     "capability": "capability_vocabulary_id",
     "environment": "build_environment_id",
     "target": "compute_target_id",
@@ -80,6 +86,9 @@ SCHEMA_KEYS = {
     "graphs": "graph",
     "devices": "device",
     "instruments": "instrument",
+    "panel_evidence": "panel_evidence",
+    "mapping_coverage": "mapping_coverage",
+    "runtime_realizations": "runtime_realizations",
     "capability": "capability",
     "environment": "environment",
     "target": "target",
@@ -450,6 +459,28 @@ def _stage1(
         )
         return {}
 
+    selected_runtime = None
+    if records["runtime_realizations"]:
+        matches = [
+            value
+            for value in records["runtime_realizations"]
+            if any(
+                build["build_request_reference"] == request_ref
+                for build in value["supported_builds"]
+            )
+        ]
+        if len(matches) != 1:
+            _diagnostic(
+                diagnostics,
+                "COMPILER_RUNTIME_REALIZATION_NOT_EXACT",
+                stage,
+                _subject("build-request", request["build_request_id"], request["revision"]),
+                "$.runtime_realizations",
+                f"expected one exact runtime realization for the build request, found {len(matches)}",
+            )
+            return {}
+        selected_runtime = matches[0]
+
     graph_registry = _registry(records["graphs"], "graph_id")
     contract_registry = _registry(records["contracts"], "component_contract_id")
     target_registry = _registry(records["target"], "compute_target_id")
@@ -529,6 +560,7 @@ def _stage1(
         "instrument": instrument,
         "target": target_record,
         "backend": backend,
+        "runtime_realization": selected_runtime,
         "contracts": contract_registry,
         "bindings": _registry(records["bindings"], "implementation_id"),
         "graphs": graph_registry,

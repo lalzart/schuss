@@ -1,8 +1,8 @@
 # Task 018: Full Gills implementation and parameter/control mapping
 
-Status: contract revised on 2026-08-16; Tasks 016 and 017 are complete, so
-implementation is ready but not started. ADR 0012 adds the executable mapped-
-instrument promotion gate.
+Status: completed on 2026-08-16 through deterministic local evidence level 5.
+Tasks 016 and 017 remain exact dependencies, and ADR 0012 supplies the
+executable mapped-instrument promotion gate.
 
 ## Goal and why it exists
 
@@ -96,13 +96,12 @@ Inputs are ADRs 0010-0012; the accepted Tasks 005-015 records and ownership
 rules; the completed Task 016 direct frontend and Task 017 curated-core/
 reference-instrument closure; and an authenticated Gills evidence packet.
 
-The completed planning deliverables are this executable contract, a read-only
-contract validator, ADR 0012, and current-routing documentation. The remaining
-implementation deliverables are the evidence packet, any additive schema
-revision required by reviewed facts, device/instrument/runtime records, exact
-mappings and coverage report, one exact executable mapped reference, record
-set, compiler/operation integration, fixtures, tests, validators, evidence, and
-completion report described above.
+The completed deliverables are this contract, its read-only validator, ADR
+0012, the authenticated evidence packet, additive schemas,
+device/instrument/runtime successors, exact mappings and total coverage, one
+exact executable mapped reference, the successor record set,
+compiler/operation integration, focused fixtures and tests, retained evidence,
+and the completion report described above.
 
 ## Acceptance tests
 
@@ -175,13 +174,14 @@ completion report described above.
 
 ## Readiness state
 
-The former dependency stop condition is resolved. Task 016 accepted the
-legacy-equivalent route and completed, then Task 017 completed its bounded
-curated core and two reference instruments. Task 018 may now start at the
-authenticated Gills evidence-packet gate. Completion additionally requires one
-exact mapped Gills runtime closure to build through evidence level 5 under ADR
-0012; unsupported Task 017 results alone cannot complete the task.
+Task 018 is complete for exact record set `schuss-record-set-000012@1`. The
+authenticated panel packet accounts for 63 slots, all three instrument
+successors have total coverage and exact runtime closure, and the mapped Task
+016 successor builds twice in fresh roots and fresh processes through local
+ARM compile/link evidence level 5. The two Task 017 successors retain stable
+unsupported diagnostics without fallback.
 
-No Task 018 implementation has occurred yet: no complete Gills census,
-additive schema, semantic record, runtime code, mapping, build record, or
-evidence level is claimed by this reconciliation.
+Levels 6-8 remain `not-run`. No connected-device, real-time/resource,
+audible/listening, upload, flash, SD-card, stage, commit, or push action is
+claimed. Task 019, Task 020, and the deferred UI are not activated by this
+completion.

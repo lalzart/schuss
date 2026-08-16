@@ -27,15 +27,14 @@ one row does not authorize the next.
 | 15 | Minimal normalized DSP and direct graph-to-C++ frontend | Complete |
 | 16 | Direct frontend for the complete accepted eight-node graph | Complete; legacy-equivalent level 5 |
 | 17 | Curated core and two richer headless reference instruments | Complete; structural level 2 |
-| 18 | Authenticated full Gills model, mapping/runtime closure, and one executable mapped reference | Contract revised; ready to start at evidence gate |
+| 18 | Authenticated full Gills model, mapping/runtime closure, and one executable mapped reference | Complete; mapped local level 5 |
 | 19 | Sampling and asset management | Deferred; not scheduled |
 | 20 | Additional compute targets and devices | Deferred; not scheduled |
 | Deferred UI | Object drawer and transparent graph canvas | Unnumbered; explicit authorization required |
 
-## Task 018 gates
+## Completed Task 018 gates
 
-Task 018 is not a single “model complete” checkbox. It must close these gates
-in order:
+Task 018 closed these independent gates in order:
 
 1. **Authenticated panel evidence:** pin one exact Gills hardware/panel
    revision and account for every physical slot and asserted fact.
@@ -47,8 +46,8 @@ in order:
    the accepted direct path and reach evidence level 5. Unsupported Task 017
    references remain valid diagnostics but cannot satisfy this gate.
 
-Task 018 performs no connected-device, real-time, audible, upload, or flash
-action without separate authorization.
+The retained evidence performs no connected-device, real-time, audible,
+upload, or flash action.
 
 ## Post-Task 018 product evidence gate
 

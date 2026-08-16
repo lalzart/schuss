@@ -22,6 +22,7 @@ if str(CONTRACT_TOOLS) not in sys.path:
 import aggregate_validator as aggregate
 import component_graph_rules as component
 import device_instrument_rules as device
+import gills_mapping_rules as gills
 import record_set_rules
 import target_backend_build_rules as target
 import validator_core as core
@@ -66,6 +67,14 @@ TASK016_SCHEMA_NAMES = {
     "direct_frontend_result_v1": "direct-frontend-result-v1.schema.json",
 }
 
+TASK018_SCHEMA_NAMES = {
+    "panel_evidence": "gills-panel-evidence-v0.schema.json",
+    "mapping_coverage": "gills-mapping-coverage-v0.schema.json",
+    "runtime_realizations": "gills-runtime-realization-v0.schema.json",
+    "operation_request_v6": "operation-request-v6.schema.json",
+    "operation_result_v6": "operation-result-v6.schema.json",
+}
+
 DOMAIN_GROUPS = (
     "catalog",
     "families",
@@ -74,6 +83,9 @@ DOMAIN_GROUPS = (
     "graphs",
     "devices",
     "instruments",
+    "panel_evidence",
+    "mapping_coverage",
+    "runtime_realizations",
     "direct_operation_specs",
     *tuple(target.SCHEMA_SPECS),
 )
@@ -100,6 +112,7 @@ class OperationContext:
     component_summary: dict[str, Any]
     task006_summary: dict[str, Any]
     task007_summary: dict[str, Any]
+    task018_summary: dict[str, Any]
     record_set_reference: dict[str, Any]
     catalog_projection: dict[str, Any] | None
 
@@ -189,6 +202,9 @@ def load_repository_context(
         "graphs": _stable_records(selected.records.get("dsp-graph", ())),
         "devices": _stable_records(selected.records.get("device-profile", ())),
         "instruments": _stable_records(selected.records.get("instrument", ())),
+        "panel_evidence": _stable_records(selected.records.get("gills-panel-evidence", ())),
+        "mapping_coverage": _stable_records(selected.records.get("gills-mapping-coverage", ())),
+        "runtime_realizations": _stable_records(selected.records.get("gills-runtime-realization", ())),
     }
     target_records = {
         kind: list(selected.records.get(kind, ()))
@@ -260,6 +276,10 @@ def load_repository_context(
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
     for key, filename in TASK016_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    for key, filename in TASK018_SCHEMA_NAMES.items():
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
@@ -376,9 +396,32 @@ def load_repository_context(
                 "conformance-probe-procedure",
                 "prerequisite-environment",
                 "direct-operation-spec",
+                "gills-panel-evidence",
+                "gills-mapping-coverage",
+                "gills-runtime-realization",
             )
             for record in selected.records.get(kind, ())
         ],
+    )
+    task018_summary = gills.validate_values(
+        {
+            "panel_evidence": list(records["panel_evidence"]),
+            "mapping_coverage": list(records["mapping_coverage"]),
+            "runtime_realizations": list(records["runtime_realizations"]),
+        },
+        {
+            key: schemas[key]
+            for key in ("panel_evidence", "mapping_coverage", "runtime_realizations")
+            if key in schemas
+        },
+        {
+            "devices": list(records["devices"]),
+            "instruments": list(records["instruments"]),
+            "request": list(records["request"]),
+            "target": list(records["target"]),
+            "backend": list(records["backend"]),
+            "environment": list(records["environment"]),
+        },
     )
     return OperationContext(
         records=records,
@@ -391,6 +434,7 @@ def load_repository_context(
         component_summary=copy.deepcopy(component_result.summary),
         task006_summary=copy.deepcopy(task006_summary),
         task007_summary=copy.deepcopy(task007_result.summary),
+        task018_summary=copy.deepcopy(task018_summary),
         record_set_reference=copy.deepcopy(selected.reference),
         catalog_projection=derived_catalog,
     )
@@ -456,6 +500,7 @@ def canonical_result_bytes(
         "schuss-operation-result-v3": "operation_result_v3",
         "schuss-operation-result-v4": "operation_result_v4",
         "schuss-operation-result-v5": "operation_result_v5",
+        "schuss-operation-result-v6": "operation_result_v6",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -590,6 +635,8 @@ def _records_validate(context: OperationContext) -> dict[str, Any]:
         "target_backend_build_rules": copy.deepcopy(context.task007_summary),
         "aggregate_validator": copy.deepcopy(context.task006_summary),
     }
+    if context.task018_summary.get("status") != "not-applicable":
+        summaries["gills_mapping_rules"] = copy.deepcopy(context.task018_summary)
     invalid = any(
         summary.get("status") == "invalid" for summary in summaries.values()
     )
@@ -602,6 +649,102 @@ def _records_validate(context: OperationContext) -> dict[str, Any]:
         {"summaries": summaries},
         diagnostics,
     )
+
+
+def _gills_inspect(payload: dict[str, Any], context: OperationContext) -> dict[str, Any]:
+    instrument_reference = payload["instrument_reference"]
+    instruments = _exact_registry(context.records["instruments"], "instrument_id")
+    instrument = instruments.get(core.reference_key(instrument_reference, "instrument_id"))
+    if instrument is None:
+        return _result(
+            "gills.inspect", "invalid", None,
+            [_diagnostic("OPERATION_REFERENCE_UNRESOLVED", f"{instrument_reference['instrument_id']}@{instrument_reference['revision']}", "$.payload.instrument_reference", "the exact instrument is absent from the selected record set")],
+            version=6,
+        )
+    device_reference = instrument["device_profile_reference"]
+    devices = _exact_registry(context.records["devices"], "device_profile_id")
+    device = devices.get(core.reference_key(device_reference, "device_profile_id"))
+    coverages = [
+        copy.deepcopy(value)
+        for value in context.records["mapping_coverage"]
+        if value["instrument_reference"] == instrument_reference
+    ]
+    runtimes = [
+        copy.deepcopy(value)
+        for value in context.records["runtime_realizations"]
+        if any(item["instrument_reference"] == instrument_reference for item in value["supported_builds"])
+    ]
+    if device is None or len(coverages) != 1 or len(runtimes) != 1:
+        return _result(
+            "gills.inspect", "invalid", None,
+            [_diagnostic("GILLS_INSPECTION_CLOSURE_NOT_EXACT", f"{instrument['instrument_id']}@{instrument['revision']}", "$", "device, coverage, and runtime realization must each resolve exactly once")],
+            version=6,
+        )
+    panel_reference = coverages[0]["panel_evidence_reference"]
+    panels = _exact_registry(context.records["panel_evidence"], "panel_evidence_packet_id")
+    panel = panels.get(core.reference_key(panel_reference, "panel_evidence_packet_id"))
+    if panel is None:
+        return _result(
+            "gills.inspect", "invalid", None,
+            [_diagnostic("GILLS_INSPECTION_EVIDENCE_UNRESOLVED", f"{instrument['instrument_id']}@{instrument['revision']}", "$.panel_evidence_reference", "the exact panel evidence packet is absent")],
+            version=6,
+        )
+    requests = _exact_registry(context.records["request"], "build_request_id")
+    builds = []
+    for supported in runtimes[0]["supported_builds"]:
+        if supported["instrument_reference"] != instrument_reference:
+            continue
+        request = requests.get(core.reference_key(supported["build_request_reference"], "build_request_id"))
+        if request is None:
+            return _result(
+                "gills.inspect", "invalid", None,
+                [_diagnostic("GILLS_INSPECTION_BUILD_UNRESOLVED", f"{instrument['instrument_id']}@{instrument['revision']}", "$.supported_builds", "the runtime build request is absent")],
+                version=6,
+            )
+        builds.append({"build_request": copy.deepcopy(request), "handler": copy.deepcopy(supported["handler"])})
+    return _result(
+        "gills.inspect", "success",
+        {
+            "record_set_reference": copy.deepcopy(context.record_set_reference),
+            "device_profile": copy.deepcopy(device),
+            "instrument": copy.deepcopy(instrument),
+            "panel_evidence": copy.deepcopy(panel),
+            "coverage_report": coverages[0],
+            "runtime_realization": runtimes[0],
+            "build_support": builds,
+            "validation": copy.deepcopy(context.task018_summary),
+        },
+        version=6,
+    )
+
+
+def _dispatch_gills_operation(request: dict[str, Any], context: OperationContext) -> dict[str, Any]:
+    operation = request.get("operation") if isinstance(request, dict) else None
+    errors: list[str] = []
+    try:
+        core.assert_portable_json_value(request)
+    except ValueError as exc:
+        errors.append(str(exc))
+    schema = context.schemas.get("operation_request_v6")
+    if schema is None:
+        errors.append("$: operation schema 'schuss-operation-request-v6' is unavailable in the selected context")
+    elif isinstance(request, dict):
+        errors.extend(core.schema_errors(request, schema, schema))
+    else:
+        errors.append("$: operation request must be an object")
+    if errors:
+        result_version = 6 if "operation_result_v6" in context.schemas else 1
+        result = _result(
+            operation if result_version == 6 and operation == "gills.inspect" else "invalid-request",
+            "invalid", None,
+            [_diagnostic("OPERATION_REQUEST_INVALID", operation if isinstance(operation, str) else "invalid-request", "$", error) for error in sorted(set(errors))],
+            version=result_version,
+        )
+        canonical_result_bytes(result, context)
+        return result
+    result = _gills_inspect(request["payload"], context)
+    canonical_result_bytes(result, context)
+    return result
 
 
 def _graph_inspect(payload: dict[str, Any], context: OperationContext) -> dict[str, Any]:
@@ -1161,6 +1304,15 @@ def dispatch_operation(
     execution_service: execution.ExecutionService | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v6"
+    ):
+        if project_service is not None:
+            loaded = project_service.load()
+            return _dispatch_gills_operation(request, loaded.context)
+        return _dispatch_gills_operation(request, context)
 
     if (
         isinstance(request, dict)

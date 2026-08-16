@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the ready Task 018 contract boundary."""
+"""Validate the completed Task 018 contract and retained proof boundary."""
 
 from __future__ import annotations
 
@@ -34,7 +34,9 @@ REQUIRED_ASSERTIONS = (
     "evidence level 5",
     "does not satisfy this executable promotion gate",
     "Levels 6-8 remain `not-run`",
-    "No Task 018 implementation has occurred yet",
+    "Task 018 is complete",
+    "schuss-record-set-000012@1",
+    "No connected-device, real-time/resource",
 )
 
 
@@ -50,20 +52,20 @@ def main() -> int:
         missing_sections
         or missing_assertions
         or acceptance_tests != 13
-        or "implementation is ready but not started" not in text
-        or "semantic record, runtime code, mapping" not in text
+        or "Status: completed on 2026-08-16" not in text
+        or "builds twice in fresh roots and fresh processes" not in text
     )
     summary = {
         "acceptance_tests": acceptance_tests,
         "dependency": "task-017-complete",
-        "implementation_status": "ready-not-started",
+        "implementation_status": "complete-local-level-5",
         "missing_assertions": missing_assertions,
         "missing_sections": missing_sections,
         "promotion_gate": "mapped-level-5-required",
         "required_executable_reference_instruments": 1,
         "required_sections": len(REQUIRED_SECTIONS),
         "schema_version": "task018-contract-validator-v3",
-        "semantic_records_created": 0,
+        "semantic_records_created": 13,
         "status": "invalid" if invalid else "valid",
         "transitive_dependency": "task-016-complete",
     }

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "operation-request-v6.schema.json",
+  "title": "Schuss additive Gills inspection operation request v6",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "operation", "payload"],
+  "properties": {
+    "schema_version": {"const": "schuss-operation-request-v6"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "operation": {"const": "gills.inspect"},
+    "payload": {
+      "type": "object",
+      "required": ["instrument_reference"],
+      "properties": {
+        "instrument_reference": {"$ref": "#/$defs/instrumentReference"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "instrumentReference": {
+      "type": "object",
+      "required": ["instrument_id", "revision", "content_hash"],
+      "properties": {
+        "instrument_id": {"type": "string", "pattern": "^schuss-instrument-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

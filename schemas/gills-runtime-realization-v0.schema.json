@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gills-runtime-realization-v0.schema.json",
+  "title": "Schuss Gills runtime realization v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "runtime_realization_id",
+    "revision",
+    "content_hash",
+    "device_profile_reference",
+    "compute_target_reference",
+    "backend_reference",
+    "firmware_runtime_reference",
+    "panel_evidence_reference",
+    "supported_builds",
+    "input_bindings",
+    "feedback_bindings",
+    "display_bindings",
+    "physical_io_bindings",
+    "policies",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": "gills-runtime-realization-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "runtime_realization_id": {
+      "type": "string",
+      "pattern": "^schuss-runtime-realization-[0-9]{6}$"
+    },
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "device_profile_reference": {"$ref": "#/$defs/deviceReference"},
+    "compute_target_reference": {"$ref": "#/$defs/targetReference"},
+    "backend_reference": {"$ref": "#/$defs/backendReference"},
+    "firmware_runtime_reference": {"$ref": "#/$defs/environmentReference"},
+    "panel_evidence_reference": {"$ref": "#/$defs/panelEvidenceReference"},
+    "supported_builds": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/supportedBuild"}
+    },
+    "input_bindings": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/slotBinding"}
+    },
+    "feedback_bindings": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/slotBinding"}
+    },
+    "display_bindings": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/slotBinding"}
+    },
+    "physical_io_bindings": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/slotBinding"}
+    },
+    "policies": {
+      "type": "object",
+      "required": [
+        "control_update",
+        "absolute_transform",
+        "smoothing",
+        "pickup",
+        "debounce",
+        "hold",
+        "encoder",
+        "feedback",
+        "display"
+      ],
+      "properties": {
+        "control_update": {"const": "one-update-per-16-sample-block-at-48000-hz"},
+        "absolute_transform": {"const": "raw-0-through-4095-to-q27-0-through-134217728-linear"},
+        "smoothing": {"const": "signed-error-arithmetic-shift-right-3-per-control-update"},
+        "pickup": {"const": "soft-crossing-or-within-16-raw-counts-then-latched"},
+        "debounce": {"const": "four-identical-control-updates"},
+        "hold": {"const": "1500-debounced-control-updates-single-event"},
+        "encoder": {"const": "official-falling-edge-a-direction-from-b-every-four-control-updates"},
+        "feedback": {"const": "instrument-state-to-led-at-control-update"},
+        "display": {"const": "instrument-display-to-sh1106-0x3c-four-line-text-buffer-32-ms-refresh"}
+      },
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "deviceReference": {
+      "type": "object",
+      "required": ["device_profile_id", "revision", "content_hash"],
+      "properties": {
+        "device_profile_id": {"type": "string", "pattern": "^schuss-device-profile-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "targetReference": {
+      "type": "object",
+      "required": ["compute_target_id", "revision", "content_hash"],
+      "properties": {
+        "compute_target_id": {"type": "string", "pattern": "^schuss-compute-target-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "backendReference": {
+      "type": "object",
+      "required": ["backend_id", "revision", "content_hash"],
+      "properties": {
+        "backend_id": {"type": "string", "pattern": "^schuss-backend-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "environmentReference": {
+      "type": "object",
+      "required": ["build_environment_id", "revision", "content_hash"],
+      "properties": {
+        "build_environment_id": {"type": "string", "pattern": "^schuss-build-environment-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "panelEvidenceReference": {
+      "type": "object",
+      "required": ["panel_evidence_packet_id", "revision", "content_hash"],
+      "properties": {
+        "panel_evidence_packet_id": {"type": "string", "pattern": "^schuss-panel-evidence-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "instrumentReference": {
+      "type": "object",
+      "required": ["instrument_id", "revision", "content_hash"],
+      "properties": {
+        "instrument_id": {"type": "string", "pattern": "^schuss-instrument-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "requestReference": {
+      "type": "object",
+      "required": ["build_request_id", "revision", "content_hash"],
+      "properties": {
+        "build_request_id": {"type": "string", "pattern": "^schuss-build-request-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "handlerReference": {
+      "type": "object",
+      "required": ["status", "build_handler_id", "revision", "content_hash"],
+      "properties": {
+        "status": {"const": "supported"},
+        "build_handler_id": {"type": "string", "pattern": "^schuss-build-handler-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "unsupportedHandler": {
+      "type": "object",
+      "required": ["status", "diagnostic_code", "fallback"],
+      "properties": {
+        "status": {"const": "unsupported"},
+        "diagnostic_code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "fallback": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "supportedBuild": {
+      "type": "object",
+      "required": ["build_request_reference", "instrument_reference", "handler"],
+      "properties": {
+        "build_request_reference": {"$ref": "#/$defs/requestReference"},
+        "instrument_reference": {"$ref": "#/$defs/instrumentReference"},
+        "handler": {
+          "oneOf": [
+            {"$ref": "#/$defs/handlerReference"},
+            {"$ref": "#/$defs/unsupportedHandler"}
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "slotBinding": {
+      "type": "object",
+      "required": ["binding_id", "slot_id", "binding_status", "runtime_locator", "evidence_source_ids", "rationale"],
+      "properties": {
+        "binding_id": {"type": "string", "pattern": "^runtime-binding-[0-9]{6}$"},
+        "slot_id": {"type": "string", "pattern": "^device-[a-z-]+-[0-9]{6}$"},
+        "binding_status": {"enum": ["bound", "intentionally-unavailable", "unresolved"]},
+        "runtime_locator": {"type": "string", "minLength": 1},
+        "evidence_source_ids": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^panel-source-[0-9]{6}$"}
+        },
+        "rationale": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

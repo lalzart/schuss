@@ -13,7 +13,8 @@ The validator dependency direction is fixed:
 validator_core
     |-- device_instrument_rules
     |-- component_graph_rules
-    `-- target_backend_build_rules
+    |-- target_backend_build_rules
+    `-- gills_mapping_rules
 
 aggregate_validator -> composes all three rule modules
 ```
@@ -66,7 +67,9 @@ ambient client state. Canonical output uses `schuss-canonical-json-v1`.
 
 `records.validate` returns separate device/instrument, component/graph,
 target/backend/build, and aggregate summaries. It does not discover or rewrite
-records after the operation context has been loaded.
+records after the operation context has been loaded. A Task 018 context also
+returns its Gills evidence/mapping/runtime summary; earlier contexts omit that
+not-applicable summary so their canonical bytes remain unchanged.
 
 `graph.inspect` returns the exact graph and exact component-contract closure.
 Implementation selection remains `not-evaluated`; lowering remains `not-run`.
@@ -231,6 +234,20 @@ diagnostics instead of treating the version mismatch as an internal failure.
 The separate Task 014 build-completion scripts enumerate the complete fixed
 `resolve`, `plan`, and `execute` option grammar; the accepted Task 011A root
 completion and Task 012A project-completion bytes remain unchanged.
+
+Task 018 additively supplies operation v6 `gills.inspect`. Its only input is
+one exact instrument ID/revision/content-hash reference. A successful result
+returns the exact device profile, instrument, panel evidence packet, total
+coverage report, runtime realization, build support, and Task 018 validation
+summary. Device, coverage, runtime, evidence, and build request must each
+resolve exactly once; any stale, absent, or ambiguous join fails closed.
+
+The existing `build.execute` operation and product command can select
+`schuss-build-handler-000003@1` for the exact mapped Task 018 request. Handler
+registration remains exact and has no fallback. The v6 inspection operation
+does not execute, access hardware, or infer a handler; it only exposes the
+same accepted closure consumed by planning and execution. Its detailed layer,
+mapping, and evidence rules are in `docs/GILLS_PANEL_RUNTIME_CONTRACTS.md`.
 
 Task 012B is retired. A future explicitly authorized UI client must consume
 these same project, graph, catalog, build, compiler, and diagnostic operations;

@@ -449,13 +449,18 @@ def _validate_inputs(
     graph: Mapping[str, Any],
     contracts: Iterable[Mapping[str, Any]],
     operation_specs: Iterable[Mapping[str, Any]],
+    expected_request_reference: Mapping[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
     plan_value = copy.deepcopy(dict(plan))
     graph_value = copy.deepcopy(dict(graph))
     if plan_value.get("status") != "success":
         raise ValueError("DIRECT_PLAN_NOT_SUCCESSFUL")
     request_reference = plan_value.get("input_closure", {}).get("build_request_reference", {})
-    if request_reference.get("build_request_id") != REQUEST_ID or request_reference.get("revision") != REQUEST_REVISION:
+    expected_request = dict(expected_request_reference) if expected_request_reference is not None else {
+        "build_request_id": REQUEST_ID,
+        "revision": REQUEST_REVISION,
+    }
+    if any(request_reference.get(key) != value for key, value in expected_request.items()):
         raise ValueError("DIRECT_BUILD_REQUEST_UNSUPPORTED")
     if {key: graph_value.get(key) for key in GRAPH_REFERENCE} != GRAPH_REFERENCE:
         raise ValueError("DIRECT_GRAPH_UNSUPPORTED")
@@ -927,16 +932,15 @@ extern "C" __attribute__((section(".boot"))) void xpatch_init(uint32_t firmware_
 '''
 
 
-def lower_gills_direct(
+def _lower_gills_direct(
     plan: Mapping[str, Any],
     graph: Mapping[str, Any],
     contracts: Iterable[Mapping[str, Any]],
     operation_specs: Iterable[Mapping[str, Any]],
+    expected_request_reference: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Lower only the accepted complete Gills graph through the direct path."""
-
     plan_value, contracts_by_id, specs_by_opcode = _validate_inputs(
-        plan, graph, contracts, operation_specs
+        plan, graph, contracts, operation_specs, expected_request_reference
     )
     graph_value = copy.deepcopy(dict(graph))
     module = _normalized_module(plan_value, graph_value, specs_by_opcode)
@@ -989,3 +993,33 @@ def lower_gills_direct(
         "ambient_discovery_used": False,
         "authoritative_records_mutated": False,
     }
+
+
+def lower_gills_direct(
+    plan: Mapping[str, Any],
+    graph: Mapping[str, Any],
+    contracts: Iterable[Mapping[str, Any]],
+    operation_specs: Iterable[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Lower only the accepted Task 016 request through the direct path."""
+
+    return _lower_gills_direct(plan, graph, contracts, operation_specs)
+
+
+def lower_gills_direct_successor(
+    plan: Mapping[str, Any],
+    graph: Mapping[str, Any],
+    contracts: Iterable[Mapping[str, Any]],
+    operation_specs: Iterable[Mapping[str, Any]],
+    expected_request_reference: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Reuse the Task 016 DSP semantics for one exact immutable successor."""
+
+    expected = copy.deepcopy(dict(expected_request_reference))
+    if set(expected) != {"build_request_id", "revision", "content_hash"}:
+        raise ValueError("DIRECT_SUCCESSOR_REQUEST_REFERENCE_INVALID")
+    if expected["build_request_id"] != REQUEST_ID or expected["revision"] <= REQUEST_REVISION:
+        raise ValueError("DIRECT_SUCCESSOR_REQUEST_UNSUPPORTED")
+    return _lower_gills_direct(
+        plan, graph, contracts, operation_specs, expected
+    )
