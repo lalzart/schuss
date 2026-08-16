@@ -15,6 +15,27 @@ deterministic local level-5 ARM build, and records the separately authorized
 volatile-RAM connected-device observation at level 6. No product task is
 automatically active after this completion.
 
+Task 022 Phase A is complete for exact artifact successor record set
+`schuss-record-set-000014@1`. It adds no instrument, mapping, runtime
+realization, product build request, or handler. A separate non-product panel
+diagnostic was generated and ARM-linked twice in fresh roots and processes,
+with exact 75,504-byte ELF SHA-256
+`2f003cde514dcb48ecb09ecc0d61f880bb1ecdec5761ddb8b737bc3c68571231`
+and exact 5,552-byte volatile upload binary SHA-256
+`7c843acb42b17c13d0c535834d12ab620d312b451fd4ee435733e4acf7321113`.
+Exactly one approved diagnostic volatile-RAM upload was performed on the exact
+Task 021 board at `0x20011000`. Identity, firmware, byte-for-byte RAM readback,
+start acknowledgement, three responsiveness probes, flags zero, upright and
+stable OLED startup, all six LED channels, all ten pot slot identities, smooth
+non-frozen response, and approximate `0000` to `4095` travel were observed.
+Stationary ADC variation of approximately 5 to 15 counts exceeded the fixed
+four-count last-moved threshold, so inactive pots repeatedly stole the OLED
+event focus and exact per-pot low/middle/high telemetry could not be retained.
+The retained result is `POT_EVENT_FOCUS_UNSTABLE`; promotion stopped before a
+complete sweep and level 6 was not earned. Approval gate 2 is closed. No Task
+021 replacement upload, second upload, reset, flash, SD-card write, persistent
+install, staging, commit, or push occurred.
+
 Task 012B remains retired. The object drawer and transparent graph canvas are
 an unnumbered future client milestone that requires explicit user
 authorization.
@@ -34,6 +55,7 @@ of Task 018 or Task 021.
 | Curated core | Twelve reviewed families and two headless reference instruments; missing direct semantics fail closed | Level 2 |
 | Full Gills panel/runtime | Authenticated 63-slot census, total mappings/coverage, exact runtime closure, and one mapped direct build | Level 5 |
 | Corrected Gills OLED/runtime | Versioned DMA-safe command transport plus one exact volatile-RAM board/OLED observation | Level 6 |
+| Gills panel diagnostic | Separate omitted-instrument telemetry source, deterministic host vectors, exact ARM artifacts, and one retained failed connected observation | Level 5; connected attempt failed before level 6 |
 
 The accepted Task 018 result proves deterministic local ARM compile/link for
 one exact mapped graph/instrument/device/runtime closure. Its exact original
@@ -82,8 +104,10 @@ Task 021 established all of the following:
 
 - The two Task 017 successors do not lower through the direct frontend: one is
   unsupported and one has unresolved compound internals.
-- No complete physical-control sweep was performed; level 6 is limited to the
-  exact board execution and OLED observation recorded by Task 021.
+- No complete physical-control sweep was performed. Task 022 retained the
+  connected `POT_EVENT_FOCUS_UNSTABLE` result after the exact per-pot telemetry
+  surface failed; buttons, encoder, final device checks, Task 021 mapping, and
+  both proposed level-6 claims remain `not-run`.
 - Real-time/resource and audible evidence levels 7-8 remain `not-run`.
 - The authenticated Task 009 local content store is ignored and must be
   validated separately when present; a clean checkout cannot claim that local
@@ -92,12 +116,14 @@ Task 021 established all of the following:
 - The Task 011A CLI output-golden test is already stale on clean `HEAD`: its
   retained golden expects input-closure hash `291b695c...`, while current
   Task 011A execution emits `7aff3534...`. Task 021 preserves that unrelated
-  historical golden and does not claim to repair it.
+  historical golden; Task 022 also preserves it and does not claim to repair
+  it.
 
-## Next decision
+## Current failed gate and next decision
 
-Task 021 completion does not automatically start sampling, another target, or
-UI work. The next decision must choose a separately bounded control-panel,
-real-time/resource, or audible proof step, or explicitly authorize a different
-product direction. Task 019, Task 020, and the future client milestone remain
-deferred.
+Task 022 is stopped at the failed diagnostic result. Approval gate 2 is closed;
+the contract does not authorize a corrected diagnostic, another upload, the
+Task 021 product-binary replacement, firmware flash, SD-card write, persistent
+installation, reset, or Git publication. Any diagnostic successor or repeated
+hardware procedure requires a new bounded decision and explicit approval.
+Tasks 019, Task 020, and the future client milestone remain deferred.

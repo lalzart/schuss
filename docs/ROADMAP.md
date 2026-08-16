@@ -68,6 +68,15 @@ expanding only the direct semantics needed by a chosen instrument, beginning
 sampling/assets for a proven runtime, adding another target/device, or later
 authorizing the client milestone. No option is pre-authorized by this roadmap.
 
+Task 022 is the separately authorized bounded control-panel evidence task. Its
+offline diagnostic candidate reaches level 5. Exactly one approved
+volatile-RAM upload retained `POT_EVENT_FOCUS_UNSTABLE`: the board, OLED, LED
+channels, pot identities, and approximate full pot travel were observed, but
+the last-moved telemetry surface could not retain the exact per-pot matrix.
+Promotion stopped before level 6 and the Task 021 replacement gate is closed.
+This result does not alter the ordinary product sequence above or activate
+Tasks 019, 020, or the UI milestone.
+
 ## Staying on track
 
 - Prefer an end-to-end executable musical outcome over accumulating catalog or

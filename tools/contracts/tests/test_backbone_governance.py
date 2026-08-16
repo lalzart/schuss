@@ -38,7 +38,11 @@ class BackboneGovernanceTest(unittest.TestCase):
         )
         self.assertEqual("none", summary["active_product_task"])
         self.assertEqual(
-            "task021-corrected-gills-level-6-satisfied", summary["promotion_gate"]
+            "022-failed-diagnostic-promotion-stopped",
+            summary["active_evidence_task"],
+        )
+        self.assertEqual(
+            "task022-failed-no-promotion", summary["promotion_gate"]
         )
         self.assertEqual(
             ["013", "014", "015", "016", "017", "018", "019", "020", "021"],
@@ -48,6 +52,10 @@ class BackboneGovernanceTest(unittest.TestCase):
         self.assertEqual(
             "complete-corrected-connected-level-6",
             summary["task_statuses"]["021"],
+        )
+        self.assertEqual(
+            "failed-connected-diagnostic-level-6-not-earned",
+            summary["task_statuses"]["022"],
         )
 
     def test_negative_governance_fixtures_fail_closed(self):

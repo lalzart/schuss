@@ -169,6 +169,42 @@ The percussion successor continues to return
 continues to return `COMPILER_BINDING_UNSUPPORTED`. These stable diagnostics
 have no fallback and do not weaken the successful mapped reference.
 
+## Task 022 diagnostic boundary
+
+Task 022 preserves the complete Task 021 record set and adds exact artifact
+successor record set `schuss-record-set-000014@1`. The diagnostic identity is
+`schuss-panel-diagnostic-000001@1`. It is explicitly non-product and has no
+instrument record, mapping successor, runtime realization, product build
+request, build handler, or CLI selector.
+
+The diagnostic source reuses the exact Task 021 parent plan and authenticated
+direct compiler/toolchain boundary only as immutable inputs. It replaces the
+runtime call site with silent panel telemetry, retains separate DMA-visible
+two-byte command and 129-byte page buffers, scans six LED channels
+automatically, and exposes raw/zone telemetry for all ten pots plus all button
+and encoder gestures. Two fresh roots and processes reproduce generated C++
+SHA-256 `f00bd3f1653a02a94c8183b913ed6619e2add4f35cc623af79143d88318c1ca3`,
+target ELF SHA-256
+`2f003cde514dcb48ecb09ecc0d61f880bb1ecdec5761ddb8b737bc3c68571231`,
+and volatile upload binary SHA-256
+`7c843acb42b17c13d0c535834d12ab620d312b451fd4ee435733e4acf7321113`.
+
+The deterministic build remains local level-5 evidence. After exactly one
+approved volatile-RAM upload, the exact board passed identity, firmware, RAM
+readback, start, three responsiveness probes, and flags-zero checks. The user
+confirmed upright/stable startup text, all six LED channels, correct identities
+and smooth non-frozen response for all ten pots, and approximate `0000` to
+`4095` travel.
+
+Stationary ADC variation of approximately 5 to 15 raw counts exceeded the
+diagnostic's fixed four-count last-moved threshold. Inactive pot slots then
+repeatedly replaced the OLED event line, preventing retention of the required
+exact per-pot low/middle/high results. The canonical connected result is
+`POT_EVENT_FOCUS_UNSTABLE`; it does not claim a hardware fault. The sweep and
+promotion stopped before buttons, encoder, final device checks, a complete
+summary, or level 6. Approval gate 2 is closed, and the Task 021 product binary
+was not uploaded. Levels 7 and 8 remain `not-run`.
+
 ## Reproduction
 
 ```bash
@@ -182,6 +218,11 @@ python3 -m unittest tools.contracts.tests.test_task021_dma_safe_oled
 python3 tools/contracts/run_task021.py --check
 python3 tools/contracts/validate_task021.py
 python3 tools/contracts/validate_task021_contract.py
+python3 tools/contracts/generate_task022_records.py --check
+python3 -m unittest tools.contracts.tests.test_task022_panel_diagnostic
+python3 tools/contracts/run_task022.py --check
+python3 tools/contracts/validate_task022.py
+python3 tools/contracts/validate_task022_contract.py
 python3 tools/contracts/validate_backbone_governance.py
 ```
 

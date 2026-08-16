@@ -28,6 +28,7 @@ ADR_0013 = "docs/decisions/0013-version-gills-runtime-correction-and-level6-evid
 TASK_012B = "docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md"
 TASK_018 = "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md"
 TASK_021 = "docs/tasks/021-gills-dma-safe-oled-and-connected-device-evidence.md"
+TASK_022 = "docs/tasks/022-connected-gills-control-panel-evidence.md"
 
 DOCUMENT_PATHS = (
     README,
@@ -46,6 +47,7 @@ DOCUMENT_PATHS = (
     TASK_012B,
     TASK_018,
     TASK_021,
+    TASK_022,
 )
 
 ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 22))
@@ -54,6 +56,7 @@ EXPECTED_TASK_FILENAMES = {
     "012b-object-drawer-and-transparent-graph-canvas.md",
     "018-full-gills-implementation-and-parameter-control-mapping.md",
     "021-gills-dma-safe-oled-and-connected-device-evidence.md",
+    "022-connected-gills-control-panel-evidence.md",
 }
 LETTERED_ALIAS = re.compile(r"\bTasks?\s+(01[3-9]|02[01])[A-Z](?:-[A-Z])?\b", re.IGNORECASE)
 INFORMAL_ALIAS = re.compile(r"(?<![A-Za-z0-9])B6(?![A-Za-z0-9])", re.IGNORECASE)
@@ -276,6 +279,39 @@ def validate_documents(
         ),
     )
 
+    task22_status = _leading_status(documents.get(TASK_022, "")) or ""
+    for fragment in (
+        "Phase A completed on 2026-08-16",
+        "deterministic local evidence level 5",
+        "Phase B stopped after exactly one approved diagnostic volatile-RAM upload",
+        "POT_EVENT_FOCUS_UNSTABLE",
+        "Approval gate 2 is closed",
+    ):
+        if fragment not in task22_status:
+            diagnostics.append(
+                _diagnostic(
+                    "TASK_022_STATUS_DRIFT",
+                    TASK_022,
+                    f"live task status must contain: {fragment}",
+                )
+            )
+    _require_phrases(
+        diagnostics,
+        code="TASK_022_APPROVAL_BOUNDARY_INVALID",
+        document=TASK_022,
+        scope=documents.get(TASK_022, ""),
+        phrases=(
+            "No device command is permitted in Phase A.",
+            "Approval gate 1: diagnostic volatile-RAM upload",
+            "Approval gate 2: immutable Task 021 product-binary upload",
+            "exactly one approved diagnostic volatile-RAM upload",
+            "POT_EVENT_FOCUS_UNSTABLE",
+            "Approval gate 2 is closed",
+            "A partial panel sweep is not complete level-6 panel evidence.",
+            "Levels 7 and 8 remain `not-run`",
+        ),
+    )
+
     status_rules = (
         "This document is the single authority for Schuss's current development state.",
         "Task 018 is complete for exact record set `schuss-record-set-000012@1`.",
@@ -287,6 +323,11 @@ def validate_documents(
         "dedicated DMA-visible command buffer",
         "volatile-RAM connected-device observation at level 6",
         "Real-time/resource and audible evidence levels 7-8 remain `not-run`",
+        "Task 022 Phase A is complete for exact artifact successor record set `schuss-record-set-000014@1`.",
+        "Exactly one approved diagnostic volatile-RAM upload was performed",
+        "The retained result is `POT_EVENT_FOCUS_UNSTABLE`",
+        "promotion stopped before a complete sweep and level 6 was not earned",
+        "Approval gate 2 is closed",
     )
     _require_phrases(
         diagnostics,
@@ -451,6 +492,7 @@ def validate_documents(
         TASK_012B: documents.get(TASK_012B, ""),
         TASK_018: documents.get(TASK_018, ""),
         TASK_021: documents.get(TASK_021, ""),
+        TASK_022: documents.get(TASK_022, ""),
     }
     for document, scope in alias_scopes.items():
         matches = sorted(set(LETTERED_ALIAS.findall(scope)))
@@ -486,14 +528,15 @@ def validate_documents(
     diagnostics.sort(key=lambda item: (item["code"], item["document"], item["detail"]))
     return {
         "active_product_task": "none",
+        "active_evidence_task": "022-failed-diagnostic-promotion-stopped",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
         "authoritative_decisions": ["ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013"],
         "checked_documents": len([path for path in DOCUMENT_PATHS if path in documents]),
         "current_status_source": STATUS,
         "diagnostics": diagnostics,
         "historical_context_policy": "completed-task-contracts-indexed-in-history-and-git",
-        "promotion_gate": "task021-corrected-gills-level-6-satisfied",
-        "schema_version": "backbone-governance-summary-v6",
+        "promotion_gate": "task022-failed-no-promotion",
+        "schema_version": "backbone-governance-summary-v8",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -506,6 +549,7 @@ def validate_documents(
             "019": "deferred-not-scheduled",
             "020": "deferred-not-scheduled",
             "021": "complete-corrected-connected-level-6",
+            "022": "failed-connected-diagnostic-level-6-not-earned",
         },
         "ui_milestone_status": "unnumbered-explicit-authorization-required",
     }

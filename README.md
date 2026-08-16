@@ -23,11 +23,17 @@ one exact mapped level-5 runtime closure. The
 [Task 021 corrective contract](docs/tasks/021-gills-dma-safe-oled-and-connected-device-evidence.md)
 preserves those bytes, adds a versioned DMA-safe OLED command path, and retains
 one separately authorized exact connected-device observation at level 6.
+The [Task 022 control-panel evidence contract](docs/tasks/022-connected-gills-control-panel-evidence.md)
+completed its offline diagnostic build at level 5, then retained a failed
+connected result after exactly one approved volatile-RAM upload. Board start,
+OLED, LEDs, all ten pot slots, and approximate full pot travel were observed,
+but ADC jitter destabilized last-moved telemetry; promotion stopped before
+level 6 and the Task 021 replacement gate is closed.
 
 The reviewed Task 017 core remains structurally useful but not yet generally
 executable. Its two full-panel successors retain stable unsupported
-diagnostics. Complete control-panel, real-time, and audible proof for the
-successful mapped reference remain separate and require new authorization.
+diagnostics. Complete connected control-panel proof was not earned; real-time
+and audible proof also remain `not-run` and require new authorization.
 
 ## Start here
 
@@ -80,6 +86,8 @@ python3 -m unittest discover -s tools/contracts/tests
 python3 tools/contracts/validate_backbone_governance.py
 python3 tools/contracts/validate_task018_contract.py
 python3 tools/contracts/validate_task021_contract.py
+python3 tools/contracts/validate_task022_contract.py
+python3 tools/contracts/validate_task022.py
 ```
 
 Some authenticated legacy checks additionally require the ignored local Task

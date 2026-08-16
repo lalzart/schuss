@@ -20,13 +20,17 @@ python3 tools/contracts/validate_task016.py
 python3 tools/contracts/validate_task017_contract.py
 python3 tools/contracts/validate_task017.py
 python3 tools/contracts/validate_task018_contract.py
+python3 tools/contracts/validate_task021_contract.py
+python3 tools/contracts/validate_task022_contract.py
+python3 tools/contracts/validate_task022.py
 python3 tools/contracts/validate_backbone_governance.py
 python3 -m unittest discover -s tools/contracts/tests
 ```
 
 `generate_task013_record_set.py --check` through
-`generate_task017_records.py --check`, `run_task016.py --check`, and
-`run_task017.py --check` are also read-only freshness/reproduction checks.
+`generate_task017_records.py --check`, `run_task016.py --check`,
+`run_task017.py --check`, `generate_task022_records.py --check`, and
+`run_task022.py --check` are also read-only freshness/reproduction checks.
 
 The Task 016/017 contract validators authenticate retained ADR/evidence
 boundaries; completed task Markdown is intentionally archived through Git.
@@ -63,6 +67,15 @@ handler, and mapped Gills panel handler remain exact boundaries beneath the
 same graph/target/build contracts, with no silent fallback. Task 018 adds
 `gills.inspect`, total panel/coverage validation, and a separate runtime
 realization without making the device profile a graph or backend.
+
+Task 022 deliberately does not register a product build request, runtime
+realization, instrument, handler, or CLI selector for its diagnostic. Its
+standalone exact builder authenticates the Task 021 parent plan and direct ARM
+toolchain, then produces an omitted-instrument, silent-output panel telemetry
+candidate. The retained connected observation records exactly one approved
+volatile-RAM upload and `POT_EVENT_FOCUS_UNSTABLE`; no level-6 promotion or
+Task 021 replacement upload occurred. Any new device action remains separately
+approval-gated.
 
 Every check must keep structural, lowering, generation, ARM compile/link,
 connected-device, real-time, and audible evidence distinct. See
