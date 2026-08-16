@@ -24,8 +24,10 @@ ADR_0009 = "docs/decisions/0009-resume-task-012b-after-durable-project-authoring
 ADR_0010 = "docs/decisions/0010-restore-backend-first-sequence-and-retire-task-012b.md"
 ADR_0011 = "docs/decisions/0011-preserve-legacy-equivalent-direct-semantics.md"
 ADR_0012 = "docs/decisions/0012-require-executable-gills-promotion.md"
+ADR_0013 = "docs/decisions/0013-version-gills-runtime-correction-and-level6-evidence.md"
 TASK_012B = "docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md"
 TASK_018 = "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md"
+TASK_021 = "docs/tasks/021-gills-dma-safe-oled-and-connected-device-evidence.md"
 
 DOCUMENT_PATHS = (
     README,
@@ -40,17 +42,20 @@ DOCUMENT_PATHS = (
     ADR_0010,
     ADR_0011,
     ADR_0012,
+    ADR_0013,
     TASK_012B,
     TASK_018,
+    TASK_021,
 )
 
-ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 21))
+ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 22))
 EXPECTED_TASK_FILENAMES = {
     "README.md",
     "012b-object-drawer-and-transparent-graph-canvas.md",
     "018-full-gills-implementation-and-parameter-control-mapping.md",
+    "021-gills-dma-safe-oled-and-connected-device-evidence.md",
 }
-LETTERED_ALIAS = re.compile(r"\bTasks?\s+(01[3-9]|020)[A-Z](?:-[A-Z])?\b", re.IGNORECASE)
+LETTERED_ALIAS = re.compile(r"\bTasks?\s+(01[3-9]|02[01])[A-Z](?:-[A-Z])?\b", re.IGNORECASE)
 INFORMAL_ALIAS = re.compile(r"(?<![A-Za-z0-9])B6(?![A-Za-z0-9])", re.IGNORECASE)
 TASK_012B_RESURRECTION = re.compile(
     r"\bTask 012B (?:is|becomes|remains) (?:an? )?"
@@ -142,6 +147,7 @@ def validate_documents(
         ADR_0010: "accepted",
         ADR_0011: "accepted",
         ADR_0012: "accepted",
+        ADR_0013: "accepted",
     }
     for path, expected in expected_adr_statuses.items():
         if _metadata(documents.get(path, ""), "Status") != expected:
@@ -167,6 +173,7 @@ def validate_documents(
         "`0010-restore-backend-first-sequence-and-retire-task-012b.md` - accepted; current task-routing authority",
         "`0011-preserve-legacy-equivalent-direct-semantics.md` - accepted; current direct-semantics authority",
         "`0012-require-executable-gills-promotion.md` - accepted; current Task 018 promotion authority",
+        "`0013-version-gills-runtime-correction-and-level6-evidence.md` - accepted; current Task 021 corrective and level-6 authority",
     )
     _require_phrases(
         diagnostics,
@@ -239,6 +246,36 @@ def validate_documents(
         ),
     )
 
+    task21_status = _leading_status(documents.get(TASK_021, "")) or ""
+    for fragment in (
+        "completed on 2026-08-16",
+        "deterministic local evidence level 5",
+        "separately retained connected-device evidence level 6",
+        "ADR 0013",
+    ):
+        if fragment not in task21_status:
+            diagnostics.append(
+                _diagnostic(
+                    "TASK_021_STATUS_DRIFT",
+                    TASK_021,
+                    f"live task status must contain: {fragment}",
+                )
+            )
+    _require_phrases(
+        diagnostics,
+        code="TASK_021_CORRECTIVE_BOUNDARY_INVALID",
+        document=TASK_021,
+        scope=documents.get(TASK_021, ""),
+        phrases=(
+            "Preserve every Task 018 record",
+            "dedicated two-byte `.sram2` buffer",
+            "mechanical instrument/coverage successors",
+            "No implicit fallback",
+            "Levels 7 and 8 remain `not-run`",
+            "firmware flash, SD-card write",
+        ),
+    )
+
     status_rules = (
         "This document is the single authority for Schuss's current development state.",
         "Task 018 is complete for exact record set `schuss-record-set-000012@1`.",
@@ -246,6 +283,10 @@ def validate_documents(
         "reaches evidence level 5 through the exact mapped handler",
         "levels 6-8 remain `not-run`",
         "Tasks 019 and 020 are deferred and not automatically activated",
+        "Task 021 is complete for exact record set `schuss-record-set-000013@1`.",
+        "dedicated DMA-visible command buffer",
+        "volatile-RAM connected-device observation at level 6",
+        "Real-time/resource and audible evidence levels 7-8 remain `not-run`",
     )
     _require_phrases(
         diagnostics,
@@ -296,7 +337,7 @@ def validate_documents(
             )
 
     roadmap_rows = _roadmap_rows(documents.get(ROADMAP, ""))
-    for number in range(13, 21):
+    for number in range(13, 22):
         label = str(number)
         if len(roadmap_rows.get(label, [])) != 1:
             diagnostics.append(
@@ -315,6 +356,7 @@ def validate_documents(
         "18": "complete; mapped local level 5",
         "19": "deferred; not scheduled",
         "20": "deferred; not scheduled",
+        "21": "complete; corrected level 6",
     }
     for label, expected in expected_roadmap_status.items():
         rows = roadmap_rows.get(label, [])
@@ -345,6 +387,19 @@ def validate_documents(
             "Executable promotion",
             "reach evidence level 5",
             "does not automatically activate Task 019 or Task 020",
+        ),
+    )
+    _require_phrases(
+        diagnostics,
+        code="ADR_0013_CORRECTIVE_GATE_DRIFT",
+        document=ADR_0013,
+        scope=_section(documents.get(ADR_0013, ""), "## Decision"),
+        phrases=(
+            "Task 021 is a separately authorized corrective successor",
+            "preserves every Task 018 v1 byte",
+            "dedicated two-byte command buffer in `.sram2`",
+            "separate exact evidence claim",
+            "does not activate Task 019, Task 020, or UI work",
         ),
     )
 
@@ -392,8 +447,10 @@ def validate_documents(
         ADR_0010: _section(documents.get(ADR_0010, ""), "## Decision"),
         ADR_0011: documents.get(ADR_0011, ""),
         ADR_0012: documents.get(ADR_0012, ""),
+        ADR_0013: documents.get(ADR_0013, ""),
         TASK_012B: documents.get(TASK_012B, ""),
         TASK_018: documents.get(TASK_018, ""),
+        TASK_021: documents.get(TASK_021, ""),
     }
     for document, scope in alias_scopes.items():
         matches = sorted(set(LETTERED_ALIAS.findall(scope)))
@@ -430,13 +487,13 @@ def validate_documents(
     return {
         "active_product_task": "none",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
-        "authoritative_decisions": ["ADR 0010", "ADR 0011", "ADR 0012"],
+        "authoritative_decisions": ["ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013"],
         "checked_documents": len([path for path in DOCUMENT_PATHS if path in documents]),
         "current_status_source": STATUS,
         "diagnostics": diagnostics,
         "historical_context_policy": "completed-task-contracts-indexed-in-history-and-git",
-        "promotion_gate": "mapped-gills-level-5-satisfied",
-        "schema_version": "backbone-governance-summary-v5",
+        "promotion_gate": "task021-corrected-gills-level-6-satisfied",
+        "schema_version": "backbone-governance-summary-v6",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -448,6 +505,7 @@ def validate_documents(
             "018": "complete-mapped-local-level-5",
             "019": "deferred-not-scheduled",
             "020": "deferred-not-scheduled",
+            "021": "complete-corrected-connected-level-6",
         },
         "ui_milestone_status": "unnumbered-explicit-authorization-required",
     }

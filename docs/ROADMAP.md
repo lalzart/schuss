@@ -30,6 +30,7 @@ one row does not authorize the next.
 | 18 | Authenticated full Gills model, mapping/runtime closure, and one executable mapped reference | Complete; mapped local level 5 |
 | 19 | Sampling and asset management | Deferred; not scheduled |
 | 20 | Additional compute targets and devices | Deferred; not scheduled |
+| 21 | Versioned DMA-safe Gills OLED runtime and exact connected-device evidence | Complete; corrected level 6 |
 | Deferred UI | Object drawer and transparent graph canvas | Unnumbered; explicit authorization required |
 
 ## Completed Task 018 gates
@@ -46,20 +47,23 @@ Task 018 closed these independent gates in order:
    the accepted direct path and reach evidence level 5. Unsupported Task 017
    references remain valid diagnostics but cannot satisfy this gate.
 
-The retained evidence performs no connected-device, real-time, audible,
-upload, or flash action.
+The retained Task 018 evidence performs no connected-device, real-time,
+audible, upload, or flash action.
 
-## Post-Task 018 product evidence gate
+## Completed Task 021 corrective gate
 
-Task 018 completion does not automatically activate Task 019 or Task 020. The
-next decision starts with a separately authorized product-evidence proposal for
-the exact mapped Gills closure:
+The separately authorized Task 021 gate preserved every Task 018 byte, fixed
+only the DMA-inaccessible OLED command payload through exact successors, and
+repeated the Executable promotion path to reach evidence level 5. It then
+retained one exact connected-device observation at level 6. This does not
+automatically activate Task 019 or Task 020.
 
-- level 6: connected-device and panel operation;
-- level 7: measured real-time/resource behavior; and
-- level 8: controlled audible/listening evidence.
+- level 6: passed for one exact volatile-RAM execution, responsiveness probe,
+  and upright OLED word observation;
+- level 7: `not-run` for measured real-time/resource behavior; and
+- level 8: `not-run` for controlled audible/listening evidence.
 
-Those results determine the next bounded task. Plausible outcomes include
+Further results require another explicit bounded task. Plausible outcomes include
 expanding only the direct semantics needed by a chosen instrument, beginning
 sampling/assets for a proven runtime, adding another target/device, or later
 authorizing the client milestone. No option is pre-authorized by this roadmap.

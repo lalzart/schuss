@@ -40,6 +40,22 @@ Every reference includes ID, revision, and content hash. Filesystem order,
 display names, mutable source paths, and implicit latest-revision selection are
 not resolution mechanisms.
 
+## Exact Task 021 corrective closure
+
+ADR 0013 preserves the complete Task 018 closure above and adds
+`schuss-record-set-000013@1`. The corrected exact path is:
+
+- `schuss-instrument-000002@3` and `schuss-coverage-report-000001@2`:
+  mechanical exact-identity successors with unchanged facets and mappings;
+- `schuss-build-request-000002@5`;
+- `schuss-build-handler-000003@2`; and
+- `schuss-runtime-realization-000001@2`.
+
+The mechanical instrument/coverage successors prevent the instrument-only
+inspection operation from having to choose implicitly between runtime
+revisions. `schuss-instrument-000002@2` still resolves exactly to the Task 018
+runtime, while revision 3 resolves exactly to the Task 021 runtime.
+
 ## Panel evidence and census
 
 The evidence packet pins the Gills hardware repository at commit
@@ -83,6 +99,12 @@ event after 1,500 debounced updates. The encoder follows the reviewed falling
 edge-A/direction-from-B algorithm every four control updates. The OLED uses a
 four-line text buffer and a 32 ms refresh thread.
 
+Task 018 allocated the two-byte OLED command payload on the OLED thread stack
+in CCM. The Task 021 successor instead allocates `SchussOledCommand[2]` in
+`.sram2`, which is visible to the DMA-backed I2C path. It does not reuse
+`SchussOledTx`: the 129-byte page buffer remains independent and byte zero is
+set to the `0x40` data-control value before every page transfer.
+
 Every other accepted slot and every public instrument facet is present in a
 coverage report as mapped, intentionally unused with rationale, or unresolved.
 Absence is never coverage. The generated C++ reads and smooths all ten pots,
@@ -110,7 +132,7 @@ goldens byte-for-byte as semantic values. It adds separate panel-runtime,
 mapping-source-map, host-vector, coverage, and runtime-realization artifacts;
 the panel code does not introduce new DSP operations.
 
-## Evidence boundary
+## Task 018 evidence boundary
 
 The exact mapped executable builds twice in fresh roots and fresh processes
 through deterministic local ARM compile/link. Evidence levels 1-5 pass:
@@ -118,6 +140,29 @@ schema/identity, graph/planning, lowering, artifact generation, and ARM
 compile/link. Levels 6-8 remain `not-run`: no connected device, control-panel
 operation, real-time/resource measurement, or audible/listening validation was
 performed.
+
+## Task 021 evidence boundary
+
+Task 021 repeats the corrected build twice in fresh roots and processes.
+Generated C++ SHA-256 is
+`e69155998e91c7c3af6b6e0aaebbac965f4cf822b67382f25de5776453af2928`;
+target ELF SHA-256 is
+`4f9bd68f5f71fc9d5bf70bd88988e7e20ff980fb46a886beff52f60c968874de`.
+Build execution itself still reports levels 1-5 passed and levels 6-8
+`not-run`.
+
+A separate `schuss-evidence-claim-000037@1` records level 6 for the exact
+corrected instrument and target executable. On Ksoloti Core USB serial
+`003D00363532511735393330`, firmware `1.1.0.0` CRC `5021D42A`, the derived
+6,440-byte binary was uploaded to volatile RAM at `0x20011000`, read back
+byte-for-byte, acknowledged start, and passed three responsiveness probes over
+six seconds with flags zero. The user confirmed the display was upright and
+showed `SCHUSS`, `BLEND`, `PICKUP`, and `TASK018`.
+
+That claim does not establish a complete control sweep, audio behavior,
+real-time margin, endurance, persistence, electrical safety, or release
+readiness. Levels 7 and 8 remain `not-run`; no firmware flash or SD-card write
+was performed.
 
 The percussion successor continues to return
 `COMPILER_COMPOUND_INTERNAL_BINDING_UNRESOLVED`; the effects successor
@@ -132,6 +177,11 @@ python3 -m unittest tools.contracts.tests.test_task018_gills_mapping
 python3 tools/contracts/run_task018.py --check
 python3 tools/contracts/validate_task018.py
 python3 tools/contracts/validate_task018_contract.py
+python3 tools/contracts/generate_task021_records.py --check
+python3 -m unittest tools.contracts.tests.test_task021_dma_safe_oled
+python3 tools/contracts/run_task021.py --check
+python3 tools/contracts/validate_task021.py
+python3 tools/contracts/validate_task021_contract.py
 python3 tools/contracts/validate_backbone_governance.py
 ```
 

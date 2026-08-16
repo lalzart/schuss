@@ -1,0 +1,516 @@
+#include "xpatch.h"
+
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
+int32buffer AudioInputLeft, AudioInputRight, AudioOutputLeft, AudioOutputRight;
+
+static volatile int32_t SchussBlendInputQ27;
+
+
+static const int32_t SchussQ27Scale = (1 << 27);
+static const uint16_t SchussAdcMax = 4095;
+
+struct SchussButtonRuntime {
+  bool candidate;
+  bool stable;
+  bool hold_sent;
+  uint16_t candidate_updates;
+  uint16_t held_updates;
+};
+
+struct SchussPanelRuntime {
+  int32_t smoothed_q27[10];
+  uint16_t prior_pickup_raw;
+  bool pickup_sample_valid;
+  bool pickup_armed;
+  SchussButtonRuntime buttons[5];
+  int32_t encoder_value;
+  bool encoder_a_last;
+  uint8_t encoder_scan_counter;
+  char display_text[44];
+  Thread* oled_thread;
+};
+
+static SchussPanelRuntime Panel;
+static WORKING_AREA(SchussOledWorkingArea, 192);
+static uint8_t SchussOledTx[129] __attribute__((section(".sram2")));
+static uint8_t SchussOledCommand[2] __attribute__((section(".sram2")));
+static uint8_t SchussOledRx[1] __attribute__((section(".sram2")));
+
+static int32_t schuss_raw_to_q27(uint16_t raw) {
+  return (int32_t)(((int64_t)raw * SchussQ27Scale) / SchussAdcMax);
+}
+
+static uint16_t schuss_q27_to_raw(int32_t value) {
+  value = value < 0 ? 0 : (value > SchussQ27Scale ? SchussQ27Scale : value);
+  return (uint16_t)(((int64_t)value * SchussAdcMax) / SchussQ27Scale);
+}
+
+static uint8_t schuss_button_update(SchussButtonRuntime* state, bool raw) {
+  uint8_t events = 0;
+  if (raw == state->candidate) {
+    if (state->candidate_updates < 4) ++state->candidate_updates;
+  } else {
+    state->candidate = raw;
+    state->candidate_updates = 1;
+  }
+  if (state->candidate_updates == 4 && state->stable != state->candidate) {
+    state->stable = state->candidate;
+    state->held_updates = 0;
+    state->hold_sent = false;
+    events |= state->stable ? 1 : 2;
+  }
+  if (state->stable) {
+    if (state->held_updates < 1500) ++state->held_updates;
+    if (state->held_updates >= 1500 && !state->hold_sent) {
+      state->hold_sent = true;
+      events |= 4;
+    }
+  }
+  return events;
+}
+
+static uint8_t schuss_glyph_column(char value, uint8_t column) {
+  static const uint8_t digits[10][5] = {
+    {0x3E,0x51,0x49,0x45,0x3E},{0x00,0x42,0x7F,0x40,0x00},{0x42,0x61,0x51,0x49,0x46},{0x21,0x41,0x45,0x4B,0x31},{0x18,0x14,0x12,0x7F,0x10},
+    {0x27,0x45,0x45,0x45,0x39},{0x3C,0x4A,0x49,0x49,0x30},{0x01,0x71,0x09,0x05,0x03},{0x36,0x49,0x49,0x49,0x36},{0x06,0x49,0x49,0x29,0x1E}
+  };
+  if (column >= 5) return 0;
+  if (value >= '0' && value <= '9') return digits[value - '0'][column];
+  switch (value) {
+    case 'A': { static const uint8_t v[5]={0x7E,0x11,0x11,0x11,0x7E}; return v[column]; }
+    case 'B': { static const uint8_t v[5]={0x7F,0x49,0x49,0x49,0x36}; return v[column]; }
+    case 'C': { static const uint8_t v[5]={0x3E,0x41,0x41,0x41,0x22}; return v[column]; }
+    case 'D': { static const uint8_t v[5]={0x7F,0x41,0x41,0x22,0x1C}; return v[column]; }
+    case 'E': { static const uint8_t v[5]={0x7F,0x49,0x49,0x49,0x41}; return v[column]; }
+    case 'H': { static const uint8_t v[5]={0x7F,0x08,0x08,0x08,0x7F}; return v[column]; }
+    case 'I': { static const uint8_t v[5]={0x00,0x41,0x7F,0x41,0x00}; return v[column]; }
+    case 'K': { static const uint8_t v[5]={0x7F,0x08,0x14,0x22,0x41}; return v[column]; }
+    case 'L': { static const uint8_t v[5]={0x7F,0x40,0x40,0x40,0x40}; return v[column]; }
+    case 'M': { static const uint8_t v[5]={0x7F,0x02,0x0C,0x02,0x7F}; return v[column]; }
+    case 'N': { static const uint8_t v[5]={0x7F,0x04,0x08,0x10,0x7F}; return v[column]; }
+    case 'P': { static const uint8_t v[5]={0x7F,0x09,0x09,0x09,0x06}; return v[column]; }
+    case 'R': { static const uint8_t v[5]={0x7F,0x09,0x19,0x29,0x46}; return v[column]; }
+    case 'S': { static const uint8_t v[5]={0x46,0x49,0x49,0x49,0x31}; return v[column]; }
+    case 'T': { static const uint8_t v[5]={0x01,0x01,0x7F,0x01,0x01}; return v[column]; }
+    case 'U': { static const uint8_t v[5]={0x3F,0x40,0x40,0x40,0x3F}; return v[column]; }
+    case '%': { static const uint8_t v[5]={0x63,0x13,0x08,0x64,0x63}; return v[column]; }
+    default: return 0;
+  }
+}
+
+static void schuss_oled_command(uint8_t value) {
+  SchussOledCommand[0] = 0;
+  SchussOledCommand[1] = value;
+  i2cMasterTransmitTimeout(&I2CD1, 0x3C, SchussOledCommand, 2, SchussOledRx, 0, 30);
+}
+
+static void schuss_oled_send_page(uint8_t page) {
+  static const uint8_t expand[16] = {0x00,0x03,0x0C,0x0F,0x30,0x33,0x3C,0x3F,0xC0,0xC3,0xCC,0xCF,0xF0,0xF3,0xFC,0xFF};
+  SchussOledTx[0] = 0x40;
+  uint32_t offset = 1;
+  const uint8_t line = page >> 1;
+  for (uint8_t character = 0; character < 11; ++character) {
+    for (uint8_t column = 0; column < 5; ++column) {
+      const uint8_t glyph = schuss_glyph_column(Panel.display_text[line * 11 + character], column);
+      const uint8_t pixels = expand[(page & 1) ? ((glyph >> 4) & 15) : (glyph & 15)];
+      SchussOledTx[offset++] = pixels;
+      SchussOledTx[offset++] = pixels;
+    }
+    SchussOledTx[offset++] = 0;
+  }
+  while (offset < 129) SchussOledTx[offset++] = 0;
+  i2cAcquireBus(&I2CD1);
+  schuss_oled_command(0x21);
+  schuss_oled_command(0x00);
+  schuss_oled_command(0x7F);
+  schuss_oled_command(0x22);
+  schuss_oled_command(page);
+  schuss_oled_command(page);
+  schuss_oled_command(0xB0 + page);
+  schuss_oled_command(0x02);
+  schuss_oled_command(0x10);
+  i2cMasterTransmitTimeout(&I2CD1, 0x3C, SchussOledTx, 129, SchussOledRx, 0, 30);
+  i2cReleaseBus(&I2CD1);
+}
+
+static msg_t schuss_oled_thread(void*) {
+  i2cAcquireBus(&I2CD1);
+  const uint8_t commands[] = {0xAE,0xD5,0x80,0xA8,0x3F,0xD3,0x01,0x40,0x8D,0x14,0x20,0x00,0xA1,0xC8,0xDA,0x12,0x81,0xCF,0xD9,0xF1,0xDB,0x40,0xA4,0xA6,0x2E,0xAF};
+  for (uint32_t index = 0; index < sizeof(commands); ++index) schuss_oled_command(commands[index]);
+  i2cReleaseBus(&I2CD1);
+  while (!chThdShouldTerminate()) {
+    for (uint8_t page = 0; page < 8; ++page) schuss_oled_send_page(page);
+    chThdSleepMilliseconds(32);
+  }
+  chThdExit((msg_t)0);
+  return 0;
+}
+
+static void schuss_set_display_line(uint8_t line, const char* text) {
+  uint8_t index = 0;
+  while (index < 11 && text[index]) {
+    Panel.display_text[line * 11 + index] = text[index];
+    ++index;
+  }
+  while (index < 11) Panel.display_text[line * 11 + index++] = ' ';
+}
+
+static void schuss_update_display(void) {
+  char blend[11] = {'B','L','E','N','D',' ', '0','0','0','%',0};
+  int32_t percent = (SchussBlendInputQ27 * 100 + (SchussQ27Scale >> 1)) / SchussQ27Scale;
+  percent = percent < 0 ? 0 : (percent > 100 ? 100 : percent);
+  blend[6] = '0' + ((percent / 100) % 10);
+  blend[7] = '0' + ((percent / 10) % 10);
+  blend[8] = '0' + (percent % 10);
+  schuss_set_display_line(0, "SCHUSS");
+  schuss_set_display_line(1, blend);
+  schuss_set_display_line(2, Panel.pickup_armed ? "PICKUP ARM" : "PICKUP SET");
+  schuss_set_display_line(3, "TASK018");
+}
+
+static void initialize_gills_panel_hardware(void) {
+  const uint8_t button_pins[4] = {5,10,12,13};
+  palSetPadMode(GPIOB, button_pins[0], PAL_MODE_INPUT);
+  palSetPadMode(GPIOA, button_pins[1], PAL_MODE_INPUT);
+  palSetPadMode(GPIOB, button_pins[2], PAL_MODE_INPUT);
+  palSetPadMode(GPIOB, button_pins[3], PAL_MODE_INPUT);
+  palSetPadMode(GPIOC, 7, PAL_MODE_INPUT_PULLUP);
+  palSetPadMode(GPIOC, 1, PAL_MODE_INPUT_PULLUP);
+  palSetPadMode(GPIOA, 9, PAL_MODE_INPUT_PULLDOWN);
+  sysmon_disable_blinker();
+  palSetPadMode(GPIOG, 6, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPadMode(GPIOC, 6, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPadMode(GPIOB, 3, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPadMode(GPIOB, 4, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPadMode(GPIOB, 6, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPadMode(GPIOB, 7, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPadMode(GPIOB, 8, PAL_MODE_ALTERNATE(4) | PAL_STM32_PUDR_PULLUP | PAL_STM32_OTYPE_OPENDRAIN);
+  palSetPadMode(GPIOB, 9, PAL_MODE_ALTERNATE(4) | PAL_STM32_PUDR_PULLUP | PAL_STM32_OTYPE_OPENDRAIN);
+  static const I2CConfig i2cfg = {OPMODE_I2C, 400000, FAST_DUTY_CYCLE_2};
+  i2cStart(&I2CD1, &i2cfg);
+  Panel.oled_thread = chThdCreateStatic(SchussOledWorkingArea, sizeof(SchussOledWorkingArea), NORMALPRIO, (tfunc_t)schuss_oled_thread, 0);
+}
+
+static void initialize_gills_panel_state(void) {
+  for (uint8_t index = 0; index < 10; ++index) Panel.smoothed_q27[index] = 0;
+  Panel.smoothed_q27[0] = SchussQ27Scale >> 1;
+  Panel.prior_pickup_raw = SchussAdcMax >> 1;
+  Panel.pickup_sample_valid = false;
+  Panel.pickup_armed = true;
+  for (uint8_t index = 0; index < 5; ++index) {
+    Panel.buttons[index].candidate = false;
+    Panel.buttons[index].stable = false;
+    Panel.buttons[index].hold_sent = false;
+    Panel.buttons[index].candidate_updates = 0;
+    Panel.buttons[index].held_updates = 0;
+  }
+  Panel.encoder_value = 0;
+  Panel.encoder_a_last = true;
+  Panel.encoder_scan_counter = 0;
+  Panel.oled_thread = 0;
+  SchussBlendInputQ27 = SchussQ27Scale >> 1;
+  schuss_update_display();
+}
+
+static void process_gills_panel(void) {
+  static const uint8_t adc_index[10] = {0,1,2,3,6,7,8,9,11,12};
+  for (uint8_t index = 0; index < 10; ++index) {
+    const int32_t target = schuss_raw_to_q27(adcvalues[adc_index[index]]);
+    Panel.smoothed_q27[index] += (target - Panel.smoothed_q27[index]) >> 3;
+  }
+  const uint16_t current_raw = schuss_q27_to_raw(Panel.smoothed_q27[0]);
+  const uint16_t target_raw = schuss_q27_to_raw(SchussBlendInputQ27);
+  const bool crossed = Panel.pickup_sample_valid && ((Panel.prior_pickup_raw <= target_raw && target_raw <= current_raw) || (current_raw <= target_raw && target_raw <= Panel.prior_pickup_raw));
+  const int32_t distance = (int32_t)current_raw - target_raw;
+  if (Panel.pickup_armed && ((distance >= -16 && distance <= 16) || crossed)) Panel.pickup_armed = false;
+  if (!Panel.pickup_armed) SchussBlendInputQ27 = Panel.smoothed_q27[0];
+  Panel.prior_pickup_raw = current_raw;
+  Panel.pickup_sample_valid = true;
+
+  const bool raw_buttons[5] = {
+    (bool)palReadPad(GPIOB,5), (bool)palReadPad(GPIOA,10), (bool)palReadPad(GPIOB,12), (bool)palReadPad(GPIOB,13), (bool)palReadPad(GPIOA,9)
+  };
+  uint8_t events[5];
+  for (uint8_t index = 0; index < 5; ++index) events[index] = schuss_button_update(&Panel.buttons[index], raw_buttons[index]);
+  if (events[0] & 1) {
+    SchussBlendInputQ27 = SchussQ27Scale >> 1;
+    Panel.pickup_armed = true;
+    Panel.prior_pickup_raw = current_raw;
+    Panel.pickup_sample_valid = true;
+  }
+  if (Panel.encoder_scan_counter == 0) {
+    const bool encoder_a = (bool)palReadPad(GPIOC,7);
+    if (!encoder_a && Panel.encoder_a_last) Panel.encoder_value += palReadPad(GPIOC,1) ? -1 : 1;
+    Panel.encoder_a_last = encoder_a;
+  }
+  Panel.encoder_scan_counter = (Panel.encoder_scan_counter + 1) & 3;
+  palWritePad(GPIOG,6, Panel.pickup_armed);
+  schuss_update_display();
+}
+
+static void dispose_gills_panel_hardware(void) {
+  if (Panel.oled_thread) {
+    chThdTerminate(Panel.oled_thread);
+    chThdWait(Panel.oled_thread);
+    Panel.oled_thread = 0;
+  }
+  i2cStop(&I2CD1);
+  palSetPadMode(GPIOB, 8, PAL_MODE_INPUT_ANALOG);
+  palSetPadMode(GPIOB, 9, PAL_MODE_INPUT_ANALOG);
+}
+
+extern "C" void schuss_gills_set_blend_q27(int32_t value) {
+  SchussBlendInputQ27 = __USAT(value, 27);
+}
+
+struct SchussGillsState {
+  static const uint16_t NPEXCH = 10;
+  ParameterExchange_t parameters[NPEXCH];
+  int32_t display_vector[5];
+  int32_t lfo_phase;
+  uint32_t lfo_reset_arm;
+  int32_t counter_trigger_history;
+  int32_t counter_reset_history;
+  int32_t counter_count;
+  uint32_t sine_a_phase;
+  uint32_t sine_b_phase;
+  int32_t filter_low;
+  int32_t filter_band;
+  int32_t sequencer_latch;
+  int32buffer sine_b_latch;
+  int32_t blend_latch;
+};
+
+static SchussGillsState State;
+
+static const int32_t InitialParameters[SchussGillsState::NPEXCH] = {
+  -50331648, -100663296, 4, 0, 10485760,
+  14680064, 25165824, 50331648, 262144, -50069504
+};
+
+static void initialize_parameters(void) {
+  for (uint32_t index = 0; index < SchussGillsState::NPEXCH; ++index) {
+    State.parameters[index].value = InitialParameters[index];
+    State.parameters[index].modvalue = InitialParameters[index];
+    State.parameters[index].signals = 0;
+    State.parameters[index].pfunction = 0;
+  }
+  State.parameters[0].pfunction = pfun_signed_clamp;
+  State.parameters[1].pfunction = pfun_signed_clamp;
+  State.parameters[3].pfunction = pfun_signed_clamp;
+  State.parameters[4].pfunction = pfun_signed_clamp;
+  State.parameters[5].pfunction = pfun_signed_clamp;
+  State.parameters[6].pfunction = pfun_signed_clamp;
+  State.parameters[7].pfunction = pfun_signed_clamp;
+  State.parameters[8].pfunction = pfun_unsigned_clamp;
+  State.parameters[9].pfunction = pfun_signed_clamp;
+  for (uint32_t index = 0; index < SchussGillsState::NPEXCH; ++index) {
+    if (State.parameters[index].pfunction) {
+      State.parameters[index].pfunction(&State.parameters[index]);
+    } else {
+      State.parameters[index].finalvalue = State.parameters[index].value;
+    }
+  }
+}
+
+static void initialize_state(void) {
+  State.display_vector[0] = 0x446F7841;
+  State.display_vector[1] = 0;
+  State.display_vector[2] = 2;
+  State.display_vector[3] = 0;
+  State.display_vector[4] = 0;
+  State.lfo_phase = 0;
+  State.lfo_reset_arm = 1;
+  State.counter_trigger_history = 0;
+  State.counter_reset_history = 0;
+  State.counter_count = 0;
+  State.sine_a_phase = 0;
+  State.sine_b_phase = 0;
+  State.filter_low = 0;
+  State.filter_band = 0;
+  State.sequencer_latch = 0;
+  State.blend_latch = 0;
+  initialize_gills_panel_state();
+  for (uint32_t index = 0; index < BUFSIZE; ++index) {
+    State.sine_b_latch[index] = 0;
+  }
+  initialize_parameters();
+}
+
+static void process_sine(uint32_t* phase, int32_t pitch, int32buffer& output) {
+  const uint32_t frequency = mtof48k_ext_q31(pitch);
+  for (uint32_t index = 0; index < BUFSIZE; ++index) {
+    *phase += frequency;
+    output[index] = sin_q31((int32_t)(*phase)) >> 4;
+  }
+}
+
+static bool process_square_lfo(int32_t pitch, bool reset) {
+  if (reset && State.lfo_reset_arm) {
+    State.lfo_phase = 0;
+    State.lfo_reset_arm = 0;
+  } else {
+    if (!reset) State.lfo_reset_arm = 1;
+    const int32_t frequency = mtof48k_ext_q31(pitch);
+    State.lfo_phase += frequency >> 2;
+  }
+  return State.lfo_phase > 0;
+}
+
+static int32_t process_counter(bool trigger, bool reset) {
+  if (trigger && !State.counter_trigger_history) {
+    State.counter_count += 1;
+    if (State.counter_count >= State.parameters[2].finalvalue) State.counter_count = 0;
+    State.counter_trigger_history = 1;
+  } else if (!trigger) {
+    State.counter_trigger_history = 0;
+  }
+  if (reset && !State.counter_reset_history) {
+    State.counter_count = 0;
+    State.counter_reset_history = 1;
+  } else if (!reset) {
+    State.counter_reset_history = 0;
+  }
+  return State.counter_count;
+}
+
+static int32_t process_four_step(int32_t step) {
+  switch (step) {
+    case 0: return State.parameters[3].finalvalue;
+    case 1: return State.parameters[4].finalvalue;
+    case 2: return State.parameters[5].finalvalue;
+    case 3: return State.parameters[6].finalvalue;
+    default: return 0;
+  }
+}
+
+static void process_crossfader(const int32buffer first, const int32buffer second,
+                               int32_t control, int32buffer& output) {
+  control = __USAT(control, 27);
+  const int32_t complement = (128 << 20) - control;
+  for (uint32_t index = 0; index < BUFSIZE; ++index) {
+    int64_t mixed = (int64_t)second[index] * control;
+    mixed += (int64_t)first[index] * complement;
+    output[index] = mixed >> 27;
+  }
+}
+
+static void process_filter(const int32buffer input, int32buffer& low_output) {
+  int32_t damp = (0x80 << 24) - (__USAT(State.parameters[8].finalvalue, 27) << 4);
+  damp = ___SMMUL(damp, damp);
+  const int32_t pitch = __SSAT(State.parameters[7].finalvalue, 28);
+  const int32_t alpha = mtof48k_ext_q31(pitch);
+  const int32_t frequency = sin_q31(alpha);
+  for (uint32_t index = 0; index < BUFSIZE; ++index) {
+    const int32_t notch = input[index] - (___SMMUL(damp, State.filter_band) << 1);
+    State.filter_low += ___SMMUL(frequency, State.filter_band) << 1;
+    const int32_t high = notch - State.filter_low;
+    State.filter_band = (___SMMUL(frequency, high) << 1) + State.filter_band;
+    low_output[index] = State.filter_low;
+  }
+}
+
+static void process_audio_output(const int32buffer left, const int32buffer right) {
+  for (uint32_t index = 0; index < BUFSIZE; ++index) {
+    AudioOutputLeft[index] += __SSAT(left[index], 28);
+    AudioOutputRight[index] += __SSAT(right[index], 28);
+  }
+  State.display_vector[3] = left[0];
+  State.display_vector[4] = right[0];
+}
+
+static void process_graph(void) {
+  int32buffer sine_a;
+  int32buffer sine_b;
+  int32buffer mixed;
+  int32buffer low;
+  for (uint32_t index = 0; index < BUFSIZE; ++index) {
+    AudioOutputLeft[index] = 0;
+    AudioOutputRight[index] = 0;
+  }
+  process_sine(&State.sine_a_phase,
+               State.parameters[0].finalvalue + State.sequencer_latch, sine_a);
+  const bool lfo = process_square_lfo(State.parameters[1].finalvalue, false);
+  const int32_t count = process_counter(lfo, false);
+  const int32_t sequence = process_four_step(count);
+  process_crossfader(sine_a, State.sine_b_latch, State.blend_latch, mixed);
+  process_filter(mixed, low);
+  process_audio_output(low, low);
+  process_sine(&State.sine_b_phase, State.parameters[9].finalvalue + sequence, sine_b);
+  const int32_t blend = __USAT(SchussBlendInputQ27, 27);
+  State.sequencer_latch = sequence;
+  for (uint32_t index = 0; index < BUFSIZE; ++index) {
+    State.sine_b_latch[index] = sine_b[index];
+  }
+  State.blend_latch = blend;
+}
+
+void PatchProcess(int32_t* input, int32_t* output) {
+  for (uint32_t index = 0; index < BUFSIZE; ++index) {
+    AudioInputLeft[index] = input[index << 1] >> 4;
+    AudioInputRight[index] = input[(index << 1) + 1] >> 4;
+  }
+  process_gills_panel();
+  process_graph();
+  for (uint32_t index = 0; index < BUFSIZE; ++index) {
+    output[index << 1] = __SSAT(AudioOutputLeft[index], 28) << 4;
+    output[(index << 1) + 1] = __SSAT(AudioOutputRight[index], 28) << 4;
+  }
+}
+
+void ApplyPreset(uint8_t index) {
+  if (index == 0) initialize_parameters();
+}
+
+void PatchMidiInHandler(midi_device_t device, uint8_t port, uint8_t status,
+                        uint8_t data1, uint8_t data2) {}
+
+typedef void (*SchussFunction)(void);
+extern SchussFunction __ctor_array_start;
+extern SchussFunction __ctor_array_end;
+extern SchussFunction __dtor_array_start;
+extern SchussFunction __dtor_array_end;
+
+void PatchDispose(void) {
+  dispose_gills_panel_hardware();
+  SchussFunction* function = &__dtor_array_start;
+  while (function < &__dtor_array_end) {
+    (*function)();
+    ++function;
+  }
+}
+
+static void xpatch_init2(uint32_t firmware_id) {
+  if (firmware_id != 0x5021D42A) return;
+  extern uint32_t _pbss_start;
+  extern uint32_t _pbss_end;
+  for (volatile uint32_t* value = &_pbss_start; value < &_pbss_end; ++value) {
+    *value = 0;
+  }
+  SchussFunction* function = &__ctor_array_start;
+  while (function < &__ctor_array_end) {
+    (*function)();
+    ++function;
+  }
+  patchMeta.npresets = 0;
+  patchMeta.npreset_entries = 0;
+  patchMeta.pPresets = 0;
+  patchMeta.pPExch = &State.parameters[0];
+  patchMeta.pDisplayVector = &State.display_vector[0];
+  patchMeta.numPEx = SchussGillsState::NPEXCH;
+  patchMeta.patchID = -2064091903;
+  extern char _sdram_dyn_start;
+  extern char _sdram_dyn_end;
+  sdram_init(&_sdram_dyn_start, &_sdram_dyn_end);
+  initialize_state();
+  initialize_gills_panel_hardware();
+  patchMeta.fptr_applyPreset = ApplyPreset;
+  patchMeta.fptr_patch_dispose = PatchDispose;
+  patchMeta.fptr_MidiInHandler = PatchMidiInHandler;
+  patchMeta.fptr_dsp_process = PatchProcess;
+}
+
+extern "C" __attribute__((section(".boot"))) void xpatch_init(uint32_t firmware_id) {
+  xpatch_init2(firmware_id);
+}

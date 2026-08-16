@@ -476,3 +476,55 @@ def mapped_cpp(base_cpp: str) -> str:
     value = value.replace(anchors["dispose"], anchors["dispose"] + "  dispose_gills_panel_hardware();\n", 1)
     value = value.replace(anchors["hardware"], anchors["hardware"] + "  initialize_gills_panel_hardware();\n", 1)
     return value
+
+
+def correct_mapped_cpp_dma_buffers(mapped_cpp_value: str) -> str:
+    """Version an existing Task 018 mapped source at the two unsafe anchors."""
+
+    value = mapped_cpp_value
+    replacements = (
+        (
+            'static uint8_t SchussOledTx[129] __attribute__((section(".sram2")));\n'
+            'static uint8_t SchussOledRx[1] __attribute__((section(".sram2")));\n',
+            'static uint8_t SchussOledTx[129] __attribute__((section(".sram2")));\n'
+            'static uint8_t SchussOledCommand[2] __attribute__((section(".sram2")));\n'
+            'static uint8_t SchussOledRx[1] __attribute__((section(".sram2")));\n',
+            "declaration",
+        ),
+        (
+            "static void schuss_oled_command(uint8_t value) {\n"
+            "  uint8_t bytes[2] = {0, value};\n"
+            "  i2cMasterTransmitTimeout(&I2CD1, 0x3C, bytes, 2, SchussOledRx, 0, 30);\n"
+            "}\n",
+            "static void schuss_oled_command(uint8_t value) {\n"
+            "  SchussOledCommand[0] = 0;\n"
+            "  SchussOledCommand[1] = value;\n"
+            "  i2cMasterTransmitTimeout(&I2CD1, 0x3C, SchussOledCommand, 2, SchussOledRx, 0, 30);\n"
+            "}\n",
+            "command-buffer",
+        ),
+    )
+    for original, corrected, name in replacements:
+        if value.count(original) != 1:
+            raise ValueError(f"GILLS_PANEL_DMA_SAFE_ANCHOR_INVALID:{name}")
+        value = value.replace(original, corrected, 1)
+    return value
+
+
+def mapped_cpp_dma_safe(base_cpp: str) -> str:
+    """Return the Task 021 successor with DMA-visible OLED command storage."""
+
+    return correct_mapped_cpp_dma_buffers(mapped_cpp(base_cpp))
+
+
+__all__ = [
+    "PanelState",
+    "correct_mapped_cpp_dma_buffers",
+    "evaluate_panel_update",
+    "host_vectors",
+    "mapped_cpp",
+    "mapped_cpp_dma_safe",
+    "q27_to_raw",
+    "raw_to_q27",
+    "smooth_q27",
+]

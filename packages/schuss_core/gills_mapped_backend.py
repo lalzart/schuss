@@ -79,15 +79,23 @@ def _fail(code: str, subject: str, message: str) -> None:
     raise DirectBackendError(code, "backend-lowering", subject, message)
 
 
-def run_handler(
+def _run_handler_for_closure(
     request: HandlerRequest,
     config: DirectExecutionConfig | None = None,
+    *,
+    request_reference: dict[str, Any],
+    instrument_reference: dict[str, Any],
+    runtime_reference: dict[str, Any],
+    coverage_reference: dict[str, Any],
+    descriptor_value: dict[str, Any],
+    lowerer: Any,
+    task_id: str,
 ) -> dict[str, Any]:
     config = config or DirectExecutionConfig.local_default()
     direct_preflight = verify_execution_config(config)
     records = request.compilation_context.records()
     request_record = _exact_record(
-        records["request"], REQUEST_REFERENCE, "build_request_id"
+        records["request"], request_reference, "build_request_id"
     )
     if request_record["backend_reference"] != BACKEND_REFERENCE:
         _fail(
@@ -97,15 +105,15 @@ def run_handler(
         )
     graph = _exact_record(records["graphs"], GRAPH_REFERENCE, "graph_id")
     instrument = _exact_record(
-        records["instruments"], INSTRUMENT_REFERENCE, "instrument_id"
+        records["instruments"], instrument_reference, "instrument_id"
     )
     runtime = _exact_record(
         records["runtime_realizations"],
-        RUNTIME_REFERENCE,
+        runtime_reference,
         "runtime_realization_id",
     )
     coverage = _exact_record(
-        records["mapping_coverage"], COVERAGE_REFERENCE, "coverage_report_id"
+        records["mapping_coverage"], coverage_reference, "coverage_report_id"
     )
     panel = _exact_record(
         records["panel_evidence"], PANEL_REFERENCE, "panel_evidence_packet_id"
@@ -115,11 +123,11 @@ def run_handler(
     )
     if request_record["instrument_reference"] != {
         "status": "included",
-        **INSTRUMENT_REFERENCE,
+        **instrument_reference,
     }:
         _fail(
             "GILLS_MAPPED_INSTRUMENT_REFERENCE_MISMATCH",
-            INSTRUMENT_REFERENCE["instrument_id"],
+            instrument_reference["instrument_id"],
             "mapped request does not name the exact mapped instrument",
         )
     if (
@@ -136,28 +144,28 @@ def run_handler(
     supported = [
         value
         for value in runtime["supported_builds"]
-        if value["build_request_reference"] == REQUEST_REFERENCE
-        and value["instrument_reference"] == INSTRUMENT_REFERENCE
+        if value["build_request_reference"] == request_reference
+        and value["instrument_reference"] == instrument_reference
         and value["handler"]
-        == {"status": "supported", **handler_reference(descriptor())}
+        == {"status": "supported", **handler_reference(descriptor_value)}
     ]
     if len(supported) != 1:
         _fail(
             "GILLS_MAPPED_HANDLER_CLOSURE_UNRESOLVED",
-            descriptor()["build_handler_id"],
+            descriptor_value["build_handler_id"],
             "runtime realization does not resolve the exact mapped handler once",
         )
     if (
         request.plan.get("input_closure", {}).get("build_request_reference")
-        != REQUEST_REFERENCE
+        != request_reference
     ):
         _fail(
             "GILLS_MAPPED_PLAN_REQUEST_MISMATCH",
-            REQUEST_REFERENCE["build_request_id"],
+            request_reference["build_request_id"],
             "handler received a plan for a different exact request",
         )
 
-    result = lower_gills_mapped(
+    result = lowerer(
         request.plan,
         graph,
         records["contracts"],
@@ -165,7 +173,7 @@ def run_handler(
         instrument,
         runtime,
         coverage,
-        REQUEST_REFERENCE,
+        request_reference,
     )
     output_root = Path(request.output_root)
     if output_root.exists():
@@ -256,8 +264,8 @@ def run_handler(
     artifacts.extend(arm_artifacts)
     resource = {
         **resource,
-        "schema_version": "task018-static-resource-facts-v1",
-        "runtime_realization_reference": copy.deepcopy(RUNTIME_REFERENCE),
+        "schema_version": f"{task_id}-static-resource-facts-v1",
+        "runtime_realization_reference": copy.deepcopy(runtime_reference),
         "device_profile_reference": copy.deepcopy(DEVICE_REFERENCE),
         "panel_evidence_reference": copy.deepcopy(PANEL_REFERENCE),
     }
@@ -280,12 +288,12 @@ def run_handler(
         )
     )
     preflight = {
-        "schema_version": "task018-mapped-preflight-v1",
+        "schema_version": f"{task_id}-mapped-preflight-v1",
         "status": "passed",
         "direct_preflight": direct_preflight,
         "device_profile_reference": copy.deepcopy(DEVICE_REFERENCE),
         "panel_evidence_reference": copy.deepcopy(PANEL_REFERENCE),
-        "runtime_realization_reference": copy.deepcopy(RUNTIME_REFERENCE),
+        "runtime_realization_reference": copy.deepcopy(runtime_reference),
         "source_pins": [
             {
                 key: source[key]
@@ -329,6 +337,23 @@ def run_handler(
         "ambient_discovery_used": False,
         "device_actions_performed": False,
     }
+
+
+def run_handler(
+    request: HandlerRequest,
+    config: DirectExecutionConfig | None = None,
+) -> dict[str, Any]:
+    return _run_handler_for_closure(
+        request,
+        config,
+        request_reference=REQUEST_REFERENCE,
+        instrument_reference=INSTRUMENT_REFERENCE,
+        runtime_reference=RUNTIME_REFERENCE,
+        coverage_reference=COVERAGE_REFERENCE,
+        descriptor_value=descriptor(),
+        lowerer=lower_gills_mapped,
+        task_id="task018",
+    )
 
 
 def registration(

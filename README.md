@@ -19,12 +19,15 @@ compiler front half, exact build execution, and deterministic direct ARM
 compile/link evidence for one eight-node Gills slice. The
 [Task 018 Gills contract](docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md)
 is complete for a 63-slot authenticated panel model, explicit mappings, and
-one exact mapped level-5 runtime closure.
+one exact mapped level-5 runtime closure. The
+[Task 021 corrective contract](docs/tasks/021-gills-dma-safe-oled-and-connected-device-evidence.md)
+preserves those bytes, adds a versioned DMA-safe OLED command path, and retains
+one separately authorized exact connected-device observation at level 6.
 
 The reviewed Task 017 core remains structurally useful but not yet generally
 executable. Its two full-panel successors retain stable unsupported
-diagnostics. Connected-device, real-time, and audible proof for the successful
-mapped reference remain separate and require new authorization.
+diagnostics. Complete control-panel, real-time, and audible proof for the
+successful mapped reference remain separate and require new authorization.
 
 ## Start here
 
@@ -58,6 +61,8 @@ bin/schuss build plan schuss-build-request-000002@3 \
   --record-set contracts/record-sets/task016-complete-gills-direct-v1.json
 bin/schuss build plan schuss-build-request-000002@4 \
   --record-set contracts/record-sets/task018-full-gills-v1.json
+bin/schuss build plan schuss-build-request-000002@5 \
+  --record-set contracts/record-sets/task021-gills-dma-safe-v1.json
 ```
 
 Build execution requires an exact registered handler, a fresh output root, and
@@ -74,6 +79,7 @@ python3 -m unittest discover -s tools/catalog/tests
 python3 -m unittest discover -s tools/contracts/tests
 python3 tools/contracts/validate_backbone_governance.py
 python3 tools/contracts/validate_task018_contract.py
+python3 tools/contracts/validate_task021_contract.py
 ```
 
 Some authenticated legacy checks additionally require the ignored local Task

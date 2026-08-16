@@ -33,16 +33,22 @@ class BackboneGovernanceTest(unittest.TestCase):
         self.assertEqual("valid", summary["status"])
         self.assertEqual([], summary["diagnostics"])
         self.assertEqual(
-            ["ADR 0010", "ADR 0011", "ADR 0012"],
+            ["ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013"],
             summary["authoritative_decisions"],
         )
         self.assertEqual("none", summary["active_product_task"])
-        self.assertEqual("mapped-gills-level-5-satisfied", summary["promotion_gate"])
         self.assertEqual(
-            ["013", "014", "015", "016", "017", "018", "019", "020"],
+            "task021-corrected-gills-level-6-satisfied", summary["promotion_gate"]
+        )
+        self.assertEqual(
+            ["013", "014", "015", "016", "017", "018", "019", "020", "021"],
             summary["active_task_sequence"],
         )
         self.assertEqual("complete-mapped-local-level-5", summary["task_statuses"]["018"])
+        self.assertEqual(
+            "complete-corrected-connected-level-6",
+            summary["task_statuses"]["021"],
+        )
 
     def test_negative_governance_fixtures_fail_closed(self):
         self.assertEqual("backbone-governance-negative-fixtures-v3", self.fixtures["schema_version"])

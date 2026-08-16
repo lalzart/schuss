@@ -12,11 +12,16 @@ from .gills_direct_frontend import (
     lower_gills_direct_successor,
     semantic_goldens,
 )
-from .gills_panel_runtime import host_vectors, mapped_cpp
+from .gills_panel_runtime import (
+    correct_mapped_cpp_dma_buffers,
+    host_vectors,
+    mapped_cpp,
+)
 
 
 FRONTEND_ID = "schuss-gills-mapped-frontend-000001"
 FRONTEND_VERSION = 1
+DMA_SAFE_FRONTEND_VERSION = 2
 
 
 def _canonical_bytes(value: Any) -> bytes:
@@ -294,4 +299,44 @@ def lower_gills_mapped(
     }
 
 
-__all__ = ["lower_gills_mapped"]
+def lower_gills_mapped_dma_safe(
+    plan: Mapping[str, Any],
+    graph: Mapping[str, Any],
+    contracts: Iterable[Mapping[str, Any]],
+    operation_specs: Iterable[Mapping[str, Any]],
+    instrument: Mapping[str, Any],
+    runtime: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    request_reference: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Lower the Task 021 successor while preserving Task 018 DSP semantics."""
+
+    result = lower_gills_mapped(
+        plan,
+        graph,
+        contracts,
+        operation_specs,
+        instrument,
+        runtime,
+        coverage,
+        request_reference,
+    )
+    cpp = correct_mapped_cpp_dma_buffers(result["generated_cpp"]["text"])
+    cpp_bytes = cpp.encode("utf-8")
+    frontend = {
+        "frontend_id": FRONTEND_ID,
+        "version": DMA_SAFE_FRONTEND_VERSION,
+    }
+    result["schema_version"] = "gills-mapped-frontend-result-v2"
+    result["frontend"] = copy.deepcopy(frontend)
+    result["panel_runtime"]["schema_version"] = "task021-panel-runtime-plan-v1"
+    result["panel_runtime"]["frontend"] = copy.deepcopy(frontend)
+    result["generated_cpp"] = {
+        "text": cpp,
+        "byte_sha256": _sha256(cpp_bytes),
+        "byte_length": len(cpp_bytes),
+    }
+    return result
+
+
+__all__ = ["lower_gills_mapped", "lower_gills_mapped_dma_safe"]

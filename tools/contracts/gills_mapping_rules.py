@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Task 018 Gills evidence, coverage, and runtime-realization rules."""
+"""Task 018 Gills rules plus exact versioned runtime successors."""
 
 from __future__ import annotations
 
@@ -271,7 +271,15 @@ def validate_values(
         _validate_coverage(coverage, devices, panels, instruments, valid["runtime_realizations"], diagnostics)
 
     successor_instruments = {
-        key for key in instruments if key[0] in {"schuss-instrument-000002", "schuss-instrument-000003", "schuss-instrument-000004"} and key[1] == 2
+        key
+        for key in instruments
+        if key[0]
+        in {
+            "schuss-instrument-000002",
+            "schuss-instrument-000003",
+            "schuss-instrument-000004",
+        }
+        and key[1] >= 2
     }
     covered_instruments = {_ref(item["instrument_reference"], "instrument_id") for item in valid["mapping_coverage"]}
     runtime_instruments = {_ref(item["instrument_reference"], "instrument_id") for runtime in valid["runtime_realizations"] for item in runtime["supported_builds"]}
@@ -280,10 +288,21 @@ def validate_values(
         (runtime_instruments, "GILLS_SUCCESSOR_RUNTIME_INCOMPLETE", "$.runtime_realizations"),
     ):
         if actual != successor_instruments:
-            _diagnostic(diagnostics, code, "task018", location, "all and only the three exact Task 018 instrument successors must be present")
+            _diagnostic(diagnostics, code, "task018", location, "all and only the exact Task 018 instrument successors and their versioned corrective successors must be present")
     mapped_handlers = [item for runtime in valid["runtime_realizations"] for item in runtime["supported_builds"] if item["handler"]["status"] == "supported"]
-    if len(mapped_handlers) != 1 or mapped_handlers[0]["instrument_reference"]["instrument_id"] != "schuss-instrument-000002":
-        _diagnostic(diagnostics, "GILLS_EXECUTABLE_PROMOTION_CLOSURE_INVALID", "task018", "$.runtime_realizations", "exactly one mapped Task 016 successor must name a supported handler")
+    mapped_handler_keys = [
+        _ref(item["handler"], "build_handler_id") for item in mapped_handlers
+    ]
+    if (
+        not mapped_handlers
+        or len(mapped_handler_keys) != len(set(mapped_handler_keys))
+        or any(
+            item["instrument_reference"]["instrument_id"]
+            != "schuss-instrument-000002"
+            for item in mapped_handlers
+        )
+    ):
+        _diagnostic(diagnostics, "GILLS_EXECUTABLE_PROMOTION_CLOSURE_INVALID", "task018", "$.runtime_realizations", "one or more exact versioned mapped successors must name unique supported handlers for the executable Gills instrument")
 
     diagnostics = sorted(set(diagnostics), key=core.diagnostic_sort_key)
     status = "invalid" if diagnostics else "valid"

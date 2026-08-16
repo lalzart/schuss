@@ -746,12 +746,14 @@ def _registered_execution_service(output_root: Path):
     specification.loader.exec_module(module)
     from .gills_direct_backend import registration as direct_registration
     from .gills_mapped_backend import registration as mapped_registration
+    from .gills_mapped_backend_v2 import registration as mapped_v2_registration
 
     return ExecutionService.from_values(
         (
             module.registration(),
             direct_registration(),
             mapped_registration(),
+            mapped_v2_registration(),
         ),
         output_root,
     )

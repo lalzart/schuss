@@ -15,3 +15,4 @@ details remain in task files unless they change a durable boundary.
 - `0010-restore-backend-first-sequence-and-retire-task-012b.md` - accepted; current task-routing authority
 - `0011-preserve-legacy-equivalent-direct-semantics.md` - accepted; current direct-semantics authority
 - `0012-require-executable-gills-promotion.md` - accepted; current Task 018 promotion authority
+- `0013-version-gills-runtime-correction-and-level6-evidence.md` - accepted; current Task 021 corrective and level-6 authority
