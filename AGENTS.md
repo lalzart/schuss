@@ -68,6 +68,46 @@ schema, bridge, or UI task to redesign adjacent layers.
 - A generated legacy `.axp` is a boundary artifact, not the authoritative
   Schuss graph.
 
+## Validation cadence and cost
+
+Validation must satisfy the active contract, but repeated aggregate runs are
+not a substitute for choosing the smallest relevant test while iterating.
+Classify the task's checks before implementation as focused, adjacent
+regression, expensive reproduction, and aggregate.
+
+Use this order unless the accepted task contract requires a stricter one:
+
+1. Run focused tests for the files and behavior currently being changed.
+2. Run adjacent regression tests for the exact historical boundaries the
+   change can affect.
+3. When the implementation is otherwise stable, run required fresh-root,
+   fresh-process, compiler, or retained-evidence reproduction checks once.
+4. Review the complete diff, generated-artifact freshness, negative cases,
+   and contract acceptance matrix. Treat this as the implementation freeze.
+5. Run the full aggregate suite once after that freeze and before declaring
+   the task complete.
+
+If the aggregate suite fails, diagnose and iterate with only the affected
+focused and adjacent tests. Finish the complete correction and repeat the
+freeze review before one final aggregate rerun. Do not rerun the full suite
+after every small fix, and do not begin it while additional implementation
+changes are still planned.
+
+Avoid separately repeating an expensive check already exercised by the same
+final aggregate run unless the task explicitly requires the standalone result
+or it is needed for diagnosis. Record the exact command and result so a passing
+unchanged check is not rerun merely to restate the evidence. A later change
+invalidates only the validation layers it can affect: for example, a prose-only
+governance edit requires its focused governance check, while code, schema,
+record, fixture, or generator changes require the relevant regression layers
+and may require a new aggregate run.
+
+Tests should use cached or in-process contexts when process isolation is not
+the fact under test. Reserve subprocesses, copied roots, alternate CWDs, and
+environment matrices for contracts that actually claim those boundaries.
+This cadence never reduces an explicit evidence requirement and never turns a
+missing authenticated prerequisite into a pass.
+
 ## Change controls
 
 - Preserve unrelated and untracked work.

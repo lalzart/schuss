@@ -38,6 +38,31 @@ read-only freshness/reproduction checks.
 The Task 016/017 contract validators authenticate retained ADR/evidence
 boundaries; completed task Markdown is intentionally archived through Git.
 
+## Validation cadence
+
+Choose checks by impact while implementing, then run the aggregate suite once
+after the task is otherwise frozen:
+
+| Stage | Purpose | Typical invocation |
+| --- | --- | --- |
+| Focused | Exercise the implementation currently changing | `python3 -m unittest tools.contracts.tests.test_taskNNN_feature` |
+| Adjacent regression | Protect exact earlier operations, records, or presentation bytes affected by the change | Run only the named neighboring test modules from the task contract |
+| Reproduction | Prove required fresh-root, fresh-process, compiler, or generated-artifact determinism | Run the task validator and its generator or runner with `--check` |
+| Aggregate | Detect cross-task drift after the implementation-freeze review | `python3 -m unittest discover -s tools/contracts/tests` |
+
+Before the aggregate stage, review the complete diff, freshness checks,
+negative cases, and every acceptance-test row. If the aggregate suite fails,
+make and verify corrections with the affected focused tests first, then run
+one final aggregate suite. Do not repeatedly run the aggregate suite during
+ordinary iteration.
+
+Do not duplicate expensive reproduction work merely because both a standalone
+command and an aggregate test exist. Run the standalone form when the contract
+requires its result or when diagnosing it; otherwise rely on the declared
+aggregate coverage. Process and fresh-root matrices belong only in tests whose
+claim depends on those boundaries. These scheduling rules reduce redundant
+work but do not waive any accepted task requirement.
+
 ## Authenticated local closure
 
 Task 009 and Task 011C execution checks require the ignored authenticated local

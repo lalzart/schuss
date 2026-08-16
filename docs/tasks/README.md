@@ -34,3 +34,9 @@ Every new implementation task must state its goal and reason, in-scope and
 out-of-scope work, inputs and deliverables, acceptance tests, decisions it may
 make, and decisions it must not make. Completing a task does not authorize the
 next task, Git publication, or hardware action.
+
+The acceptance section must also classify validation as focused, adjacent
+regression, expensive reproduction, or final aggregate, and identify when a
+standalone expensive check is already covered by the aggregate suite. Follow
+the cadence in the workspace `AGENTS.md`: iterate narrowly, freeze the complete
+implementation, then run the full suite once rather than after each small fix.
