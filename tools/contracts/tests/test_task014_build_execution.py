@@ -305,7 +305,15 @@ class Task014BuildExecutionTest(unittest.TestCase):
 
     def test_product_plan_and_additive_completion(self):
         process = subprocess.run(
-            [str(ROOT / "bin/schuss"), "build", "plan", "schuss-build-request-000002@2", "--json"],
+            [
+                str(ROOT / "bin/schuss"),
+                "build",
+                "plan",
+                "schuss-build-request-000002@2",
+                "--record-set",
+                str(RECORD_SET),
+                "--json",
+            ],
             cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
         )
         self.assertEqual(0, process.returncode, process.stderr.decode())
@@ -319,7 +327,18 @@ class Task014BuildExecutionTest(unittest.TestCase):
 
     def test_product_execute_requires_explicit_intent(self):
         process = subprocess.run(
-            [str(ROOT / "bin/schuss"), "build", "execute", "schuss-build-request-000002@2", "--output-root", "unused"],
+            [
+                str(ROOT / "bin/schuss"),
+                "build",
+                "execute",
+                "schuss-build-request-000002@2",
+                "--handler",
+                "schuss-build-handler-000001@1",
+                "--output-root",
+                "unused",
+                "--record-set",
+                str(RECORD_SET),
+            ],
             cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
         )
         self.assertEqual(2, process.returncode)

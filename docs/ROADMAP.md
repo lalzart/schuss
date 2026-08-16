@@ -33,7 +33,7 @@ of one row does not authorize the next.
 | 20 | Additional compute targets and devices | Deferred; not scheduled |
 | 21 | Versioned DMA-safe Gills OLED runtime and exact connected-device evidence | Complete; corrected level 6 |
 | 22 | Connected Gills control-panel diagnostic and evidence | Stopped; failed before level 6 |
-| 23 | CLI v2 and application-surface consolidation | Planned next; contract not created |
+| 23 | CLI v2 and application-surface consolidation | Complete; shared capability surface and CLI v2 |
 | 24 | Complete catalog coverage and deterministic curation | Planned; depends on Task 023 |
 | 25 | Direct-compiler core-library tranche | Planned; depends on Task 024 selection |
 | 26 | Complete authoring operations and CLI workflow | Planned; depends on Tasks 023 and 025 |
@@ -88,17 +88,19 @@ ADR 0014 selects Tasks 023-028 and the unnumbered UI-architecture milestone.
 The normative dependency, child-task, ownership, and parallel-work rules are
 in `APPLICATION_SPINE_PLAN.md`.
 
-Task 023 is next, but no implementation contract has been created. After Task
-023 is accepted, Task 024 and design-only UI architecture may run concurrently.
-After Task 026, Task 027 and Task 028 may form two implementation lanes, with
-shared status, schemas, stable IDs, record sets, and publication integrated
-serially. The default ceiling is two implementation lanes plus one read-only
-or design lane.
+Task 023 is accepted complete. Task 024 is the next numbered contract gate and
+is not active. The authorized design-only UI-architecture milestone is now
+eligible but not started; when separately started, it may run concurrently
+with Task 024. After Task 026, Task 027 and Task 028 may form two implementation
+lanes, with shared status, schemas, stable IDs, record sets, and publication
+integrated serially. The default ceiling is two implementation lanes plus one
+read-only or design lane.
 
 A parent may declare children such as `023A`, `023B`, and `023C`. Those are
 exact parent-owned work packages, not aliases or independent roadmap entries;
-the parent fixes their dependencies, write ownership, and integration order.
-Tasks 019 and 020 remain deferred. UI implementation remains separately gated.
+the completed Task 023 parent fixed their dependencies, write ownership, and
+integration order. Tasks 019 and 020 remain deferred. UI implementation
+remains separately gated.
 
 ## Staying on track
 

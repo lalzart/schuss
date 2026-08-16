@@ -1,0 +1,63 @@
+{
+  "schema_version": "task023-smoke-cases-v1",
+  "record_set": "contracts/record-sets/task023-application-spine-v1.json",
+  "project": "fixtures/task012a/minimal-project",
+  "cases": [
+    {
+      "case_id": "application-description",
+      "arguments": ["application", "describe", "--json"],
+      "expected_operation": "application.describe",
+      "expected_status": "success",
+      "expected_schema_version": "schuss-operation-result-v7"
+    },
+    {
+      "case_id": "catalog-search",
+      "arguments": ["catalog", "search", "crossfade", "--json"],
+      "expected_operation": "catalog.search",
+      "expected_status": "success",
+      "expected_schema_version": "schuss-operation-result-v2"
+    },
+    {
+      "case_id": "catalog-inspection",
+      "arguments": ["catalog", "inspect", "schuss-family-000018@1", "--json"],
+      "expected_operation": "catalog.inspect",
+      "expected_status": "success",
+      "expected_schema_version": "schuss-operation-result-v2"
+    },
+    {
+      "case_id": "project-inspection",
+      "arguments": ["project", "inspect", "--project", "{project}", "--json"],
+      "expected_operation": "project.inspect",
+      "expected_status": "success",
+      "expected_schema_version": "schuss-operation-result-v3"
+    },
+    {
+      "case_id": "project-validation",
+      "arguments": ["project", "validate", "--project", "{project}", "--json"],
+      "expected_operation": "project.validate",
+      "expected_status": "success",
+      "expected_schema_version": "schuss-operation-result-v3"
+    },
+    {
+      "case_id": "graph-inspection",
+      "arguments": ["graph", "inspect", "schuss-graph-000002@1", "--json"],
+      "expected_operation": "graph.inspect",
+      "expected_status": "success",
+      "expected_schema_version": "schuss-operation-result-v1"
+    },
+    {
+      "case_id": "compiler-plan",
+      "arguments": ["build", "plan", "schuss-build-request-000002@5", "--json"],
+      "expected_operation": "build.plan",
+      "expected_status": "success",
+      "expected_schema_version": "schuss-operation-result-v4"
+    },
+    {
+      "case_id": "gills-instrument-inspection",
+      "arguments": ["gills", "inspect", "schuss-instrument-000002@3", "--json"],
+      "expected_operation": "gills.inspect",
+      "expected_status": "success",
+      "expected_schema_version": "schuss-operation-result-v6"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "application-capability-description-v0.schema.json",
+  "title": "Schuss application capability description v0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "description_version",
+    "record_set_reference",
+    "operations"
+  ],
+  "properties": {
+    "schema_version": {"const": "application-capability-description-v0"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "description_version": {"const": "schuss-application-capability-description-v0"},
+    "record_set_reference": {"$ref": "#/$defs/recordSetReference"},
+    "operations": {
+      "type": "array",
+      "x-schuss-array-kind": "sequence",
+      "minItems": 14,
+      "maxItems": 14,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/operationCapability"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "recordSetReference": {
+      "type": "object",
+      "required": ["record_set_id", "revision", "content_hash"],
+      "properties": {
+        "record_set_id": {"type": "string", "pattern": "^schuss-record-set-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "contextSet": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "exact-execution-service",
+          "exact-record-set",
+          "explicit-project-workspace",
+          "fresh-output-root"
+        ]
+      }
+    },
+    "gateSet": {
+      "type": "array",
+      "x-schuss-array-kind": "set",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "base-content-hash",
+          "create-only-workspace",
+          "exact-handler",
+          "exact-record-set",
+          "exact-reference",
+          "execute-intent",
+          "expected-project-reference",
+          "explicit-project-workspace",
+          "fresh-output-root",
+          "write-intent"
+        ]
+      }
+    },
+    "operationCapability": {
+      "type": "object",
+      "required": [
+        "operation",
+        "domain_group",
+        "purpose",
+        "request_schema_version",
+        "result_schema_version",
+        "required_contexts",
+        "effect_class",
+        "explicit_gates",
+        "declared_support",
+        "availability",
+        "evidence_boundary"
+      ],
+      "properties": {
+        "operation": {
+          "enum": [
+            "application.describe",
+            "build.execute",
+            "build.plan",
+            "build.resolve",
+            "catalog.inspect",
+            "catalog.search",
+            "gills.inspect",
+            "graph.inspect",
+            "graph.transact",
+            "project.graph.commit",
+            "project.init",
+            "project.inspect",
+            "project.validate",
+            "records.validate"
+          ]
+        },
+        "domain_group": {
+          "enum": ["application", "build", "catalog", "gills", "graph", "project", "records"]
+        },
+        "purpose": {"type": "string", "minLength": 1},
+        "request_schema_version": {"type": "string", "pattern": "^schuss-operation-request-v[1-7]$"},
+        "result_schema_version": {"type": "string", "pattern": "^schuss-operation-result-v[1-7]$"},
+        "required_contexts": {"$ref": "#/$defs/contextSet"},
+        "effect_class": {
+          "enum": ["read-only", "proposal-only", "workspace-write", "build-output-write"]
+        },
+        "explicit_gates": {"$ref": "#/$defs/gateSet"},
+        "declared_support": {"const": "supported"},
+        "availability": {
+          "enum": [
+            "available",
+            "requires-execution-service",
+            "requires-project-workspace",
+            "unavailable-in-selected-record-set"
+          ]
+        },
+        "evidence_boundary": {"const": "operation-contract-only"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

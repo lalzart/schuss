@@ -1,0 +1,41 @@
+{
+  "completion": {
+    "bash": {"byte_length": 2699, "byte_sha256": "7d6c3fb29d406e90c8c3c8bd9b13d753d1cc52f7eeb1a3a1acc83371e6704fa5"},
+    "fish": {"byte_length": 4412, "byte_sha256": "71c0ad6df74fe040824f423f8292cdda2ca77fa34ccc8616df8f52e15fd0f040"},
+    "zsh": {"byte_length": 2924, "byte_sha256": "8c5ce14b67d85e70d3fb0f9e7847487b6b33cb5b75d44811b9ae86f66f7eddf9"}
+  },
+  "help": {
+    "application": {"byte_length": 358, "byte_sha256": "0ecf3c8c436e7dd3207bcb64554ceacd28646ebb1418221d58873c5f917c50e3"},
+    "application-describe": {"byte_length": 664, "byte_sha256": "8c532110ec8bc2ac3143747c02148c05a75459c9ef266a5422813e93c6ca058e"},
+    "build": {"byte_length": 582, "byte_sha256": "65d74f3c9ca0c5ce655ae36eb59870bba14c95c001a057e7633dd1b7c577794d"},
+    "build-execute": {"byte_length": 729, "byte_sha256": "548ad88a0b84841e7b2e9bd9fb9cb12bbba651420ef8baa9fc223fcf86b105c9"},
+    "build-plan": {"byte_length": 510, "byte_sha256": "c58949867c6855400b35b92ca6ddf5311f7233878084fef966644d49627a819d"},
+    "build-resolve": {"byte_length": 744, "byte_sha256": "4243bdc08335f5f14008ddcdad1018c71c19709fc4a53fe801ac484e4481f921"},
+    "catalog": {"byte_length": 407, "byte_sha256": "770074823553af2481bb601854efb86ab24264b81444122265ac7211ba52b04e"},
+    "catalog-inspect": {"byte_length": 550, "byte_sha256": "476a49fc754cb0930fccce1c3133b06889cc9710518fd36373634e8bec645e61"},
+    "catalog-search": {"byte_length": 1542, "byte_sha256": "70335d27b8df065f98da96c1b95fe93bbf49cbe26af34f4150776f45a26ac09e"},
+    "completion": {"byte_length": 353, "byte_sha256": "9aff46f98102c24a96dbd2062803859db326a6ce2813f1a3d93a8bd8eca66bd8"},
+    "gills": {"byte_length": 356, "byte_sha256": "5f3758dc034064dd0c6a9e96e2b64730ef314df1566870b06648dfbc2eef2121"},
+    "gills-inspect": {"byte_length": 754, "byte_sha256": "395b5a9f977a24a0e9846db4d0ced2152090043849947029324b0519f27dabe5"},
+    "graph": {"byte_length": 425, "byte_sha256": "2f4fc0aad233ce821c7768fa2f9a229611cec5da2725a4e4b296c2e378f69739"},
+    "op": {"byte_length": 551, "byte_sha256": "4747ea167a51bc061e657de2c8359b27f598e75d51eae7ff6881e211e5686db0"},
+    "project": {"byte_length": 759, "byte_sha256": "3fbb9978d94912b8c2c67930892b09ab5790f4cebd45c8254dbc6b44808b5f6a"},
+    "root": {"byte_length": 1254, "byte_sha256": "611d505b58476d84301833e8692099148e3c85b67916221b397675851c8cb450"}
+  },
+  "human": {
+    "application-describe": {"byte_length": 5801, "byte_sha256": "6cbaea10e3b455cb0531318920b06723bdb106de11f11f599f5b1f7a8885ac61"},
+    "build-plan-gills": {"byte_length": 705, "byte_sha256": "f4875e9421e94a30b4d022c38428b72fe2e15325e49b7a977fc79665ea93ff19"},
+    "catalog-inspect-crossfader": {"byte_length": 9665, "byte_sha256": "b1fa5d919f4822cf6205a3b72f8b6d2ce1ded79e6c7c18ae1b8290ec1e79eb35"},
+    "catalog-search-crossfade": {"byte_length": 2403, "byte_sha256": "798e25527c3197cc83243eccef40e658cd950b57115a1a3cbec7326af305b3bf"},
+    "gills-inspect": {"byte_length": 1258, "byte_sha256": "51f51d8a81cb544ae2b7f730962fcdb18cd94cb4e55777b9b2a14d932fce8010"},
+    "graph-inspect-gills": {"byte_length": 4391, "byte_sha256": "267f099c6eadd2a71fb43ccf0d871b09f84885537dbb1e6757d910de4b8008f8"}
+  },
+  "json": {
+    "application-describe": {"byte_length": 7345, "byte_sha256": "2d740cbeff4427ed0055a49c91a4f5ec522cd327e00ad93899505c3b424b6af1"},
+    "build-plan-gills": {"byte_length": 129191, "byte_sha256": "6f48d84e199d8b29566b6b3049957c3cf0c13332bcca6f62560646b017992d04"},
+    "catalog-inspect-crossfader": {"byte_length": 9812, "byte_sha256": "01f12e3af0d8330b483dbf4c985979bf75670a89df98511ff9060eb83f426421"},
+    "catalog-search-crossfade": {"byte_length": 2854, "byte_sha256": "6c94a7ebd36a3d20060860cc51b92885c5db920b60aa805b7889b0ef94eefc40"},
+    "gills-inspect": {"byte_length": 109006, "byte_sha256": "4f693d2351d78cb5d1ebdb465f82fe427417f061ce598e547bbc81b033827ac5"},
+    "graph-inspect-gills": {"byte_length": 43969, "byte_sha256": "82ace5e980be713838d078c03b94e3877af899b1e3b01d1d6522bd5173b9e0fe"}
+  }
+}

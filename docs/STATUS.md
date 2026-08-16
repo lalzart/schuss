@@ -38,13 +38,21 @@ install, or other connected-device action occurred. The retained Task 022
 result is published on `main` at commit `a5fa328`.
 
 ADR 0014 accepts the application-spine sequence in
-`docs/APPLICATION_SPINE_PLAN.md`. Task 023, CLI v2 and application-surface
-consolidation, is the next planned task; its implementation contract has not
-been created and no Task 023 implementation is active. Tasks 024-028 remain
-ordered planned successors rather than ambient authorization. Exact lettered
-children such as `023A`, `023B`, and `023C` may exist only when their accepted
-parent contract declares their scopes, dependencies, write ownership, and
-integration order.
+`docs/APPLICATION_SPINE_PLAN.md`. Task 023 was explicitly accepted and
+completed on 2026-08-16. Exact schema-only successor record set
+`schuss-record-set-000015@1` adds application-capability-description v0 and
+operation request/result v7 without adding any semantic record. The shared
+`application.describe` operation inventories fourteen accepted public
+operations, their contexts, effects, gates, availability, and evidence
+boundaries. CLI v2 exposes validation, application, catalog, project, graph,
+Gills, build, completion, and canonical-operation routes over the same shared
+services. The parent integrated Tasks 023A, 023B, and 023C in order.
+
+The read-only Task 023 smoke passes in two copied fresh roots and fresh
+processes with varied CWD, locale, timezone, hash seed, terminal width, and
+harmless host noise. Repository snapshots remained unchanged; backend
+execution, project writes, and hardware access were `not-run`. Tasks 024-028
+remain ordered planned successors rather than ambient authorization.
 
 Task 012B remains retired. The object drawer and transparent graph canvas are
 an unnumbered future client milestone. UI architecture planning is now
@@ -67,7 +75,7 @@ of Task 018 or Task 021.
 | Full Gills panel/runtime | Authenticated 63-slot census, total mappings/coverage, exact runtime closure, and one mapped direct build | Level 5 |
 | Corrected Gills OLED/runtime | Versioned DMA-safe command transport plus one exact volatile-RAM board/OLED observation | Level 6 |
 | Gills panel diagnostic | Separate omitted-instrument telemetry source, deterministic host vectors, exact ARM artifacts, and one retained failed connected observation | Level 5; connected attempt failed before level 6 |
-| Application-spine plan | Accepted Task 023-028 dependency sequence, subtask rules, and bounded parallel lanes | Planning authority only; implementation not started |
+| Application surface | Fourteen client-neutral capability descriptions, coherent CLI v2, exact schema-only record-set successor, and read-only cross-service smoke | Host structural/application proof only; no new compile, device, real-time, audible, safety, or release evidence |
 
 The accepted Task 018 result proves deterministic local ARM compile/link for
 one exact mapped graph/instrument/device/runtime closure. Its exact original
@@ -124,12 +132,11 @@ Task 021 established all of the following:
 - The authenticated Task 009 local content store is ignored and must be
   validated separately when present; a clean checkout cannot claim that local
   evidence merely from tracked manifests.
-- No desktop application or UI client is implemented.
-- The Task 011A CLI output-golden test is already stale on clean `HEAD`: its
-  retained golden expects input-closure hash `291b695c...`, while current
-  Task 011A execution emits `7aff3534...`. Task 021 preserves that unrelated
-  historical golden; Task 022 also preserves it and does not claim to repair
-  it.
+- No desktop application or UI client is implemented. UI architecture is
+  eligible but has not started.
+- The historical Task 011A CLI golden remains byte-identical. Task 023 records
+  its successor golden separately and tests the inherited four equal-length
+  input-closure digest changes without treating them as semantic catalog drift.
 
 ## Current planning boundary
 
@@ -139,9 +146,9 @@ Task 021 product-binary replacement, firmware flash, SD-card write, persistent
 installation, or reset. Any diagnostic successor or repeated hardware
 procedure requires a new bounded decision and explicit approval.
 
-The next implementation gate is creation and acceptance of the complete Task
-023 contract. The application-spine plan does not start Task 023, authorize a
-lettered child, or authorize staging, commit, push, or publication. Task 024
-and the unnumbered UI-architecture milestone may overlap only after Task 023
-fixes the application capability boundary. UI implementation remains gated;
-Tasks 019 and 020 remain deferred.
+Task 023 is accepted complete. Task 024 is the next numbered implementation
+gate, but no Task 024 contract exists and no successor task is active. The
+already authorized unnumbered UI-architecture milestone is now eligible as a
+separate planning lane but has not started. Task 023 completion does not
+authorize staging, commit, push, publication, project writes, build execution,
+hardware action, or UI implementation. Tasks 019 and 020 remain deferred.

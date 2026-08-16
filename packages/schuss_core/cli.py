@@ -18,6 +18,7 @@ from .control_plane import (
 )
 from .product_cli import (
     ProductInputError,
+    application_describe_request,
     build_resolve_request,
     build_plan_request,
     build_execute_request,
@@ -27,6 +28,7 @@ from .product_cli import (
     completion_script,
     graph_inspect_request,
     graph_transact_request,
+    gills_inspect_request,
     records_validate_request,
     render_human_result,
     resolve_build_handler_locator,
@@ -51,17 +53,13 @@ DEFAULT_RECORD_SET_REFERENCE = {
     "content_hash": "sha256:f3fde23e7410a0a78c79ffdbcf3741995cedbf69f41c5a47e596ac39a2ac62f6",
 }
 
-CATALOG_RECORD_SET_PATH = (
+APPLICATION_RECORD_SET_PATH = (
     Path(__file__).resolve().parents[2]
-    / "contracts/record-sets/task011a-catalog-v1.json"
-)
-BUILD_RECORD_SET_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "contracts/record-sets/task014-build-execution-v1.json"
+    / "contracts/record-sets/task023-application-spine-v1.json"
 )
 
 PRODUCT_HELP_EPILOG = (
-    "Default output is deterministic plain text over schuss-record-set-000001@1. "
+    "Default output is deterministic plain text over schuss-record-set-000015@1. "
     "--record-set selects one exact validated parent-preserving manifest; --json "
     "emits the canonical operation result. Exit 0 is success, 1 is a dispatched "
     "non-success, 2 is usage/input failure, and 3 is unexpected internal failure."
@@ -81,46 +79,8 @@ class _HelpRequested(Exception):
 
 
 def _stable_help(parser: argparse.ArgumentParser) -> str:
-    """Preserve the accepted root help bytes while adding project commands."""
+    """Render the explicit Task 023 CLI v2 grammar."""
 
-    if parser.prog == "schuss build":
-        for action in parser._actions:
-            if not isinstance(action, argparse._SubParsersAction):
-                continue
-            hidden = {name for name in ("plan", "execute", "completion") if name in action.choices}
-            choices = list(action.choices.items())
-            choice_actions = list(action._choices_actions)
-            try:
-                for name in hidden:
-                    del action.choices[name]
-                action._choices_actions[:] = [
-                    item for item in action._choices_actions if item.dest not in hidden
-                ]
-                return parser.format_help()
-            finally:
-                action.choices.clear()
-                action.choices.update(choices)
-                action._choices_actions[:] = choice_actions
-        return parser.format_help()
-    if parser.prog != "schuss":
-        return parser.format_help()
-    for action in parser._actions:
-        if not isinstance(action, argparse._SubParsersAction):
-            continue
-        if "project" not in action.choices:
-            break
-        choices = list(action.choices.items())
-        choice_actions = list(action._choices_actions)
-        try:
-            del action.choices["project"]
-            action._choices_actions[:] = [
-                item for item in action._choices_actions if item.dest != "project"
-            ]
-            return parser.format_help()
-        finally:
-            action.choices.clear()
-            action.choices.update(choices)
-            action._choices_actions[:] = choice_actions
     return parser.format_help()
 
 
@@ -184,12 +144,12 @@ def _parser() -> argparse.ArgumentParser:
     parser = _new_parser(
         prog="schuss",
         description=(
-            "Deterministic Schuss product CLI over the shared validation, "
-            "catalog, inspection, resolution, and in-memory transaction operations."
+            "Schuss CLI v2 over the shared application, catalog, project, graph, "
+            "Gills, and build operations."
         ),
         epilog=(
             "Default operation output is deterministic plain text over "
-            "schuss-record-set-000001@1. --record-set selects one exact validated "
+            "schuss-record-set-000015@1. --record-set selects one exact validated "
             "parent-preserving manifest; --json emits the canonical operation result. "
             "Exit 0: success/help/completion. Exit 1: dispatched non-success or "
             "interruption. Exit 2: usage/input/record-set failure. Exit 3: unexpected "
@@ -209,6 +169,30 @@ def _parser() -> argparse.ArgumentParser:
         epilog=PRODUCT_HELP_EPILOG,
     )
     _add_product_options(validate)
+
+    application = subcommands.add_parser(
+        "application",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="inspect the client-neutral application capability surface",
+        description="Application commands describe the shared operation registry.",
+        epilog="Choose describe; it is read only and does not probe external services.",
+    )
+    _add_help(application)
+    application_commands = application.add_subparsers(
+        dest="application_command", required=True, metavar="COMMAND"
+    )
+    application_describe = application_commands.add_parser(
+        "describe",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="describe operations, effects, gates, and availability",
+        description="Dispatch application.describe over the selected exact context.",
+        epilog=PRODUCT_HELP_EPILOG,
+    )
+    _add_product_options(application_describe)
 
     project = subcommands.add_parser(
         "project",
@@ -338,8 +322,8 @@ def _parser() -> argparse.ArgumentParser:
         allow_abbrev=False,
         formatter_class=_FixedHelpFormatter,
         help="browse the exact client-neutral component catalog",
-        description="Catalog commands use the Task 011A exact catalog projection.",
-        epilog="Choose search or inspect; both default to schuss-record-set-000004@1.",
+        description="Catalog commands use the exact catalog projection in the application context.",
+        epilog="Choose search or inspect; both default to schuss-record-set-000015@1.",
     )
     _add_help(catalog)
     catalog_commands = catalog.add_subparsers(
@@ -356,7 +340,7 @@ def _parser() -> argparse.ArgumentParser:
             "different filter kinds are ANDed. An omitted query lists all matches."
         ),
         epilog=(
-            "Default context is schuss-record-set-000004@1. Output and exit behavior "
+            "Default context is schuss-record-set-000015@1. Output and exit behavior "
             "otherwise match the product commands."
         ),
     )
@@ -391,7 +375,7 @@ def _parser() -> argparse.ArgumentParser:
         help="inspect one exact component family",
         description="Dispatch catalog.inspect for one exact family revision.",
         epilog=(
-            "Default context is schuss-record-set-000004@1. Output and exit behavior "
+            "Default context is schuss-record-set-000015@1. Output and exit behavior "
             "otherwise match the product commands."
         ),
     )
@@ -441,17 +425,42 @@ def _parser() -> argparse.ArgumentParser:
     )
     _add_product_options(transact)
 
+    gills = subcommands.add_parser(
+        "gills",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="inspect exact Gills instrument application support",
+        description="Gills commands inspect device, panel, mapping, runtime, and build support.",
+        epilog="Choose inspect; inspection is read only and preserves evidence boundaries.",
+    )
+    _add_help(gills)
+    gills_commands = gills.add_subparsers(
+        dest="gills_command", required=True, metavar="COMMAND"
+    )
+    gills_inspect = gills_commands.add_parser(
+        "inspect",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="inspect one exact Gills instrument closure",
+        description="Dispatch gills.inspect for one exact instrument revision.",
+        epilog=PRODUCT_HELP_EPILOG,
+    )
+    gills_inspect.add_argument("locator", metavar="INSTRUMENT_ID@REVISION")
+    _add_product_options(gills_inspect)
+
     build = subcommands.add_parser(
         "build",
         add_help=False,
         allow_abbrev=False,
         formatter_class=_FixedHelpFormatter,
-        help="resolve an exact build request without executing a backend",
+        help="resolve, plan, or explicitly execute an exact build request",
         description=(
-            "Build commands expose resolution only. A plain build does not compile, "
-            "generate artifacts, or invoke the Task 009 handler."
+            "Build commands share one exact application context. Resolve and plan are "
+            "read only; execute requires an exact handler and explicit intent."
         ),
-        epilog="Choose resolve; its child help documents record-set, output, and exit behavior.",
+        epilog="Choose resolve, plan, execute, or completion.",
     )
     _add_help(build)
     build_commands = build.add_subparsers(
@@ -474,7 +483,7 @@ def _parser() -> argparse.ArgumentParser:
         formatter_class=_FixedHelpFormatter,
         help="plan one exact build through compiler stage 6",
         description="Dispatch build.plan through the shared compiler front half.",
-        epilog="Defaults to the Task 014 exact record set and never invokes a handler.",
+        epilog="Defaults to the Task 023 application context and never invokes a handler.",
     )
     plan.add_argument("locator", metavar="REQUEST_ID@REVISION")
     _add_product_options(plan)
@@ -487,7 +496,7 @@ def _parser() -> argparse.ArgumentParser:
         epilog="--execute is mandatory explicit intent. Existing output roots are rejected.",
     )
     execute.add_argument("locator", metavar="REQUEST_ID@REVISION")
-    execute.add_argument("--handler", default="schuss-build-handler-000001@1", metavar="HANDLER_ID@REVISION")
+    execute.add_argument("--handler", required=True, metavar="HANDLER_ID@REVISION")
     execute.add_argument("--output-root", required=True, metavar="DIRECTORY")
     execute.add_argument("--execute", action="store_true", required=True)
     _add_product_options(execute)
@@ -495,8 +504,8 @@ def _parser() -> argparse.ArgumentParser:
     build_completion = build_commands.add_parser(
         "completion", add_help=False, allow_abbrev=False,
         formatter_class=_FixedHelpFormatter,
-        help="emit the additive Task 014 build completion surface",
-        description="Emit static build plan/execute completion without changing legacy completion bytes.",
+        help="emit the build-command completion surface",
+        description="Emit static build resolve/plan/execute completion.",
     )
     build_completion.add_argument("shell", choices=("bash", "zsh", "fish"))
     _add_help(build_completion)
@@ -523,11 +532,11 @@ def _parser() -> argparse.ArgumentParser:
         formatter_class=_FixedHelpFormatter,
         help="dispatch one canonical machine operation",
         description=(
-            "Task 008 canonical-JSON machine adapter. The original invocation remains "
-            "byte-compatible; --record-set only selects an explicit validated context."
+            "Canonical-JSON machine adapter over the shared operation dispatcher. "
+            "--record-set selects an explicit validated context."
         ),
         epilog=(
-            "Default context is schuss-record-set-000001@1. Exit 0 is operation success, "
+            "Default context is schuss-record-set-000015@1. Exit 0 is operation success, "
             "1 is dispatched non-success, 2 is usage/input failure, and 3 is unexpected "
             "internal failure. Stdout is canonical JSON plus one LF."
         ),
@@ -811,6 +820,8 @@ def _project_request(
 
 
 def _product_request(args, context: OperationContext, stdin: BinaryIO, stderr: TextIO, execution_service=None):
+    if args.command == "application" and args.application_command == "describe":
+        return application_describe_request(), None
     if args.command == "validate":
         return records_validate_request(), None
     if args.command == "catalog":
@@ -854,6 +865,11 @@ def _product_request(args, context: OperationContext, stdin: BinaryIO, stderr: T
         if exit_code is not None:
             return None, exit_code
         return graph_transact_request(reference, edits), None
+    if args.command == "gills" and args.gills_command == "inspect":
+        reference = resolve_locator(
+            args.locator, expected_kind="instrument", context=context
+        )
+        return gills_inspect_request(reference), None
     if args.command == "build" and args.build_command == "resolve":
         reference = resolve_locator(
             args.locator, expected_kind="build-request", context=context
@@ -943,7 +959,9 @@ def run(
             if exit_code is not None:
                 return exit_code
             context, exit_code = _load_context_or_report(
-                args.record_set, context_loader, stderr
+                args.record_set or str(APPLICATION_RECORD_SET_PATH),
+                context_loader,
+                stderr,
             )
             if exit_code is not None:
                 return exit_code
@@ -951,11 +969,7 @@ def run(
             _emit_bytes(stdout, canonical_result_bytes(result, context) + b"\n")
             return 0 if result["status"] == "success" else 1
 
-        manifest = args.record_set
-        if args.command == "catalog" and manifest is None:
-            manifest = str(CATALOG_RECORD_SET_PATH)
-        if args.command == "build" and args.build_command in {"plan", "execute"} and manifest is None:
-            manifest = str(BUILD_RECORD_SET_PATH)
+        manifest = args.record_set or str(APPLICATION_RECORD_SET_PATH)
         context, exit_code = _load_context_or_report(manifest, context_loader, stderr)
         if exit_code is not None:
             return exit_code

@@ -217,6 +217,26 @@ def catalog_inspect_request(
     }
 
 
+def gills_inspect_request(
+    instrument_reference: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "schema_version": "schuss-operation-request-v6",
+        "canonical_profile": "schuss-canonical-json-v1",
+        "operation": "gills.inspect",
+        "payload": {"instrument_reference": instrument_reference},
+    }
+
+
+def application_describe_request() -> dict[str, Any]:
+    return {
+        "schema_version": "schuss-operation-request-v7",
+        "canonical_profile": "schuss-canonical-json-v1",
+        "operation": "application.describe",
+        "payload": {"scope": "selected-context"},
+    }
+
+
 def _safe_text(value: Any) -> str:
     if value is None:
         return "none"
@@ -250,7 +270,10 @@ REFERENCE_ID_FIELDS = (
     "graph_id",
     "implementation_id",
     "instrument_id",
+    "coverage_report_id",
+    "panel_evidence_packet_id",
     "resource_report_id",
+    "runtime_realization_id",
     "stable_id",
 )
 
@@ -684,6 +707,73 @@ def _append_build_execute(lines: list[str], result: dict[str, Any]) -> None:
         lines.append(f"  - {item['level']}: {item['status']}")
 
 
+def _append_application_describe(lines: list[str], result: dict[str, Any]) -> None:
+    value = result.get("value")
+    if value is None:
+        return
+    lines.append(f"description_version: {_safe_text(value['description_version'])}")
+    lines.append("operations:")
+    for item in value["operations"]:
+        lines.append(f"  - operation: {_safe_text(item['operation'])}")
+        lines.append(f"    domain_group: {_safe_text(item['domain_group'])}")
+        lines.append(f"    effect_class: {_safe_text(item['effect_class'])}")
+        lines.append(f"    availability: {_safe_text(item['availability'])}")
+        lines.append(
+            f"    request_schema: {_safe_text(item['request_schema_version'])}"
+        )
+        lines.append(
+            f"    result_schema: {_safe_text(item['result_schema_version'])}"
+        )
+        _append_list(lines, "required_contexts", item["required_contexts"], "    ")
+        _append_list(lines, "explicit_gates", item["explicit_gates"], "    ")
+        lines.append(
+            f"    evidence_boundary: {_safe_text(item['evidence_boundary'])}"
+        )
+
+
+def _append_gills_inspect(lines: list[str], result: dict[str, Any]) -> None:
+    value = result.get("value")
+    if value is None:
+        return
+    for label, record, id_field in (
+        ("device_profile", value["device_profile"], "device_profile_id"),
+        ("instrument", value["instrument"], "instrument_id"),
+        ("panel_evidence", value["panel_evidence"], "panel_evidence_packet_id"),
+        ("mapping_coverage", value["coverage_report"], "coverage_report_id"),
+        (
+            "runtime_realization",
+            value["runtime_realization"],
+            "runtime_realization_id",
+        ),
+    ):
+        _append_reference(
+            lines,
+            label,
+            {
+                id_field: record[id_field],
+                "revision": record["revision"],
+                "content_hash": record["content_hash"],
+            },
+        )
+    lines.append("build_support:")
+    if not value["build_support"]:
+        lines.append("  none")
+    for supported in value["build_support"]:
+        lines.append("  -")
+        request = supported["build_request"]
+        _append_reference(
+            lines,
+            "build_request",
+            {
+                "build_request_id": request["build_request_id"],
+                "revision": request["revision"],
+                "content_hash": request["content_hash"],
+            },
+            "    ",
+        )
+        _append_reference(lines, "handler", supported["handler"], "    ")
+
+
 def _append_diagnostics(lines: list[str], result: dict[str, Any]) -> None:
     lines.append("diagnostics:")
     diagnostics = result["diagnostics"]
@@ -721,6 +811,8 @@ def render_human_result(
         "graph.transact": lambda: _append_graph_transact(lines, result, request),
         "catalog.search": lambda: _append_catalog_search(lines, result),
         "catalog.inspect": lambda: _append_catalog_inspect(lines, result),
+        "application.describe": lambda: _append_application_describe(lines, result),
+        "gills.inspect": lambda: _append_gills_inspect(lines, result),
     }
     appender = appenders.get(result["operation"])
     if appender is not None:
@@ -729,15 +821,19 @@ def render_human_result(
     return ("\n".join(lines) + "\n").encode("utf-8")
 
 
-BASH_COMPLETION = """# Schuss static completion for Bash
+BASH_COMPLETION = """# Schuss CLI v2 completion for Bash
 _schuss_complete() {
   local current="${COMP_WORDS[COMP_CWORD]}"
   local choices=""
   if [[ ${COMP_CWORD} -eq 1 ]]; then
-    choices="validate catalog graph build completion op --help"
+    choices="validate application catalog project graph gills build completion op --help"
   else
     case "${COMP_WORDS[1]}" in
       validate) choices="--record-set --json --help" ;;
+      application)
+        if [[ ${COMP_CWORD} -eq 2 ]]; then choices="describe --help";
+        else choices="--record-set --json --help"; fi
+        ;;
       catalog)
         if [[ ${COMP_CWORD} -eq 2 ]]; then
           choices="search inspect --help"
@@ -745,6 +841,19 @@ _schuss_complete() {
           case "${COMP_WORDS[2]}" in
             search) choices="--function --abstraction --form --signal-domain --signal-rate --signal-role --capability --technique --readiness --provenance --record-set --json --help" ;;
             inspect) choices="--record-set --json --help" ;;
+          esac
+        fi
+        ;;
+      project)
+        if [[ ${COMP_CWORD} -eq 2 ]]; then
+          choices="init inspect validate transact op completion --help"
+        else
+          case "${COMP_WORDS[2]}" in
+            init) choices="--project --project-id --record-set --graph --instrument --build-request --json --help" ;;
+            inspect|validate) choices="--project --json --help" ;;
+            transact) choices="--project --expected-project --project-content-hash --graph-content-hash --edits --write --json --help" ;;
+            op) choices="--project --request --json --help" ;;
+            completion) choices="bash zsh fish --help" ;;
           esac
         fi
         ;;
@@ -758,11 +867,19 @@ _schuss_complete() {
           esac
         fi
         ;;
+      gills)
+        if [[ ${COMP_CWORD} -eq 2 ]]; then choices="inspect --help";
+        else choices="--record-set --json --help"; fi
+        ;;
       build)
         if [[ ${COMP_CWORD} -eq 2 ]]; then
-          choices="resolve --help"
+          choices="resolve plan execute completion --help"
         else
-          choices="--record-set --json --help"
+          case "${COMP_WORDS[2]}" in
+            resolve|plan) choices="--record-set --json --help" ;;
+            execute) choices="--handler --output-root --execute --record-set --json --help" ;;
+            completion) choices="bash zsh fish --help" ;;
+          esac
         fi
         ;;
       completion) choices="bash zsh fish --help" ;;
@@ -776,13 +893,16 @@ complete -F _schuss_complete schuss
 
 
 ZSH_COMPLETION = """#compdef schuss
-# Schuss static completion for Zsh
+# Schuss CLI v2 completion for Zsh
 _schuss() {
-  local -a root_commands catalog_commands graph_commands build_commands shells
-  root_commands=(validate catalog graph build completion op)
+  local -a root_commands application_commands catalog_commands project_commands graph_commands gills_commands build_commands shells
+  root_commands=(validate application catalog project graph gills build completion op)
+  application_commands=(describe)
   catalog_commands=(search inspect)
+  project_commands=(init inspect validate transact op completion)
   graph_commands=(inspect transact)
-  build_commands=(resolve)
+  gills_commands=(inspect)
+  build_commands=(resolve plan execute completion)
   shells=(bash zsh fish)
   if (( CURRENT == 2 )); then
     _describe 'command' root_commands
@@ -790,6 +910,10 @@ _schuss() {
   fi
   case ${words[2]} in
     validate) _values 'option' --record-set --json --help ;;
+    application)
+      if (( CURRENT == 3 )); then _describe 'application command' application_commands
+      else _values 'option' --record-set --json --help; fi
+      ;;
     catalog)
       if (( CURRENT == 3 )); then
         _describe 'catalog command' catalog_commands
@@ -797,6 +921,19 @@ _schuss() {
         case ${words[3]} in
           search) _values 'option' --function --abstraction --form --signal-domain --signal-rate --signal-role --capability --technique --readiness --provenance --record-set --json --help ;;
           inspect) _values 'option' --record-set --json --help ;;
+        esac
+      fi
+      ;;
+    project)
+      if (( CURRENT == 3 )); then
+        _describe 'project command' project_commands
+      else
+        case ${words[3]} in
+          init) _values 'option' --project --project-id --record-set --graph --instrument --build-request --json --help ;;
+          inspect|validate) _values 'option' --project --json --help ;;
+          transact) _values 'option' --project --expected-project --project-content-hash --graph-content-hash --edits --write --json --help ;;
+          op) _values 'option' --project --request --json --help ;;
+          completion) _describe 'shell' shells ;;
         esac
       fi
       ;;
@@ -810,11 +947,19 @@ _schuss() {
         esac
       fi
       ;;
+    gills)
+      if (( CURRENT == 3 )); then _describe 'gills command' gills_commands
+      else _values 'option' --record-set --json --help; fi
+      ;;
     build)
       if (( CURRENT == 3 )); then
         _describe 'build command' build_commands
       else
-        _values 'option' --record-set --json --help
+        case ${words[3]} in
+          resolve|plan) _values 'option' --record-set --json --help ;;
+          execute) _values 'option' --handler --output-root --execute --record-set --json --help ;;
+          completion) _describe 'shell' shells ;;
+        esac
       fi
       ;;
     completion) _describe 'shell' shells ;;
@@ -825,20 +970,32 @@ _schuss "$@"
 """
 
 
-FISH_COMPLETION = """# Schuss static completion for Fish
+FISH_COMPLETION = """# Schuss CLI v2 completion for Fish
 complete -c schuss -f
 complete -c schuss -n '__fish_use_subcommand' -a validate
+complete -c schuss -n '__fish_use_subcommand' -a application
 complete -c schuss -n '__fish_use_subcommand' -a catalog
+complete -c schuss -n '__fish_use_subcommand' -a project
 complete -c schuss -n '__fish_use_subcommand' -a graph
+complete -c schuss -n '__fish_use_subcommand' -a gills
 complete -c schuss -n '__fish_use_subcommand' -a build
 complete -c schuss -n '__fish_use_subcommand' -a completion
 complete -c schuss -n '__fish_use_subcommand' -a op
-complete -c schuss -n '__fish_seen_subcommand_from graph' -a 'inspect transact'
+complete -c schuss -n '__fish_seen_subcommand_from application' -a describe
 complete -c schuss -n '__fish_seen_subcommand_from catalog' -a 'search inspect'
-complete -c schuss -n '__fish_seen_subcommand_from build' -a resolve
+complete -c schuss -n '__fish_seen_subcommand_from project' -a 'init inspect validate transact op completion'
+complete -c schuss -n '__fish_seen_subcommand_from graph' -a 'inspect transact'
+complete -c schuss -n '__fish_seen_subcommand_from gills' -a inspect
+complete -c schuss -n '__fish_seen_subcommand_from build' -a 'resolve plan execute completion'
 complete -c schuss -n '__fish_seen_subcommand_from completion' -a 'bash zsh fish'
-complete -c schuss -n '__fish_seen_subcommand_from validate search inspect transact resolve op' -l record-set -r
-complete -c schuss -n '__fish_seen_subcommand_from validate search inspect transact resolve op' -l json
+complete -c schuss -n '__fish_seen_subcommand_from validate; and not __fish_seen_subcommand_from project' -l record-set -r
+complete -c schuss -n '__fish_seen_subcommand_from application catalog graph gills build; and not __fish_seen_subcommand_from completion' -l record-set -r
+complete -c schuss -n '__fish_seen_subcommand_from op; and not __fish_seen_subcommand_from project' -l record-set -r
+complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from init' -l record-set -r
+complete -c schuss -n '__fish_seen_subcommand_from validate; and not __fish_seen_subcommand_from project' -l json
+complete -c schuss -n '__fish_seen_subcommand_from application catalog graph gills build; and not __fish_seen_subcommand_from completion' -l json
+complete -c schuss -n '__fish_seen_subcommand_from op; and not __fish_seen_subcommand_from project' -l json
+complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from init inspect validate transact op' -l json
 complete -c schuss -n '__fish_seen_subcommand_from search' -l function -r
 complete -c schuss -n '__fish_seen_subcommand_from search' -l abstraction -r
 complete -c schuss -n '__fish_seen_subcommand_from search' -l form -r
@@ -851,6 +1008,18 @@ complete -c schuss -n '__fish_seen_subcommand_from search' -l readiness -r
 complete -c schuss -n '__fish_seen_subcommand_from search' -l provenance -r
 complete -c schuss -n '__fish_seen_subcommand_from transact' -l edits -r
 complete -c schuss -n '__fish_seen_subcommand_from op' -l request -r
+complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from init inspect validate transact op' -l project -r
+complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from init' -l project-id -r
+complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from init' -l graph -r
+complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from init' -l instrument -r
+complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from init' -l build-request -r
+complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from transact' -l expected-project -r
+complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from transact' -l project-content-hash -r
+complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from transact' -l graph-content-hash -r
+complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from transact' -l write
+complete -c schuss -n '__fish_seen_subcommand_from execute' -l handler -r
+complete -c schuss -n '__fish_seen_subcommand_from execute' -l output-root -r
+complete -c schuss -n '__fish_seen_subcommand_from execute' -l execute
 complete -c schuss -l help
 """
 

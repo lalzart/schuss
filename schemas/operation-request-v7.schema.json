@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "operation-request-v7.schema.json",
+  "title": "Schuss application description operation request v7",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "operation", "payload"],
+  "properties": {
+    "schema_version": {"const": "schuss-operation-request-v7"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "operation": {"const": "application.describe"},
+    "payload": {
+      "type": "object",
+      "required": ["scope"],
+      "properties": {
+        "scope": {"const": "selected-context"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

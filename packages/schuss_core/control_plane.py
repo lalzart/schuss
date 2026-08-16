@@ -30,6 +30,7 @@ import validator_core as core
 from . import catalog_projection as catalog
 from . import compiler_front_half as compiler
 from . import build_execution as execution
+from . import application_capabilities as application
 
 
 REQUEST_SCHEMA_NAME = "operation-request-v1.schema.json"
@@ -73,6 +74,12 @@ TASK018_SCHEMA_NAMES = {
     "runtime_realizations": "gills-runtime-realization-v0.schema.json",
     "operation_request_v6": "operation-request-v6.schema.json",
     "operation_result_v6": "operation-result-v6.schema.json",
+}
+
+TASK023_SCHEMA_NAMES = {
+    "application_capability_description": "application-capability-description-v0.schema.json",
+    "operation_request_v7": "operation-request-v7.schema.json",
+    "operation_result_v7": "operation-result-v7.schema.json",
 }
 
 DOMAIN_GROUPS = (
@@ -280,6 +287,10 @@ def load_repository_context(
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
     for key, filename in TASK018_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    for key, filename in TASK023_SCHEMA_NAMES.items():
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
@@ -501,6 +512,7 @@ def canonical_result_bytes(
         "schuss-operation-result-v4": "operation_result_v4",
         "schuss-operation-result-v5": "operation_result_v5",
         "schuss-operation-result-v6": "operation_result_v6",
+        "schuss-operation-result-v7": "operation_result_v7",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -530,6 +542,107 @@ def _catalog_unavailable(operation: str) -> dict[str, Any]:
         ],
         version=2,
     )
+
+
+def _dispatch_application_operation(
+    request: dict[str, Any],
+    context: OperationContext,
+    *,
+    project_workspace_available: bool = False,
+    execution_service_available: bool = False,
+) -> dict[str, Any]:
+    operation = request.get("operation") if isinstance(request, dict) else None
+    required_schemas = (
+        "application_capability_description",
+        "operation_request_v7",
+        "operation_result_v7",
+    )
+    missing_schemas = sorted(
+        name for name in required_schemas if name not in context.schemas
+    )
+    if missing_schemas:
+        result_version = 7 if "operation_result_v7" in context.schemas else 1
+        result = _result(
+            "application.describe" if result_version == 7 else "invalid-request",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "APPLICATION_SCHEMA_UNAVAILABLE",
+                    operation if isinstance(operation, str) else "invalid-request",
+                    "$",
+                    "the selected context is missing application schema keys: "
+                    + ", ".join(missing_schemas),
+                )
+            ],
+            version=result_version,
+        )
+        canonical_result_bytes(result, context)
+        return result
+    errors: list[str] = []
+    try:
+        core.assert_portable_json_value(request)
+    except ValueError as exc:
+        errors.append(str(exc))
+    request_schema = context.schemas["operation_request_v7"]
+    if isinstance(request, dict):
+        errors.extend(core.schema_errors(request, request_schema, request_schema))
+    else:
+        errors.append("$: operation request must be an object")
+    if errors:
+        result_version = 7 if "operation_result_v7" in context.schemas else 1
+        result = _result(
+            (
+                operation
+                if result_version == 7 and operation == "application.describe"
+                else "invalid-request"
+            ),
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "OPERATION_REQUEST_INVALID",
+                    operation if isinstance(operation, str) else "invalid-request",
+                    "$",
+                    error,
+                )
+                for error in sorted(set(errors))
+            ],
+            version=result_version,
+        )
+        canonical_result_bytes(result, context)
+        return result
+    try:
+        value = application.build_application_description(
+            record_set_reference=context.record_set_reference,
+            schemas=context.schemas,
+            project_workspace_available=project_workspace_available,
+            execution_service_available=execution_service_available,
+        )
+        value_schema = context.schemas["application_capability_description"]
+        value_errors = core.schema_errors(value, value_schema, value_schema)
+        if value_errors:
+            raise application.CapabilityRegistryError("; ".join(value_errors))
+    except application.CapabilityRegistryError as exc:
+        result = _result(
+            "application.describe",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "APPLICATION_CAPABILITY_REGISTRY_INVALID",
+                    "application.describe",
+                    "$.value.operations",
+                    str(exc),
+                )
+            ],
+            version=7,
+        )
+        canonical_result_bytes(result, context)
+        return result
+    result = _result("application.describe", "success", value, version=7)
+    canonical_result_bytes(result, context)
+    return result
 
 
 def _catalog_search(
@@ -1304,6 +1417,24 @@ def dispatch_operation(
     execution_service: execution.ExecutionService | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v7"
+    ):
+        if project_service is not None:
+            loaded = project_service.load()
+            return _dispatch_application_operation(
+                request,
+                loaded.context,
+                project_workspace_available=True,
+                execution_service_available=execution_service is not None,
+            )
+        return _dispatch_application_operation(
+            request,
+            context,
+            execution_service_available=execution_service is not None,
+        )
 
     if (
         isinstance(request, dict)

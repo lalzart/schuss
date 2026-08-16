@@ -107,7 +107,14 @@ class CliContractHardeningTest(unittest.TestCase):
         }
         direct = dispatch_operation(copy.deepcopy(request), self.default_context)
         process = _process(
-            ["op", "--request", "-", "--json"],
+            [
+                "op",
+                "--request",
+                "-",
+                "--record-set",
+                str(ACCEPTED),
+                "--json",
+            ],
             input_bytes=core.canonical_json(request).encode("utf-8") + b"\n",
         )
 
@@ -219,7 +226,7 @@ class CliContractHardeningTest(unittest.TestCase):
             ),
             (
                 "build-plan",
-                ["build", "plan", "schuss-build-request-000002@2", "--json"],
+                ["build", "plan", "schuss-build-request-000002@5", "--json"],
                 None,
                 0,
                 "build.plan",
@@ -262,6 +269,8 @@ class CliContractHardeningTest(unittest.TestCase):
                         "build",
                         "execute",
                         "schuss-build-request-000002@latest",
+                        "--handler",
+                        "schuss-build-handler-000003@2",
                         "--output-root",
                         str(output_root),
                         "--execute",
@@ -333,8 +342,12 @@ class CliContractHardeningTest(unittest.TestCase):
                 "build",
                 "execute",
                 "schuss-build-request-000002@2",
+                "--handler",
+                "schuss-build-handler-000001@1",
                 "--output-root",
                 "unused",
+                "--record-set",
+                str(TASK014),
                 "--json",
             ]
         )
@@ -384,8 +397,12 @@ class CliContractHardeningTest(unittest.TestCase):
                     "build",
                     "execute",
                     "schuss-build-request-000002@2",
+                    "--handler",
+                    "schuss-build-handler-000001@1",
                     "--output-root",
                     str(occupied),
+                    "--record-set",
+                    str(TASK014),
                     "--execute",
                     "--json",
                 ]
@@ -407,8 +424,12 @@ class CliContractHardeningTest(unittest.TestCase):
                     "build",
                     "execute",
                     "schuss-build-request-000002@2",
+                    "--handler",
+                    "schuss-build-handler-000001@1",
                     "--output-root",
                     str(missing_parent_root),
+                    "--record-set",
+                    str(TASK014),
                     "--execute",
                     "--json",
                 ]
@@ -422,10 +443,10 @@ class CliContractHardeningTest(unittest.TestCase):
             )
             self.assertFalse(missing_parent_root.parent.exists())
 
-    def test_help_and_completion_preserve_history_and_cover_build_grammar(self):
+    def test_help_and_completion_cover_current_and_compatibility_grammar(self):
         help_hashes = {
-            "root": "f0cfe4c99ace639652c8d127c1def34055510cb8cfcf1990f86427728196aa93",
-            "build": "2fbc0ab3be00cc5a142557f48e710db20b4b7b5ec0ec3087a1a09e2246ce8c89",
+            "root": "611d505b58476d84301833e8692099148e3c85b67916221b397675851c8cb450",
+            "build": "65d74f3c9ca0c5ce655ae36eb59870bba14c95c001a057e7633dd1b7c577794d",
         }
         help_cases = {
             "root": ["--help"],
@@ -456,10 +477,10 @@ class CliContractHardeningTest(unittest.TestCase):
         ):
             self.assertIn(option, execute_help)
 
-        legacy_hashes = {
-            "bash": "54b604a3ca4cfd768bc20e21744eb19a175906767e4cdf2f46c2441468c94c51",
-            "zsh": "32b548eb3b28b89c84c193bc9de32f1ef2c92ea3d7d1393471fb9fc5e1067f2c",
-            "fish": "17cc15956e4a5b392e209e328badf7fd51fdcb0c1534610f00daf0dff6b1aeda",
+        current_hashes = {
+            "bash": "7d6c3fb29d406e90c8c3c8bd9b13d753d1cc52f7eeb1a3a1acc83371e6704fa5",
+            "zsh": "8c5ce14b67d85e70d3fb0f9e7847487b6b33cb5b75d44811b9ae86f66f7eddf9",
+            "fish": "71c0ad6df74fe040824f423f8292cdda2ca77fa34ccc8616df8f52e15fd0f040",
         }
         project_hashes = {
             "bash": "f8c907c42387842d2beac1682f70d6de5a867e8e6537e7e768e90a10851795c2",
@@ -474,7 +495,7 @@ class CliContractHardeningTest(unittest.TestCase):
         for shell in ("bash", "zsh", "fish"):
             with self.subTest(completion=shell):
                 self.assertEqual(
-                    legacy_hashes[shell],
+                    current_hashes[shell],
                     hashlib.sha256(completion_script(shell)).hexdigest(),
                 )
                 self.assertEqual(

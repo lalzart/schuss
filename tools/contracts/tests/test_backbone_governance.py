@@ -31,6 +31,7 @@ class BackboneGovernanceTest(unittest.TestCase):
     def test_live_repository_is_valid(self):
         summary = governance.validate_documents(self.documents, self.task_filenames)
         self.assertEqual("valid", summary["status"])
+        self.assertEqual("backbone-governance-summary-v11", summary["schema_version"])
         self.assertEqual([], summary["diagnostics"])
         self.assertEqual(
             ["ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014"],
@@ -42,7 +43,8 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["active_evidence_task"],
         )
         self.assertEqual(
-            "task023-contract-creation-pending", summary["promotion_gate"]
+            "task024-contract-creation-and-acceptance-pending",
+            summary["promotion_gate"],
         )
         self.assertEqual(
             [
@@ -51,9 +53,11 @@ class BackboneGovernanceTest(unittest.TestCase):
             ],
             summary["active_task_sequence"],
         )
-        self.assertEqual("023-contract-not-created", summary["next_planned_task"])
         self.assertEqual(
-            ["023", "024", "025", "026", "027", "028"],
+            "024-contract-not-created", summary["next_planned_task"]
+        )
+        self.assertEqual(
+            ["024", "025", "026", "027", "028"],
             summary["planned_task_sequence"],
         )
         self.assertEqual("complete-mapped-local-level-5", summary["task_statuses"]["018"])
@@ -65,14 +69,17 @@ class BackboneGovernanceTest(unittest.TestCase):
             "failed-connected-diagnostic-level-6-not-earned",
             summary["task_statuses"]["022"],
         )
-        self.assertEqual("planned-contract-not-created", summary["task_statuses"]["023"])
         self.assertEqual(
-            "unnumbered-architecture-authorized-implementation-gated",
+            "complete-application-surface-cli-v2",
+            summary["task_statuses"]["023"],
+        )
+        self.assertEqual(
+            "unnumbered-architecture-eligible-not-started-implementation-gated",
             summary["ui_milestone_status"],
         )
 
     def test_negative_governance_fixtures_fail_closed(self):
-        self.assertEqual("backbone-governance-negative-fixtures-v4", self.fixtures["schema_version"])
+        self.assertEqual("backbone-governance-negative-fixtures-v6", self.fixtures["schema_version"])
         for fixture in self.fixtures["cases"]:
             with self.subTest(case=fixture["name"]):
                 documents = copy.deepcopy(self.documents)

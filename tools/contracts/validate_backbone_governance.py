@@ -31,6 +31,7 @@ TASK_012B = "docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md"
 TASK_018 = "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md"
 TASK_021 = "docs/tasks/021-gills-dma-safe-oled-and-connected-device-evidence.md"
 TASK_022 = "docs/tasks/022-connected-gills-control-panel-evidence.md"
+TASK_023 = "docs/tasks/023-cli-v2-and-application-surface-consolidation.md"
 
 DOCUMENT_PATHS = (
     README,
@@ -52,16 +53,18 @@ DOCUMENT_PATHS = (
     TASK_018,
     TASK_021,
     TASK_022,
+    TASK_023,
 )
 
 ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 29))
-PLANNED_SEQUENCE = tuple(f"{number:03d}" for number in range(23, 29))
+PLANNED_SEQUENCE = tuple(f"{number:03d}" for number in range(24, 29))
 EXPECTED_TASK_FILENAMES = {
     "README.md",
     "012b-object-drawer-and-transparent-graph-canvas.md",
     "018-full-gills-implementation-and-parameter-control-mapping.md",
     "021-gills-dma-safe-oled-and-connected-device-evidence.md",
     "022-connected-gills-control-panel-evidence.md",
+    "023-cli-v2-and-application-surface-consolidation.md",
 }
 LETTERED_ALIAS = re.compile(r"\bTasks?\s+(01[3-9]|02[01])[A-Z](?:-[A-Z])?\b", re.IGNORECASE)
 INFORMAL_ALIAS = re.compile(r"(?<![A-Za-z0-9])B6(?![A-Za-z0-9])", re.IGNORECASE)
@@ -319,6 +322,45 @@ def validate_documents(
         ),
     )
 
+    task23_status = _leading_status(documents.get(TASK_023, "")) or ""
+    for fragment in (
+        "accepted by the user and completed on 2026-08-16",
+        "passed all sixteen acceptance tests",
+        "ADR 0014",
+    ):
+        if fragment not in task23_status:
+            diagnostics.append(
+                _diagnostic(
+                    "TASK_023_CONTRACT_INVALID",
+                    TASK_023,
+                    f"Task 023 contract status must contain: {fragment}",
+                )
+            )
+    _require_phrases(
+        diagnostics,
+        code="TASK_023_CONTRACT_INVALID",
+        document=TASK_023,
+        scope=documents.get(TASK_023, ""),
+        phrases=(
+            "application.describe",
+            "application-capability-description-v0",
+            "operation-request-v7",
+            "operation-result-v7",
+            "schuss-record-set-000015@1",
+            "schuss-record-set-000014@1",
+            "Task 011A golden fixture remains byte-identical",
+            "Task 023A",
+            "Task 023B",
+            "Task 023C",
+            "Tasks 023A and 023B may proceed as two implementation lanes",
+            "Task 023C waits for both",
+            "passed all sixteen acceptance tests",
+            "Task 024 still requires its own complete accepted contract",
+            "UI-architecture milestone is now eligible to begin as a separate planning lane",
+            "Staging, commit, push",
+        ),
+    )
+
     status_rules = (
         "This document is the single authority for Schuss's current development state.",
         "Task 018 is complete for exact record set `schuss-record-set-000012@1`.",
@@ -336,11 +378,16 @@ def validate_documents(
         "promotion stopped before a complete sweep and level 6 was not earned",
         "Approval gate 2 is closed",
         "ADR 0014 accepts the application-spine sequence",
-        "Task 023, CLI v2 and application-surface consolidation, is the next planned task",
-        "no Task 023 implementation is active",
+        "Task 023 was explicitly accepted and completed on 2026-08-16",
+        "`schuss-record-set-000015@1`",
+        "`application.describe` operation inventories fourteen accepted public operations",
+        "The read-only Task 023 smoke passes in two copied fresh roots",
+        "backend execution, project writes, and hardware access were `not-run`",
         "UI architecture planning is now explicitly authorized by ADR 0014",
         "UI implementation remains separately gated",
-        "The next implementation gate is creation and acceptance of the complete Task 023 contract.",
+        "Task 024 is the next numbered implementation gate",
+        "no Task 024 contract exists and no successor task is active",
+        "UI-architecture milestone is now eligible as a separate planning lane but has not started",
     )
     _require_phrases(
         diagnostics,
@@ -356,7 +403,7 @@ def validate_documents(
         document=APPLICATION_SPINE_PLAN,
         scope=documents.get(APPLICATION_SPINE_PLAN, ""),
         phrases=(
-            "Status: accepted planning authority under ADR 0014. No Task 023-028 implementation contract has been created or activated.",
+            "Status: accepted planning authority under ADR 0014. Task 023 is accepted and complete. No Task 024-028 contract has been created or activated; the unnumbered UI-architecture milestone is eligible but not started.",
             "Task 023: CLI v2 and application-surface consolidation",
             "Task 024: Complete catalog coverage and deterministic curation",
             "Task 025: Direct-compiler core-library tranche",
@@ -369,7 +416,9 @@ def validate_documents(
             "The default concurrency ceiling is two implementation lanes plus one read-only/design lane.",
             "operation and schema version allocation",
             "stable semantic IDs, record-set revisions, and manifest publication",
-            "This plan does not itself start Task 023",
+            "This plan did not itself start Task 023",
+            "Task 023 is accepted complete",
+            "does not activate Task 024",
             "Tasks 019 and 020 remain deferred.",
         ),
     )
@@ -436,7 +485,7 @@ def validate_documents(
         "20": "deferred; not scheduled",
         "21": "complete; corrected level 6",
         "22": "stopped; failed before level 6",
-        "23": "planned next; contract not created",
+        "23": "complete; shared capability surface and cli v2",
         "24": "planned; depends on task 023",
         "25": "planned; depends on task 024 selection",
         "26": "planned; depends on tasks 023 and 025",
@@ -477,7 +526,9 @@ def validate_documents(
             "Executable promotion",
             "reach evidence level 5",
             "Tasks 019 and 020 remain deferred.",
-            "Task 023 is next, but no implementation contract has been created.",
+            "Task 023 is accepted complete.",
+            "Task 024 is the next numbered contract gate and is not active.",
+            "UI-architecture milestone is now eligible but not started",
             "two implementation lanes plus one read-only or design lane",
         ),
     )
@@ -563,6 +614,7 @@ def validate_documents(
         TASK_018: documents.get(TASK_018, ""),
         TASK_021: documents.get(TASK_021, ""),
         TASK_022: documents.get(TASK_022, ""),
+        TASK_023: documents.get(TASK_023, ""),
     }
     for document, scope in alias_scopes.items():
         matches = sorted(set(LETTERED_ALIAS.findall(scope)))
@@ -605,10 +657,10 @@ def validate_documents(
         "current_status_source": STATUS,
         "diagnostics": diagnostics,
         "historical_context_policy": "completed-task-contracts-indexed-in-history-and-git",
-        "next_planned_task": "023-contract-not-created",
+        "next_planned_task": "024-contract-not-created",
         "planned_task_sequence": list(PLANNED_SEQUENCE),
-        "promotion_gate": "task023-contract-creation-pending",
-        "schema_version": "backbone-governance-summary-v9",
+        "promotion_gate": "task024-contract-creation-and-acceptance-pending",
+        "schema_version": "backbone-governance-summary-v11",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -622,14 +674,14 @@ def validate_documents(
             "020": "deferred-not-scheduled",
             "021": "complete-corrected-connected-level-6",
             "022": "failed-connected-diagnostic-level-6-not-earned",
-            "023": "planned-contract-not-created",
+            "023": "complete-application-surface-cli-v2",
             "024": "planned-depends-on-023",
             "025": "planned-depends-on-024",
             "026": "planned-depends-on-023-and-025",
             "027": "planned-depends-on-026",
             "028": "planned-depends-on-024-and-025",
         },
-        "ui_milestone_status": "unnumbered-architecture-authorized-implementation-gated",
+        "ui_milestone_status": "unnumbered-architecture-eligible-not-started-implementation-gated",
     }
 
 

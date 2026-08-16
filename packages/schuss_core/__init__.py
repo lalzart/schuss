@@ -15,6 +15,12 @@ from .build_execution import (
     execute_build,
     handler_reference,
 )
+from .application_capabilities import (
+    APPLICATION_DESCRIPTION_VERSION,
+    CAPABILITY_ENTRIES,
+    CapabilityRegistryError,
+    build_application_description,
+)
 
 __all__ = [
     "OperationContext",
@@ -30,4 +36,8 @@ __all__ = [
     "HandlerRegistration",
     "execute_build",
     "handler_reference",
+    "APPLICATION_DESCRIPTION_VERSION",
+    "CAPABILITY_ENTRIES",
+    "CapabilityRegistryError",
+    "build_application_description",
 ]

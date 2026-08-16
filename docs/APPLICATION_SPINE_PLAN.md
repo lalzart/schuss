@@ -1,7 +1,8 @@
 # Application-spine sequence and parallel-work plan
 
-Status: accepted planning authority under ADR 0014. No Task 023-028
-implementation contract has been created or activated.
+Status: accepted planning authority under ADR 0014. Task 023 is accepted and
+complete. No Task 024-028 contract has been created or activated; the
+unnumbered UI-architecture milestone is eligible but not started.
 
 ## Goal
 
@@ -209,7 +210,7 @@ Tasks 025 + 026 + 027 + UI architecture -> gated UI vertical slice
 
 Useful parallel windows are intentionally bounded:
 
-1. After Task 023 is accepted, Task 024 implementation and the read-only/design
+1. After Task 023 is accepted complete, Task 024 implementation and the read-only/design
    UI-architecture milestone may run concurrently.
 2. After Task 024 freezes its selection packet, family-specific Task 025
    semantic specifications and host vectors may use disjoint child work
@@ -250,7 +251,10 @@ separate output namespaces.
 
 ## Activation and approval rules
 
-- This plan does not itself start Task 023 or create any Task 023-028 contract.
+- This plan did not itself start Task 023 and does not create or activate any
+  Task 024-028 contract.
+- Task 023 is accepted complete; that completion does not activate Task 024 or
+  the eligible UI-architecture planning lane.
 - Each numbered task requires a complete contract before implementation.
 - Completion of one task does not automatically authorize the next.
 - UI architecture planning is authorized; UI implementation remains gated.

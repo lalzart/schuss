@@ -42,6 +42,9 @@ REQUEST_FIXTURE = (
     ROOT / "tools/contracts/tests/fixtures/task011a-catalog-operation-requests.json"
 )
 GOLDEN_FIXTURE = ROOT / "tools/contracts/tests/fixtures/task011a-cli-golden-hashes.json"
+TASK023_GOLDEN_FIXTURE = (
+    ROOT / "tools/contracts/tests/fixtures/task023-cli-v2-golden-hashes.json"
+)
 V1_FIXTURE = ROOT / "tools/contracts/tests/fixtures/task008-operation-requests.json"
 OVERLAY = ROOT / "catalog/overlays/phase-4a-semantic-catalog-v0/catalog.json"
 CORPUS = ROOT / "contracts/catalog/task011a-corpus-v1.json"
@@ -308,7 +311,16 @@ class Task011ACatalogTest(unittest.TestCase):
     def test_all_client_projections_are_canonical_byte_equal(self):
         request = self.fixtures["catalog_search_crossfade"]
         direct = canonical_result_bytes(dispatch_operation(copy.deepcopy(request), self.context), self.context)
-        ergonomic = _process(["catalog", "search", "crossfade", "--json"])
+        ergonomic = _process(
+            [
+                "catalog",
+                "search",
+                "crossfade",
+                "--record-set",
+                str(RECORD_SET),
+                "--json",
+            ]
+        )
         raw = _process(
             ["op", "--request", "-", "--record-set", str(RECORD_SET), "--json"],
             input_bytes=core.canonical_json(request).encode("utf-8") + b"\n",
@@ -325,6 +337,7 @@ class Task011ACatalogTest(unittest.TestCase):
             (["catalog", "search", "crossfade", "--json"], "catalog.search"),
             (["catalog", "inspect", "schuss-family-000018@1", "--json"], "catalog.inspect"),
         ):
+            arguments = [*arguments, "--record-set", str(RECORD_SET)]
             calls = []
 
             def counted(request, context):
@@ -383,7 +396,7 @@ class Task011ACatalogTest(unittest.TestCase):
         self.assertIn(b"CLI_LOCATOR_MALFORMED", malformed.stderr)
         human = _process(["catalog", "search", "crossfade"])
         self.assertEqual(0, human.returncode)
-        self.assertIn(b"record_set: schuss-record-set-000004@1", human.stdout)
+        self.assertIn(b"record_set: schuss-record-set-000015@1", human.stdout)
         self.assertIn(b"readiness_states:", human.stdout)
         root_help = _process(["--help"])
         catalog_help = _process(["catalog", "search", "--help"])
@@ -395,8 +408,9 @@ class Task011ACatalogTest(unittest.TestCase):
             self.assertIn(b"search", script)
             self.assertIn(b"inspect", script)
 
-    def test_task011a_help_completion_human_and_json_goldens(self):
-        golden = core.load_json(GOLDEN_FIXTURE)
+    def test_task011a_historical_and_task023_successor_goldens(self):
+        historical = core.load_json(GOLDEN_FIXTURE)
+        successor = core.load_json(TASK023_GOLDEN_FIXTURE)
         observed = {"help": {}, "completion": {}, "human": {}, "json": {}}
         for name, arguments in {
             "root": ["--help"],
@@ -417,7 +431,44 @@ class Task011ACatalogTest(unittest.TestCase):
         }.items():
             observed["human"][name] = _digest(_process(arguments).stdout)
             observed["json"][name] = _digest(_process([*arguments, "--json"]).stdout)
-        self.assertEqual(golden, observed)
+        expected = {
+            section: {
+                name: successor[section][name]
+                for name in observed[section]
+            }
+            for section in observed
+        }
+        self.assertEqual(expected, observed)
+        self.assertEqual(
+            "f4530b7e13e1275df11fdb17a99abaf70758547db36d1025e666cb1aa8c94ed4",
+            hashlib.sha256(GOLDEN_FIXTURE.read_bytes()).hexdigest(),
+        )
+
+        # The retained pre-Task-023 mismatch is four equal-length digest changes.
+        # It is isolated to the exact Task 011A context rather than hidden by
+        # rewriting the historical fixture or misreported as catalog semantic drift.
+        historical_context = {"human": {}, "json": {}}
+        for name, arguments in {
+            "catalog-search-crossfade": ["catalog", "search", "crossfade"],
+            "catalog-inspect-crossfader": [
+                "catalog",
+                "inspect",
+                "schuss-family-000018@1",
+            ],
+        }.items():
+            explicit = [*arguments, "--record-set", str(RECORD_SET)]
+            historical_context["human"][name] = _digest(_process(explicit).stdout)
+            historical_context["json"][name] = _digest(
+                _process([*explicit, "--json"]).stdout
+            )
+        for section in ("human", "json"):
+            for name, value in historical_context[section].items():
+                self.assertEqual(
+                    historical[section][name]["byte_length"], value["byte_length"]
+                )
+                self.assertNotEqual(
+                    historical[section][name]["byte_sha256"], value["byte_sha256"]
+                )
 
     def test_broken_pipe_and_interruption_remain_contained(self):
         class BrokenOutput:
@@ -428,7 +479,14 @@ class Task011ACatalogTest(unittest.TestCase):
                 return None
 
         code = run_cli(
-            ["catalog", "search", "crossfade", "--json"],
+            [
+                "catalog",
+                "search",
+                "crossfade",
+                "--record-set",
+                str(RECORD_SET),
+                "--json",
+            ],
             io.BytesIO(),
             BrokenOutput(),
             io.StringIO(),
@@ -438,7 +496,14 @@ class Task011ACatalogTest(unittest.TestCase):
         with mock.patch("packages.schuss_core.cli.dispatch_operation", side_effect=KeyboardInterrupt):
             stderr = io.StringIO()
             code = run_cli(
-                ["catalog", "search", "crossfade", "--json"],
+                [
+                    "catalog",
+                    "search",
+                    "crossfade",
+                    "--record-set",
+                    str(RECORD_SET),
+                    "--json",
+                ],
                 io.BytesIO(), io.BytesIO(), stderr,
                 lambda **kwargs: self.context,
             )

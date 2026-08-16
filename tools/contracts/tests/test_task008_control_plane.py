@@ -36,6 +36,7 @@ POSITIVE_PATH = (
     / "tools/contracts/tests/fixtures/target-backend-build-positive-fixtures.json"
 )
 CLI = ROOT / "bin/schuss"
+ACCEPTED_RECORD_SET = ROOT / "contracts/record-sets/task005-008-accepted-v0.json"
 
 
 def _ref(record, id_field):
@@ -335,7 +336,15 @@ class Task008ControlPlaneTest(unittest.TestCase):
                 direct = dispatch_operation(copy.deepcopy(request), self.context)
                 expected = canonical_result_bytes(direct, self.context) + b"\n"
                 process = subprocess.run(
-                    [str(CLI), "op", "--request", str(request_path), "--json"],
+                    [
+                        str(CLI),
+                        "op",
+                        "--request",
+                        str(request_path),
+                        "--record-set",
+                        str(ACCEPTED_RECORD_SET),
+                        "--json",
+                    ],
                     cwd=ROOT,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,

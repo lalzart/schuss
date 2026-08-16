@@ -22,6 +22,8 @@ python3 tools/contracts/validate_task017.py
 python3 tools/contracts/validate_task018_contract.py
 python3 tools/contracts/validate_task021_contract.py
 python3 tools/contracts/validate_task022_contract.py
+python3 tools/contracts/validate_task023_contract.py
+python3 tools/contracts/validate_task023.py
 python3 tools/contracts/validate_task022.py
 python3 tools/contracts/validate_backbone_governance.py
 python3 -m unittest discover -s tools/contracts/tests
@@ -29,8 +31,9 @@ python3 -m unittest discover -s tools/contracts/tests
 
 `generate_task013_record_set.py --check` through
 `generate_task017_records.py --check`, `run_task016.py --check`,
-`run_task017.py --check`, `generate_task022_records.py --check`, and
-`run_task022.py --check` are also read-only freshness/reproduction checks.
+`run_task017.py --check`, `generate_task022_records.py --check`,
+`run_task022.py --check`, and `generate_task023_records.py --check` are also
+read-only freshness/reproduction checks.
 
 The Task 016/017 contract validators authenticate retained ADR/evidence
 boundaries; completed task Markdown is intentionally archived through Git.
@@ -76,6 +79,12 @@ candidate. The retained connected observation records exactly one approved
 volatile-RAM upload and `POT_EVENT_FOCUS_UNSTABLE`; no level-6 promotion or
 Task 021 replacement upload occurred. Any new device action remains separately
 approval-gated.
+
+Task 023 adds the client-neutral `application.describe` operation and exact
+record set `schuss-record-set-000015@1`, then exposes the accepted operations
+through one CLI v2 grammar. `validate_task023.py` is a read-only cross-service
+smoke and two-fresh-root determinism check; it does not execute a backend,
+write a project, or access hardware.
 
 Every check must keep structural, lowering, generation, ARM compile/link,
 connected-device, real-time, and audible evidence distinct. See

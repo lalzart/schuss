@@ -31,12 +31,13 @@ but ADC jitter destabilized last-moved telemetry; promotion stopped before
 level 6 and the Task 021 replacement gate is closed.
 
 [ADR 0014](docs/decisions/0014-sequence-application-spine-and-authorize-ui-architecture.md)
-now accepts the [application-spine plan](docs/APPLICATION_SPINE_PLAN.md): Task
-023 is the next planned contract, followed by catalog coverage, a broader
-direct-compiler tranche, complete authoring operations, application jobs, and
-transparent-compound expansion. No Task 023 implementation has started. UI
-architecture is authorized as an unnumbered planning milestone; UI
-implementation remains separately gated.
+now accepts the [application-spine plan](docs/APPLICATION_SPINE_PLAN.md). The
+[Task 023 contract](docs/tasks/023-cli-v2-and-application-surface-consolidation.md)
+is accepted and complete: one client-neutral capability description, one
+coherent CLI v2 grammar, one exact application record set, and a read-only
+cross-service smoke path now form the application boundary. Task 024 is the
+next contract gate. UI architecture is eligible as a separate unnumbered
+planning lane but has not started; UI implementation remains separately gated.
 
 The reviewed Task 017 core remains structurally useful but not yet generally
 executable. Its two full-panel successors retain stable unsupported
@@ -53,6 +54,8 @@ and audible proof also remain `not-run` and require new authorization.
 - [Roadmap](docs/ROADMAP.md): current gate and later decisions.
 - [Application-spine plan](docs/APPLICATION_SPINE_PLAN.md): Tasks 023-028,
   lettered children, dependencies, and safe parallel lanes.
+- [Task 023 contract](docs/tasks/023-cli-v2-and-application-surface-consolidation.md):
+  the completed CLI v2/application-surface boundary.
 - [Decision log](docs/decisions/README.md): accepted and superseded choices.
 - [Development history](docs/HISTORY.md): concise completed-work index and Git
   retrieval instructions.
@@ -63,25 +66,21 @@ and compiler-front-half documents under `docs/`.
 
 ## Command line
 
-`bin/schuss` is the product and machine-operation boundary. The current root
-help and completion preserve earlier accepted bytes and therefore do not list
-every additive project and build command even though their explicit
-subcommands exist. Task 023 owns a coherent versioned successor rather than
-silently rewriting that historical contract.
+`bin/schuss` is the product and machine-operation boundary. CLI v2 visibly
+exposes validation, application capabilities, catalog, project, graph, Gills,
+build, completion, and canonical-operation routes. Non-project commands use
+exact record set `schuss-record-set-000015@1` by default. Historical CLI
+goldens remain retained separately rather than being rewritten.
 
 Representative read-only commands are:
 
 ```bash
 bin/schuss validate
+bin/schuss application describe
 bin/schuss catalog search oscillator
-bin/schuss graph inspect schuss-graph-000002@1 \
-  --record-set contracts/record-sets/task011c-executed-v1.json
-bin/schuss build plan schuss-build-request-000002@3 \
-  --record-set contracts/record-sets/task016-complete-gills-direct-v1.json
-bin/schuss build plan schuss-build-request-000002@4 \
-  --record-set contracts/record-sets/task018-full-gills-v1.json
-bin/schuss build plan schuss-build-request-000002@5 \
-  --record-set contracts/record-sets/task021-gills-dma-safe-v1.json
+bin/schuss graph inspect schuss-graph-000002@1
+bin/schuss build plan schuss-build-request-000002@5
+bin/schuss gills inspect schuss-instrument-000002@3
 ```
 
 Build execution requires an exact registered handler, a fresh output root, and
@@ -100,6 +99,9 @@ python3 tools/contracts/validate_backbone_governance.py
 python3 tools/contracts/validate_task018_contract.py
 python3 tools/contracts/validate_task021_contract.py
 python3 tools/contracts/validate_task022_contract.py
+python3 tools/contracts/validate_task023_contract.py
+python3 tools/contracts/generate_task023_records.py --check
+python3 tools/contracts/validate_task023.py
 python3 tools/contracts/validate_task022.py
 ```
 
