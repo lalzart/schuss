@@ -1,0 +1,39 @@
+{
+  "catalog_policy": {
+    "accepted_palette_count": 20,
+    "automatic_promotions": [],
+    "policy": "Machine import does not imply standalone catalog promotion. Exact reusable contracts and public selection require independent evidence."
+  },
+  "machine_builder": {
+    "state": "later-separate-layer",
+    "work": [
+      "assemble and edit authoritative DSP graphs through shared graph/project operations",
+      "author instrument public facets, state, actions, displays, and device mappings",
+      "validate exact component and dependency closure before creating machine-v0"
+    ]
+  },
+  "palimpsest": {
+    "import_order": 1,
+    "required_before_machine_v0": [
+      "authoritative transparent DSP graph for stage mutation, scheduler, voice allocation, modal recipes, mixing, filter/drive, and limiter",
+      "accepted Palimpsest instrument record owning complete Gills mappings and resolved graph",
+      "exact treatment of Braids sine-table and stmlib resources as non-object dependencies",
+      "resolution or explicit machine-private retention of each required catalogued-only, observed-only, and unsuitable dependency",
+      "completed machine presentation with exact graph-node traces"
+    ],
+    "state": "inspection-only"
+  },
+  "schema_version": "task029-remaining-prerequisites-v1",
+  "tide_pit": {
+    "import_order": 2,
+    "required_before_machine_v0": [
+      "authoritative transparent DSP graph for excitation, reed waveguide, string/LPG body, eight-mode body, granular engine, Clouds diffusion tail, effects, and output",
+      "accepted Tide Pit instrument record owning complete Gills mappings and resolved graph",
+      "exact Clouds and Braids resource ownership without substituting unsupported Rings reverb",
+      "resource qualification beyond the 251408 source-declared SDRAM bytes",
+      "resolution or explicit machine-private retention of each required catalogued-only, observed-only, and unsuitable dependency",
+      "completed machine presentation with exact graph-node traces"
+    ],
+    "state": "inspection-only"
+  }
+}

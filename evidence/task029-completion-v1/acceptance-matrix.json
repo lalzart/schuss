@@ -1,0 +1,101 @@
+{
+  "acceptance_rows": [
+    {
+      "command": "python3 tools/contracts/validate_task029_contract.py",
+      "evidence": "12 required contract headings, 12 implementation assertions, portable documentation, and resolved relative links",
+      "result": "passed"
+    },
+    {
+      "command": "python3 tools/contracts/generate_task029_records.py --check",
+      "evidence": "two source reviews, two presentations, one panel layout, zero machines, palette total 20",
+      "result": "passed"
+    },
+    {
+      "command": "python3 tools/contracts/generate_task029_viewer_fixtures.py --check",
+      "evidence": "two canonical machine.inspect Viewer fixtures and two exact requests are fresh",
+      "result": "passed"
+    },
+    {
+      "command": "python3 -m unittest tools.contracts.tests.test_task029_gills_machines",
+      "evidence": "13 focused schema, source, panel, dependency, operation, negative-closure, palette, fixture, and evidence-package tests",
+      "result": "passed"
+    },
+    {
+      "command": "npm test --prefix apps/schuss_machine_viewer",
+      "evidence": "5 read-only rendering-model, highlighting, completed-machine identity, Tide Pit boundary, and fail-closed tests",
+      "result": "passed"
+    },
+    {
+      "command": "python3 tools/contracts/validate_task029.py",
+      "evidence": "machine layer valid; level 1 passed; levels 2-8 not run",
+      "result": "passed"
+    },
+    {
+      "command": "python3 tools/contracts/validate_task029_sources.py --source-root SOURCE --panel-root PANEL --photo PHOTO",
+      "evidence": "11 Gills blobs, all retained source-span bounds, 3 panel blobs, and non-retained photo hash matched pinned identities",
+      "result": "passed"
+    },
+    {
+      "command": "python3 tools/contracts/run_task029_fresh_process.py",
+      "evidence": "2 exact references matched canonical fixtures in 4 fresh CLI processes and 2 CWDs",
+      "result": "passed"
+    },
+    {
+      "command": "python3 tools/contracts/validate_device_instrument_contracts.py --record-set contracts/record-sets/task029-gills-machines-v1.json",
+      "evidence": "device/instrument closure valid with one retained historical deferred graph",
+      "result": "passed"
+    },
+    {
+      "command": "python3 -m unittest tools.contracts.tests.test_task023_application_capabilities",
+      "evidence": "9 historical application-capability tests",
+      "result": "passed"
+    },
+    {
+      "command": "python3 tools/contracts/validate_desktop_ui_structure.py",
+      "evidence": "separately owned desktop boundary remains valid with no runtime capability or semantic record",
+      "result": "passed"
+    },
+    {
+      "command": "python3 tools/contracts/validate_task028.py",
+      "evidence": "11 tests and two fresh-root reproductions retain the exact 20-object palette",
+      "result": "passed"
+    },
+    {
+      "command": "bin/schuss validate --record-set contracts/record-sets/task029-gills-machines-v1.json --json",
+      "evidence": "machine_rules is valid; all 72 diagnostics are byte-identical to the Task 028 parent and come from inherited target/evidence records",
+      "result": "inherited-invalid-parent-boundary"
+    },
+    {
+      "command": "python3 tools/contracts/validate_task018.py",
+      "evidence": "failed because current local source evidence verified 0 of 12 versus retained 12; command also invoked two disposable historical ARM reproductions before failure",
+      "result": "inherited-evidence-drift-and-scope-exception"
+    },
+    {
+      "command": "python3 tools/contracts/validate_backbone_governance.py",
+      "evidence": "pre-existing ui-desktop-initialization.md archive-policy diagnostic remains separately owned",
+      "result": "inherited-governance-diagnostic"
+    },
+    {
+      "command": "local Chrome headless static rendering",
+      "evidence": "both fixtures rendered all four sections with no application JavaScript or asset request failure; prescribed agent-browser binary unavailable",
+      "result": "passed-with-fallback"
+    },
+    {
+      "command": "python3 -m unittest discover -s tools/contracts/tests",
+      "evidence": "not invoked because the aggregate contains expressly prohibited compiler/build paths",
+      "result": "not-run-by-scope"
+    }
+  ],
+  "parent_record_set_reference": {
+    "content_hash": "sha256:e7b253f61a01cd65c23f1981f5a7b3526cd7152e1cdaf36a33905d493c4f1af9",
+    "record_set_id": "schuss-record-set-000021",
+    "revision": 1
+  },
+  "record_set_reference": {
+    "content_hash": "sha256:2251703253440ba4ef280a6769dbbae8a679002986bdcd5aa7ef622501efccb3",
+    "record_set_id": "schuss-record-set-000022",
+    "revision": 1
+  },
+  "schema_version": "task029-acceptance-matrix-v1",
+  "status": "passed-with-documented-inherited-boundaries"
+}

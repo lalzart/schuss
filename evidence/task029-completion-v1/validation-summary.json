@@ -1,0 +1,67 @@
+{
+  "accepted_machine_count": 0,
+  "accepted_palette_count": 20,
+  "actions_performed": {
+    "catalog_promotion": false,
+    "connected_device": false,
+    "dsp_change": false,
+    "hardware_write": false,
+    "publication": false,
+    "runtime_bridge": false,
+    "staging_commit_or_push": false,
+    "task029_build_or_lowering": false
+  },
+  "adjacent_scope_exception": {
+    "command": "python3 tools/contracts/validate_task018.py",
+    "disposition": "outside-task-build-invocation-recorded; no Task 029 evidence",
+    "hardware_or_device_action": false,
+    "persistent_artifacts": false,
+    "result": "failed-on-inherited-retained-evidence-drift",
+    "temporary_historical_task018_arm_reproductions": 2
+  },
+  "evidence_levels": [
+    {
+      "level": 1,
+      "status": "passed"
+    },
+    {
+      "level": 2,
+      "status": "not-run"
+    },
+    {
+      "level": 3,
+      "status": "not-run"
+    },
+    {
+      "level": 4,
+      "status": "not-run"
+    },
+    {
+      "level": 5,
+      "status": "not-run"
+    },
+    {
+      "level": 6,
+      "status": "not-run"
+    },
+    {
+      "level": 7,
+      "status": "not-run"
+    },
+    {
+      "level": 8,
+      "status": "not-run"
+    }
+  ],
+  "machine_presentation_count": 2,
+  "machine_source_review_count": 2,
+  "panel_semantic_region_count": 42,
+  "record_set_reference": {
+    "content_hash": "sha256:2251703253440ba4ef280a6769dbbae8a679002986bdcd5aa7ef622501efccb3",
+    "record_set_id": "schuss-record-set-000022",
+    "revision": 1
+  },
+  "schema_version": "task029-validation-summary-v1",
+  "status": "passed-with-documented-inherited-boundaries",
+  "tide_pit_source_declared_sdram_bytes": 251408
+}

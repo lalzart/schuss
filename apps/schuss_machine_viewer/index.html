@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Schuss Machine Viewer</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">SCHUSS / GILLS</p>
+        <h1>Machine Viewer</h1>
+      </div>
+      <label class="machine-picker">
+        Reference machine
+        <select id="machine-select">
+          <option value="palimpsest-machine-inspect.json">Palimpsest</option>
+          <option value="tide-pit-machine-inspect.json">Tide Pit</option>
+        </select>
+      </label>
+    </header>
+    <main id="viewer" aria-live="polite">
+      <p class="loading">Loading exact machine inspection…</p>
+    </main>
+    <template id="viewer-template">
+      <article class="viewer-shell">
+        <section class="identity-card" aria-labelledby="machine-name">
+          <div>
+            <p class="eyebrow">REFERENCE MACHINE</p>
+            <h2 id="machine-name"></h2>
+            <p id="machine-summary" class="summary"></p>
+          </div>
+          <div class="identity-meta">
+            <span id="inspection-badge" class="badge warning"></span>
+            <code id="exact-identity"></code>
+            <code id="source-provenance"></code>
+            <span id="proof-badge" class="badge"></span>
+          </div>
+        </section>
+        <section class="section-card diagram-card" aria-labelledby="diagram-heading">
+          <div class="section-heading">
+            <div><p class="eyebrow">SOURCE-EVIDENCED FLOW</p><h3 id="diagram-heading">Machine block diagram</h3></div>
+            <p>Blocks explain the reference source. They do not claim an accepted Schuss graph.</p>
+          </div>
+          <div id="diagram" class="diagram-scroll"></div>
+          <div id="block-detail" class="detail-panel">Select a block to highlight its mapped Gills controls.</div>
+          <details class="trace-panel"><summary>Exact source edge trace index</summary><ol id="trace-index"></ol></details>
+        </section>
+        <section class="section-card panel-card" aria-labelledby="panel-heading">
+          <div class="section-heading">
+            <div><p class="eyebrow">AUTHENTICATED V0.6 LAYOUT</p><h3 id="panel-heading">Gills panel mappings</h3></div>
+            <p>CAD-derived geometry; photograph used only for non-retained visual QA.</p>
+          </div>
+          <div class="panel-grid">
+            <object id="panel-object" type="image/svg+xml" aria-label="Interactive Gills panel"></object>
+            <aside id="control-detail" class="control-detail"><p>Select a block or physical control.</p></aside>
+          </div>
+        </section>
+        <section class="section-card" aria-labelledby="dependencies-heading">
+          <div class="section-heading">
+            <div><p class="eyebrow">FAIL-CLOSED SUPPORT</p><h3 id="dependencies-heading">Dependencies and evidence</h3></div>
+            <p id="resource-summary"></p>
+          </div>
+          <div class="table-scroll"><table><thead><tr><th>Dependency</th><th>Classification</th><th>Evidence</th><th>First proof gap</th></tr></thead><tbody id="dependencies"></tbody></table></div>
+        </section>
+      </article>
+    </template>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

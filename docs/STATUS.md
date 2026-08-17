@@ -166,8 +166,54 @@ Drum and Bell retain Task 027 Mutable-derived provenance without changing
 their sound-source families or raising their evidence. The Rings reverb
 failure and absent native allocation 000094 remain unchanged; physical
 resonator 000096 remains catalogued-only. Transparent compounds remain
-deferred. No numbered implementation task is automatically active after Task
-028 completion; the authorized UI-architecture lane remains unstarted.
+deferred.
+
+Task 029 is implemented with local acceptance complete in its isolated
+worktree for exact prospective successor record set
+`schuss-record-set-000022@1`, parented by `schuss-record-set-000021@1`. It adds
+the client-neutral distinction between catalog objects and complete machines:
+`machine-source-review-v0`, `panel-layout-v0`, `machine-presentation-v0`, the
+smallest exact-reference `machine-v0`, and read-only `machine.inspect` request
+and result v9. The application-capability v2 surface contains nineteen
+operations. The accepted twenty-item palette and every parent record remain
+unchanged.
+
+The exact reference machines are Palimpsest at
+`projects/palimpsest-gills/` and Tide Pit at `projects/tide-pit-gills/`. Task
+029 retains one portable, hash-bound source review and one source-evidenced
+inspection presentation for each. Both presentations are explicitly
+inspection-only and contain no authoritative graph-node claims. No completed
+`machine-v0` record is accepted because neither source project yet has the
+exact Schuss graph, instrument, and required-dependency closure; the validator
+rejects promotion across that boundary.
+
+The shared v0.6 Gills panel asset is a self-contained 158 x 100 mm editable SVG
+derived from pinned CC BY 4.0 CAD/editable sources, paired with a separate
+42-region semantic map. The supplied photograph was used only as a
+hash-identified, non-retained appearance reference. The isolated
+`apps/schuss_machine_viewer/` client renders identity, block diagram, panel
+mappings, and dependency/evidence sections solely from canonical
+`machine.inspect` results. It does not integrate with or depend on the
+separately owned desktop foundation.
+
+Focused schema/record/operation tests, four fresh CLI processes across two
+CWDs, explicit pinned-source blob verification, Viewer tests, and local
+Chrome-headless rendering pass. Structural level 1 passes; graph/instrument,
+compiler, artifact, ARM, device, real-time/resource, and audible levels 2-8
+remain `not-run`. Tide Pit's 251,408 source-declared SDRAM bytes are not a
+measurement. Its Clouds diffusion tail is preserved; unrelated Rings reverb
+remains a non-required unsupported non-dependency. No catalog promotion, DSP,
+Task 029 compiler/build evidence, runtime bridge, device, hardware, staging,
+commit, or push action occurred. One adjacent `validate_task018.py` invocation
+unexpectedly ran its historical two-root ARM reproduction in disposable
+directories before failing on inherited local-evidence drift; it retained no
+artifact, performed no device action, and is not Task 029 evidence. Further
+build-bearing aggregate checks remain not run by scope.
+
+Task 029 does not activate its later Machine Builder or the Palimpsest/Tide Pit
+graph-import prerequisites. The authorized desktop UI-architecture lane remains
+separately owned. Task 029 was activated by explicit user authorization.
+No numbered implementation task is automatically active after Task 028 completion.
 
 Task 012B remains retired. The object drawer and transparent graph canvas are
 an unnumbered future client milestone. UI architecture planning is now
@@ -196,6 +242,7 @@ of Task 018 or Task 021.
 | Complete authoring workflow | Project-owned graph/instrument/request allocation and versioning, atomic multi-record persistence, immutable history/revert, project-aware CLI planning/execution, and two-root authored ELF reproduction | Levels 1-5 passed for the exact reverb-free profile; levels 6-8 not-run |
 | Mutable-related catalog provenance | Exact 19-object extended-source review plus 53 attributed factory candidates, additive per-candidate/per-implementation provenance, 60-family preservation, and one catalogued-only Rings resonator implementation | Levels 1-2 structural/provenance only; compiler/build and levels 3-8 not-run |
 | Twenty-item direct palette | Five retained Task 025 promotions plus fifteen exact independent Task 028 selections and normalized operation-IR lowerings; seven Task 026 support bindings remain separate | Levels 1-3 passed; source generation, ARM, device, realtime/resource, and audible levels 4-8 not-run |
+| Gills machine layer | Exact Palimpsest and Tide Pit source reviews, source-evidenced inspection presentations, editable v0.6 panel plus semantic map, fail-closed completed-machine schema, shared read-only inspection operation, and isolated Viewer | Level 1 structural/source-identity/host inspection proof; completed machines zero; levels 2-8 not-run |
 
 The accepted Task 018 result proves deterministic local ARM compile/link for
 one exact mapped graph/instrument/device/runtime closure. Its exact original

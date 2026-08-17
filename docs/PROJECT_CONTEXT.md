@@ -48,13 +48,16 @@ Schuss should provide:
    I/O slots.
 6. **Instrument** owns musical identity, public facets, state, mappings, and
    behavior.
-7. **Project/workspace** groups exact graph, instrument, build-request,
+7. **Machine** owns the completed instrument product identity and exact
+   references to its accepted instrument, evidence, and presentation; it is
+   neither a catalog object nor a copied DSP graph.
+8. **Project/workspace** groups exact graph, instrument, build-request,
    record-set, and asset references for durable authoring.
-8. **Compute target** owns processor, memory, audio-runtime, and toolchain
+9. **Compute target** owns processor, memory, audio-runtime, and toolchain
    constraints.
-9. **Backend** resolves implementations and lowers an exact graph for a target.
-10. **Build and evidence** record exact requests, outputs, diagnostics, and the
-    proof level actually reached.
+10. **Backend** resolves implementations and lowers an exact graph for a target.
+11. **Build and evidence** record exact requests, outputs, diagnostics, and the
+   proof level actually reached.
 
 No layer silently borrows identity from another. Gills can initially target
 Ksoloti Core without becoming synonymous with it, and a legacy object can be
@@ -117,5 +120,6 @@ deliberately contains no task-by-task status chronicle.
 | Implementation binding | A concrete realization of one exact component-contract revision |
 | DSP graph | The authoritative complete signal/control implementation |
 | Instrument | Musical identity and mappings over a device profile and graph |
+| Machine | Completed instrument product identity with exact instrument, evidence, and presentation references |
 | Project/workspace | Portable exact authoring manifest plus local coordination state |
 | Build evidence | An immutable level-specific observation about exact inputs and outputs |

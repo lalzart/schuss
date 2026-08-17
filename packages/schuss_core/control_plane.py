@@ -23,6 +23,7 @@ import aggregate_validator as aggregate
 import component_graph_rules as component
 import device_instrument_rules as device
 import gills_mapping_rules as gills
+import machine_rules as machine
 import record_set_rules
 import target_backend_build_rules as target
 import validator_core as core
@@ -67,6 +68,16 @@ TASK026B_SCHEMA_NAMES = {
     "operation_result_v8": "operation-result-v8.schema.json",
 }
 
+TASK029_SCHEMA_NAMES = {
+    "machine_source_review": "machine-source-review-v0.schema.json",
+    "panel_layout": "panel-layout-v0.schema.json",
+    "machine_presentation": "machine-presentation-v0.schema.json",
+    "machine": "machine-v0.schema.json",
+    "application_capability_description_v2": "application-capability-description-v2.schema.json",
+    "operation_request_v9": "operation-request-v9.schema.json",
+    "operation_result_v9": "operation-result-v9.schema.json",
+}
+
 TASK015_SCHEMA_NAMES = {
     "normalized_dsp_module": "normalized-dsp-module-v0.schema.json",
     "direct_frontend_result": "direct-frontend-result-v0.schema.json",
@@ -104,6 +115,10 @@ DOMAIN_GROUPS = (
     "panel_evidence",
     "mapping_coverage",
     "runtime_realizations",
+    "machine_source_reviews",
+    "panel_layouts",
+    "machine_presentations",
+    "machines",
     "direct_operation_specs",
     "selection_packets",
     *tuple(target.SCHEMA_SPECS),
@@ -132,6 +147,7 @@ class OperationContext:
     task006_summary: dict[str, Any]
     task007_summary: dict[str, Any]
     task018_summary: dict[str, Any]
+    machine_summary: dict[str, Any]
     record_set_reference: dict[str, Any]
     catalog_projection: dict[str, Any] | None
 
@@ -231,6 +247,10 @@ def load_repository_context(
         "panel_evidence": _stable_records(selected.records.get("gills-panel-evidence", ())),
         "mapping_coverage": _stable_records(selected.records.get("gills-mapping-coverage", ())),
         "runtime_realizations": _stable_records(selected.records.get("gills-runtime-realization", ())),
+        "machine_source_reviews": _stable_records(selected.records.get("machine-source-review", ())),
+        "panel_layouts": _stable_records(selected.records.get("panel-layout", ())),
+        "machine_presentations": _stable_records(selected.records.get("machine-presentation", ())),
+        "machines": _stable_records(selected.records.get("machine", ())),
         "selection_packets": _stable_records(selected.records.get("core-selection-packet", ())),
     }
     if selected.records.get("catalog-source-review"):
@@ -352,7 +372,15 @@ def load_repository_context(
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
-    if "application_capability_description_v1" in schemas:
+    for key, filename in TASK029_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    if "application_capability_description_v2" in schemas:
+        schemas["application_capability_description"] = schemas[
+            "application_capability_description_v2"
+        ]
+    elif "application_capability_description_v1" in schemas:
         schemas["application_capability_description"] = schemas[
             "application_capability_description_v1"
         ]
@@ -496,6 +524,35 @@ def load_repository_context(
             "environment": list(records["environment"]),
         },
     )
+    machine_summary = machine.validate_values(
+        {
+            "machine_source_reviews": list(records["machine_source_reviews"]),
+            "panel_layouts": list(records["panel_layouts"]),
+            "machine_presentations": list(records["machine_presentations"]),
+            "machines": list(records["machines"]),
+        },
+        {
+            group: schemas[key]
+            for group, key in (
+                ("machine_source_reviews", "machine_source_review"),
+                ("panel_layouts", "panel_layout"),
+                ("machine_presentations", "machine_presentation"),
+                ("machines", "machine"),
+            )
+            if key in schemas
+        },
+        {
+            "catalog": list(records["catalog"]),
+            "catalog_projection": [copy.deepcopy(derived_catalog)] if derived_catalog else [],
+            "contracts": list(records["contracts"]),
+            "bindings": list(records["bindings"]),
+            "graphs": list(records["graphs"]),
+            "devices": list(records["devices"]),
+            "instruments": list(records["instruments"]),
+            "eligibility": list(records["eligibility"]),
+        },
+        repository_root,
+    )
     return OperationContext(
         records=records,
         schemas=schemas,
@@ -508,6 +565,7 @@ def load_repository_context(
         task006_summary=copy.deepcopy(task006_summary),
         task007_summary=copy.deepcopy(task007_result.summary),
         task018_summary=copy.deepcopy(task018_summary),
+        machine_summary=copy.deepcopy(machine_summary),
         record_set_reference=copy.deepcopy(selected.reference),
         catalog_projection=derived_catalog,
     )
@@ -576,6 +634,7 @@ def canonical_result_bytes(
         "schuss-operation-result-v6": "operation_result_v6",
         "schuss-operation-result-v7": "operation_result_v7",
         "schuss-operation-result-v8": "operation_result_v8",
+        "schuss-operation-result-v9": "operation_result_v9",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -813,6 +872,8 @@ def _records_validate(context: OperationContext) -> dict[str, Any]:
     }
     if context.task018_summary.get("status") != "not-applicable":
         summaries["gills_mapping_rules"] = copy.deepcopy(context.task018_summary)
+    if context.machine_summary.get("status") != "not-applicable":
+        summaries["machine_rules"] = copy.deepcopy(context.machine_summary)
     invalid = any(
         summary.get("status") == "invalid" for summary in summaries.values()
     )
@@ -919,6 +980,192 @@ def _dispatch_gills_operation(request: dict[str, Any], context: OperationContext
         canonical_result_bytes(result, context)
         return result
     result = _gills_inspect(request["payload"], context)
+    canonical_result_bytes(result, context)
+    return result
+
+
+def _machine_inspect(payload: dict[str, Any], context: OperationContext) -> dict[str, Any]:
+    if context.machine_summary.get("status") != "valid":
+        return _result(
+            "machine.inspect",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "MACHINE_LAYER_INVALID",
+                    f"{context.record_set_reference['record_set_id']}@{context.record_set_reference['revision']}",
+                    "$",
+                    "the selected machine-layer closure is not valid",
+                )
+            ],
+            version=9,
+        )
+    reviews = _exact_registry(
+        context.records["machine_source_reviews"], "machine_source_review_id"
+    )
+    presentations = _exact_registry(
+        context.records["machine_presentations"], "machine_presentation_id"
+    )
+    panels = _exact_registry(context.records["panel_layouts"], "panel_layout_id")
+    machines = _exact_registry(context.records["machines"], "machine_id")
+    instruments = _exact_registry(context.records["instruments"], "instrument_id")
+
+    machine_record = None
+    instrument = None
+    if "source_review_reference" in payload:
+        review_reference = payload["source_review_reference"]
+        review = reviews.get(
+            core.reference_key(review_reference, "machine_source_review_id")
+        )
+        location = "$.payload.source_review_reference"
+        subject = f"{review_reference['machine_source_review_id']}@{review_reference['revision']}"
+    else:
+        machine_reference = payload["machine_reference"]
+        machine_record = machines.get(
+            core.reference_key(machine_reference, "machine_id")
+        )
+        if machine_record is None:
+            return _result(
+                "machine.inspect",
+                "invalid",
+                None,
+                [
+                    _diagnostic(
+                        "MACHINE_INSPECTION_REFERENCE_UNRESOLVED",
+                        f"{machine_reference['machine_id']}@{machine_reference['revision']}",
+                        "$.payload.machine_reference",
+                        "the exact completed machine is absent from the selected record set",
+                    )
+                ],
+                version=9,
+            )
+        review_reference = machine_record["source_review_reference"]
+        review = reviews.get(
+            core.reference_key(review_reference, "machine_source_review_id")
+        )
+        instrument = instruments.get(
+            core.reference_key(machine_record["instrument_reference"], "instrument_id")
+        )
+        location = "$.machine.source_review_reference"
+        subject = f"{machine_record['machine_id']}@{machine_record['revision']}"
+    if review is None:
+        return _result(
+            "machine.inspect",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "MACHINE_INSPECTION_REFERENCE_UNRESOLVED",
+                    subject,
+                    location,
+                    "the exact machine source review is absent from the selected record set",
+                )
+            ],
+            version=9,
+        )
+    candidates = [
+        value
+        for value in presentations.values()
+        if value["source_review_reference"] == review_reference
+        and (
+            machine_record is None
+            or value["machine_presentation_id"]
+            == machine_record["presentation_reference"]["machine_presentation_id"]
+        )
+    ]
+    if machine_record is not None:
+        candidates = [
+            value
+            for value in candidates
+            if core.exact_key(value, "machine_presentation_id")
+            == core.reference_key(
+                machine_record["presentation_reference"], "machine_presentation_id"
+            )
+        ]
+    if len(candidates) != 1:
+        return _result(
+            "machine.inspect",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "MACHINE_INSPECTION_PRESENTATION_NOT_EXACT",
+                    subject,
+                    "$.presentation_reference",
+                    "the source review must resolve exactly one applicable machine presentation",
+                )
+            ],
+            version=9,
+        )
+    presentation = candidates[0]
+    panel = panels.get(
+        core.reference_key(presentation["panel_layout_reference"], "panel_layout_id")
+    )
+    if panel is None or (machine_record is not None and instrument is None):
+        return _result(
+            "machine.inspect",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "MACHINE_INSPECTION_CLOSURE_UNRESOLVED",
+                    subject,
+                    "$",
+                    "the exact panel layout and completed-machine instrument closure must resolve",
+                )
+            ],
+            version=9,
+        )
+    value = machine.inspection_value(
+        review,
+        presentation,
+        panel,
+        context.record_set_reference,
+        context.machine_summary,
+        machine=machine_record,
+        instrument=instrument,
+    )
+    return _result("machine.inspect", "success", value, version=9)
+
+
+def _dispatch_machine_operation(
+    request: dict[str, Any], context: OperationContext
+) -> dict[str, Any]:
+    operation = request.get("operation") if isinstance(request, dict) else None
+    errors: list[str] = []
+    try:
+        core.assert_portable_json_value(request)
+    except ValueError as exc:
+        errors.append(str(exc))
+    schema = context.schemas.get("operation_request_v9")
+    if schema is None:
+        errors.append(
+            "$: operation schema 'schuss-operation-request-v9' is unavailable in the selected context"
+        )
+    elif isinstance(request, dict):
+        errors.extend(core.schema_errors(request, schema, schema))
+    else:
+        errors.append("$: operation request must be an object")
+    if errors:
+        version = 9 if "operation_result_v9" in context.schemas else 1
+        result = _result(
+            operation if version == 9 and operation == "machine.inspect" else "invalid-request",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "OPERATION_REQUEST_INVALID",
+                    operation if isinstance(operation, str) else "invalid-request",
+                    "$",
+                    error,
+                )
+                for error in sorted(set(errors))
+            ],
+            version=version,
+        )
+        canonical_result_bytes(result, context)
+        return result
+    result = _machine_inspect(request["payload"], context)
     canonical_result_bytes(result, context)
     return result
 
@@ -1507,6 +1754,15 @@ def dispatch_operation(
     execution_service: execution.ExecutionService | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v9"
+    ):
+        if project_service is not None:
+            loaded = project_service.load()
+            return _dispatch_machine_operation(request, loaded.context)
+        return _dispatch_machine_operation(request, context)
 
     if (
         isinstance(request, dict)

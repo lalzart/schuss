@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="158mm" height="100mm" viewBox="0 0 158 100" role="img" aria-labelledby="panel-title panel-description">
+  <title id="panel-title">Ksoloti Gills v0.6 panel layout</title>
+  <desc id="panel-description">Editable technical silhouette derived from the pinned Ksoloti Gills v0.6 CAD, with stable regions for Schuss semantic highlighting.</desc>
+  <metadata id="asset-attribution">Adapted for Schuss from Ksoloti Gills hardware revision v0.6 at commit 280503036aee95e6c6ef91a1f1357443f4768faa. Original hardware design copyright Ksoloti contributors, licensed CC BY 4.0. This normalized technical view is a modification and is not manufacturing artwork.</metadata>
+  <style>
+    .panel { fill: #e8e9e5; stroke: #252728; stroke-width: 0.5; }
+    .cutout { fill: #252728; stroke: #111; stroke-width: 0.25; }
+    .control { fill: #191b1c; stroke: #050505; stroke-width: 0.4; cursor: pointer; }
+    .control-core { fill: #b9bab5; stroke: #454746; stroke-width: 0.3; pointer-events: none; }
+    .button { fill: #d8d1b5; stroke: #403b31; stroke-width: 0.5; cursor: pointer; }
+    .indicator { fill: #3c3d39; stroke: #151515; stroke-width: 0.25; cursor: pointer; }
+    .legend { fill: #202223; font-family: ui-monospace, monospace; font-size: 2.3px; text-anchor: middle; pointer-events: none; }
+    .small { font-size: 1.8px; }
+    .brand { font-size: 4px; letter-spacing: 0.45px; }
+    .highlight { fill: none; stroke: transparent; stroke-width: 1.4; pointer-events: none; }
+    .highlight.is-highlighted { stroke: #ff7a18; filter: drop-shadow(0 0 1px #ff7a18); }
+  </style>
+  <g id="panel-geometry">
+    <rect id="panel-outline" class="panel" x="0.25" y="0.25" width="157.5" height="99.5" rx="1.4"/>
+    <g id="mounting-holes">
+      <circle class="cutout" cx="5.5" cy="13.5" r="1.7"/>
+      <circle class="cutout" cx="152.5" cy="13.5" r="1.7"/>
+      <circle class="cutout" cx="5.5" cy="94.5" r="1.7"/>
+      <circle class="cutout" cx="152.5" cy="94.5" r="1.7"/>
+    </g>
+    <g id="vent-slots">
+      <rect class="cutout" x="13" y="1.8" width="16" height="1.4" rx="0.4"/>
+      <rect class="cutout" x="71" y="1.8" width="16" height="1.4" rx="0.4"/>
+      <rect class="cutout" x="129" y="1.8" width="16" height="1.4" rx="0.4"/>
+      <rect class="cutout" x="13" y="96.8" width="16" height="1.4" rx="0.4"/>
+      <rect class="cutout" x="71" y="96.8" width="16" height="1.4" rx="0.4"/>
+      <rect class="cutout" x="129" y="96.8" width="16" height="1.4" rx="0.4"/>
+      <rect class="cutout" x="1.8" y="24" width="1.4" height="16" rx="0.4"/>
+      <rect class="cutout" x="1.8" y="67" width="1.4" height="16" rx="0.4"/>
+      <rect class="cutout" x="154.8" y="24" width="1.4" height="16" rx="0.4"/>
+      <rect class="cutout" x="154.8" y="67" width="1.4" height="16" rx="0.4"/>
+    </g>
+    <g id="top-io-legends" class="legend small">
+      <text x="9" y="6.6">9-18VDC</text>
+      <text x="31" y="6.6">L IN</text>
+      <text x="47" y="6.6">R IN</text>
+      <text x="78" y="6.6">SD</text>
+      <text x="97" y="6.6">PWR-PROG</text>
+      <text x="116" y="6.6">HOST</text>
+      <text x="137" y="6.6">L OUT</text>
+      <text x="151" y="6.6">R OUT</text>
+    </g>
+    <text class="legend brand" x="126" y="17">Ksoloti Gills</text>
+  </g>
+  <g id="display-regions">
+    <rect id="oled-region" class="cutout" x="63.4" y="11.4" width="31.2" height="17.2" rx="0.7" data-semantic-region="display"/>
+    <rect id="highlight-oled" class="highlight" x="62.5" y="10.5" width="33" height="19" rx="1.2"/>
+  </g>
+  <g id="upper-controls">
+    <g id="input-volume-region" data-semantic-region="control" transform="translate(29.002 33.242)">
+      <circle class="control" r="6.2"/><circle class="control-core" r="2.2"/><path class="control-core" d="M0 0 L0 -5.2"/>
+    </g>
+    <circle id="highlight-input-volume" class="highlight" cx="29.002" cy="33.242" r="7"/>
+    <text class="legend" x="29.002" y="41.7">IN VOL</text>
+    <g id="encoder-region" data-semantic-region="control" transform="translate(94.002 34.142)">
+      <circle class="control" r="6.2"/><circle class="control-core" r="2.2"/><path class="control-core" d="M0 0 L0 -5.2"/>
+    </g>
+    <circle id="highlight-encoder" class="highlight" cx="94.002" cy="34.142" r="7"/>
+    <text class="legend" x="94.002" y="42.6">ENC</text>
+    <g id="output-volume-region" data-semantic-region="control" transform="translate(129.002 33.242)">
+      <circle class="control" r="6.2"/><circle class="control-core" r="2.2"/><path class="control-core" d="M0 0 L0 -5.2"/>
+    </g>
+    <circle id="highlight-output-volume" class="highlight" cx="129.002" cy="33.242" r="7"/>
+    <text class="legend" x="129.002" y="41.7">OUT VOL</text>
+  </g>
+  <g id="button-regions">
+    <circle id="button-01-region" class="button" cx="54.002" cy="42.242" r="3.2" data-semantic-region="control"/>
+    <circle id="highlight-button-01" class="highlight" cx="54.002" cy="42.242" r="4.4"/>
+    <text class="legend" x="54.002" y="37.2">S1</text>
+    <circle id="button-02-region" class="button" cx="79.002" cy="42.242" r="3.2" data-semantic-region="control"/>
+    <circle id="highlight-button-02" class="highlight" cx="79.002" cy="42.242" r="4.4"/>
+    <text class="legend" x="79.002" y="37.2">S2</text>
+    <circle id="button-03-region" class="button" cx="66.502" cy="70.742" r="3.2" data-semantic-region="control"/>
+    <circle id="highlight-button-03" class="highlight" cx="66.502" cy="70.742" r="4.4"/>
+    <text class="legend" x="62.3" y="70.1">S3</text>
+    <circle id="button-04-region" class="button" cx="91.502" cy="70.742" r="3.2" data-semantic-region="control"/>
+    <circle id="highlight-button-04" class="highlight" cx="91.502" cy="70.742" r="4.4"/>
+    <text class="legend" x="87.2" y="70.1">S4</text>
+  </g>
+  <g id="feedback-regions">
+    <rect id="led-01-region" class="indicator" x="111.96" y="19.69" width="3" height="3" rx="0.5" data-semantic-region="feedback"/>
+    <rect id="highlight-led-01" class="highlight" x="111.2" y="18.9" width="4.5" height="4.5" rx="1"/>
+    <text class="legend small" x="108.4" y="22">L1</text>
+    <rect id="led-02-region" class="indicator" x="111.96" y="27.69" width="3" height="3" rx="0.5" data-semantic-region="feedback"/>
+    <rect id="highlight-led-02" class="highlight" x="111.2" y="26.9" width="4.5" height="4.5" rx="1"/>
+    <text class="legend small" x="108.4" y="30">L2</text>
+    <rect id="led-03-region" class="indicator" x="61.882" y="52.922" width="3" height="3" rx="0.5" data-semantic-region="feedback"/>
+    <rect id="highlight-led-03" class="highlight" x="61.1" y="52.1" width="4.5" height="4.5" rx="1"/>
+    <text class="legend small" x="59" y="55.2">L3</text>
+    <rect id="led-04-region" class="indicator" x="86.91" y="52.922" width="3" height="3" rx="0.5" data-semantic-region="feedback"/>
+    <rect id="highlight-led-04" class="highlight" x="86.1" y="52.1" width="4.5" height="4.5" rx="1"/>
+    <text class="legend small" x="84" y="55.2">L4</text>
+  </g>
+  <g id="performance-pot-regions">
+    <g id="pot-01-region" data-semantic-region="control" transform="translate(29.002 58.242)"><circle class="control" r="5.7"/><circle class="control-core" r="2"/><path class="control-core" d="M0 0 L0 -4.8"/></g>
+    <circle id="highlight-pot-01" class="highlight" cx="29.002" cy="58.242" r="6.5"/>
+    <g id="pot-02-region" data-semantic-region="control" transform="translate(54.002 58.242)"><circle class="control" r="5.7"/><circle class="control-core" r="2"/><path class="control-core" d="M0 0 L0 -4.8"/></g>
+    <circle id="highlight-pot-02" class="highlight" cx="54.002" cy="58.242" r="6.5"/>
+    <g id="pot-03-region" data-semantic-region="control" transform="translate(79.002 58.242)"><circle class="control" r="5.7"/><circle class="control-core" r="2"/><path class="control-core" d="M0 0 L0 -4.8"/></g>
+    <circle id="highlight-pot-03" class="highlight" cx="79.002" cy="58.242" r="6.5"/>
+    <g id="pot-04-region" data-semantic-region="control" transform="translate(104.002 58.242)"><circle class="control" r="5.7"/><circle class="control-core" r="2"/><path class="control-core" d="M0 0 L0 -4.8"/></g>
+    <circle id="highlight-pot-04" class="highlight" cx="104.002" cy="58.242" r="6.5"/>
+    <g id="pot-05-region" data-semantic-region="control" transform="translate(129.002 58.242)"><circle class="control" r="5.7"/><circle class="control-core" r="2"/><path class="control-core" d="M0 0 L0 -4.8"/></g>
+    <circle id="highlight-pot-05" class="highlight" cx="129.002" cy="58.242" r="6.5"/>
+    <g id="pot-06-region" data-semantic-region="control" transform="translate(29.002 83.242)"><circle class="control" r="5.7"/><circle class="control-core" r="2"/><path class="control-core" d="M0 0 L0 -4.8"/></g>
+    <circle id="highlight-pot-06" class="highlight" cx="29.002" cy="83.242" r="6.5"/>
+    <g id="pot-07-region" data-semantic-region="control" transform="translate(54.002 83.242)"><circle class="control" r="5.7"/><circle class="control-core" r="2"/><path class="control-core" d="M0 0 L0 -4.8"/></g>
+    <circle id="highlight-pot-07" class="highlight" cx="54.002" cy="83.242" r="6.5"/>
+    <g id="pot-08-region" data-semantic-region="control" transform="translate(79.002 83.242)"><circle class="control" r="5.7"/><circle class="control-core" r="2"/><path class="control-core" d="M0 0 L0 -4.8"/></g>
+    <circle id="highlight-pot-08" class="highlight" cx="79.002" cy="83.242" r="6.5"/>
+    <g id="pot-09-region" data-semantic-region="control" transform="translate(104.002 83.242)"><circle class="control" r="5.7"/><circle class="control-core" r="2"/><path class="control-core" d="M0 0 L0 -4.8"/></g>
+    <circle id="highlight-pot-09" class="highlight" cx="104.002" cy="83.242" r="6.5"/>
+    <g id="pot-10-region" data-semantic-region="control" transform="translate(129.002 83.242)"><circle class="control" r="5.7"/><circle class="control-core" r="2"/><path class="control-core" d="M0 0 L0 -4.8"/></g>
+    <circle id="highlight-pot-10" class="highlight" cx="129.002" cy="83.242" r="6.5"/>
+    <g class="legend small">
+      <text x="29.002" y="67">P1</text><text x="54.002" y="67">P2</text><text x="79.002" y="67">P3</text><text x="104.002" y="67">P4</text><text x="129.002" y="67">P5</text>
+      <text x="29.002" y="92">P6</text><text x="54.002" y="92">P7</text><text x="79.002" y="92">P8</text><text x="104.002" y="92">P9</text><text x="129.002" y="92">P10</text>
+    </g>
+  </g>
+</svg>
