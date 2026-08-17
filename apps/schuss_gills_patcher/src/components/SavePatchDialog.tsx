@@ -34,16 +34,10 @@ export function SavePatchDialog({
         role="dialog"
       >
         <header>
-          <div>
-            <span className="section-kicker">LOCAL PATCH LIBRARY</span>
-            <h2 id="save-dialog-title">{isUpdate ? "Save patch changes" : "Name this patch"}</h2>
-          </div>
+          <h2 id="save-dialog-title">{isUpdate ? "Save changes" : "Name this patch"}</h2>
           <button aria-label="Cancel save" onClick={onCancel} type="button">×</button>
         </header>
-        <p>
-          Saves this visual draft in this browser only. It is not yet a persisted,
-          wired, or buildable Schuss graph.
-        </p>
+        <p>Saved only in this browser.</p>
         <label>
           <span>Patch name</span>
           <input
@@ -58,11 +52,10 @@ export function SavePatchDialog({
         <div className="save-dialog__actions">
           <button className="dialog-secondary-button" onClick={onCancel} type="button">Cancel</button>
           <button className="dialog-primary-button" disabled={normalizedName.length === 0} type="submit">
-            {isUpdate ? "Update local patch" : "Save local patch"}
+            {isUpdate ? "Save changes" : "Save patch"}
           </button>
         </div>
       </form>
     </div>
   );
 }
-

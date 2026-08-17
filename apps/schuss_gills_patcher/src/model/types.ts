@@ -15,24 +15,24 @@ export interface ControlMapping {
 export interface MachineOutput {
   outputId: string;
   label: string;
-  detail: string;
+  detail?: string;
   kind: "audio" | "feedback";
   targetId: string;
 }
 
 export interface SourceOutlineStage {
   label: string;
-  detail: string;
+  detail?: string;
 }
 
 export interface MachineDefinition {
   key: MachineKey;
   displayName: string;
-  subtitle: string;
+  subtitle?: string;
   sourceObject: string;
   sourcePatch: string;
   sourceRevision: string;
-  summary: string;
+  summary?: string;
   performanceModes: readonly PerformanceMode[] | null;
   controls: readonly ControlMapping[];
   outputs: readonly MachineOutput[];
@@ -47,7 +47,7 @@ export interface ExactReference {
 
 export interface CatalogItem {
   displayName: string;
-  description: string;
+  description?: string;
   primaryFunction: string;
   familyReference: ExactReference;
   contractReference: ExactReference | null;
@@ -63,10 +63,10 @@ export const PERFORMANCE_MODES: readonly PerformanceMode[] = [
 ];
 
 export const SIGNAL_COLORS: Record<SignalKind, string> = {
-  control: "#41a9ff",
-  event: "#b78cff",
-  audio: "#ff9a4a",
-  feedback: "#53d69b",
+  control: "#7895ad",
+  event: "#9d8eab",
+  audio: "#bc865c",
+  feedback: "#6f9a86",
 };
 
 export function labelForMode(

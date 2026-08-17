@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { CatalogSidebar } from "./CatalogSidebar";
 
 describe("CatalogSidebar", () => {
-  it("renders the accepted count, drag affordance, and disabled evidence section", () => {
+  it("renders compact object rows, drag affordances, and disabled evidence", () => {
     const markup = renderToStaticMarkup(
       <CatalogSidebar
         activePatchId={null}
@@ -26,5 +26,7 @@ describe("CatalogSidebar", () => {
     expect(markup).toContain("Reference only");
     expect(markup).toContain("Granular Buffer Processor");
     expect(markup).toContain("aria-disabled=\"true\"");
+    expect(markup).not.toContain("Generates a band-limited sawtooth audio stream from pitch control.");
+    expect(markup).not.toContain("schuss-family-000031");
   });
 });

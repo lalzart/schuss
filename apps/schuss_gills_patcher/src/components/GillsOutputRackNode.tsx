@@ -12,9 +12,8 @@ function GillsOutputRackNodeComponent({ data, selected }: NodeProps<GillsOutputF
   return (
     <article className={`patch-node gills-output-node${selected ? " is-selected" : ""}`}>
       <header className="patch-node__header">
-        <span className="node-eyebrow node-eyebrow--profile">DEVICE PROFILE</span>
+        <span className="node-eyebrow node-eyebrow--profile">Device outputs</span>
         <h2>Gills outputs</h2>
-        <p>Audio and visible feedback owned by the device profile.</p>
       </header>
       <div className="output-rows">
         {data.machine.outputs.map((output, index) => (
@@ -33,17 +32,14 @@ function GillsOutputRackNodeComponent({ data, selected }: NodeProps<GillsOutputF
             <span className="output-row__icon" aria-hidden="true">
               {output.kind === "audio" ? "◒" : output.outputId.startsWith("stage") ? "●" : "▰"}
             </span>
-            <span>
+            <span title={output.detail}>
               <strong>{output.label}</strong>
-              <small>{output.detail}</small>
             </span>
           </div>
         ))}
       </div>
-      <footer className="node-boundary-note">Profile services · not palette nodes</footer>
     </article>
   );
 }
 
 export const GillsOutputRackNode = memo(GillsOutputRackNodeComponent);
-

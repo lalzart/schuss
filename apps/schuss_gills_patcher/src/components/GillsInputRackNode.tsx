@@ -12,13 +12,12 @@ function GillsInputRackNodeComponent({ data, selected }: NodeProps<GillsInputFlo
   return (
     <article className={`patch-node gills-input-node${selected ? " is-selected" : ""}`}>
       <header className="patch-node__header">
-        <span className="node-eyebrow node-eyebrow--profile">DEVICE PROFILE</span>
+        <span className="node-eyebrow node-eyebrow--profile">Device inputs</span>
         <h2>Gills controls</h2>
-        <p>Stable physical slots. Each cable shows the mapped instrument facet.</p>
       </header>
       <div className="rack-caption">
-        <span>PHYSICAL</span>
-        <span>MAPPED MEANING</span>
+        <span>Control</span>
+        <span>Mapping</span>
       </div>
       <div className="control-rows">
         {data.machine.controls.map((mapping, index) => (
@@ -27,9 +26,8 @@ function GillsInputRackNodeComponent({ data, selected }: NodeProps<GillsInputFlo
             key={mapping.controlId}
           >
             <strong>{mapping.physicalLabel}</strong>
-            <span>
+            <span title={mapping.detail}>
               {labelForMode(mapping, data.mode)}
-              {mapping.detail && <small>{mapping.detail}</small>}
             </span>
             <Handle
               className={`signal-handle signal-handle--${mapping.mapped ? mapping.kind : "unmapped"}`}
@@ -45,7 +43,6 @@ function GillsInputRackNodeComponent({ data, selected }: NodeProps<GillsInputFlo
           </div>
         ))}
       </div>
-      <footer className="node-boundary-note">Profile slots · not catalog objects</footer>
     </article>
   );
 }

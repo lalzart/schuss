@@ -171,20 +171,20 @@ export default function App() {
         <div className="brand-lockup">
           <div className="brand-mark" aria-hidden="true">S</div>
           <div>
-            <span>SCHUSS</span>
-            <strong>Gills graph patcher</strong>
+            <strong>Schuss</strong>
+            <span>Gills patcher</span>
           </div>
         </div>
-        <div className="evidence-status" role="status">
+        <div
+          className="evidence-status"
+          role="status"
+          title="Browser-local presentation state; not a wired or buildable Schuss graph"
+        >
           <span className="status-dot" />
-          <div>
-            <strong>BROWSER-LOCAL PATCH DRAFT</strong>
-            <small>Saved presentation state · not a wired or buildable Schuss graph</small>
-          </div>
-        </div>
-        <div className="header-machine-id">
-          <span>REFERENCE</span>
-          <strong>{machine.displayName}</strong>
+          <span>Local draft</span>
+          <span className="visually-hidden">
+            Browser-local presentation state; not a wired or buildable Schuss graph
+          </span>
         </div>
       </header>
 
@@ -209,18 +209,13 @@ export default function App() {
         />
         <section className="canvas-region" aria-labelledby="canvas-title">
           <div className="canvas-titlebar">
-            <div>
+            <div className="canvas-title">
               <span className="section-kicker">
-                {activePatchName === null ? "REFERENCE MACHINE" : "LOCAL PATCH DRAFT"}
+                {activePatchName === null ? "Source template" : "Local patch"}
               </span>
               <h1 id="canvas-title">{canvasTitle}</h1>
-              <p>{activePatchName === null ? machine.subtitle : `Based on ${machine.displayName} · ${dirty ? "unsaved changes" : "saved locally"}`}</p>
             </div>
-            <div className="source-reference">
-              <span>INSPECTED SOURCE</span>
-              <code>{machine.sourcePatch}</code>
-              {notice !== null && <span className="canvas-notice" role="status">{notice}</span>}
-            </div>
+            {notice !== null && <span className="canvas-notice" role="status">{notice}</span>}
           </div>
           <PatcherCanvas
             initialSnapshot={initialSnapshot}

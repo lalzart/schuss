@@ -18,14 +18,14 @@ import {
   type ReferenceNodeId,
 } from "./patchLibrary";
 
-export const INPUT_HANDLE_TOP = 146;
-export const INPUT_ROW_HEIGHT = 34;
-export const COMPOUND_HANDLE_TOP = 180;
-export const COMPOUND_ROW_HEIGHT = 34;
-export const COMPOUND_OUTPUT_TOP = 180;
-export const COMPOUND_OUTPUT_ROW_HEIGHT = 50;
-export const OUTPUT_HANDLE_TOP = 128;
-export const OUTPUT_ROW_HEIGHT = 54;
+export const INPUT_HANDLE_TOP = 104;
+export const INPUT_ROW_HEIGHT = 32;
+export const COMPOUND_HANDLE_TOP = 142;
+export const COMPOUND_ROW_HEIGHT = 32;
+export const COMPOUND_OUTPUT_TOP = 147;
+export const COMPOUND_OUTPUT_ROW_HEIGHT = 42;
+export const OUTPUT_HANDLE_TOP = 86;
+export const OUTPUT_ROW_HEIGHT = 44;
 
 export type GillsInputNodeData = Record<string, unknown> & {
   machine: MachineDefinition;
@@ -77,14 +77,14 @@ export function buildReferenceNodes(
       data: { machine, mode, onModeChange },
       deletable: false,
       id: "instrument-compound",
-      position: { x: 430, y: 20 },
+      position: { x: 360, y: 20 },
       type: "instrument",
     },
     {
       data: { machine },
       deletable: false,
       id: "gills-output-rack",
-      position: { x: 1080, y: 110 },
+      position: { x: 940, y: 110 },
       type: "gillsOutput",
     },
   ];
@@ -94,20 +94,21 @@ export function buildReferenceEdges(machine: MachineDefinition): Edge[] {
   const controlEdges: Edge[] = machine.controls
     .filter((mapping) => mapping.mapped)
     .map((mapping) => ({
-      animated: mapping.kind === "event",
+      animated: false,
       deletable: false,
       id: `mapping-${mapping.controlId}`,
       markerEnd: {
         color: SIGNAL_COLORS[mapping.kind],
-        height: 12,
+        height: 9,
         type: MarkerType.ArrowClosed,
-        width: 12,
+        width: 9,
       },
       source: "gills-input-rack",
       sourceHandle: mapping.controlId,
       style: {
         stroke: SIGNAL_COLORS[mapping.kind],
-        strokeWidth: 2.2,
+        strokeDasharray: mapping.kind === "event" ? "5 5" : undefined,
+        strokeWidth: 1.7,
       },
       target: "instrument-compound",
       targetHandle: mapping.targetId,
@@ -115,20 +116,20 @@ export function buildReferenceEdges(machine: MachineDefinition): Edge[] {
     }));
 
   const outputEdges: Edge[] = machine.outputs.map((output) => ({
-    animated: output.kind === "audio",
+    animated: false,
     deletable: false,
     id: `output-${output.outputId}`,
     markerEnd: {
       color: SIGNAL_COLORS[output.kind],
-      height: 12,
+      height: 9,
       type: MarkerType.ArrowClosed,
-      width: 12,
+      width: 9,
     },
     source: "instrument-compound",
     sourceHandle: output.outputId,
     style: {
       stroke: SIGNAL_COLORS[output.kind],
-      strokeWidth: output.kind === "audio" ? 3 : 2.2,
+      strokeWidth: output.kind === "audio" ? 2.2 : 1.7,
     },
     target: "gills-output-rack",
     targetHandle: output.targetId,

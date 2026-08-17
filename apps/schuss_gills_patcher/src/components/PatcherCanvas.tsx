@@ -183,9 +183,9 @@ const PatcherCanvasInner = forwardRef<PatcherCanvasHandle, PatcherCanvasProps>(
     }, [onDirty, selectedNode, setNodes]);
 
     const minimapColor = useCallback((node: PatcherNode) => {
-      if (node.type === "gillsInput" || node.type === "gillsOutput") return "#41a9ff";
-      if (node.type === "instrument") return "#ffb15c";
-      return "#b78cff";
+      if (node.type === "gillsInput" || node.type === "gillsOutput") return "#778897";
+      if (node.type === "instrument") return "#a98a6c";
+      return "#8e8496";
     }, []);
 
     return (
@@ -212,11 +212,11 @@ const PatcherCanvasInner = forwardRef<PatcherCanvasHandle, PatcherCanvasProps>(
           snapToGrid
           zoomOnDoubleClick={false}
         >
-          <Background color="#3a4150" gap={22} size={1} variant={BackgroundVariant.Dots} />
+          <Background color="#30363b" gap={24} size={1} variant={BackgroundVariant.Dots} />
           <Controls position="top-right" showInteractive={false} />
           <MiniMap
             className="patcher-minimap"
-            maskColor="rgba(6, 8, 12, 0.74)"
+            maskColor="rgba(18, 20, 22, 0.78)"
             nodeColor={minimapColor}
             pannable
             position="bottom-right"
@@ -232,8 +232,7 @@ const PatcherCanvasInner = forwardRef<PatcherCanvasHandle, PatcherCanvasProps>(
         </div>
 
         <div className="canvas-help">
-          <strong>Drag to move · scroll to pan</strong>
-          <span>Drop accepted catalog objects anywhere</span>
+          <span>Drag canvas · drop objects</span>
         </div>
 
         <SelectionInspector

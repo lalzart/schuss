@@ -17,13 +17,12 @@ function InstrumentCompoundNodeComponent({ data, selected }: NodeProps<Instrumen
     <article className={`patch-node instrument-node${selected ? " is-selected" : ""}`}>
       <header className="patch-node__header instrument-node__header">
         <div>
-          <span className="node-eyebrow node-eyebrow--compound">SOURCE COMPOUND</span>
+          <span className="node-eyebrow node-eyebrow--compound">Source compound</span>
           <h2>{data.machine.displayName}</h2>
-          <p>{data.machine.subtitle}</p>
         </div>
         {data.machine.performanceModes !== null && (
           <div aria-label={`${data.machine.displayName} effect mode`} className="node-mode-switch nodrag" role="group">
-            <span>MODE</span>
+            <span>Mode</span>
             {data.machine.performanceModes.map((mode) => (
               <button
                 aria-pressed={data.mode === mode}
@@ -40,8 +39,7 @@ function InstrumentCompoundNodeComponent({ data, selected }: NodeProps<Instrumen
       </header>
 
       <div className="compound-boundary">
-        <strong>Opaque implementation boundary</strong>
-        <span>Complete inspected local object; not an accepted Schuss graph.</span>
+        <span>Read-only source</span>
       </div>
 
       <div className="compound-grid">
@@ -65,7 +63,7 @@ function InstrumentCompoundNodeComponent({ data, selected }: NodeProps<Instrumen
                   type="target"
                 />
               )}
-              <span>{labelForMode(mapping, data.mode)}</span>
+              <span title={mapping.detail}>{labelForMode(mapping, data.mode)}</span>
               <small>{mapping.physicalLabel}</small>
             </div>
           ))}
@@ -74,9 +72,12 @@ function InstrumentCompoundNodeComponent({ data, selected }: NodeProps<Instrumen
         <section aria-label="Instrument outputs" className="compound-outputs">
           <h3>Outputs</h3>
           {data.machine.outputs.map((output, index) => (
-            <div className={`compound-output-row signal-${output.kind}`} key={output.outputId}>
+            <div
+              className={`compound-output-row signal-${output.kind}`}
+              key={output.outputId}
+              title={output.detail}
+            >
               <span>{output.label}</span>
-              <small>{output.detail}</small>
               <Handle
                 className={`signal-handle signal-handle--${output.kind}`}
                 id={output.outputId}
@@ -114,14 +115,13 @@ function InstrumentCompoundNodeComponent({ data, selected }: NodeProps<Instrumen
               <span>{String(index + 1).padStart(2, "0")}</span>
               <div>
                 <strong>{stage.label}</strong>
-                <small>{stage.detail}</small>
+                {stage.detail && <small>{stage.detail}</small>}
               </div>
             </div>
           ))}
         </section>
       )}
 
-      <footer className="node-boundary-note">{data.machine.sourceObject}</footer>
     </article>
   );
 }

@@ -31,24 +31,31 @@ export function PatcherToolbar({
             type="button"
           >
             <span>{MACHINES[key].displayName}</span>
-            <small>{key === "tide-pit" ? "SOURCE 01" : "SOURCE 02"}</small>
           </button>
         ))}
       </div>
 
-      <div className="toolbar-divider" />
-
       <div className="patch-document-status">
-        <span>PATCH DRAFT</span>
         <strong>{currentPatchName ?? `${MACHINES[machineKey].displayName} sketch`}</strong>
         <small>{dirty ? "Unsaved changes" : currentPatchName === null ? "Not saved" : "Saved locally"}</small>
       </div>
 
-      <button className="reset-button" onClick={onReset} type="button">
-        New from template
+      <button
+        aria-label="New from template"
+        className="reset-button"
+        onClick={onReset}
+        title="New from template"
+        type="button"
+      >
+        New
       </button>
-      <button className="save-patch-button" onClick={onSave} type="button">
-        {currentPatchName === null ? "Save patch" : "Save changes"}
+      <button
+        aria-label={currentPatchName === null ? "Save patch" : "Save changes"}
+        className="save-patch-button"
+        onClick={onSave}
+        type="button"
+      >
+        Save
       </button>
     </nav>
   );

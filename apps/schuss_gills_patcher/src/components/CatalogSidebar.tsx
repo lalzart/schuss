@@ -18,6 +18,13 @@ interface CatalogCardProps {
   onAdd: (item: CatalogItem) => void;
 }
 
+function functionLabel(value: string): string {
+  return value
+    .split("-")
+    .map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`)
+    .join(" ");
+}
+
 function CatalogCardComponent({ item, onAdd }: CatalogCardProps) {
   const contract = item.contractReference;
   const handleDragStart = (event: DragEvent<HTMLElement>) => {
@@ -36,32 +43,28 @@ function CatalogCardComponent({ item, onAdd }: CatalogCardProps) {
       className={`catalog-card${item.selectable ? "" : " is-disabled"}`}
       draggable={item.selectable}
       onDragStart={handleDragStart}
+      title={item.selectable ? undefined : item.disabledReason}
     >
-      <div className="catalog-card__topline">
-        <span>{item.primaryFunction}</span>
-        {item.selectable ? (
-          <button
-            aria-label={`Add ${item.displayName} to canvas`}
-            className="catalog-add-button"
-            onClick={() => onAdd(item)}
-            title="Add to canvas"
-            type="button"
-          >
-            +
-          </button>
-        ) : (
-          <span aria-hidden="true" className="catalog-lock">×</span>
+      <div className="catalog-card__body">
+        <h3>{item.displayName}</h3>
+        <span>{functionLabel(item.primaryFunction)}</span>
+        {!item.selectable && (
+          <small>{item.disabledReason ?? item.statusLabel}</small>
         )}
       </div>
-      <h3>{item.displayName}</h3>
-      <p>{item.description}</p>
-      <div className="catalog-card__reference">
-        <span>{item.familyReference.stableId.replace("schuss-family-", "family ")}</span>
-        {contract && <span>{contract.stableId.replace("schuss-component-contract-", "contract ")}</span>}
-      </div>
-      <footer className={item.selectable ? "is-supported" : "is-unsupported"}>
-        {item.selectable ? "Drag or add" : item.disabledReason}
-      </footer>
+      {item.selectable ? (
+        <button
+          aria-label={`Add ${item.displayName} to canvas`}
+          className="catalog-add-button"
+          onClick={() => onAdd(item)}
+          title="Add to canvas"
+          type="button"
+        >
+          +
+        </button>
+      ) : (
+        <span aria-hidden="true" className="catalog-lock">—</span>
+      )}
     </article>
   );
 }
@@ -77,14 +80,17 @@ function PatchTemplateCardComponent({ machineKey, onLoad }: PatchTemplateCardPro
   const machine = MACHINES[machineKey];
   return (
     <article className="patch-library-card is-template">
-      <div className="patch-card__topline">
-        <span>SOURCE TEMPLATE</span>
-        <span>{machineKey === "tide-pit" ? "01" : "02"}</span>
+      <div className="patch-card__body">
+        <h3>{machine.displayName}</h3>
+        <span>Source template</span>
       </div>
-      <h3>{machine.displayName}</h3>
-      <p>{machine.subtitle}</p>
-      <code>{machine.sourcePatch}</code>
-      <button onClick={() => onLoad(machineKey)} type="button">Open new draft</button>
+      <button
+        aria-label={`Open new ${machine.displayName} draft`}
+        onClick={() => onLoad(machineKey)}
+        type="button"
+      >
+        New
+      </button>
     </article>
   );
 }
@@ -102,13 +108,12 @@ function SavedPatchCardComponent({ active, patch, onDelete, onLoad }: SavedPatch
   const machine = MACHINES[patch.machineKey];
   return (
     <article className={`patch-library-card is-saved${active ? " is-active" : ""}`}>
-      <div className="patch-card__topline">
-        <span>LOCAL DRAFT</span>
-        <span>{patch.catalogNodes.length} object{patch.catalogNodes.length === 1 ? "" : "s"}</span>
+      <div className="patch-card__body">
+        <h3>{patch.name}</h3>
+        <span>
+          {machine.displayName} · {patch.catalogNodes.length} object{patch.catalogNodes.length === 1 ? "" : "s"}
+        </span>
       </div>
-      <h3>{patch.name}</h3>
-      <p>{machine.displayName} · {patch.mode === "filter" ? "FILT" : patch.mode.toUpperCase()}</p>
-      <code>{patch.patchId}</code>
       <div className="patch-card__actions">
         <button onClick={() => onLoad(patch)} type="button">{active ? "Reload" : "Open"}</button>
         <button
@@ -167,7 +172,7 @@ export function CatalogSidebar({
     if (normalizedQuery.length === 0) return MACHINE_KEYS;
     return MACHINE_KEYS.filter((machineKey) => {
       const machine = MACHINES[machineKey];
-      return `${machine.displayName} ${machine.subtitle} ${machineKey}`
+      return `${machine.displayName} ${machine.subtitle ?? ""} ${machineKey}`
         .toLocaleLowerCase()
         .includes(normalizedQuery);
     });
@@ -178,12 +183,9 @@ export function CatalogSidebar({
   return (
     <aside className="catalog-sidebar" aria-label="Patcher library">
       <header className="catalog-header">
-        <div>
-          <span className="section-kicker">{activeTab === "objects" ? "OBJECT CATALOG" : "PATCH LIBRARY"}</span>
-          <h2>{activeTab === "objects" ? "Build the patch" : "Find a patch"}</h2>
-        </div>
-        <span className="catalog-count" title={activeTab === "objects" ? "Accepted direct-palette selections" : "Templates and local patches"}>
-          {activeTab === "objects" ? 20 : patchCount}
+        <h2>Library</h2>
+        <span title={activeTab === "objects" ? "Accepted direct-palette selections" : "Templates and local patches"}>
+          {activeTab === "objects" ? "Objects" : "Patches"}
         </span>
       </header>
 
@@ -225,7 +227,7 @@ export function CatalogSidebar({
               <select onChange={(event) => setCategory(event.target.value)} value={category}>
                 <option value="all">All functions</option>
                 {CATALOG_CATEGORIES.map((entry) => (
-                  <option key={entry} value={entry}>{entry.replaceAll("-", " ")}</option>
+                  <option key={entry} value={entry}>{functionLabel(entry)}</option>
                 ))}
               </select>
             </label>
@@ -250,7 +252,6 @@ export function CatalogSidebar({
                 <h3 id="unavailable-catalog-heading">Reference only</h3>
                 <span>{unavailable.length}</span>
               </div>
-              <p className="catalog-section-note">Visible evidence; fail-closed for placement.</p>
               <div className="catalog-list">
                 {unavailable.map((item) => (
                   <CatalogCard item={item} key={item.familyReference.stableId} onAdd={onAdd} />
@@ -271,7 +272,6 @@ export function CatalogSidebar({
                 value={patchQuery}
               />
             </label>
-            <p>Source templates and browser-local drafts are separate from catalog objects.</p>
           </div>
 
           <div className="catalog-scroll patch-scroll">
@@ -317,4 +317,3 @@ export function CatalogSidebar({
     </aside>
   );
 }
-

@@ -276,10 +276,9 @@ export function filterCatalogItems(
   return items.filter((item) => {
     const categoryMatches = category === "all" || item.primaryFunction === category;
     const queryMatches = normalizedQuery.length === 0
-      || `${item.displayName} ${item.description} ${item.primaryFunction}`
+      || `${item.displayName} ${item.description ?? ""} ${item.primaryFunction}`
         .toLocaleLowerCase()
         .includes(normalizedQuery);
     return categoryMatches && queryMatches;
   });
 }
-
