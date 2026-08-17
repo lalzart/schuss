@@ -60,6 +60,13 @@ timing, and state. Evidence stops at level 3; no generated source, ARM build,
 Java/AXP route, device, realtime/resource, or audible result follows. Rings
 reverb and physical resonator support remain gated, and transparent compounds
 remain deferred.
+Task 029 is complete for exact record set `schuss-record-set-000022@1`: two
+source-evidenced Gills machine presentations are available for read-only
+inspection, while zero completed machines are accepted. Task 030 is complete
+for exact record set `schuss-record-set-000023@1`: all 56 exactly attributed
+Mutable-derived entries are catalogued as individual implementation objects
+across 107 function-first families. CLI v3 adds shared `catalog objects`
+discovery; all 50 additions remain catalogued-only and unresolved.
 UI architecture is eligible as a separate unnumbered planning lane but has not
 started; UI implementation remains separately gated.
 
@@ -96,6 +103,10 @@ and audible proof also remain `not-run` and require new authorization.
 - [Task 028 contract](docs/tasks/028-twenty-item-direct-palette.md): completed
   fifteen-item direct selection/lowering tranche and exact twenty-item counted
   palette, with levels 4-8 explicitly not run.
+- [Task 029 machine contract](docs/GILLS_MACHINE_IMPLEMENTATION_CONTRACT.md):
+  completed source-evidenced inspection layer with zero completed machines.
+- [Task 030 contract](docs/tasks/030-complete-mutable-catalog-and-object-cli.md):
+  completed exact Mutable-derived catalog cohort and implementation-object CLI.
 - [Decision log](docs/decisions/README.md): accepted and superseded choices.
 - [Development history](docs/HISTORY.md): concise completed-work index and Git
   retrieval instructions.
@@ -106,12 +117,12 @@ and compiler-front-half documents under `docs/`.
 
 ## Command line
 
-`bin/schuss` is the product and machine-operation boundary. CLI v2 visibly
+`bin/schuss` is the product and machine-operation boundary. CLI v3 visibly
 exposes validation, application capabilities, catalog, project, graph, Gills,
-build, completion, and canonical-operation routes. Non-project commands use
-exact application record set `schuss-record-set-000015@1` by default; the
-Task 024 catalog successor is `schuss-record-set-000016@1`. Historical CLI
-goldens remain retained separately rather than being rewritten.
+build, completion, and canonical-operation routes. Most non-project commands
+use exact application record set `schuss-record-set-000015@1` by default;
+catalog commands use `schuss-record-set-000023@1`. Historical CLI goldens
+remain retained separately rather than being rewritten.
 
 Representative read-only commands are:
 
@@ -119,6 +130,7 @@ Representative read-only commands are:
 bin/schuss validate
 bin/schuss application describe
 bin/schuss catalog search oscillator
+bin/schuss catalog objects --provenance mutable-instruments-derived
 bin/schuss graph inspect schuss-graph-000002@1
 bin/schuss build plan schuss-build-request-000002@5
 bin/schuss gills inspect schuss-instrument-000002@3

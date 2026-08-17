@@ -18,7 +18,7 @@ for value in (ROOT, TOOLS):
     if str(value) not in sys.path:
         sys.path.insert(0, str(value))
 
-from packages.schuss_core.cli import run as run_cli
+from packages.schuss_core.cli import CATALOG_RECORD_SET_PATH, run as run_cli
 from packages.schuss_core.control_plane import (
     canonical_result_bytes,
     dispatch_operation,
@@ -49,6 +49,9 @@ class Task023CliV2Test(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.context = load_repository_context(record_set_path=RECORD_SET)
+        cls.catalog_context = load_repository_context(
+            record_set_path=CATALOG_RECORD_SET_PATH
+        )
 
     def invoke(
         self,
@@ -102,6 +105,7 @@ class Task023CliV2Test(unittest.TestCase):
         expected_tokens = set(root_groups) | {
             "describe",
             "search",
+            "objects",
             "inspect",
             "init",
             "transact",
@@ -136,42 +140,52 @@ class Task023CliV2Test(unittest.TestCase):
 
     def test_default_nonproject_commands_select_one_application_context(self):
         cases = (
-            (["validate", "--json"], "records.validate"),
-            (["application", "describe", "--json"], "application.describe"),
-            (["catalog", "search", "crossfade", "--json"], "catalog.search"),
+            (["validate", "--json"], "records.validate", RECORD_SET, self.context),
+            (["application", "describe", "--json"], "application.describe", RECORD_SET, self.context),
+            (["catalog", "search", "crossfade", "--json"], "catalog.search", CATALOG_RECORD_SET_PATH, self.catalog_context),
             (
                 ["catalog", "inspect", "schuss-family-000018@1", "--json"],
                 "catalog.inspect",
+                CATALOG_RECORD_SET_PATH,
+                self.catalog_context,
             ),
             (
                 ["graph", "inspect", "schuss-graph-000002@1", "--json"],
                 "graph.inspect",
+                RECORD_SET,
+                self.context,
             ),
             (
                 ["build", "resolve", "schuss-build-request-000002@5", "--json"],
                 "build.resolve",
+                RECORD_SET,
+                self.context,
             ),
             (
                 ["build", "plan", "schuss-build-request-000002@5", "--json"],
                 "build.plan",
+                RECORD_SET,
+                self.context,
             ),
             (
                 ["gills", "inspect", "schuss-instrument-000002@3", "--json"],
                 "gills.inspect",
+                RECORD_SET,
+                self.context,
             ),
         )
-        for arguments, operation in cases:
+        for arguments, operation, manifest, selected_context in cases:
             with self.subTest(operation=operation):
                 loaded = []
 
                 def loader(**kwargs):
                     loaded.append(kwargs["record_set_path"])
-                    return self.context
+                    return selected_context
 
                 code, output, error = self.invoke(arguments, context_loader=loader)
                 self.assertEqual("", error)
                 self.assertIn(code, (0, 1))
-                self.assertEqual([RECORD_SET.resolve()], loaded)
+                self.assertEqual([manifest.resolve()], loaded)
                 value = json.loads(output)
                 self.assertEqual(operation, value["operation"])
 
@@ -285,13 +299,21 @@ class Task023CliV2Test(unittest.TestCase):
             ],
         }
         for name, arguments in command_cases.items():
-            observed["human"][name] = _digest(self.invoke(arguments)[1])
-            observed["json"][name] = _digest(self.invoke([*arguments, "--json"])[1])
+            explicit = [*arguments, "--record-set", str(RECORD_SET)]
+            observed["human"][name] = _digest(self.invoke(explicit)[1])
+            observed["json"][name] = _digest(self.invoke([*explicit, "--json"])[1])
         retained = core.load_json(GOLDEN)
-        self.assertEqual(retained["completion"], observed["completion"])
         self.assertEqual(retained["human"], observed["human"])
         self.assertEqual(retained["json"], observed["json"])
-        successor_help = {"project", "build-plan", "build-execute"}
+        successor_help = {
+            "root",
+            "catalog",
+            "catalog-search",
+            "catalog-inspect",
+            "project",
+            "build-plan",
+            "build-execute",
+        }
         self.assertEqual(
             {
                 key: value
@@ -306,6 +328,7 @@ class Task023CliV2Test(unittest.TestCase):
         )
         for key in successor_help:
             self.assertNotEqual(retained["help"][key], observed["help"][key])
+        self.assertNotEqual(retained["completion"], observed["completion"])
 
     def test_completion_shell_syntax_is_valid_when_shell_is_available(self):
         for shell, command in (("bash", ["bash", "-n"]), ("zsh", ["zsh", "-n"])):

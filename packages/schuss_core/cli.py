@@ -23,6 +23,7 @@ from .product_cli import (
     build_plan_request,
     build_execute_request,
     build_completion_script,
+    catalog_implementation_search_request,
     catalog_inspect_request,
     catalog_search_request,
     completion_script,
@@ -60,6 +61,11 @@ DEFAULT_RECORD_SET_REFERENCE = {
 APPLICATION_RECORD_SET_PATH = (
     Path(__file__).resolve().parents[2]
     / "contracts/record-sets/task023-application-spine-v1.json"
+)
+
+CATALOG_RECORD_SET_PATH = (
+    Path(__file__).resolve().parents[2]
+    / "contracts/record-sets/task030-complete-mutable-catalog-v1.json"
 )
 
 TASK026_PROFILE_LOCATORS = {
@@ -154,12 +160,12 @@ def _parser() -> argparse.ArgumentParser:
     parser = _new_parser(
         prog="schuss",
         description=(
-            "Schuss CLI v2 over the shared application, catalog, project, graph, "
+            "Schuss CLI v3 over the shared application, catalog, project, graph, "
             "Gills, and build operations."
         ),
         epilog=(
-            "Default operation output is deterministic plain text over "
-            "schuss-record-set-000015@1. --record-set selects one exact validated "
+            "Most operation output defaults to schuss-record-set-000015@1; catalog "
+            "commands default to schuss-record-set-000023@1. --record-set selects one exact validated "
             "parent-preserving manifest; --json emits the canonical operation result. "
             "Exit 0: success/help/completion. Exit 1: dispatched non-success or "
             "interruption. Exit 2: usage/input/record-set failure. Exit 3: unexpected "
@@ -409,7 +415,7 @@ def _parser() -> argparse.ArgumentParser:
         formatter_class=_FixedHelpFormatter,
         help="browse the exact client-neutral component catalog",
         description="Catalog commands use the exact catalog projection in the application context.",
-        epilog="Choose search or inspect; both default to schuss-record-set-000015@1.",
+        epilog="Choose search, objects, or inspect; all default to schuss-record-set-000023@1.",
     )
     _add_help(catalog)
     catalog_commands = catalog.add_subparsers(
@@ -426,7 +432,7 @@ def _parser() -> argparse.ArgumentParser:
             "different filter kinds are ANDed. An omitted query lists all matches."
         ),
         epilog=(
-            "Default context is schuss-record-set-000015@1. Output and exit behavior "
+            "Default context is schuss-record-set-000023@1. Output and exit behavior "
             "otherwise match the product commands."
         ),
     )
@@ -453,6 +459,44 @@ def _parser() -> argparse.ArgumentParser:
         )
     _add_product_options(search)
 
+    objects = catalog_commands.add_parser(
+        "objects",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="search and filter individual implementation objects",
+        description=(
+            "Dispatch catalog.implementations.search through the shared exact "
+            "projection. An omitted query lists all implementation objects."
+        ),
+        epilog=(
+            "Default context is schuss-record-set-000023@1. Catalog membership and "
+            "provenance do not imply compiler, device, real-time, or audible support."
+        ),
+    )
+    objects.add_argument("query", nargs="?", default="", metavar="QUERY")
+    for option, destination in (
+        ("function", "function"),
+        ("abstraction", "abstraction"),
+        ("form", "form"),
+        ("signal-domain", "signal_domain"),
+        ("signal-rate", "signal_rate"),
+        ("signal-role", "signal_role"),
+        ("capability", "capability"),
+        ("technique", "technique"),
+        ("readiness", "readiness"),
+        ("provenance", "provenance"),
+    ):
+        objects.add_argument(
+            f"--{option}",
+            dest=destination,
+            action="append",
+            default=[],
+            metavar="VALUE",
+            help=f"filter by {option.replace('-', ' ')} (repeatable)",
+        )
+    _add_product_options(objects)
+
     catalog_inspect = catalog_commands.add_parser(
         "inspect",
         add_help=False,
@@ -461,7 +505,7 @@ def _parser() -> argparse.ArgumentParser:
         help="inspect one exact component family",
         description="Dispatch catalog.inspect for one exact family revision.",
         epilog=(
-            "Default context is schuss-record-set-000015@1. Output and exit behavior "
+            "Default context is schuss-record-set-000023@1. Output and exit behavior "
             "otherwise match the product commands."
         ),
     )
@@ -977,7 +1021,7 @@ def _product_request(args, context: OperationContext, stdin: BinaryIO, stderr: T
                 "CLI_CATALOG_CONTEXT_UNAVAILABLE",
                 "the selected record set contains no exact Task 011A catalog corpus",
             )
-        if args.catalog_command == "search":
+        if args.catalog_command in {"search", "objects"}:
             filters = {
                 name: getattr(args, name)
                 for name in (
@@ -993,7 +1037,12 @@ def _product_request(args, context: OperationContext, stdin: BinaryIO, stderr: T
                     "provenance",
                 )
             }
-            return catalog_search_request(args.query, filters), None
+            request_builder = (
+                catalog_implementation_search_request
+                if args.catalog_command == "objects"
+                else catalog_search_request
+            )
+            return request_builder(args.query, filters), None
         if args.catalog_command == "inspect":
             reference = resolve_locator(
                 args.locator, expected_kind="family", context=context
@@ -1190,7 +1239,12 @@ def run(
             _emit_bytes(stdout, output)
             return 0 if result["status"] == "success" else 1
 
-        manifest = args.record_set or str(APPLICATION_RECORD_SET_PATH)
+        default_manifest = (
+            CATALOG_RECORD_SET_PATH
+            if args.command == "catalog"
+            else APPLICATION_RECORD_SET_PATH
+        )
+        manifest = args.record_set or str(default_manifest)
         context, exit_code = _load_context_or_report(manifest, context_loader, stderr)
         if exit_code is not None:
             return exit_code

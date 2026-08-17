@@ -78,6 +78,12 @@ TASK029_SCHEMA_NAMES = {
     "operation_result_v9": "operation-result-v9.schema.json",
 }
 
+TASK030_SCHEMA_NAMES = {
+    "application_capability_description_v3": "application-capability-description-v3.schema.json",
+    "operation_request_v10": "operation-request-v10.schema.json",
+    "operation_result_v10": "operation-result-v10.schema.json",
+}
+
 TASK015_SCHEMA_NAMES = {
     "normalized_dsp_module": "normalized-dsp-module-v0.schema.json",
     "direct_frontend_result": "direct-frontend-result-v0.schema.json",
@@ -332,6 +338,7 @@ def load_repository_context(
             "catalog-corpus-v2": "catalog-projection-v2",
             "catalog-corpus-v3": "catalog-projection-v3",
             "catalog-corpus-v4": "catalog-projection-v4",
+            "catalog-corpus-v5": "catalog-projection-v5",
         }
         projection_version = projection_versions.get(catalog_schema_version)
         if projection_version is not None:
@@ -376,7 +383,15 @@ def load_repository_context(
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
-    if "application_capability_description_v2" in schemas:
+    for key, filename in TASK030_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    if "application_capability_description_v3" in schemas:
+        schemas["application_capability_description"] = schemas[
+            "application_capability_description_v3"
+        ]
+    elif "application_capability_description_v2" in schemas:
         schemas["application_capability_description"] = schemas[
             "application_capability_description_v2"
         ]
@@ -635,6 +650,7 @@ def canonical_result_bytes(
         "schuss-operation-result-v7": "operation_result_v7",
         "schuss-operation-result-v8": "operation_result_v8",
         "schuss-operation-result-v9": "operation_result_v9",
+        "schuss-operation-result-v10": "operation_result_v10",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -852,6 +868,115 @@ def _catalog_inspect(
         },
         version=2,
     )
+
+
+def _catalog_implementation_search(
+    payload: dict[str, Any], context: OperationContext
+) -> dict[str, Any]:
+    projection = context.catalog_projection
+    if projection is None:
+        return _result(
+            "catalog.implementations.search",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "CATALOG_CONTEXT_UNAVAILABLE",
+                    "catalog.implementations.search",
+                    "$",
+                    "the selected record set contains no exact catalog projection",
+                )
+            ],
+            version=10,
+        )
+    normalized_filters = catalog.canonical_filters(payload["filters"])
+    invalid = catalog.validate_implementation_filter_values(
+        projection, normalized_filters
+    )
+    if invalid:
+        return _result(
+            "catalog.implementations.search",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "CATALOG_FILTER_VALUE_UNSUPPORTED",
+                    f"{name}:{value}",
+                    f"$.payload.filters.{name}",
+                    "the filter value is absent from the exact selected implementation projection",
+                )
+                for name, value in invalid
+            ],
+            version=10,
+        )
+    query, filters, results = catalog.search_implementations(
+        projection, payload["query"], normalized_filters
+    )
+    return _result(
+        "catalog.implementations.search",
+        "success",
+        {
+            "record_set_reference": copy.deepcopy(
+                projection["record_set_reference"]
+            ),
+            "catalog_reference": copy.deepcopy(projection["catalog_reference"]),
+            "projection_version": projection["projection_version"],
+            "match_algorithm": projection["match_algorithm"],
+            "input_closure_hash": projection["input_closure_hash"],
+            "query": query,
+            "filters": filters,
+            "total_matches": len(results),
+            "results": results,
+        },
+        version=10,
+    )
+
+
+def _dispatch_catalog_implementation_operation(
+    request: dict[str, Any], context: OperationContext
+) -> dict[str, Any]:
+    operation = request.get("operation") if isinstance(request, dict) else None
+    errors: list[str] = []
+    try:
+        core.assert_portable_json_value(request)
+    except ValueError as exc:
+        errors.append(str(exc))
+    schema = context.schemas.get("operation_request_v10")
+    if schema is None:
+        errors.append(
+            "$: operation schema 'schuss-operation-request-v10' is unavailable in the selected context"
+        )
+    elif isinstance(request, dict):
+        errors.extend(core.schema_errors(request, schema, schema))
+    else:
+        errors.append("$: operation request must be an object")
+    if errors:
+        version = 10 if "operation_result_v10" in context.schemas else 1
+        result = _result(
+            (
+                operation
+                if version == 10
+                and operation == "catalog.implementations.search"
+                else "invalid-request"
+            ),
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "OPERATION_REQUEST_INVALID",
+                    operation if isinstance(operation, str) else "invalid-request",
+                    "$",
+                    error,
+                )
+                for error in sorted(set(errors))
+            ],
+            version=version,
+        )
+        canonical_result_bytes(result, context)
+        return result
+    result = _catalog_implementation_search(request["payload"], context)
+    canonical_result_bytes(result, context)
+    return result
 
 
 def _exact_registry(
@@ -1754,6 +1879,17 @@ def dispatch_operation(
     execution_service: execution.ExecutionService | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v10"
+    ):
+        if project_service is not None:
+            loaded = project_service.load()
+            return _dispatch_catalog_implementation_operation(
+                request, loaded.context
+            )
+        return _dispatch_catalog_implementation_operation(request, context)
 
     if (
         isinstance(request, dict)

@@ -213,7 +213,34 @@ build-bearing aggregate checks remain not run by scope.
 Task 029 does not activate its later Machine Builder or the Palimpsest/Tide Pit
 graph-import prerequisites. The authorized desktop UI-architecture lane remains
 separately owned. Task 029 was activated by explicit user authorization.
-No numbered implementation task is automatically active after Task 028 completion.
+
+Task 030 is accepted complete for exact prospective successor record set
+`schuss-record-set-000023@1`, parented by `schuss-record-set-000022@1`. It
+catalogues the complete exact Task 027 source-attributed Mutable cohort: the
+six prior mappings are retained and the remaining fifty candidates become
+`schuss-implementation-000112@1` through `000161@1`. Forty-seven new
+function-first families bring the catalog to 107 families and 133
+implementations. The sixteen extended-library entries without exact Mutable
+attribution remain inventory-only.
+
+Catalog corpus/projection v5 retains provenance per implementation. Shared
+read-only operation `catalog.implementations.search` and CLI v3 command
+`schuss catalog objects` expose individual objects from that same projection;
+catalog commands now default to the Task 030 context. All fifty additions are
+`catalogued-only`, compatibility `not-evaluated`, and unresolved. No component
+contract, binding, compiler eligibility, build, project/machine mutation,
+device, real-time/resource, audible, Git, or publication claim was added.
+Structural/catalog provenance levels 1-2 pass and levels 3-8 remain `not-run`.
+The dedicated Task 030 validator passes. The required one-shot repository
+aggregate ran 394 tests in 1,199.802 seconds and retained three pre-existing
+historical failures: two assertions over the already documented four
+equal-length Task 023 catalog input-closure digest differences, and one Task
+027 retained validation-summary projection-hash drift. No Task 030 test
+failed; no historical golden or local source configuration was changed.
+
+Task 030 does not activate compiler promotion, Machine Builder, UI
+implementation, hardware work, or publication. No numbered implementation
+task is automatically active after Task 030 completion.
 
 Task 012B remains retired. The object drawer and transparent graph canvas are
 an unnumbered future client milestone. UI architecture planning is now
@@ -241,6 +268,7 @@ of Task 018 or Task 021.
 | Effects semantic tranche | Five exact Task 025 native-operation promotions plus two reused routing operations; reverb remains explicitly unsupported | Five component claims pass level 2; complete graph fails level 2; levels 3-8 not-run |
 | Complete authoring workflow | Project-owned graph/instrument/request allocation and versioning, atomic multi-record persistence, immutable history/revert, project-aware CLI planning/execution, and two-root authored ELF reproduction | Levels 1-5 passed for the exact reverb-free profile; levels 6-8 not-run |
 | Mutable-related catalog provenance | Exact 19-object extended-source review plus 53 attributed factory candidates, additive per-candidate/per-implementation provenance, 60-family preservation, and one catalogued-only Rings resonator implementation | Levels 1-2 structural/provenance only; compiler/build and levels 3-8 not-run |
+| Complete Mutable-derived catalog cohort | All 56 exactly attributed Task 027 entries catalogued as individual implementations across 107 function-first families, with shared implementation search and CLI v3 object browsing | Levels 1-2 structural/provenance only; all 50 additions remain catalogued-only and levels 3-8 not-run |
 | Twenty-item direct palette | Five retained Task 025 promotions plus fifteen exact independent Task 028 selections and normalized operation-IR lowerings; seven Task 026 support bindings remain separate | Levels 1-3 passed; source generation, ARM, device, realtime/resource, and audible levels 4-8 not-run |
 | Gills machine layer | Exact Palimpsest and Tide Pit source reviews, source-evidenced inspection presentations, editable v0.6 panel plus semantic map, fail-closed completed-machine schema, shared read-only inspection operation, and isolated Viewer | Level 1 structural/source-identity/host inspection proof; completed machines zero; levels 2-8 not-run |
 
@@ -304,21 +332,23 @@ Task 021 established all of the following:
 - The historical Task 011A CLI golden remains byte-identical. Task 023 records
   its successor golden separately and tests the inherited four equal-length
   input-closure digest changes without treating them as semantic catalog drift.
+- Validation-hygiene task VH-001 retains five configured historical
+  golden/hash gates as environment-dependent mismatches. It changes no source
+  configuration or golden and makes no product or evidence promotion claim.
 - The 20 Task 024 families and their 29 exact current variants have no Task 024-created component contract,
   binding, compiler eligibility, or execution evidence. Their unresolved state
   is intentional.
-- Fifty Task 027 tagged candidates remain outside the catalog: forty-eight
-  attributed factory variants plus the extended topographic sequencer and
-  macro voice. Sixteen other extended objects remain inventory-only and are
-  not tagged without exact derivation evidence. Candidate presence is not
-  compiler, device, real-time, or audible support.
+- All fifty former Task 027 tagged candidates are now catalogued, but none has
+  a Task 030-created contract, binding, eligibility, compiler/build, device,
+  real-time, or audible claim. Sixteen other extended objects remain
+  inventory-only and untagged because exact Mutable derivation is absent.
 - Rings-derived reverb remains ineligible until its exact allocation and
   ownership contract is independently resolved; Tasks 026-028 do not
   redesign, repair, or consume it.
-- Sixty-three accepted catalog implementations remain outside the bounded
-  twenty-item palette. Task 028's exact gap ledger preserves their prior
-  readiness and accounts separately for all seventy-two Task 027 source-review
-  entries; absence from this first palette is not a quality judgment.
+- One hundred thirteen accepted catalog implementations remain outside the
+  bounded twenty-item palette. Task 028's exact parent-era gap ledger accounts
+  for its 83-implementation catalog; Task 030 adds fifty catalogued-only
+  objects without changing that palette. Absence is not a quality judgment.
 
 ## Current planning boundary
 
@@ -328,7 +358,7 @@ Task 021 product-binary replacement, firmware flash, SD-card write, persistent
 installation, or reset. Any diagnostic successor or repeated hardware
 procedure requires a new bounded decision and explicit approval.
 
-Tasks 023-028 are accepted complete. Task 025's retained fail-closed result is
+Tasks 023-030 are accepted complete. Task 025's retained fail-closed result is
 bounded by `docs/tasks/025-direct-compiler-core-library-tranche.md` and
 `contracts/task025/reverb-allocation-boundary.md`; it does not authorize or
 claim lowering, ARM, device, real-time, audible, Git, or publication action.
@@ -336,7 +366,9 @@ Task 026 consumes only the separately accepted reverb-free seven-node profile
 and is bounded by its completed contract and evidence. Task 027 is bounded by
 its completed source-review and provenance contract and does not activate
 Task 028. Task 028 is bounded by its completed twenty-item direct-palette
-contract; its prior transparent-compound outcome is deferred. No numbered
+contract; its prior transparent-compound outcome is deferred. Task 029 is
+bounded to source-evidenced machine inspection and Task 030 to catalog
+provenance plus read-only object discovery. No numbered
 implementation lane is currently planned. The already authorized unnumbered
 UI-architecture milestone remains eligible but has not started. The
 original application sessions/jobs/diagnostics outcome is deferred without a

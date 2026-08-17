@@ -251,6 +251,14 @@ readiness derivation, and inspection are shared operation semantics. The CLI
 only constructs requests and renders results. Future GUI and AI clients must
 submit the same requests and consume the same canonical results.
 
+Task 030 extends this boundary with `catalog.implementations.search`. It does
+not create a second object index: per-implementation queries, filters,
+provenance, readiness, and ordering derive from the same exact catalog
+projection as family search and inspect. The CLI v3 `catalog objects` route is
+only a request constructor and renderer. The 50 new Mutable-attributed entries
+remain catalogued-only and do not enter graphs or compiler selection without
+separate exact contracts and bindings.
+
 Task 011B consumes the projection's exact seven-role identity closure without
 putting catalog identity into the graph. Additive component and binding schema
 versions represent Q21 semitone offsets, receiver-owned rising-edge behavior,
@@ -293,7 +301,7 @@ The projection reference direction remains one way:
 ```text
 exact catalog corpus + frozen Phase 4A overlay + accepted semantic/evidence records
     -> derived catalog projection
-    -> catalog.search / catalog.inspect
+    -> catalog.search / catalog.implementations.search / catalog.inspect
     -> CLI, future GUI, future AI
 ```
 

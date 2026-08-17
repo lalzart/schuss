@@ -298,7 +298,11 @@ def _validate_corpus(
         "schuss-implementation-000041",
     }:
         raise CatalogProjectionError("catalog implementation additions exceed slice scope")
-    if corpus["schema_version"] in {"catalog-corpus-v3", "catalog-corpus-v4"}:
+    if corpus["schema_version"] in {
+        "catalog-corpus-v3",
+        "catalog-corpus-v4",
+        "catalog-corpus-v5",
+    }:
         review = corpus.get("current_ksoloti_review")
         if not isinstance(review, dict):
             raise CatalogProjectionError("catalog v3 current-Ksoloti review is absent")
@@ -330,7 +334,7 @@ def _validate_corpus(
                 raise CatalogProjectionError(
                     f"catalog v3 current-Ksoloti implementation family is stale: {family_id}"
                 )
-    if corpus["schema_version"] == "catalog-corpus-v4":
+    if corpus["schema_version"] in {"catalog-corpus-v4", "catalog-corpus-v5"}:
         review = corpus.get("mutable_instruments_review")
         if not isinstance(review, dict):
             raise CatalogProjectionError("catalog v4 Mutable Instruments review is absent")
@@ -352,14 +356,32 @@ def _validate_corpus(
             value["implementation_id"] for value in overlay["implementations"]
         } | implementation_ids
         tags = review["implementation_tags"]
-        expected_tagged = {
-            "schuss-implementation-000010",
-            "schuss-implementation-000016",
-            "schuss-implementation-000056",
-            "schuss-implementation-000057",
-            "schuss-implementation-000058",
-            "schuss-implementation-000096",
-        }
+        if corpus["schema_version"] == "catalog-corpus-v4":
+            expected_tagged = {
+                "schuss-implementation-000010",
+                "schuss-implementation-000016",
+                "schuss-implementation-000056",
+                "schuss-implementation-000057",
+                "schuss-implementation-000058",
+                "schuss-implementation-000096",
+            }
+        else:
+            tagged_entries = [
+                value
+                for value in source_review["entries"]
+                if "mutable-instruments-derived" in value["provenance_tags"]
+            ]
+            expected_tagged = {
+                value["catalog_implementation_id"] for value in tagged_entries
+            }
+            if (
+                len(tagged_entries) != 56
+                or len(expected_tagged) != 56
+                or None in expected_tagged
+            ):
+                raise CatalogProjectionError(
+                    "catalog v5 source review does not map all 56 attributed entries"
+                )
         actual_tagged = {value["implementation_id"] for value in tags}
         if actual_tagged != expected_tagged or len(tags) != len(expected_tagged):
             raise CatalogProjectionError(
@@ -413,6 +435,68 @@ def _validate_corpus(
             raise CatalogProjectionError(
                 "catalog v4 pinned extended implementation authority is stale"
             )
+        if corpus["schema_version"] == "catalog-corpus-v5":
+            task030_ids = {
+                f"schuss-implementation-{value:06d}" for value in range(112, 162)
+            }
+            task030_additions = {
+                value["implementation_id"]: value
+                for value in corpus["implementation_additions"]
+                if value["implementation_id"] in task030_ids
+            }
+            if set(task030_additions) != task030_ids:
+                raise CatalogProjectionError(
+                    "catalog v5 does not contain the exact Task 030 implementation range"
+                )
+            tagged_by_id = {
+                value["implementation_id"]: entries[value["source_entry_id"]]
+                for value in tags
+            }
+            for identifier, implementation in task030_additions.items():
+                entry = tagged_by_id.get(identifier)
+                if entry is None:
+                    raise CatalogProjectionError(
+                        f"catalog v5 implementation lacks source-review mapping: {identifier}"
+                    )
+                authority = implementation["source_authority"]
+                paths = {value["role"]: value for value in entry["source_paths"]}
+                if entry["source_kind"] == "factory-candidate":
+                    observation = authority.get("observation", {})
+                    object_path = paths.get("object", {})
+                    stable_uuid = entry["stable_source_id"].rsplit("@", 1)[-1]
+                    if (
+                        authority.get("kind") != "legacy-observation"
+                        or observation.get("source_id") != entry["source_id"]
+                        or observation.get("source_path") != object_path.get("portable_path")
+                        or observation.get("source_sha256") != object_path.get("byte_sha256")
+                        or observation.get("legacy_uuid_sha256")
+                        != "sha256:"
+                        + hashlib.sha256(stable_uuid.encode("utf-8")).hexdigest()
+                    ):
+                        raise CatalogProjectionError(
+                            f"catalog v5 factory source authority is stale: {identifier}"
+                        )
+                else:
+                    if (
+                        authority.get("kind") != "pinned-source-object"
+                        or authority.get("evidence_ref") != entry["entry_id"]
+                        or authority.get("stable_source_id") != entry["stable_source_id"]
+                        or authority.get("manifest_path")
+                        != paths.get("manifest", {}).get("portable_path")
+                        or authority.get("manifest_sha256")
+                        != paths.get("manifest", {}).get("byte_sha256")
+                        or authority.get("object_path")
+                        != paths.get("object", {}).get("portable_path")
+                        or authority.get("object_sha256")
+                        != paths.get("object", {}).get("byte_sha256")
+                        or authority.get("license_path")
+                        != paths.get("license", {}).get("portable_path")
+                        or authority.get("license_sha256")
+                        != paths.get("license", {}).get("byte_sha256")
+                    ):
+                        raise CatalogProjectionError(
+                            f"catalog v5 extended source authority is stale: {identifier}"
+                        )
 
 
 def _evidence_for_binding(
@@ -838,7 +922,10 @@ def build_catalog_projection(
                     ],
                     "unresolved_facts": sorted(unresolved),
                 }
-            if corpus["schema_version"] == "catalog-corpus-v4":
+            if corpus["schema_version"] in {
+                "catalog-corpus-v4",
+                "catalog-corpus-v5",
+            }:
                 implementation_summary["provenance_tags"] = sorted(provenance_tags)
             implementation_summaries.append(implementation_summary)
         entry = {
@@ -869,7 +956,11 @@ def build_catalog_projection(
             "implementations": implementation_summaries,
             "unresolved_facts": sorted(family_unresolved),
         }
-        if corpus["schema_version"] in {"catalog-corpus-v3", "catalog-corpus-v4"}:
+        if corpus["schema_version"] in {
+            "catalog-corpus-v3",
+            "catalog-corpus-v4",
+            "catalog-corpus-v5",
+        }:
             entry.update(
                 {
                     "curation_treatment": (
@@ -1089,3 +1180,123 @@ def inspect_family(
         if entry["family_reference"] == family_reference
     ]
     return copy.deepcopy(matches[0]) if len(matches) == 1 else None
+
+
+def _implementation_facet_values(
+    family: dict[str, Any], implementation: dict[str, Any], name: str
+) -> set[str]:
+    mapping = {
+        "function": {family["primary_function"]},
+        "abstraction": {family["abstraction_level"]},
+        "form": {implementation["form"]},
+        "signal_domain": {item["domain"] for item in family["signal_facets"]},
+        "signal_rate": {item["rate"] for item in family["signal_facets"]},
+        "signal_role": {item["role"] for item in family["signal_facets"]},
+        "capability": set(family["capability_keys"]),
+        "technique": set(family["technique_tags"]),
+        "readiness": set(implementation["readiness_states"]),
+        "provenance": set(implementation["provenance_sources"])
+        | set(implementation.get("provenance_tags", ())),
+    }
+    return {normalize_text(value) for value in mapping[name]}
+
+
+def validate_implementation_filter_values(
+    projection: dict[str, Any], filters: dict[str, list[str]]
+) -> list[tuple[str, str]]:
+    invalid = []
+    for name, requested in filters.items():
+        available = {
+            value
+            for family in projection["families"]
+            for implementation in family["implementations"]
+            for value in _implementation_facet_values(family, implementation, name)
+        }
+        for value in requested:
+            if value not in available:
+                invalid.append((name, value))
+    return sorted(invalid)
+
+
+def search_implementations(
+    projection: dict[str, Any],
+    query: str,
+    filters: Mapping[str, Iterable[str]],
+) -> tuple[str, dict[str, list[str]], list[dict[str, Any]]]:
+    """Search individual catalog implementations through the exact projection."""
+
+    normalized_query = normalize_text(query)
+    tokens = normalized_query.split(" ") if normalized_query else []
+    normalized_filters = canonical_filters(filters)
+    category_order: dict[str, int] = {}
+    for family in projection["families"]:
+        category_order.setdefault(family["primary_function"], len(category_order))
+    scored: list[tuple[int, dict[str, Any], dict[str, Any]]] = []
+    for family in projection["families"]:
+        for implementation in family["implementations"]:
+            if any(
+                requested
+                and not (
+                    _implementation_facet_values(family, implementation, name)
+                    & set(requested)
+                )
+                for name, requested in normalized_filters.items()
+            ):
+                continue
+            fields = [
+                normalize_text(implementation["implementation_id"]),
+                normalize_text(implementation["display_name"]),
+                normalize_text(family["display_name"]),
+                normalize_text(family["description"]),
+                *(normalize_text(value) for value in family["aliases"]),
+                *(normalize_text(value) for value in family["technique_tags"]),
+            ]
+            score = 0
+            for token in tokens:
+                matches = []
+                for field in fields:
+                    if token == field:
+                        matches.append(300)
+                    elif field.startswith(token):
+                        matches.append(200)
+                    elif token in field:
+                        matches.append(100)
+                if not matches:
+                    score = -1
+                    break
+                score += max(matches)
+            if score >= 0:
+                scored.append((score, family, implementation))
+    scored.sort(
+        key=lambda item: (
+            -item[0],
+            category_order[item[1]["primary_function"]],
+            normalize_text(item[1]["display_name"]).encode("utf-8"),
+            normalize_text(item[2]["display_name"]).encode("utf-8"),
+            item[2]["implementation_id"],
+        )
+    )
+    results = [
+        {
+            "implementation_id": implementation["implementation_id"],
+            "exact_reference": copy.deepcopy(implementation["exact_reference"]),
+            "display_name": implementation["display_name"],
+            "form": implementation["form"],
+            "family_reference": copy.deepcopy(family["family_reference"]),
+            "family_display_name": family["display_name"],
+            "primary_function": family["primary_function"],
+            "abstraction_level": family["abstraction_level"],
+            "provenance_sources": copy.deepcopy(
+                implementation["provenance_sources"]
+            ),
+            "provenance_tags": copy.deepcopy(
+                implementation.get("provenance_tags", [])
+            ),
+            "readiness_states": copy.deepcopy(
+                implementation["readiness_states"]
+            ),
+            "score": score,
+        }
+        for score, family, implementation in scored
+    ]
+    return normalized_query, normalized_filters, results

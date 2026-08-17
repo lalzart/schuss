@@ -1,8 +1,9 @@
 # Application-spine sequence and parallel-work plan
 
 Status: accepted planning authority under ADR 0014 and amended by ADR 0015 for
-Task 027 only. Tasks 023-028 are accepted and complete. Task 025 retained a
-fail-closed partial semantic tranche after
+Task 027 only. Tasks 023-030 are accepted and complete. Tasks 029-030 were
+later activated by explicit user requests outside the ADR 0014 sequence. Task
+025 retained a fail-closed partial semantic tranche after
 the selected reverb allocation contradiction prevented lowering and ARM
 evidence. Task 026 then accepted a separate reverb-free seven-node executable
 profile and completed the client-neutral authoring flow through local level 5.
@@ -180,6 +181,15 @@ filtering/resonance, timing, and state. Levels 1-3 pass; levels 4-8 remain
 `not-run`. Rings reverb, physical resonator support, transparent compounds,
 and broad catalog coverage remain explicit gates.
 
+### Later explicit Tasks 029-030
+
+Task 029 adds the client-neutral complete-machine distinction, two exact
+inspection-only source presentations, and read-only `machine.inspect`; it
+accepts zero completed machines. Task 030 catalogues all 56 exactly attributed
+Task 027 Mutable-derived entries and adds shared individual implementation
+search plus CLI v3 `catalog objects`. Both retain their compiler, device,
+real-time, and audible gates; neither changes the twenty-item palette.
+
 ## Unnumbered UI milestones
 
 ### UI architecture
@@ -289,7 +299,7 @@ separate output namespaces.
 ## Activation and approval rules
 
 - This plan did not itself start Task 023 or create any numbered task contract.
-- Tasks 023-028 are accepted complete. The eligible UI-architecture planning
+- Tasks 023-030 are accepted complete. The eligible UI-architecture planning
   lane remains unstarted; no numbered implementation task is active.
 - The original Task 027 sessions/jobs/diagnostics outcome is deferred without
   a replacement task number under ADR 0015.

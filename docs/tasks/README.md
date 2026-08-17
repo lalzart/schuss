@@ -37,13 +37,23 @@ contracts pending their normal archival step:
   It adds exactly fifteen independently selectable native bindings to the five
   Task 025 promotions, records normalized local lowering at levels 1-3, and
   defers transparent compounds and every build/device/audio claim.
+- `../GILLS_MACHINE_IMPLEMENTATION_CONTRACT.md` is the completed Task 029
+  read-only machine inspection contract. It retains two exact source-evidenced
+  presentations and accepts zero completed machine records.
+- `030-complete-mutable-catalog-and-object-cli.md` is the completed exact
+  Mutable catalog cohort and CLI v3 contract. It catalogues all 56 attributed
+  Task 027 entries and leaves the 16 unattributed extended entries inventory-only.
 
-Tasks 023-028 are complete; no numbered implementation task is active. ADR
+Tasks 023-030 are complete; no numbered implementation task is active. ADR
 0015 retargeted the previously unstarted Task 027 assignment. Task 028's prior
 transparent-compound outcome remains deferred; the original sessions/jobs/diagnostics outcome
 is deferred without a replacement number. Tasks 019 and 020 remain deferred. UI
 architecture is authorized and eligible as an unnumbered planning milestone,
 but has not started; UI implementation remains separately gated.
+
+Unnumbered validation-hygiene task VH-001 is retained under `../validation/`.
+It audits five configured historical golden/hash gates and authorizes neither
+golden rebaselining nor source-configuration changes.
 
 Completed task detail is indexed in `../HISTORY.md` and recoverable byte for
 byte from Git. Accepted architectural choices must move into ADRs, while exact

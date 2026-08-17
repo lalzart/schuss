@@ -63,6 +63,23 @@ device, real-time, or audible evidence. The new Rings resonator remains
 `catalogued-only` and `unresolved`; Task 027 does not alter the separate failed
 Rings-reverb allocation claim.
 
+## Task 030 complete attributed cohort
+
+Exact record set `schuss-record-set-000023@1` adds catalog corpus/projection v5
+and source-review revision 2. It retains the six Task 027 mappings, turns the
+remaining fifty attributed candidates into exact implementations `000112`-
+`000161`, and adds forty-seven function-first families `000061`-`000107`.
+Elements string/tube reuse Physical-model Resonator family `000010`; Braids
+saw reuses Band-limited Saw Oscillator family `000031`. The result contains
+107 families, 133 implementations, and exactly 56 implementations carrying
+`mutable-instruments-derived`.
+
+The sixteen extended entries without exact attribution remain inventory-only.
+Every new implementation is `catalogued-only`, compatibility `not-evaluated`,
+and unresolved, with no contract, binding, eligibility, result, artifact, or
+evidence reference. Catalog membership therefore proves only structural and
+source provenance levels 1-2.
+
 ## Projection derivation
 
 `schuss-catalog-projection-v1` validates the complete client-neutral view.
@@ -115,6 +132,23 @@ unsupported values fail with `CATALOG_FILTER_VALUE_UNSUPPORTED`. In particular,
 factory, repository, source, user, community, and demo labels are not musical
 functions merely because they may be provenance values.
 
+Task 030 adds `catalog.implementations.search` and the CLI form:
+
+```text
+schuss catalog objects [QUERY]
+  [--function VALUE] [--abstraction VALUE] [--form VALUE]
+  [--signal-domain VALUE] [--signal-rate VALUE] [--signal-role VALUE]
+  [--capability VALUE] [--technique VALUE] [--readiness VALUE]
+  [--provenance VALUE] [--record-set MANIFEST] [--json]
+```
+
+It uses the same normalization, closed filters, AND/OR rules, exact projection,
+and deterministic scoring as family search, but returns one summary per
+implementation. Provenance filtering is implementation-specific, so a tagged
+implementation never tags an untagged sibling by family association. Current
+catalog search, object search, and inspect commands default to Task 030; other
+product command defaults remain unchanged.
+
 ## Inspection and readiness
 
 `catalog.inspect` accepts only an exact `FAMILY_ID@REVISION` locator at the CLI
@@ -146,7 +180,8 @@ implementations or a whole family by association.
 
 ## Client and execution boundary
 
-Both catalog operations use additive operation v2 schemas and the same pure
+The family operations use additive operation v2 schemas. Task 030 object search
+uses additive request/result v10. All three use the same pure
 `dispatch_operation` API as existing operations. Direct API, raw `schuss op`,
 ergonomic CLI, and future GUI/AI callers receive the same canonical result.
 Human output and static Bash/Zsh/Fish completion are CLI presentation only.

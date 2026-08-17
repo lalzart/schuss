@@ -206,6 +206,15 @@ def catalog_search_request(
     }
 
 
+def catalog_implementation_search_request(
+    query: str, filters: dict[str, list[str]]
+) -> dict[str, Any]:
+    request = catalog_search_request(query, filters)
+    request["schema_version"] = "schuss-operation-request-v10"
+    request["operation"] = "catalog.implementations.search"
+    return request
+
+
 def catalog_inspect_request(
     family_reference: dict[str, Any],
 ) -> dict[str, Any]:
@@ -662,6 +671,13 @@ def _append_catalog_inspect(lines: list[str], result: dict[str, Any]) -> None:
             implementation["provenance_sources"],
             "    ",
         )
+        if "provenance_tags" in implementation:
+            _append_list(
+                lines,
+                "provenance_tags",
+                implementation["provenance_tags"],
+                "    ",
+            )
         for label in (
             "contract_references",
             "binding_references",
@@ -689,6 +705,50 @@ def _append_catalog_inspect(lines: list[str], result: dict[str, Any]) -> None:
             implementation["unresolved_facts"],
             "    ",
         )
+
+
+def _append_catalog_implementation_search(
+    lines: list[str], result: dict[str, Any]
+) -> None:
+    value = result.get("value")
+    if value is None:
+        return
+    _append_reference(lines, "catalog", value["catalog_reference"])
+    lines.append(f"projection_version: {_safe_text(value['projection_version'])}")
+    lines.append(f"match_algorithm: {_safe_text(value['match_algorithm'])}")
+    lines.append(f"input_closure_hash: {_safe_text(value['input_closure_hash'])}")
+    lines.append(f"query: {_safe_text(value['query'])}")
+    lines.append("filters:")
+    _append_tree(lines, value["filters"], "  ")
+    lines.append(f"total_matches: {value['total_matches']}")
+    lines.append("objects:")
+    if not value["results"]:
+        lines.append("  none")
+    for item in value["results"]:
+        lines.append(
+            f"  - implementation_id: {_safe_text(item['implementation_id'])}"
+        )
+        if item["exact_reference"] is not None:
+            _append_reference(lines, "exact_reference", item["exact_reference"], "    ")
+        else:
+            lines.append("    exact_reference: absent-in-phase-4a-overlay")
+        lines.append(f"    display_name: {_safe_text(item['display_name'])}")
+        lines.append(f"    form: {_safe_text(item['form'])}")
+        _append_reference(lines, "family", item["family_reference"], "    ")
+        lines.append(
+            f"    family_display_name: {_safe_text(item['family_display_name'])}"
+        )
+        lines.append(
+            f"    primary_function: {_safe_text(item['primary_function'])}"
+        )
+        lines.append(
+            f"    abstraction_level: {_safe_text(item['abstraction_level'])}"
+        )
+        _append_list(
+            lines, "provenance_sources", item["provenance_sources"], "    "
+        )
+        _append_list(lines, "provenance_tags", item["provenance_tags"], "    ")
+        _append_list(lines, "readiness_states", item["readiness_states"], "    ")
 
 
 def _append_build_plan(lines: list[str], result: dict[str, Any]) -> None:
@@ -831,6 +891,9 @@ def render_human_result(
         "build.execute": lambda: _append_build_execute(lines, result),
         "graph.transact": lambda: _append_graph_transact(lines, result, request),
         "catalog.search": lambda: _append_catalog_search(lines, result),
+        "catalog.implementations.search": lambda: _append_catalog_implementation_search(
+            lines, result
+        ),
         "catalog.inspect": lambda: _append_catalog_inspect(lines, result),
         "application.describe": lambda: _append_application_describe(lines, result),
         "gills.inspect": lambda: _append_gills_inspect(lines, result),
@@ -842,7 +905,7 @@ def render_human_result(
     return ("\n".join(lines) + "\n").encode("utf-8")
 
 
-BASH_COMPLETION = """# Schuss CLI v2 completion for Bash
+BASH_COMPLETION = """# Schuss CLI v3 completion for Bash
 _schuss_complete() {
   local current="${COMP_WORDS[COMP_CWORD]}"
   local choices=""
@@ -857,10 +920,10 @@ _schuss_complete() {
         ;;
       catalog)
         if [[ ${COMP_CWORD} -eq 2 ]]; then
-          choices="search inspect --help"
+          choices="search objects inspect --help"
         else
           case "${COMP_WORDS[2]}" in
-            search) choices="--function --abstraction --form --signal-domain --signal-rate --signal-role --capability --technique --readiness --provenance --record-set --json --help" ;;
+            search|objects) choices="--function --abstraction --form --signal-domain --signal-rate --signal-role --capability --technique --readiness --provenance --record-set --json --help" ;;
             inspect) choices="--record-set --json --help" ;;
           esac
         fi
@@ -914,12 +977,12 @@ complete -F _schuss_complete schuss
 
 
 ZSH_COMPLETION = """#compdef schuss
-# Schuss CLI v2 completion for Zsh
+# Schuss CLI v3 completion for Zsh
 _schuss() {
   local -a root_commands application_commands catalog_commands project_commands graph_commands gills_commands build_commands shells
   root_commands=(validate application catalog project graph gills build completion op)
   application_commands=(describe)
-  catalog_commands=(search inspect)
+  catalog_commands=(search objects inspect)
   project_commands=(init inspect validate transact op completion)
   graph_commands=(inspect transact)
   gills_commands=(inspect)
@@ -940,7 +1003,7 @@ _schuss() {
         _describe 'catalog command' catalog_commands
       else
         case ${words[3]} in
-          search) _values 'option' --function --abstraction --form --signal-domain --signal-rate --signal-role --capability --technique --readiness --provenance --record-set --json --help ;;
+          search|objects) _values 'option' --function --abstraction --form --signal-domain --signal-rate --signal-role --capability --technique --readiness --provenance --record-set --json --help ;;
           inspect) _values 'option' --record-set --json --help ;;
         esac
       fi
@@ -991,7 +1054,7 @@ _schuss "$@"
 """
 
 
-FISH_COMPLETION = """# Schuss CLI v2 completion for Fish
+FISH_COMPLETION = """# Schuss CLI v3 completion for Fish
 complete -c schuss -f
 complete -c schuss -n '__fish_use_subcommand' -a validate
 complete -c schuss -n '__fish_use_subcommand' -a application
@@ -1003,7 +1066,7 @@ complete -c schuss -n '__fish_use_subcommand' -a build
 complete -c schuss -n '__fish_use_subcommand' -a completion
 complete -c schuss -n '__fish_use_subcommand' -a op
 complete -c schuss -n '__fish_seen_subcommand_from application' -a describe
-complete -c schuss -n '__fish_seen_subcommand_from catalog' -a 'search inspect'
+complete -c schuss -n '__fish_seen_subcommand_from catalog' -a 'search objects inspect'
 complete -c schuss -n '__fish_seen_subcommand_from project' -a 'init inspect validate transact op completion'
 complete -c schuss -n '__fish_seen_subcommand_from graph' -a 'inspect transact'
 complete -c schuss -n '__fish_seen_subcommand_from gills' -a inspect
@@ -1017,16 +1080,16 @@ complete -c schuss -n '__fish_seen_subcommand_from validate; and not __fish_seen
 complete -c schuss -n '__fish_seen_subcommand_from application catalog graph gills build; and not __fish_seen_subcommand_from completion' -l json
 complete -c schuss -n '__fish_seen_subcommand_from op; and not __fish_seen_subcommand_from project' -l json
 complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from init inspect validate transact op' -l json
-complete -c schuss -n '__fish_seen_subcommand_from search' -l function -r
-complete -c schuss -n '__fish_seen_subcommand_from search' -l abstraction -r
-complete -c schuss -n '__fish_seen_subcommand_from search' -l form -r
-complete -c schuss -n '__fish_seen_subcommand_from search' -l signal-domain -r
-complete -c schuss -n '__fish_seen_subcommand_from search' -l signal-rate -r
-complete -c schuss -n '__fish_seen_subcommand_from search' -l signal-role -r
-complete -c schuss -n '__fish_seen_subcommand_from search' -l capability -r
-complete -c schuss -n '__fish_seen_subcommand_from search' -l technique -r
-complete -c schuss -n '__fish_seen_subcommand_from search' -l readiness -r
-complete -c schuss -n '__fish_seen_subcommand_from search' -l provenance -r
+complete -c schuss -n '__fish_seen_subcommand_from search objects' -l function -r
+complete -c schuss -n '__fish_seen_subcommand_from search objects' -l abstraction -r
+complete -c schuss -n '__fish_seen_subcommand_from search objects' -l form -r
+complete -c schuss -n '__fish_seen_subcommand_from search objects' -l signal-domain -r
+complete -c schuss -n '__fish_seen_subcommand_from search objects' -l signal-rate -r
+complete -c schuss -n '__fish_seen_subcommand_from search objects' -l signal-role -r
+complete -c schuss -n '__fish_seen_subcommand_from search objects' -l capability -r
+complete -c schuss -n '__fish_seen_subcommand_from search objects' -l technique -r
+complete -c schuss -n '__fish_seen_subcommand_from search objects' -l readiness -r
+complete -c schuss -n '__fish_seen_subcommand_from search objects' -l provenance -r
 complete -c schuss -n '__fish_seen_subcommand_from transact' -l edits -r
 complete -c schuss -n '__fish_seen_subcommand_from op' -l request -r
 complete -c schuss -n '__fish_seen_subcommand_from project; and __fish_seen_subcommand_from init inspect validate transact op' -l project -r

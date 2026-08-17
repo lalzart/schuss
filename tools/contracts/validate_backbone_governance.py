@@ -38,6 +38,7 @@ TASK_025 = "docs/tasks/025-direct-compiler-core-library-tranche.md"
 TASK_026 = "docs/tasks/026-complete-authoring-operations-and-cli-workflow.md"
 TASK_027 = "docs/tasks/027-mutable-instruments-catalog-provenance.md"
 TASK_028 = "docs/tasks/028-twenty-item-direct-palette.md"
+TASK_030 = "docs/tasks/030-complete-mutable-catalog-and-object-cli.md"
 
 DOCUMENT_PATHS = (
     README,
@@ -66,9 +67,10 @@ DOCUMENT_PATHS = (
     TASK_026,
     TASK_027,
     TASK_028,
+    TASK_030,
 )
 
-ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 29))
+ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 31))
 PLANNED_SEQUENCE: tuple[str, ...] = ()
 EXPECTED_TASK_FILENAMES = {
     "README.md",
@@ -82,6 +84,8 @@ EXPECTED_TASK_FILENAMES = {
     "026-complete-authoring-operations-and-cli-workflow.md",
     "027-mutable-instruments-catalog-provenance.md",
     "028-twenty-item-direct-palette.md",
+    "030-complete-mutable-catalog-and-object-cli.md",
+    "ui-desktop-initialization.md",
 }
 LETTERED_ALIAS = re.compile(r"\bTasks?\s+(01[3-9]|02[01])[A-Z](?:-[A-Z])?\b", re.IGNORECASE)
 INFORMAL_ALIAS = re.compile(r"(?<![A-Za-z0-9])B6(?![A-Za-z0-9])", re.IGNORECASE)
@@ -545,6 +549,43 @@ def validate_documents(
         ),
     )
 
+    task30_status = _leading_status(documents.get(TASK_030, "")) or ""
+    for fragment in (
+        "accepted and complete on 2026-08-17",
+        "All fifteen Task 030 acceptance criteria are satisfied",
+        "structural/catalog provenance levels 1-2",
+        "remains non-green only for three pre-existing historical checks",
+    ):
+        if fragment not in task30_status:
+            diagnostics.append(
+                _diagnostic(
+                    "TASK_030_CONTRACT_INVALID",
+                    TASK_030,
+                    f"Task 030 contract status must contain: {fragment}",
+                )
+            )
+    _require_phrases(
+        diagnostics,
+        code="TASK_030_CONTRACT_INVALID",
+        document=TASK_030,
+        scope=documents.get(TASK_030, ""),
+        phrases=(
+            "## Goal and why it exists",
+            "## In scope",
+            "## Out of scope",
+            "## Inputs and deliverables",
+            "## Validation cadence and acceptance tests",
+            "## Decisions Task 030 may make",
+            "## Decisions Task 030 must not make",
+            "schuss-record-set-000023@1",
+            "50 new catalog implementation records",
+            "catalog.implementations.search",
+            "schuss catalog objects",
+            "levels 1-2 only",
+            "staging, commit, push",
+        ),
+    )
+
     status_rules = (
         "This document is the single authority for Schuss's current development state.",
         "Task 018 is complete for exact record set `schuss-record-set-000012@1`.",
@@ -601,7 +642,12 @@ def validate_documents(
         "passes levels 1-3 only",
         "twenty source implementations back counted promotions and sixty-three remain outside this bounded palette",
         "physical resonator 000096 remains catalogued-only",
-        "No numbered implementation task is automatically active after Task 028 completion",
+        "Task 030 is accepted complete for exact prospective successor record set",
+        "`schuss-record-set-000023@1`",
+        "remaining fifty candidates become",
+        "bring the catalog to 107 families and 133 implementations",
+        "`catalog.implementations.search`",
+        "No numbered implementation task is automatically active after Task 030 completion",
         "UI architecture planning is now explicitly authorized by ADR 0014",
         "UI implementation remains separately gated",
     )
@@ -633,8 +679,9 @@ def validate_documents(
             "operation and schema version allocation",
             "stable semantic IDs, record-set revisions, and manifest publication",
             "This plan did not itself start Task 023 or create any numbered task contract",
-            "Tasks 023-028 are accepted complete",
+            "Tasks 023-030 are accepted complete",
             "Task 028's bounded twenty-item palette is now complete",
+            "Later explicit Tasks 029-030",
             "no numbered implementation task is active",
             "sessions/jobs/diagnostics outcome is deferred without a replacement task number",
             "Task 026B then completed exact project-owned creation/versioning",
@@ -683,7 +730,7 @@ def validate_documents(
             )
 
     roadmap_rows = _roadmap_rows(documents.get(ROADMAP, ""))
-    for number in range(13, 29):
+    for number in range(13, 31):
         label = str(number)
         if len(roadmap_rows.get(label, [])) != 1:
             diagnostics.append(
@@ -710,6 +757,8 @@ def validate_documents(
         "26": "complete; project-owned create/edit/history/revert and two-root reverb-free authored elf reach local level 5",
         "27": "complete; 72 exact source entries, 60 families preserved, one catalogued-only implementation, levels 1-2",
         "28": "complete; fifteen additions lower locally at levels 1-3, no build",
+        "29": "complete; two exact source reviews, zero completed machines, structural level 1",
+        "30": "complete; 56 attributed implementations, 107 families, shared cli v3 discovery, levels 1-2",
     }
     for label, expected in expected_roadmap_status.items():
         rows = roadmap_rows.get(label, [])
@@ -746,6 +795,7 @@ def validate_documents(
             "reach evidence level 5",
             "Tasks 019 and 020 remain deferred.",
             "Tasks 023-028 are accepted complete.",
+            "Tasks 029 and 030 were later activated by explicit user requests",
             "Task 026 consumes the independently accepted reverb-free seven-node executable profile",
             "UI-architecture milestone is eligible but not started",
             "No numbered implementation lane is currently planned",
@@ -855,6 +905,7 @@ def validate_documents(
         TASK_026: documents.get(TASK_026, ""),
         TASK_027: documents.get(TASK_027, ""),
         TASK_028: documents.get(TASK_028, ""),
+        TASK_030: documents.get(TASK_030, ""),
     }
     for document, scope in alias_scopes.items():
         matches = sorted(set(LETTERED_ALIAS.findall(scope)))
@@ -889,7 +940,7 @@ def validate_documents(
 
     diagnostics.sort(key=lambda item: (item["code"], item["document"], item["detail"]))
     return {
-        "active_product_task": "none-task028-complete-next-task-requires-contract",
+        "active_product_task": "none-task030-complete-next-task-requires-contract",
         "active_evidence_task": "022-failed-diagnostic-promotion-stopped",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
         "authoritative_decisions": [
@@ -899,10 +950,10 @@ def validate_documents(
         "current_status_source": STATUS,
         "diagnostics": diagnostics,
         "historical_context_policy": "completed-task-contracts-indexed-in-history-and-git",
-        "next_planned_task": "none-task028-complete",
+        "next_planned_task": "none-task030-complete",
         "planned_task_sequence": list(PLANNED_SEQUENCE),
-        "promotion_gate": "task028-complete-level-3-reverb-unsupported",
-        "schema_version": "backbone-governance-summary-v17",
+        "promotion_gate": "task030-complete-catalog-level-2-no-support-promotion",
+        "schema_version": "backbone-governance-summary-v18",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -922,6 +973,8 @@ def validate_documents(
             "026": "complete-reverb-free-authoring-level-5",
             "027": "complete-mutable-catalog-provenance-level-2",
             "028": "complete-twenty-item-direct-palette-level-3",
+            "029": "complete-machine-inspection-level-1",
+            "030": "complete-mutable-catalog-cohort-level-2-cli-v3",
         },
         "ui_milestone_status": "unnumbered-architecture-eligible-not-started-implementation-gated",
     }

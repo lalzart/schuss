@@ -9,6 +9,7 @@ from typing import Any, Iterable, Mapping
 APPLICATION_DESCRIPTION_VERSION = "schuss-application-capability-description-v0"
 APPLICATION_DESCRIPTION_VERSION_V1 = "schuss-application-capability-description-v1"
 APPLICATION_DESCRIPTION_VERSION_V2 = "schuss-application-capability-description-v2"
+APPLICATION_DESCRIPTION_VERSION_V3 = "schuss-application-capability-description-v3"
 
 
 class CapabilityRegistryError(ValueError):
@@ -246,6 +247,18 @@ TASK029_CAPABILITY_ENTRIES = (
     ),
 )
 
+TASK030_CAPABILITY_ENTRIES = (
+    _entry(
+        "catalog.implementations.search",
+        "catalog",
+        "Search and filter individual implementations in the exact derived catalog.",
+        10,
+        ("exact-record-set",),
+        "read-only",
+        ("exact-record-set",),
+    ),
+)
+
 
 EXPECTED_OPERATIONS = tuple(sorted(entry["operation"] for entry in CAPABILITY_ENTRIES))
 EXPECTED_OPERATIONS_V1 = tuple(
@@ -261,6 +274,17 @@ EXPECTED_OPERATIONS_V2 = tuple(
             *CAPABILITY_ENTRIES,
             *TASK026_CAPABILITY_ENTRIES,
             *TASK029_CAPABILITY_ENTRIES,
+        )
+    )
+)
+EXPECTED_OPERATIONS_V3 = tuple(
+    sorted(
+        entry["operation"]
+        for entry in (
+            *CAPABILITY_ENTRIES,
+            *TASK026_CAPABILITY_ENTRIES,
+            *TASK029_CAPABILITY_ENTRIES,
+            *TASK030_CAPABILITY_ENTRIES,
         )
     )
 )
@@ -304,9 +328,18 @@ def build_application_description(
 ) -> dict[str, Any]:
     """Return the deterministic application description for one exact context."""
 
-    uses_v2 = "application_capability_description_v2" in schemas
+    uses_v3 = "application_capability_description_v3" in schemas
+    uses_v2 = uses_v3 or "application_capability_description_v2" in schemas
     uses_v1 = uses_v2 or "application_capability_description_v1" in schemas
     default_entries = (
+        (
+            *CAPABILITY_ENTRIES,
+            *TASK026_CAPABILITY_ENTRIES,
+            *TASK029_CAPABILITY_ENTRIES,
+            *TASK030_CAPABILITY_ENTRIES,
+        )
+        if uses_v3
+        else
         (*CAPABILITY_ENTRIES, *TASK026_CAPABILITY_ENTRIES, *TASK029_CAPABILITY_ENTRIES)
         if uses_v2
         else (*CAPABILITY_ENTRIES, *TASK026_CAPABILITY_ENTRIES)
@@ -315,7 +348,9 @@ def build_application_description(
     )
     selected = list(default_entries if entries is None else entries)
     expected_operations = (
-        EXPECTED_OPERATIONS_V2
+        EXPECTED_OPERATIONS_V3
+        if uses_v3
+        else EXPECTED_OPERATIONS_V2
         if uses_v2
         else EXPECTED_OPERATIONS_V1
         if uses_v1
@@ -343,7 +378,9 @@ def build_application_description(
         described.append(entry)
     return {
         "schema_version": (
-            "application-capability-description-v2"
+            "application-capability-description-v3"
+            if uses_v3
+            else "application-capability-description-v2"
             if uses_v2
             else "application-capability-description-v1"
             if uses_v1
@@ -351,7 +388,9 @@ def build_application_description(
         ),
         "canonical_profile": "schuss-canonical-json-v1",
         "description_version": (
-            APPLICATION_DESCRIPTION_VERSION_V2
+            APPLICATION_DESCRIPTION_VERSION_V3
+            if uses_v3
+            else APPLICATION_DESCRIPTION_VERSION_V2
             if uses_v2
             else APPLICATION_DESCRIPTION_VERSION_V1
             if uses_v1

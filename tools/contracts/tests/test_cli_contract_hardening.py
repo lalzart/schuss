@@ -37,6 +37,9 @@ PROJECT = ROOT / "fixtures/task012a/minimal-project"
 OPERATION_FIXTURES = (
     ROOT / "tools/contracts/tests/fixtures/task008-operation-requests.json"
 )
+TASK030_CLI_GOLDEN = (
+    ROOT / "tools/contracts/tests/fixtures/task030-cli-v3-golden-hashes.json"
+)
 
 
 def _process(
@@ -444,8 +447,9 @@ class CliContractHardeningTest(unittest.TestCase):
             self.assertFalse(missing_parent_root.parent.exists())
 
     def test_help_and_completion_cover_current_and_compatibility_grammar(self):
+        task030 = core.load_json(TASK030_CLI_GOLDEN)
         help_hashes = {
-            "root": "611d505b58476d84301833e8692099148e3c85b67916221b397675851c8cb450",
+            "root": task030["help"]["root"]["byte_sha256"],
             "build": "65d74f3c9ca0c5ce655ae36eb59870bba14c95c001a057e7633dd1b7c577794d",
         }
         help_cases = {
@@ -478,9 +482,8 @@ class CliContractHardeningTest(unittest.TestCase):
             self.assertIn(option, execute_help)
 
         current_hashes = {
-            "bash": "7d6c3fb29d406e90c8c3c8bd9b13d753d1cc52f7eeb1a3a1acc83371e6704fa5",
-            "zsh": "8c5ce14b67d85e70d3fb0f9e7847487b6b33cb5b75d44811b9ae86f66f7eddf9",
-            "fish": "71c0ad6df74fe040824f423f8292cdda2ca77fa34ccc8616df8f52e15fd0f040",
+            shell: task030["completion"][shell]["byte_sha256"]
+            for shell in ("bash", "zsh", "fish")
         }
         project_hashes = {
             "bash": "a913b555368ed8373f759fe79661b0f4c95f32c86fceccf0b822e3e7376f2795",

@@ -24,6 +24,13 @@ python3 tools/contracts/validate_task021_contract.py
 python3 tools/contracts/validate_task022_contract.py
 python3 tools/contracts/validate_task023_contract.py
 python3 tools/contracts/validate_task023.py
+python3 tools/contracts/validate_task024.py
+python3 tools/contracts/validate_task025.py
+python3 tools/contracts/validate_task026.py
+python3 tools/contracts/validate_task027.py
+python3 tools/contracts/validate_task028.py
+python3 tools/contracts/validate_task029.py
+python3 tools/contracts/validate_task030.py
 python3 tools/contracts/validate_task022.py
 python3 tools/contracts/validate_backbone_governance.py
 python3 -m unittest discover -s tools/contracts/tests

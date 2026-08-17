@@ -40,6 +40,8 @@ row does not authorize the next.
 | 26 | Complete authoring operations and CLI workflow | Complete; project-owned create/edit/history/revert and two-root reverb-free authored ELF reach local level 5 |
 | 27 | Mutable-related catalog provenance and extended-source review | Complete; 72 exact source entries, 60 families preserved, one catalogued-only implementation, levels 1-2 |
 | 28 | Twenty-item direct selectable palette; transparent compounds deferred | Complete; fifteen additions lower locally at levels 1-3, no build |
+| 29 | Complete-machine inspection layer and isolated Viewer | Complete; two exact source reviews, zero completed machines, structural level 1 |
+| 30 | Complete exact Mutable-derived catalog cohort and object CLI | Complete; 56 attributed implementations, 107 families, shared CLI v3 discovery, levels 1-2 |
 | Deferred UI | Object drawer and transparent graph canvas | Unnumbered; architecture authorized, implementation separately gated |
 
 ## Completed Task 018 gates
@@ -104,6 +106,12 @@ implementation lane is currently planned. The original
 sessions/jobs/diagnostics outcome is deferred without a replacement number.
 The default ceiling remains two implementation lanes plus one read-only or
 design lane.
+
+Tasks 029 and 030 were later activated by explicit user requests outside the
+ADR 0014 sequence. Task 029 adds only source-evidenced machine inspection.
+Task 030 catalogues all 56 exactly attributed Task 027 entries and exposes
+individual implementation search without adding compiler or device support.
+Both are complete; no numbered implementation lane is active.
 
 A parent may declare children such as `023A`, `023B`, and `023C`. Those are
 exact parent-owned work packages, not aliases or independent roadmap entries;

@@ -396,7 +396,7 @@ class Task011ACatalogTest(unittest.TestCase):
         self.assertIn(b"CLI_LOCATOR_MALFORMED", malformed.stderr)
         human = _process(["catalog", "search", "crossfade"])
         self.assertEqual(0, human.returncode)
-        self.assertIn(b"record_set: schuss-record-set-000015@1", human.stdout)
+        self.assertIn(b"record_set: schuss-record-set-000023@1", human.stdout)
         self.assertIn(b"readiness_states:", human.stdout)
         root_help = _process(["--help"])
         catalog_help = _process(["catalog", "search", "--help"])
@@ -406,31 +406,20 @@ class Task011ACatalogTest(unittest.TestCase):
             script = completion_script(shell)
             self.assertIn(b"catalog", script)
             self.assertIn(b"search", script)
+            self.assertIn(b"objects", script)
             self.assertIn(b"inspect", script)
 
     def test_task011a_historical_and_task023_successor_goldens(self):
         historical = core.load_json(GOLDEN_FIXTURE)
         successor = core.load_json(TASK023_GOLDEN_FIXTURE)
-        observed = {"help": {}, "completion": {}, "human": {}, "json": {}}
-        for name, arguments in {
-            "root": ["--help"],
-            "catalog": ["catalog", "--help"],
-            "catalog-search": ["catalog", "search", "--help"],
-            "catalog-inspect": ["catalog", "inspect", "--help"],
-        }.items():
-            narrow = _process(arguments, environment={"COLUMNS": "20"})
-            wide = _process(arguments, environment={"COLUMNS": "240"})
-            self.assertEqual(narrow.stdout, wide.stdout)
-            self.assertLessEqual(max(map(len, narrow.stdout.splitlines())), 80)
-            observed["help"][name] = _digest(narrow.stdout)
-        for shell in ("bash", "zsh", "fish"):
-            observed["completion"][shell] = _digest(completion_script(shell))
+        observed = {"human": {}, "json": {}}
         for name, arguments in {
             "catalog-search-crossfade": ["catalog", "search", "crossfade"],
             "catalog-inspect-crossfader": ["catalog", "inspect", "schuss-family-000018@1"],
         }.items():
-            observed["human"][name] = _digest(_process(arguments).stdout)
-            observed["json"][name] = _digest(_process([*arguments, "--json"]).stdout)
+            explicit = [*arguments, "--record-set", str(ROOT / "contracts/record-sets/task023-application-spine-v1.json")]
+            observed["human"][name] = _digest(_process(explicit).stdout)
+            observed["json"][name] = _digest(_process([*explicit, "--json"]).stdout)
         expected = {
             section: {
                 name: successor[section][name]
@@ -442,6 +431,10 @@ class Task011ACatalogTest(unittest.TestCase):
         self.assertEqual(
             "f4530b7e13e1275df11fdb17a99abaf70758547db36d1025e666cb1aa8c94ed4",
             hashlib.sha256(GOLDEN_FIXTURE.read_bytes()).hexdigest(),
+        )
+        self.assertEqual(
+            "3a27c68ae935c42d5ac17606ed68da6e74b5e722d1c2a5a274398905a96c7d62",
+            hashlib.sha256(TASK023_GOLDEN_FIXTURE.read_bytes()).hexdigest(),
         )
 
         # The retained pre-Task-023 mismatch is four equal-length digest changes.

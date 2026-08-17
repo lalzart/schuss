@@ -267,6 +267,23 @@ parent chain or removes owned history. Project-aware v4/v5 build operations
 then plan and execute the selected project-owned request without substituting a
 canonical fixture.
 
+Task 029 additively supplies operation v9 `machine.inspect` and
+application-capability-description v2. It returns one exact source review and
+inspection-only presentation or one accepted complete-machine closure; the
+accepted Task 029 set contains two inspection candidates and zero completed
+machines. The operation is read-only and establishes structural level 1 only.
+
+Task 030 additively supplies request/result v10 for
+`catalog.implementations.search` and application-capability-description v3,
+bringing the exact selected-context registry to twenty operations. The payload
+uses the same closed filter vocabulary as `catalog.search`; the result is a
+stable list of individual implementation summaries derived from catalog
+projection v5. Unsupported filters, extra fields, unavailable v10 schemas, or
+stale source mappings fail closed. `schuss catalog objects` constructs this
+request and dispatches exactly once. Catalog commands default to
+`schuss-record-set-000023@1`; other product commands and raw `op` retain their
+existing defaults.
+
 Task 012B is retired. A future explicitly authorized UI client must consume
 these same project, graph, catalog, build, compiler, and diagnostic operations;
 it may not define a parallel persistence, build, or compiler path.
