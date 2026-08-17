@@ -39,7 +39,7 @@ row does not authorize the next.
 | 25 | Direct-compiler core-library tranche | Complete fail-closed partial tranche; five level-2 promotions pass, reverb and complete graph fail level 2, no build |
 | 26 | Complete authoring operations and CLI workflow | Complete; project-owned create/edit/history/revert and two-root reverb-free authored ELF reach local level 5 |
 | 27 | Mutable-related catalog provenance and extended-source review | Complete; 72 exact source entries, 60 families preserved, one catalogued-only implementation, levels 1-2 |
-| 28 | Second catalog/compiler tranche and transparent compounds | Planned; depends on Tasks 024 and 025 |
+| 28 | Twenty-item direct selectable palette; transparent compounds deferred | Complete; fifteen additions lower locally at levels 1-3, no build |
 | Deferred UI | Object drawer and transparent graph canvas | Unnumbered; architecture authorized, implementation separately gated |
 
 ## Completed Task 018 gates
@@ -90,14 +90,17 @@ ADR 0015 retargets only Task 027.
 The normative dependency, child-task, ownership, and parallel-work rules are
 in `APPLICATION_SPINE_PLAN.md`.
 
-Tasks 023-027 are accepted complete. Task 025 preserves the exact eight-contract
+Tasks 023-028 are accepted complete. Task 025 preserves the exact eight-contract
 Task 024 packet but stops before lowering because reverb is unsupported. Task
 026 consumes the independently accepted reverb-free seven-node executable
 profile and completes project-owned authoring through deterministic local ARM
 compile/link level 5. Task 027 preserves all sixty functional families while
-adding exact Mutable-derived provenance at structural levels 1-2. The
-authorized design-only UI-architecture milestone is eligible but not started.
-Task 028 is the only planned numbered implementation lane. The original
+adding exact Mutable-derived provenance at structural levels 1-2. Task 028
+adds fifteen independently selectable native operation identities to the five
+Task 025 promotions, reaching an exact twenty-item palette at local lowering
+level 3; transparent compounds remain deferred. The authorized design-only
+UI-architecture milestone is eligible but not started. No numbered
+implementation lane is currently planned. The original
 sessions/jobs/diagnostics outcome is deferred without a replacement number.
 The default ceiling remains two implementation lanes plus one read-only or
 design lane.

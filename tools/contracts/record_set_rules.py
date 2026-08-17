@@ -38,6 +38,7 @@ ID_FIELDS = (
     "implementation_id",
     "instrument_id",
     "panel_evidence_packet_id",
+    "palette_lowering_proof_id",
     "selection_packet_id",
     "prerequisite_environment_id",
     "procedure_id",

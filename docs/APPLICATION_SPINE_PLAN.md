@@ -1,13 +1,14 @@
 # Application-spine sequence and parallel-work plan
 
 Status: accepted planning authority under ADR 0014 and amended by ADR 0015 for
-Task 027 only. Tasks 023-027 are accepted and complete. Task 025 retained a
+Task 027 only. Tasks 023-028 are accepted and complete. Task 025 retained a
 fail-closed partial semantic tranche after
 the selected reverb allocation contradiction prevented lowering and ARM
 evidence. Task 026 then accepted a separate reverb-free seven-node executable
 profile and completed the client-neutral authoring flow through local level 5.
 Task 027 completed its bounded Mutable-related catalog provenance review at
-levels 1-2. Task 028 and the unnumbered UI-architecture milestone are eligible
+levels 1-2. Task 028 completed its bounded twenty-item direct palette at levels
+1-3; transparent compounds remain deferred. The unnumbered UI-architecture milestone is eligible
 but not started.
 
 ## Goal
@@ -166,15 +167,18 @@ ADR 0015 defers the original application sessions, jobs, and diagnostics
 outcome without assigning it a replacement task number. A future decision must
 contract that work before it starts.
 
-### Task 028: Second catalog/compiler tranche and transparent compounds
+### Task 028: Twenty-item direct selectable palette
 
-Goal: expand usefulness after the first complete authoring flow and close the
-current transparent-compound/percussion compiler gap.
+Goal: expand the five Task 025 native promotions to an exact twenty-item,
+independently selectable palette without broad catalog or execution claims.
 
-The exact scope is selected from Task 024 coverage plus feedback from Tasks
-025-027. It must retain inspectable compound internals, origin/source maps,
-deterministic binding resolution, and explicit unsupported results. It may not
-become an unbounded promise to compile every legacy observation.
+Retained result: exact record set `schuss-record-set-000021@1` adds fifteen
+source/family-pinned native bindings, independently resolves each one for the
+existing direct target/backend pair, and emits normalized operation IR. The
+balanced cohort covers sources, envelopes/modulation, gain/mixing/routing,
+filtering/resonance, timing, and state. Levels 1-3 pass; levels 4-8 remain
+`not-run`. Rings reverb, physical resonator support, transparent compounds,
+and broad catalog coverage remain explicit gates.
 
 ## Unnumbered UI milestones
 
@@ -232,10 +236,9 @@ numbered parent.
 
 ```text
 Task 023
-  |-- Task 024 -- Task 025 -- Task 026 -- Task 027 (retargeted, complete)
-  |                     |          |
-  |                     |          `-- Task 028 scheduling gate
-  |                     `------------- Task 028 semantic dependencies
+  |-- Task 024 -- Task 025 -- Task 026 -- Task 027 -- Task 028 (complete)
+  |                     |                         |
+  |                     `------------------------- semantic dependencies
   `-- UI architecture
 
 Tasks 025 + 026 + UI architecture + future session/job gate -> gated UI vertical slice
@@ -253,7 +256,8 @@ Useful parallel windows are intentionally bounded:
    authoring operations were integrated; the retained Task 025 result alone did
    not satisfy that gate.
 4. ADR 0015 retargeted Task 027 to catalog provenance; it is now complete.
-   Task 028 family/compound work remains the only planned numbered lane.
+   Task 028's bounded twenty-item palette is now complete; transparent
+   compound work remains deferred without a numbered lane.
 5. The UI vertical slice still requires Tasks 025-026, accepted UI architecture,
    and a future explicit session/job/diagnostics gate. Task 027 catalog
    completion does not satisfy that deferred orchestration dependency.
@@ -285,8 +289,8 @@ separate output namespaces.
 ## Activation and approval rules
 
 - This plan did not itself start Task 023 or create any numbered task contract.
-- Tasks 023-027 are accepted complete. Task 028 and the eligible
-  UI-architecture planning lane remain unstarted.
+- Tasks 023-028 are accepted complete. The eligible UI-architecture planning
+  lane remains unstarted; no numbered implementation task is active.
 - The original Task 027 sessions/jobs/diagnostics outcome is deferred without
   a replacement task number under ADR 0015.
 - Each numbered task requires a complete contract before implementation.

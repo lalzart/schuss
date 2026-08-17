@@ -237,6 +237,10 @@ def load_repository_context(
         records["catalog_source_reviews"] = _stable_records(
             selected.records["catalog-source-review"]
         )
+    if selected.records.get("palette-lowering-proof"):
+        records["palette_lowering_proofs"] = _stable_records(
+            selected.records["palette-lowering-proof"]
+        )
     target_records = {
         kind: list(selected.records.get(kind, ()))
         for kind in target.SCHEMA_SPECS
@@ -279,14 +283,14 @@ def load_repository_context(
     schemas["binding_versions"] = binding_versions
     direct_operation_spec_versions = {
         version: selected.schemas[version]
-        for version in ("direct-operation-spec-v0", "direct-operation-spec-v1", "direct-operation-spec-v2")
+        for version in ("direct-operation-spec-v0", "direct-operation-spec-v1", "direct-operation-spec-v2", "direct-operation-spec-v3")
         if version in selected.schemas
     }
     if direct_operation_spec_versions:
         schemas["direct_operation_spec_versions"] = direct_operation_spec_versions
     selection_packet_versions = {
         version: selected.schemas[version]
-        for version in ("core-selection-packet-v0", "task025-selection-packet-v0")
+        for version in ("core-selection-packet-v0", "task025-selection-packet-v0", "task028-selection-packet-v0")
         if version in selected.schemas
     }
     if selection_packet_versions:

@@ -31,14 +31,17 @@ class BackboneGovernanceTest(unittest.TestCase):
     def test_live_repository_is_valid(self):
         summary = governance.validate_documents(self.documents, self.task_filenames)
         self.assertEqual("valid", summary["status"])
-        self.assertEqual("backbone-governance-summary-v15", summary["schema_version"])
+        self.assertEqual("backbone-governance-summary-v17", summary["schema_version"])
         self.assertEqual([], summary["diagnostics"])
         self.assertEqual(
-            ["ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014"],
+            [
+                "ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014",
+                "ADR 0015",
+            ],
             summary["authoritative_decisions"],
         )
         self.assertEqual(
-            "none-task026-complete-next-task-requires-contract",
+            "none-task028-complete-next-task-requires-contract",
             summary["active_product_task"],
         )
         self.assertEqual(
@@ -46,7 +49,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["active_evidence_task"],
         )
         self.assertEqual(
-            "task026-complete-level-5-reverb-unsupported",
+            "task028-complete-level-3-reverb-unsupported",
             summary["promotion_gate"],
         )
         self.assertEqual(
@@ -57,11 +60,11 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["active_task_sequence"],
         )
         self.assertEqual(
-            "027-or-028-contract-required",
+            "none-task028-complete",
             summary["next_planned_task"],
         )
         self.assertEqual(
-            ["027", "028"],
+            [],
             summary["planned_task_sequence"],
         )
         self.assertEqual("complete-mapped-local-level-5", summary["task_statuses"]["018"])
@@ -88,6 +91,14 @@ class BackboneGovernanceTest(unittest.TestCase):
         self.assertEqual(
             "complete-reverb-free-authoring-level-5",
             summary["task_statuses"]["026"],
+        )
+        self.assertEqual(
+            "complete-mutable-catalog-provenance-level-2",
+            summary["task_statuses"]["027"],
+        )
+        self.assertEqual(
+            "complete-twenty-item-direct-palette-level-3",
+            summary["task_statuses"]["028"],
         )
         self.assertEqual(
             "unnumbered-architecture-eligible-not-started-implementation-gated",

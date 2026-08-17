@@ -27,6 +27,7 @@ ADR_0011 = "docs/decisions/0011-preserve-legacy-equivalent-direct-semantics.md"
 ADR_0012 = "docs/decisions/0012-require-executable-gills-promotion.md"
 ADR_0013 = "docs/decisions/0013-version-gills-runtime-correction-and-level6-evidence.md"
 ADR_0014 = "docs/decisions/0014-sequence-application-spine-and-authorize-ui-architecture.md"
+ADR_0015 = "docs/decisions/0015-retarget-task-027-to-mutable-catalog-provenance.md"
 TASK_012B = "docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md"
 TASK_018 = "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md"
 TASK_021 = "docs/tasks/021-gills-dma-safe-oled-and-connected-device-evidence.md"
@@ -35,6 +36,8 @@ TASK_023 = "docs/tasks/023-cli-v2-and-application-surface-consolidation.md"
 TASK_024 = "docs/tasks/024-complete-catalog-coverage-and-deterministic-curation.md"
 TASK_025 = "docs/tasks/025-direct-compiler-core-library-tranche.md"
 TASK_026 = "docs/tasks/026-complete-authoring-operations-and-cli-workflow.md"
+TASK_027 = "docs/tasks/027-mutable-instruments-catalog-provenance.md"
+TASK_028 = "docs/tasks/028-twenty-item-direct-palette.md"
 
 DOCUMENT_PATHS = (
     README,
@@ -52,6 +55,7 @@ DOCUMENT_PATHS = (
     ADR_0012,
     ADR_0013,
     ADR_0014,
+    ADR_0015,
     TASK_012B,
     TASK_018,
     TASK_021,
@@ -60,10 +64,12 @@ DOCUMENT_PATHS = (
     TASK_024,
     TASK_025,
     TASK_026,
+    TASK_027,
+    TASK_028,
 )
 
 ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 29))
-PLANNED_SEQUENCE = tuple(f"{number:03d}" for number in range(27, 29))
+PLANNED_SEQUENCE: tuple[str, ...] = ()
 EXPECTED_TASK_FILENAMES = {
     "README.md",
     "012b-object-drawer-and-transparent-graph-canvas.md",
@@ -74,6 +80,8 @@ EXPECTED_TASK_FILENAMES = {
     "024-complete-catalog-coverage-and-deterministic-curation.md",
     "025-direct-compiler-core-library-tranche.md",
     "026-complete-authoring-operations-and-cli-workflow.md",
+    "027-mutable-instruments-catalog-provenance.md",
+    "028-twenty-item-direct-palette.md",
 }
 LETTERED_ALIAS = re.compile(r"\bTasks?\s+(01[3-9]|02[01])[A-Z](?:-[A-Z])?\b", re.IGNORECASE)
 INFORMAL_ALIAS = re.compile(r"(?<![A-Za-z0-9])B6(?![A-Za-z0-9])", re.IGNORECASE)
@@ -169,6 +177,7 @@ def validate_documents(
         ADR_0012: "accepted",
         ADR_0013: "accepted",
         ADR_0014: "accepted",
+        ADR_0015: "accepted",
     }
     for path, expected in expected_adr_statuses.items():
         if _metadata(documents.get(path, ""), "Status") != expected:
@@ -195,7 +204,8 @@ def validate_documents(
         "`0011-preserve-legacy-equivalent-direct-semantics.md` - accepted; current direct-semantics authority",
         "`0012-require-executable-gills-promotion.md` - accepted; current Task 018 promotion authority",
         "`0013-version-gills-runtime-correction-and-level6-evidence.md` - accepted; current Task 021 corrective and level-6 authority",
-        "`0014-sequence-application-spine-and-authorize-ui-architecture.md` - accepted; current Task 023-028 sequence and UI-architecture authority",
+        "`0014-sequence-application-spine-and-authorize-ui-architecture.md` - accepted; application-spine and UI-architecture authority, amended by ADR 0015 for Task 027 only",
+        "`0015-retarget-task-027-to-mutable-catalog-provenance.md` - accepted; current Task 027 retarget and Mutable-provenance authority",
     )
     _require_phrases(
         diagnostics,
@@ -470,6 +480,71 @@ def validate_documents(
         ),
     )
 
+    task27_status = _leading_status(documents.get(TASK_027, "")) or ""
+    for fragment in (
+        "accepted and complete on 2026-08-17",
+        "All fifteen acceptance tests passed",
+        "catalog structural/provenance boundary",
+    ):
+        if fragment not in task27_status:
+            diagnostics.append(
+                _diagnostic(
+                    "TASK_027_CONTRACT_INVALID",
+                    TASK_027,
+                    f"Task 027 contract status must contain: {fragment}",
+                )
+            )
+    _require_phrases(
+        diagnostics,
+        code="TASK_027_CONTRACT_INVALID",
+        document=TASK_027,
+        scope=documents.get(TASK_027, ""),
+        phrases=(
+            "## Goal and why it exists",
+            "## In scope",
+            "## Out of scope",
+            "## Inputs and deliverables",
+            "## Acceptance tests",
+            "## Decisions Task 027 may make",
+            "## Decisions Task 027 must not make",
+            "schuss-record-set-000020@1",
+            "schuss-implementation-000096@1",
+            "mutable-instruments-derived",
+            "sixty reviewed catalog families",
+            "levels 3-8 are `not-run`",
+            "staging, commit, push",
+        ),
+    )
+
+    task28_status = _leading_status(documents.get(TASK_028, "")) or ""
+    for fragment in (
+        "accepted and complete on 2026-08-17",
+        "All fifteen acceptance tests pass",
+        "exact local selection and normalized backend-lowering boundary",
+    ):
+        if fragment not in task28_status:
+            diagnostics.append(
+                _diagnostic(
+                    "TASK_028_CONTRACT_INVALID",
+                    TASK_028,
+                    f"Task 028 contract status must contain: {fragment}",
+                )
+            )
+    _require_phrases(
+        diagnostics,
+        code="TASK_028_CONTRACT_INVALID",
+        document=TASK_028,
+        scope=documents.get(TASK_028, ""),
+        phrases=(
+            "## Goal and why it exists", "## In scope", "## Out of scope",
+            "## Inputs and deliverables", "## Acceptance tests",
+            "## Decisions Task 028 may make", "## Decisions Task 028 must not make",
+            "schuss-record-set-000021@1", "exactly twenty", "fifteen safe promotions",
+            "levels 1-3 as `passed`", "levels 4-8 remain `not-run`",
+            "Rings reverb", "000094", "staging, commit, or push",
+        ),
+    )
+
     status_rules = (
         "This document is the single authority for Schuss's current development state.",
         "Task 018 is complete for exact record set `schuss-record-set-000012@1`.",
@@ -515,8 +590,18 @@ def validate_documents(
         "historical fourteen-operation Task 023 description remains byte-exact",
         "Two fresh workspaces reproduced byte-identical history, plan, generated source, and ELF",
         "Reverb is still explicitly unsupported",
-        "Tasks 027-028 and the authorized UI-architecture lane remain unstarted",
-        "no new numbered task is automatically active",
+        "Task 027 is accepted complete for exact record set `schuss-record-set-000020@1`",
+        "does not change any of the sixty reviewed families or thirteen functional categories",
+        "The review retains seventy-two exact source entries",
+        "Six catalogued implementations across five ordinary families carry the tag",
+        "The other sixteen extended objects remain inventory-only",
+        "Task 028 is accepted complete for exact record set `schuss-record-set-000021@1`",
+        "exactly fifteen independently selectable native bindings",
+        "counted total of twenty",
+        "passes levels 1-3 only",
+        "twenty source implementations back counted promotions and sixty-three remain outside this bounded palette",
+        "physical resonator 000096 remains catalogued-only",
+        "No numbered implementation task is automatically active after Task 028 completion",
         "UI architecture planning is now explicitly authorized by ADR 0014",
         "UI implementation remains separately gated",
     )
@@ -534,13 +619,13 @@ def validate_documents(
         document=APPLICATION_SPINE_PLAN,
         scope=documents.get(APPLICATION_SPINE_PLAN, ""),
         phrases=(
-            "Status: accepted planning authority under ADR 0014. Tasks 023-026 are accepted and complete.",
+            "Status: accepted planning authority under ADR 0014 and amended by ADR 0015 for Task 027 only.",
             "Task 023: CLI v2 and application-surface consolidation",
             "Task 024: Current-Ksoloti-first catalog structure and deterministic lineage",
             "Task 025: Direct-compiler core-library tranche",
             "Task 026: Complete authoring operations and CLI workflow",
-            "Task 027: Application sessions, jobs, and diagnostics",
-            "Task 028: Second catalog/compiler tranche and transparent compounds",
+            "Task 027: Mutable-related catalog provenance and extended-source review",
+            "Task 028: Twenty-item direct selectable palette",
             "UI architecture is explicitly authorized now.",
             "UI implementation remains separately gated.",
             "`023A`, `023B`, and `023C`",
@@ -548,8 +633,10 @@ def validate_documents(
             "operation and schema version allocation",
             "stable semantic IDs, record-set revisions, and manifest publication",
             "This plan did not itself start Task 023 or create any numbered task contract",
-            "Tasks 023-026 are accepted complete",
-            "Tasks 027-028 and the eligible UI-architecture planning lane remain unstarted",
+            "Tasks 023-028 are accepted complete",
+            "Task 028's bounded twenty-item palette is now complete",
+            "no numbered implementation task is active",
+            "sessions/jobs/diagnostics outcome is deferred without a replacement task number",
             "Task 026B then completed exact project-owned creation/versioning",
             "Tasks 019 and 020 remain deferred.",
         ),
@@ -621,8 +708,8 @@ def validate_documents(
         "24": "complete; 685 current first-party candidates, frozen lineage coverage, and 60-family level-2 catalog",
         "25": "complete fail-closed partial tranche",
         "26": "complete; project-owned create/edit/history/revert and two-root reverb-free authored elf reach local level 5",
-        "27": "planned; depends on task 026",
-        "28": "planned; depends on tasks 024 and 025",
+        "27": "complete; 72 exact source entries, 60 families preserved, one catalogued-only implementation, levels 1-2",
+        "28": "complete; fifteen additions lower locally at levels 1-3, no build",
     }
     for label, expected in expected_roadmap_status.items():
         rows = roadmap_rows.get(label, [])
@@ -658,10 +745,11 @@ def validate_documents(
             "Executable promotion",
             "reach evidence level 5",
             "Tasks 019 and 020 remain deferred.",
-            "Tasks 023-026 are accepted complete.",
+            "Tasks 023-028 are accepted complete.",
             "Task 026 consumes the independently accepted reverb-free seven-node executable profile",
             "UI-architecture milestone is eligible but not started",
-            "Tasks 027 and 028 may now form two implementation lanes",
+            "No numbered implementation lane is currently planned",
+            "sessions/jobs/diagnostics outcome is deferred without a replacement number",
             "two implementation lanes plus one",
         ),
     )
@@ -693,6 +781,19 @@ def validate_documents(
             "`023A`, `023B`, and `023C`",
             "two implementation lanes plus one read-only or design lane",
             "Tasks 019 and 020 remain deferred",
+        ),
+    )
+    _require_phrases(
+        diagnostics,
+        code="ADR_0015_TASK027_RETARGET_DRIFT",
+        document=ADR_0015,
+        scope=_section(documents.get(ADR_0015, ""), "## Decision"),
+        phrases=(
+            "Task 027 is retargeted to Mutable-related catalog provenance",
+            "sessions, jobs, and diagnostics outcome is deferred",
+            "preserve the sixty reviewed catalog families",
+            "additive provenance tag",
+            "Ambient working-tree changes are excluded",
         ),
     )
 
@@ -742,6 +843,7 @@ def validate_documents(
         ADR_0012: documents.get(ADR_0012, ""),
         ADR_0013: documents.get(ADR_0013, ""),
         ADR_0014: documents.get(ADR_0014, ""),
+        ADR_0015: documents.get(ADR_0015, ""),
         APPLICATION_SPINE_PLAN: documents.get(APPLICATION_SPINE_PLAN, ""),
         TASK_012B: documents.get(TASK_012B, ""),
         TASK_018: documents.get(TASK_018, ""),
@@ -751,6 +853,8 @@ def validate_documents(
         TASK_024: documents.get(TASK_024, ""),
         TASK_025: documents.get(TASK_025, ""),
         TASK_026: documents.get(TASK_026, ""),
+        TASK_027: documents.get(TASK_027, ""),
+        TASK_028: documents.get(TASK_028, ""),
     }
     for document, scope in alias_scopes.items():
         matches = sorted(set(LETTERED_ALIAS.findall(scope)))
@@ -785,18 +889,20 @@ def validate_documents(
 
     diagnostics.sort(key=lambda item: (item["code"], item["document"], item["detail"]))
     return {
-        "active_product_task": "none-task026-complete-next-task-requires-contract",
+        "active_product_task": "none-task028-complete-next-task-requires-contract",
         "active_evidence_task": "022-failed-diagnostic-promotion-stopped",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
-        "authoritative_decisions": ["ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014"],
+        "authoritative_decisions": [
+            "ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014", "ADR 0015"
+        ],
         "checked_documents": len([path for path in DOCUMENT_PATHS if path in documents]),
         "current_status_source": STATUS,
         "diagnostics": diagnostics,
         "historical_context_policy": "completed-task-contracts-indexed-in-history-and-git",
-        "next_planned_task": "027-or-028-contract-required",
+        "next_planned_task": "none-task028-complete",
         "planned_task_sequence": list(PLANNED_SEQUENCE),
-        "promotion_gate": "task026-complete-level-5-reverb-unsupported",
-        "schema_version": "backbone-governance-summary-v15",
+        "promotion_gate": "task028-complete-level-3-reverb-unsupported",
+        "schema_version": "backbone-governance-summary-v17",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -814,8 +920,8 @@ def validate_documents(
             "024": "complete-current-ksoloti-catalog-lineage-level-2",
             "025": "complete-fail-closed-partial-level-2",
             "026": "complete-reverb-free-authoring-level-5",
-            "027": "planned-depends-on-026",
-            "028": "planned-depends-on-024-and-025",
+            "027": "complete-mutable-catalog-provenance-level-2",
+            "028": "complete-twenty-item-direct-palette-level-3",
         },
         "ui_milestone_status": "unnumbered-architecture-eligible-not-started-implementation-gated",
     }

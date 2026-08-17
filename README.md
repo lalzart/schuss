@@ -52,6 +52,14 @@ candidates are reviewed without changing the sixty functional families, and
 Mutable-derived ancestry is exposed only as an additive provenance facet. The
 only new catalog implementation is an unresolved, catalogued-only Rings
 resonator variant; no compiler or device support follows.
+Task 028 is complete for exact record set `schuss-record-set-000021@1`: fifteen
+exact candidates now resolve independently and lower to normalized operation
+IR, expanding the counted direct palette from five to twenty. The additions
+cover sources, envelopes/modulation, gain/mixing/routing, filtering/resonance,
+timing, and state. Evidence stops at level 3; no generated source, ARM build,
+Java/AXP route, device, realtime/resource, or audible result follows. Rings
+reverb and physical resonator support remain gated, and transparent compounds
+remain deferred.
 UI architecture is eligible as a separate unnumbered planning lane but has not
 started; UI implementation remains separately gated.
 
@@ -85,6 +93,9 @@ and audible proof also remain `not-run` and require new authorization.
 - [Task 027 contract](docs/tasks/027-mutable-instruments-catalog-provenance.md):
   completed exact extended-source review and additive Mutable-derived catalog
   provenance with the existing function-first taxonomy preserved.
+- [Task 028 contract](docs/tasks/028-twenty-item-direct-palette.md): completed
+  fifteen-item direct selection/lowering tranche and exact twenty-item counted
+  palette, with levels 4-8 explicitly not run.
 - [Decision log](docs/decisions/README.md): accepted and superseded choices.
 - [Development history](docs/HISTORY.md): concise completed-work index and Git
   retrieval instructions.
@@ -142,6 +153,9 @@ python3 tools/contracts/validate_task025.py
 python3 tools/contracts/validate_task027_contract.py
 python3 tools/contracts/generate_task027_records.py --check
 python3 tools/contracts/validate_task027.py
+python3 tools/contracts/validate_task028_contract.py
+python3 tools/contracts/generate_task028_records.py --check
+python3 tools/contracts/validate_task028.py
 python3 tools/contracts/validate_task022.py
 ```
 

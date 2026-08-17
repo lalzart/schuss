@@ -33,10 +33,14 @@ contracts pending their normal archival step:
   source-review and provenance contract. It preserves all sixty families,
   reviews the exact nineteen-object extended library and fifty-three attributed
   factory candidates, and adds one catalogued-only Rings resonator variant.
+- `028-twenty-item-direct-palette.md` is the completed bounded compiler tranche.
+  It adds exactly fifteen independently selectable native bindings to the five
+  Task 025 promotions, records normalized local lowering at levels 1-3, and
+  defers transparent compounds and every build/device/audio claim.
 
-Tasks 023-027 are complete; no numbered implementation task is active. ADR
-0015 retargeted the previously unstarted Task 027 assignment. Task 028 remains
-the only planned numbered task; the original sessions/jobs/diagnostics outcome
+Tasks 023-028 are complete; no numbered implementation task is active. ADR
+0015 retargeted the previously unstarted Task 027 assignment. Task 028's prior
+transparent-compound outcome remains deferred; the original sessions/jobs/diagnostics outcome
 is deferred without a replacement number. Tasks 019 and 020 remain deferred. UI
 architecture is authorized and eligible as an unnumbered planning milestone,
 but has not started; UI implementation remains separately gated.
