@@ -31,6 +31,38 @@ No other family or implementation identity is allocated. No missing component
 contract, binding, eligibility, graph, instrument, build, or evidence record is
 created.
 
+## Task 027 provenance successor
+
+Exact record set `schuss-record-set-000020@1` adds catalog corpus/projection v4
+and source review `schuss-catalog-source-review-000001@1`. It preserves all
+sixty Task 024 reviewed families and every prior implementation, then adds only
+`schuss-implementation-000096@1` under existing Physical-model Resonator family
+`schuss-family-000010@1`.
+
+The source review is a separate deterministic candidate artifact. It covers
+the nineteen objects in the exact pinned `ai/sdk/ksoloti-extended` Git tree and
+fifty-three Task 024 factory candidates whose own descriptions explicitly
+attribute Mutable Instruments code or DSP. It does not use ambient source
+bytes. Candidate membership does not itself make an object a catalog
+implementation.
+
+`mutable-instruments-derived` is an additive candidate- and
+implementation-specific provenance tag. The family-level projection exposes
+the union as a search facet so catalogued objects remain discoverable through
+their ordinary functional families. `catalog.inspect` identifies the exact
+tagged implementations; it does not impute ancestry to their siblings. Six
+catalogued implementations across five families carry the tag. The extended
+topographic sequencer, macro voice, and forty-eight attributed factory objects
+remain tagged candidates outside the catalog, while sixteen other extended
+objects remain inventory-only without exact Mutable-derivation evidence.
+
+Source compatibility and build labels remain quoted source metadata. In
+particular, the macro voice's `h7-recommended` and `build-failed` values and the
+Warps wrapper's source link-failure statement are not Schuss compiler, ARM,
+device, real-time, or audible evidence. The new Rings resonator remains
+`catalogued-only` and `unresolved`; Task 027 does not alter the separate failed
+Rings-reverb allocation claim.
+
 ## Projection derivation
 
 `schuss-catalog-projection-v1` validates the complete client-neutral view.

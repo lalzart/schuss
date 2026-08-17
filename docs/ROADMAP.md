@@ -18,8 +18,9 @@ compiler, device, and evidence claims independent. Completed detail belongs in
 ## Accepted task sequence
 
 The ordinary task numbers established by ADR 0010 remain stable. ADR 0014 adds
-the application-spine sequence after the retained Task 022 result. Completion
-of one row does not authorize the next.
+the application-spine sequence after the retained Task 022 result. ADR 0015
+retargets only the previously unstarted Task 027 assignment. Completion of one
+row does not authorize the next.
 
 | Phase | Outcome | Status |
 | --- | --- | --- |
@@ -37,7 +38,7 @@ of one row does not authorize the next.
 | 24 | Current-Ksoloti-first catalog structure and deterministic lineage | Complete; 685 current first-party candidates, frozen lineage coverage, and 60-family level-2 catalog |
 | 25 | Direct-compiler core-library tranche | Complete fail-closed partial tranche; five level-2 promotions pass, reverb and complete graph fail level 2, no build |
 | 26 | Complete authoring operations and CLI workflow | Complete; project-owned create/edit/history/revert and two-root reverb-free authored ELF reach local level 5 |
-| 27 | Application sessions, jobs, and diagnostics | Planned; depends on Task 026 |
+| 27 | Mutable-related catalog provenance and extended-source review | Complete; 72 exact source entries, 60 families preserved, one catalogued-only implementation, levels 1-2 |
 | 28 | Second catalog/compiler tranche and transparent compounds | Planned; depends on Tasks 024 and 025 |
 | Deferred UI | Object drawer and transparent graph canvas | Unnumbered; architecture authorized, implementation separately gated |
 
@@ -84,19 +85,22 @@ it remains a proof gap before complete hardware-control or release claims.
 
 ## Accepted application-spine plan
 
-ADR 0014 selects Tasks 023-028 and the unnumbered UI-architecture milestone.
+ADR 0014 selects Tasks 023-028 and the unnumbered UI-architecture milestone;
+ADR 0015 retargets only Task 027.
 The normative dependency, child-task, ownership, and parallel-work rules are
 in `APPLICATION_SPINE_PLAN.md`.
 
-Tasks 023-026 are accepted complete. Task 025 preserves the exact eight-contract
+Tasks 023-027 are accepted complete. Task 025 preserves the exact eight-contract
 Task 024 packet but stops before lowering because reverb is unsupported. Task
 026 consumes the independently accepted reverb-free seven-node executable
 profile and completes project-owned authoring through deterministic local ARM
-compile/link level 5. The authorized design-only UI-architecture milestone is
-eligible but not started. Tasks 027 and 028 may now form two
-implementation lanes, with shared status, schemas, stable IDs, record sets,
-and publication integrated serially. The default ceiling remains two
-implementation lanes plus one read-only or design lane.
+compile/link level 5. Task 027 preserves all sixty functional families while
+adding exact Mutable-derived provenance at structural levels 1-2. The
+authorized design-only UI-architecture milestone is eligible but not started.
+Task 028 is the only planned numbered implementation lane. The original
+sessions/jobs/diagnostics outcome is deferred without a replacement number.
+The default ceiling remains two implementation lanes plus one read-only or
+design lane.
 
 A parent may declare children such as `023A`, `023B`, and `023C`. Those are
 exact parent-owned work packages, not aliases or independent roadmap entries;

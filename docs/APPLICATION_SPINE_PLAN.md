@@ -1,12 +1,14 @@
 # Application-spine sequence and parallel-work plan
 
-Status: accepted planning authority under ADR 0014. Tasks 023-026 are accepted
-and complete. Task 025 retained a fail-closed partial semantic tranche after
+Status: accepted planning authority under ADR 0014 and amended by ADR 0015 for
+Task 027 only. Tasks 023-027 are accepted and complete. Task 025 retained a
+fail-closed partial semantic tranche after
 the selected reverb allocation contradiction prevented lowering and ARM
 evidence. Task 026 then accepted a separate reverb-free seven-node executable
 profile and completed the client-neutral authoring flow through local level 5.
-Tasks 027-028 and the unnumbered UI-architecture milestone are eligible but not
-started.
+Task 027 completed its bounded Mutable-related catalog provenance review at
+levels 1-2. Task 028 and the unnumbered UI-architecture milestone are eligible
+but not started.
 
 ## Goal
 
@@ -48,7 +50,7 @@ before offline catalog, compiler, CLI, or UI-architecture development.
   ordinary product command.
 - No desktop application is implemented.
 
-## Planned numbered tasks
+## Numbered application-spine tasks
 
 ### Task 023: CLI v2 and application-surface consolidation
 
@@ -147,16 +149,22 @@ atomic recovery, close/reopen, project-based planning, and two-root authored
 ELF reproduction. The reverb allocation contradiction remains unresolved and
 outside this result; levels 6-8 remain `not-run`.
 
-### Task 027: Application sessions, jobs, and diagnostics
+### Task 027: Mutable-related catalog provenance and extended-source review
 
-Goal: provide the orchestration a real application needs without moving
-semantic or compiler decisions into the UI.
+Goal: integrate exact Mutable Instruments-related Ksoloti source evidence
+without replacing the sixty function-first reviewed families with a
+provenance hierarchy or promoting source presence into executable support.
 
-Required outcomes include explicit workspace sessions, background build jobs,
-progress events, cancellation boundaries, structured diagnostics, recovery,
-and deterministic final operation results. CLI and UI adapters may present
-those events differently but must receive the same canonical final result.
-No job or session identity becomes project, graph, build, or evidence identity.
+Retained result: exact record set `schuss-record-set-000020@1` reviews all
+nineteen pinned extended objects and fifty-three exactly attributed factory
+candidates. The additive `mutable-instruments-derived` facet reaches six
+catalogued implementations across five ordinary families. The sole new
+implementation is an unresolved, catalogued-only Rings resonator variant;
+compiler, ARM, device, real-time, and audible evidence remain `not-run`.
+
+ADR 0015 defers the original application sessions, jobs, and diagnostics
+outcome without assigning it a replacement task number. A future decision must
+contract that work before it starts.
 
 ### Task 028: Second catalog/compiler tranche and transparent compounds
 
@@ -190,11 +198,14 @@ It does not revive Task 012B.
 
 ### UI vertical slice
 
-UI implementation remains separately gated. When authorized after Tasks
-025-027, the first vertical slice should browse by function, place and connect
-exact components, inspect parameters and transparent internals, save/reopen a
-project, and present build progress and structured diagnostics. It must match
-the CLI/shared-operation fixtures and initially performs no device upload.
+UI implementation remains separately gated. When authorized after the
+completed Tasks 025-026, accepted UI architecture, and a future explicit
+session/job/diagnostics gate, the first vertical slice should browse by
+function, place and connect exact components, inspect parameters and
+transparent internals, save/reopen a project, and present build progress and
+structured diagnostics. It must match the CLI/shared-operation fixtures and
+initially performs no device upload. Task 027 catalog completion does not
+satisfy the deferred orchestration gate.
 
 ## Subtask identifiers
 
@@ -221,13 +232,13 @@ numbered parent.
 
 ```text
 Task 023
-  |-- Task 024 -- Task 025 -- Task 026 -- Task 027
+  |-- Task 024 -- Task 025 -- Task 026 -- Task 027 (retargeted, complete)
   |                     |          |
   |                     |          `-- Task 028 scheduling gate
   |                     `------------- Task 028 semantic dependencies
   `-- UI architecture
 
-Tasks 025 + 026 + 027 + UI architecture -> gated UI vertical slice
+Tasks 025 + 026 + UI architecture + future session/job gate -> gated UI vertical slice
 ```
 
 Useful parallel windows are intentionally bounded:
@@ -241,11 +252,11 @@ Useful parallel windows are intentionally bounded:
 3. Task 026 closed its executable-profile prerequisite serially before the
    authoring operations were integrated; the retained Task 025 result alone did
    not satisfy that gate.
-4. After Task 026 is accepted, Task 027 session/job implementation and Task 028
-   family/compound work may run as two implementation lanes because their
-   primary code ownership differs. Record-set publication, shared status, and
-   aggregate validation still integrate one at a time.
-5. The UI vertical slice waits for Tasks 025-027 and accepted UI architecture.
+4. ADR 0015 retargeted Task 027 to catalog provenance; it is now complete.
+   Task 028 family/compound work remains the only planned numbered lane.
+5. The UI vertical slice still requires Tasks 025-026, accepted UI architecture,
+   and a future explicit session/job/diagnostics gate. Task 027 catalog
+   completion does not satisfy that deferred orchestration dependency.
    Fixture-only UI prototyping may occur earlier but cannot become production
    semantics or persistence.
 
@@ -274,8 +285,10 @@ separate output namespaces.
 ## Activation and approval rules
 
 - This plan did not itself start Task 023 or create any numbered task contract.
-- Tasks 023-026 are accepted complete. Tasks 027-028 and the eligible
+- Tasks 023-027 are accepted complete. Task 028 and the eligible
   UI-architecture planning lane remain unstarted.
+- The original Task 027 sessions/jobs/diagnostics outcome is deferred without
+  a replacement task number under ADR 0015.
 - Each numbered task requires a complete contract before implementation.
 - Completion of one task does not automatically authorize the next.
 - UI architecture planning is authorized; UI implementation remains gated.

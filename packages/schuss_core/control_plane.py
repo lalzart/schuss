@@ -94,6 +94,7 @@ TASK023_SCHEMA_NAMES = {
 
 DOMAIN_GROUPS = (
     "catalog",
+    "catalog_source_reviews",
     "families",
     "contracts",
     "bindings",
@@ -232,6 +233,10 @@ def load_repository_context(
         "runtime_realizations": _stable_records(selected.records.get("gills-runtime-realization", ())),
         "selection_packets": _stable_records(selected.records.get("core-selection-packet", ())),
     }
+    if selected.records.get("catalog-source-review"):
+        records["catalog_source_reviews"] = _stable_records(
+            selected.records["catalog-source-review"]
+        )
     target_records = {
         kind: list(selected.records.get(kind, ()))
         for kind in target.SCHEMA_SPECS
@@ -302,6 +307,7 @@ def load_repository_context(
         projection_versions = {
             "catalog-corpus-v2": "catalog-projection-v2",
             "catalog-corpus-v3": "catalog-projection-v3",
+            "catalog-corpus-v4": "catalog-projection-v4",
         }
         projection_version = projection_versions.get(catalog_schema_version)
         if projection_version is not None:

@@ -168,6 +168,8 @@ def _authority_values(
         return [source["evidence_ref"]], {source["source_id"]}
     if authority["kind"] == "schuss-transparent-compound":
         return [authority["evidence_ref"]], {"schuss"}
+    if authority["kind"] == "pinned-source-object":
+        return [authority["evidence_ref"]], {authority["source_id"]}
     raise CatalogProjectionError("catalog addition source authority is unsupported")
 
 
@@ -178,6 +180,7 @@ def _validate_corpus(
     overlay_sha256: str,
     observations: Mapping[str, dict[str, Any]],
     exact_families: Iterable[dict[str, Any]],
+    source_reviews: Iterable[dict[str, Any]],
     core: Any,
 ) -> None:
     errors = core.schema_errors(corpus, schema, schema)
@@ -295,7 +298,7 @@ def _validate_corpus(
         "schuss-implementation-000041",
     }:
         raise CatalogProjectionError("catalog implementation additions exceed slice scope")
-    if corpus["schema_version"] == "catalog-corpus-v3":
+    if corpus["schema_version"] in {"catalog-corpus-v3", "catalog-corpus-v4"}:
         review = corpus.get("current_ksoloti_review")
         if not isinstance(review, dict):
             raise CatalogProjectionError("catalog v3 current-Ksoloti review is absent")
@@ -327,6 +330,89 @@ def _validate_corpus(
                 raise CatalogProjectionError(
                     f"catalog v3 current-Ksoloti implementation family is stale: {family_id}"
                 )
+    if corpus["schema_version"] == "catalog-corpus-v4":
+        review = corpus.get("mutable_instruments_review")
+        if not isinstance(review, dict):
+            raise CatalogProjectionError("catalog v4 Mutable Instruments review is absent")
+        source_matches = [
+            value
+            for value in source_reviews
+            if _generic_reference(value, "catalog_source_review_id")
+            == review["source_review_reference"]
+        ]
+        if len(source_matches) != 1:
+            raise CatalogProjectionError(
+                "catalog v4 source review reference does not resolve exactly once"
+            )
+        source_review = source_matches[0]
+        entries = {value["entry_id"]: value for value in source_review["entries"]}
+        if len(entries) != len(source_review["entries"]):
+            raise CatalogProjectionError("catalog v4 source review entry identity is duplicated")
+        all_implementation_ids = {
+            value["implementation_id"] for value in overlay["implementations"]
+        } | implementation_ids
+        tags = review["implementation_tags"]
+        expected_tagged = {
+            "schuss-implementation-000010",
+            "schuss-implementation-000016",
+            "schuss-implementation-000056",
+            "schuss-implementation-000057",
+            "schuss-implementation-000058",
+            "schuss-implementation-000096",
+        }
+        actual_tagged = {value["implementation_id"] for value in tags}
+        if actual_tagged != expected_tagged or len(tags) != len(expected_tagged):
+            raise CatalogProjectionError(
+                "catalog v4 tagged implementation cohort is not the exact reviewed set"
+            )
+        for tag in tags:
+            identifier = tag["implementation_id"]
+            if identifier not in all_implementation_ids:
+                raise CatalogProjectionError(
+                    f"catalog v4 provenance tag names an absent implementation: {identifier}"
+                )
+            entry = entries.get(tag["source_entry_id"])
+            if entry is None:
+                raise CatalogProjectionError(
+                    f"catalog v4 provenance tag source entry is absent: {identifier}"
+                )
+            if tag["tag_id"] not in entry["provenance_tags"]:
+                raise CatalogProjectionError(
+                    f"catalog v4 provenance tag lacks exact source evidence: {identifier}"
+                )
+            if entry["catalog_implementation_id"] != identifier:
+                raise CatalogProjectionError(
+                    f"catalog v4 source review implementation cross-reference is stale: {identifier}"
+                )
+        new_implementation = next(
+            value
+            for value in corpus["implementation_additions"]
+            if value["implementation_id"] == "schuss-implementation-000096"
+        )
+        new_entry = entries[
+            next(
+                value["source_entry_id"]
+                for value in tags
+                if value["implementation_id"] == "schuss-implementation-000096"
+            )
+        ]
+        authority = new_implementation["source_authority"]
+        paths = {value["role"]: value for value in new_entry["source_paths"]}
+        if (
+            authority["kind"] != "pinned-source-object"
+            or authority["stable_source_id"] != new_entry["stable_source_id"]
+            or authority["evidence_ref"] != new_entry["entry_id"]
+            or authority["manifest_path"] != paths["manifest"]["portable_path"]
+            or authority["manifest_sha256"] != paths["manifest"]["byte_sha256"]
+            or authority["object_path"] != paths["object"]["portable_path"]
+            or authority["object_sha256"] != paths["object"]["byte_sha256"]
+            or authority["license_path"] != paths["license"]["portable_path"]
+            or authority["license_sha256"] != paths["license"]["byte_sha256"]
+            or authority["declared_license"] != new_entry["declared_license"]
+        ):
+            raise CatalogProjectionError(
+                "catalog v4 pinned extended implementation authority is stale"
+            )
 
 
 def _evidence_for_binding(
@@ -420,6 +506,7 @@ def build_catalog_projection(
         overlay_sha256,
         observations,
         records.get("families", ()),
+        records.get("catalog_source_reviews", ()),
         core,
     )
     companion_by_id = {
@@ -441,6 +528,13 @@ def build_catalog_projection(
             "family_treatments", ()
         )
     }
+    provenance_tags_by_implementation: dict[str, set[str]] = {}
+    for value in corpus.get("mutable_instruments_review", {}).get(
+        "implementation_tags", ()
+    ):
+        provenance_tags_by_implementation.setdefault(
+            value["implementation_id"], set()
+        ).add(value["tag_id"])
 
     family_values: dict[str, dict[str, Any]] = {}
     family_refs: dict[str, dict[str, Any]] = {}
@@ -595,6 +689,8 @@ def build_catalog_projection(
                 unresolved = set(addition["unresolved_questions"])
             forms.add(implementation["form"])
             provenance.update(sources)
+            provenance_tags = provenance_tags_by_implementation.get(identifier, set())
+            provenance.update(provenance_tags)
             bindings = sorted(
                 bindings_by_implementation.get(identifier, ()),
                 key=core.canonical_json,
@@ -673,8 +769,7 @@ def build_catalog_projection(
                 readiness.add("unresolved")
             family_readiness.update(readiness)
             family_unresolved.update(unresolved)
-            implementation_summaries.append(
-                {
+            implementation_summary = {
                     "implementation_id": identifier,
                     "exact_reference": exact_reference,
                     "display_name": implementation["display_name"],
@@ -743,7 +838,9 @@ def build_catalog_projection(
                     ],
                     "unresolved_facts": sorted(unresolved),
                 }
-            )
+            if corpus["schema_version"] == "catalog-corpus-v4":
+                implementation_summary["provenance_tags"] = sorted(provenance_tags)
+            implementation_summaries.append(implementation_summary)
         entry = {
             "family_reference": family_refs[family_id],
             "display_name": family["display_name"],
@@ -772,7 +869,7 @@ def build_catalog_projection(
             "implementations": implementation_summaries,
             "unresolved_facts": sorted(family_unresolved),
         }
-        if corpus["schema_version"] == "catalog-corpus-v3":
+        if corpus["schema_version"] in {"catalog-corpus-v3", "catalog-corpus-v4"}:
             entry.update(
                 {
                     "curation_treatment": (

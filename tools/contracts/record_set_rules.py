@@ -21,6 +21,7 @@ ID_FIELDS = (
     "build_result_id",
     "catalog_id",
     "catalog_selection_id",
+    "catalog_source_review_id",
     "capability_vocabulary_id",
     "component_contract_id",
     "compute_target_id",

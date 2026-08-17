@@ -29,10 +29,15 @@ contracts pending their normal archival step:
   reverb-free authoring contract. Its two children establish the exact
   executable profile and the project-owned create/edit/history/revert/build
   workflow through deterministic local level 5.
+- `027-mutable-instruments-catalog-provenance.md` is the completed
+  source-review and provenance contract. It preserves all sixty families,
+  reviews the exact nineteen-object extended library and fifty-three attributed
+  factory candidates, and adds one catalogued-only Rings resonator variant.
 
-Tasks 023-026 are complete; no numbered implementation task is active. ADR
-0014 and `../APPLICATION_SPINE_PLAN.md` retain Tasks 027-028 as the next
-planned sequence. Tasks 019 and 020 remain deferred. UI
+Tasks 023-027 are complete; no numbered implementation task is active. ADR
+0015 retargeted the previously unstarted Task 027 assignment. Task 028 remains
+the only planned numbered task; the original sessions/jobs/diagnostics outcome
+is deferred without a replacement number. Tasks 019 and 020 remain deferred. UI
 architecture is authorized and eligible as an unnumbered planning milestone,
 but has not started; UI implementation remains separately gated.
 

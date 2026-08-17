@@ -116,8 +116,34 @@ reproduced byte-identical history, plan, generated source, and ELF. Exact
 completion evidence is in `evidence/task026-completion-v1/`; levels 1-5 pass
 and levels 6-8 remain `not-run`. Reverb is still explicitly unsupported and no
 Java, `.axp`, device, real-time, audible, Git, or publication action occurred.
-Tasks 027-028 and the authorized UI-architecture lane remain unstarted; no new
-numbered task is automatically active.
+
+ADR 0015 retargets the previously unstarted Task 027 assignment. Task 027 is
+accepted complete for exact record set `schuss-record-set-000020@1`. It
+reviews the exact nineteen-object `ai/sdk/ksoloti-extended` tree from pinned
+`patcher` commit `08d3e6e1e2b61230308c20a15ded58ffdaf4656c` together with
+fifty-three exact factory candidates whose descriptions attribute Mutable
+Instruments code or DSP. The additive `mutable-instruments-derived` tag does
+not change any of the sixty reviewed families or thirteen functional
+categories.
+
+The review retains seventy-two exact source entries. Fifty-six are tagged
+candidates: all fifty-three factory entries plus the extended Rings resonator,
+Grids-derived topographic sequencer, and Plaits macro voice. Six catalogued
+implementations across five ordinary families carry the tag. The only new
+implementation is `schuss-implementation-000096@1`, the extended Rings
+resonator under existing `schuss-family-000010@1`; it remains
+`catalogued-only` and `unresolved`. The other sixteen extended objects remain
+inventory-only because the exact library license does not establish Mutable
+derivation for them.
+
+The two factory Warps objects remain candidates: `fx/wrps/vocoder` is
+uncurated and `fx/wrps/wrps` retains its exact source statement that it does
+not currently link. The extended macro voice retains source metadata
+`h7-recommended` and `build-failed`; neither is Schuss support evidence. Task
+027 reproduced catalog structural/provenance levels 1-2 only. Compiler, ARM,
+Java, `.axp`, project, device, real-time, audible, Git, and publication work
+were `not-run`. Task 028 and the authorized UI-architecture lane remain
+unstarted; no new numbered task is automatically active.
 
 Task 012B remains retired. The object drawer and transparent graph canvas are
 an unnumbered future client milestone. UI architecture planning is now
@@ -144,6 +170,7 @@ of Task 018 or Task 021.
 | Catalog structure and lineage | Current pinned first-party Ksoloti corpus with 666 normal-definition cohorts plus 19 compounds, all 3,602 frozen observations retained as lineage/gap evidence, 60-family reviewed projection, and exact eight-contract Task 025 packet | Level 2 structural/provenance only; new families remain catalogued-only |
 | Effects semantic tranche | Five exact Task 025 native-operation promotions plus two reused routing operations; reverb remains explicitly unsupported | Five component claims pass level 2; complete graph fails level 2; levels 3-8 not-run |
 | Complete authoring workflow | Project-owned graph/instrument/request allocation and versioning, atomic multi-record persistence, immutable history/revert, project-aware CLI planning/execution, and two-root authored ELF reproduction | Levels 1-5 passed for the exact reverb-free profile; levels 6-8 not-run |
+| Mutable-related catalog provenance | Exact 19-object extended-source review plus 53 attributed factory candidates, additive per-candidate/per-implementation provenance, 60-family preservation, and one catalogued-only Rings resonator implementation | Levels 1-2 structural/provenance only; compiler/build and levels 3-8 not-run |
 
 The accepted Task 018 result proves deterministic local ARM compile/link for
 one exact mapped graph/instrument/device/runtime closure. Its exact original
@@ -208,9 +235,14 @@ Task 021 established all of the following:
 - The 20 Task 024 families and their 29 exact current variants have no Task 024-created component contract,
   binding, compiler eligibility, or execution evidence. Their unresolved state
   is intentional.
+- Fifty Task 027 tagged candidates remain outside the catalog: forty-eight
+  attributed factory variants plus the extended topographic sequencer and
+  macro voice. Sixteen other extended objects remain inventory-only and are
+  not tagged without exact derivation evidence. Candidate presence is not
+  compiler, device, real-time, or audible support.
 - Rings-derived reverb remains ineligible until its exact allocation and
-  ownership contract is independently resolved; Task 026 does not redesign or
-  consume it.
+  ownership contract is independently resolved; Tasks 026 and 027 do not
+  redesign, repair, or consume it.
 
 ## Current planning boundary
 
@@ -220,11 +252,14 @@ Task 021 product-binary replacement, firmware flash, SD-card write, persistent
 installation, or reset. Any diagnostic successor or repeated hardware
 procedure requires a new bounded decision and explicit approval.
 
-Tasks 023-026 are accepted complete. Task 025's retained fail-closed result is
+Tasks 023-027 are accepted complete. Task 025's retained fail-closed result is
 bounded by `docs/tasks/025-direct-compiler-core-library-tranche.md` and
 `contracts/task025/reverb-allocation-boundary.md`; it does not authorize or
 claim lowering, ARM, device, real-time, audible, Git, or publication action.
 Task 026 consumes only the separately accepted reverb-free seven-node profile
-and is bounded by its completed contract and evidence. Task 027, Task 028, and
-the already authorized unnumbered UI-architecture milestone are eligible next
-lanes but have not started. Tasks 019 and 020 remain deferred.
+and is bounded by its completed contract and evidence. Task 027 is bounded by
+its completed source-review and provenance contract and does not activate
+Task 028. Task 028 is the only planned numbered lane. The already authorized
+unnumbered UI-architecture milestone remains eligible but has not started. The
+original application sessions/jobs/diagnostics outcome is deferred without a
+replacement task number. Tasks 019 and 020 remain deferred.

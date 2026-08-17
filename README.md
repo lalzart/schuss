@@ -46,6 +46,12 @@ pass level 2, but the selected reverb allocation is inconsistent and the
 complete graph fails before lowering. Task 026 is also complete: a separately
 accepted reverb-free seven-node profile now supports project-owned
 create/edit/history/revert and deterministic local ARM builds through level 5.
+Task 027 is complete for exact record set `schuss-record-set-000020@1`: the
+exact nineteen-object extended library and fifty-three attributed factory
+candidates are reviewed without changing the sixty functional families, and
+Mutable-derived ancestry is exposed only as an additive provenance facet. The
+only new catalog implementation is an unresolved, catalogued-only Rings
+resonator variant; no compiler or device support follows.
 UI architecture is eligible as a separate unnumbered planning lane but has not
 started; UI implementation remains separately gated.
 
@@ -76,6 +82,9 @@ and audible proof also remain `not-run` and require new authorization.
 - [Task 026 contract](docs/tasks/026-complete-authoring-operations-and-cli-workflow.md):
   completed client-neutral empty-workspace-to-project-owned-build workflow over
   the exact reverb-free executable profile.
+- [Task 027 contract](docs/tasks/027-mutable-instruments-catalog-provenance.md):
+  completed exact extended-source review and additive Mutable-derived catalog
+  provenance with the existing function-first taxonomy preserved.
 - [Decision log](docs/decisions/README.md): accepted and superseded choices.
 - [Development history](docs/HISTORY.md): concise completed-work index and Git
   retrieval instructions.
@@ -130,6 +139,9 @@ python3 tools/contracts/validate_task025_contract.py
 python3 tools/contracts/generate_task025_records.py --check
 python3 tools/contracts/generate_task025_evidence.py --check
 python3 tools/contracts/validate_task025.py
+python3 tools/contracts/validate_task027_contract.py
+python3 tools/contracts/generate_task027_records.py --check
+python3 tools/contracts/validate_task027.py
 python3 tools/contracts/validate_task022.py
 ```
 
