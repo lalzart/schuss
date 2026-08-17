@@ -1,0 +1,20 @@
+{
+  "description": "Inert boundary metadata for the future Schuss Tauri 2, React, and TypeScript desktop client.",
+  "name": "@schuss/desktop",
+  "private": true,
+  "schuss": {
+    "applicationBoundary": "apps/schuss_desktop",
+    "coreBoundaryContract": "contracts/ui-core-boundary-v1.json",
+    "status": "structure-only",
+    "targetStack": {
+      "language": "TypeScript",
+      "shell": "Tauri 2",
+      "view": "React"
+    }
+  },
+  "scripts": {
+    "validate:structure": "python3 ../../tools/contracts/validate_desktop_ui_structure.py"
+  },
+  "type": "module",
+  "version": "0.0.0"
+}

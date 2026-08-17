@@ -34,6 +34,12 @@ import validator_core as core  # noqa: E402
 
 RECORD_SET = ROOT / "contracts/record-sets/task025-direct-core-v1.json"
 PARENT_SET = ROOT / "contracts/record-sets/task024-catalog-coverage-v1.json"
+LOCAL_SOURCES = ROOT / "catalog/sources.local.yml"
+LOCAL_SOURCE_SKIP = (
+    "configured Task 025 source reproduction requires ignored "
+    "catalog/sources.local.yml; run "
+    "python3 tools/contracts/validate_task024_025_configured_sources.py separately"
+)
 
 
 def _exact(values, field: str, stable_id: str, revision: int):
@@ -224,6 +230,7 @@ class Task025DirectCoreTest(unittest.TestCase):
         self.assertEqual("not-run", self.plan["backend_execution_status"])
         self.assertFalse(self.plan["authoritative_records_mutated"])
 
+    @unittest.skipUnless(LOCAL_SOURCES.is_file(), LOCAL_SOURCE_SKIP)
     def test_reverb_source_audit_and_absent_native_records_are_exact(self) -> None:
         observed = generator._verify_source_authority()
         self.assertEqual(
@@ -296,6 +303,7 @@ class Task025DirectCoreTest(unittest.TestCase):
         )
         self.assertEqual([], result["value"]["artifacts"])
 
+    @unittest.skipUnless(LOCAL_SOURCES.is_file(), LOCAL_SOURCE_SKIP)
     def test_generated_records_are_fresh_and_deterministic(self) -> None:
         first_files, first_manifest, first_summary = generator.generated()
         second_files, second_manifest, second_summary = generator.generated()

@@ -1,0 +1,99 @@
+{
+  "schema_version": "historical-golden-hash-audit-v1",
+  "task_id": "schuss-validation-hygiene-000001",
+  "scope": {
+    "mismatch_count": 5,
+    "configuration_behavior_changed": false,
+    "configured_reproduction_performed": false,
+    "goldens_updated": false
+  },
+  "environment_boundary": {
+    "source_evidence_references": 9,
+    "historical_configured_local_verification_count": 9,
+    "ordinary_unconfigured_local_verification_count": 0,
+    "only_semantic_delta": "$.reference_resolution.source_evidence_locally_verified",
+    "synthetic_substitution_is_provenance_evidence": false
+  },
+  "identities": {
+    "target_backend_validator_stdout": {
+      "historical_configured": {
+        "byte_length": 1964,
+        "byte_sha256": "7a898b3409e5ad7ef02eab1246f87756cc2af7cbd512d72f9a5eb43b1573a3a2"
+      },
+      "ordinary_unconfigured": {
+        "byte_length": 1964,
+        "byte_sha256": "32e5faa060030588944a33794f743190c475aa10218a42fe01ff224963384c8a"
+      }
+    },
+    "records_validate_canonical_result": {
+      "historical_configured": {
+        "byte_length": 4324,
+        "byte_sha256": "cb0735df54a0baade54c8cc16807a94771c1e7cbbc93a6710291084fcb656543"
+      },
+      "ordinary_unconfigured": {
+        "byte_length": 4324,
+        "byte_sha256": "da887e6c9ea04f3331edad63ccb88cb591fbe41f7730b38e4bb8741aab490980"
+      }
+    },
+    "records_validate_human_output": {
+      "historical_configured": {
+        "byte_length": 5371,
+        "byte_sha256": "bb9171763459ac6c204afa3d1a510f09200b8f35e6003184afdfe31e0c998619"
+      },
+      "ordinary_unconfigured": {
+        "byte_length": 5371,
+        "byte_sha256": "f620e39201a56227eba18b74cd66ec833c6ecfcf30afbff36a32676b51a4d2a3"
+      }
+    }
+  },
+  "decisions": [
+    {
+      "decision_id": "HGM-001",
+      "test_id": "tools.contracts.tests.test_task008_control_plane.Task008ControlPlaneTest.test_all_legacy_validator_stdout_bytes_are_preserved",
+      "identity": "target_backend_validator_stdout",
+      "classification": "invocation-fixture-environment",
+      "disposition": "retained-configured-validation-gate",
+      "golden_updated": false
+    },
+    {
+      "decision_id": "HGM-002",
+      "test_id": "tools.contracts.tests.test_task009_prerequisite.Task009PrerequisiteTest.test_accepted_view_preserves_operation_result_hashes",
+      "identity": "records_validate_canonical_result",
+      "classification": "invocation-fixture-environment",
+      "disposition": "retained-configured-validation-gate",
+      "golden_updated": false
+    },
+    {
+      "decision_id": "HGM-003",
+      "test_id": "tools.contracts.tests.test_task010_cli.Task010ProductCliTest.test_all_task005_through_task009_inputs_and_outputs_are_preserved",
+      "identity": "records_validate_canonical_result",
+      "classification": "invocation-fixture-environment",
+      "disposition": "retained-configured-validation-gate",
+      "golden_updated": false
+    },
+    {
+      "decision_id": "HGM-004",
+      "test_id": "tools.contracts.tests.test_task010_cli.Task010ProductCliTest.test_human_outputs_match_golden_hashes_and_keep_exact_statuses",
+      "identity": "records_validate_human_output",
+      "classification": "invocation-fixture-environment",
+      "disposition": "retained-configured-validation-gate",
+      "golden_updated": false
+    },
+    {
+      "decision_id": "HGM-005",
+      "test_id": "tools.contracts.tests.test_task011a_catalog.Task011ACatalogTest.test_successor_schemas_and_v1_bytes_are_preserved",
+      "identity": "records_validate_canonical_result",
+      "classification": "invocation-fixture-environment",
+      "disposition": "retained-configured-validation-gate",
+      "golden_updated": false
+    }
+  ],
+  "retained_original_evidence": [
+    "evidence/task-009-prerequisite-v0/pre-task-preservation.json",
+    "tools/contracts/tests/fixtures/task010-cli-golden-hashes.json",
+    "tools/contracts/tests/test_task008_control_plane.py",
+    "tools/contracts/tests/test_task009_prerequisite.py",
+    "tools/contracts/tests/test_task010_cli.py",
+    "tools/contracts/tests/test_task011a_catalog.py"
+  ]
+}

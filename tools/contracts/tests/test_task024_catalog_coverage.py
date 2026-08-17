@@ -23,6 +23,12 @@ import validator_core as core  # noqa: E402
 RECORD_SET = ROOT / "contracts/record-sets/task024-catalog-coverage-v1.json"
 REVIEW = ROOT / "catalog/reviews/task024-catalog-coverage-v1"
 CURRENT_REVIEW = ROOT / "catalog/reviews/task024-current-ksoloti-v1"
+LOCAL_SOURCES = ROOT / "catalog/sources.local.yml"
+LOCAL_SOURCE_SKIP = (
+    "configured Task 024 source reproduction requires ignored "
+    "catalog/sources.local.yml; run "
+    "python3 tools/contracts/validate_task024_025_configured_sources.py separately"
+)
 
 
 class Task024CatalogCoverageTest(unittest.TestCase):
@@ -206,6 +212,7 @@ class Task024CatalogCoverageTest(unittest.TestCase):
         self.assertEqual(["catalogued-only", "unresolved"], inspected["value"]["family"]["readiness_states"])
         self.assertEqual(["axoloti-factory:delay/read interp"], inspected["value"]["family"]["current_ksoloti_base_refs"])
 
+    @unittest.skipUnless(LOCAL_SOURCES.is_file(), LOCAL_SOURCE_SKIP)
     def test_generated_outputs_are_fresh_and_byte_deterministic(self) -> None:
         first_files, first_manifest, first_summary = generator.generated()
         second_files, second_manifest, second_summary = generator.generated()

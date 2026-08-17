@@ -35,6 +35,16 @@ python3 -m unittest discover -s tools/contracts/tests
 `run_task022.py --check`, and `generate_task023_records.py --check` are also
 read-only freshness/reproduction checks.
 
+Task 024/025 source reproduction requires the ignored machine-local mapping
+`catalog/sources.local.yml`. Ordinary test discovery reports those three
+checks as explicit prerequisite skips when the mapping is absent. With the
+mapping configured to existing pinned checkouts, run their unchanged source
+identity, freshness, and determinism assertions separately:
+
+```bash
+python3 tools/contracts/validate_task024_025_configured_sources.py
+```
+
 The Task 016/017 contract validators authenticate retained ADR/evidence
 boundaries; completed task Markdown is intentionally archived through Git.
 
