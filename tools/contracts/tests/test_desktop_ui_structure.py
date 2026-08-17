@@ -30,65 +30,66 @@ def copy_fixture_root(destination: Path) -> None:
 
 
 class DesktopUiStructureTest(unittest.TestCase):
-    def test_live_structure_is_valid_inert_and_core_owned(self):
+    def test_live_structure_is_valid_read_only_and_core_owned(self):
         summary = desktop.validate_structure(ROOT)
-        self.assertEqual("valid", summary["status"])
+        self.assertEqual("valid", summary["status"], summary["diagnostics"])
         self.assertEqual([], summary["diagnostics"])
-        self.assertEqual("schuss-desktop-ui-structure-validation-v1", summary["schema_version"])
-        self.assertEqual("schuss-desktop-core-boundary-v1", summary["boundary_schema_version"])
-        self.assertEqual(7, summary["file_count"])
+        self.assertEqual(
+            "schuss-desktop-ui-structure-validation-v2", summary["schema_version"]
+        )
+        self.assertEqual(
+            "schuss-desktop-core-boundary-v1", summary["boundary_schema_version"]
+        )
+        self.assertEqual(len(desktop.REQUIRED_APP_FILES), summary["file_count"])
         self.assertEqual(13, summary["planned_operation_count"])
-        self.assertEqual(0, summary["runtime_capability_count"])
+        self.assertEqual(3, summary["runtime_capability_count"])
         self.assertEqual(0, summary["semantic_record_count"])
 
-    def test_product_source_and_runtime_files_fail_closed(self):
+    def test_unreviewed_source_and_copied_semantic_record_fail_closed(self):
         with tempfile.TemporaryDirectory() as temporary:
             fixture_root = Path(temporary)
             copy_fixture_root(fixture_root)
-            product_source = fixture_root / desktop.APP_ROOT / "src/App.tsx"
-            product_source.write_text("export const App = () => null;\n", encoding="utf-8")
-            cargo = fixture_root / desktop.APP_ROOT / "src-tauri/Cargo.toml"
-            cargo.write_text("[package]\nname = 'schuss-desktop'\n", encoding="utf-8")
-            summary = desktop.validate_structure(fixture_root)
-            codes = {item["code"] for item in summary["diagnostics"]}
-            self.assertEqual("invalid", summary["status"])
-            self.assertIn("DESKTOP_PRODUCT_SOURCE_PRESENT", codes)
-            self.assertIn("DESKTOP_APP_PATH_UNEXPECTED", codes)
-
-    def test_copied_semantic_record_fails_closed(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            fixture_root = Path(temporary)
-            copy_fixture_root(fixture_root)
+            unexpected = fixture_root / desktop.APP_ROOT / "src/GraphEditor.tsx"
+            unexpected.write_text("export const GraphEditor = () => null;\n", encoding="utf-8")
             record = fixture_root / desktop.APP_ROOT / "records/schuss-graph-999999-r1.json"
             record.parent.mkdir(parents=True)
             record.write_text("{}\n", encoding="utf-8")
+
             summary = desktop.validate_structure(fixture_root)
             codes = {item["code"] for item in summary["diagnostics"]}
             self.assertEqual("invalid", summary["status"])
-            self.assertEqual(1, summary["semantic_record_count"])
+            self.assertIn("DESKTOP_APP_PATH_UNEXPECTED", codes)
             self.assertIn("DESKTOP_SEMANTIC_RECORD_OWNERSHIP_INVALID", codes)
+            self.assertEqual(1, summary["semantic_record_count"])
 
-    def test_dependency_and_capability_drift_fail_closed(self):
+    def test_dependency_runtime_capability_and_tauri_permission_drift_fail_closed(self):
         with tempfile.TemporaryDirectory() as temporary:
             fixture_root = Path(temporary)
             copy_fixture_root(fixture_root)
 
             package_path = fixture_root / desktop.PACKAGE
             package = json.loads(package_path.read_bytes())
-            package["dependencies"] = {"react": "latest"}
+            package["dependencies"]["@mui/material"] = "9.0.0"
             package_path.write_bytes(desktop.stable_json_bytes(package))
 
             boundary_path = fixture_root / desktop.BOUNDARY
             boundary = json.loads(boundary_path.read_bytes())
-            boundary["planned_capability_phases"][0]["operations"][2]["operation"] = "build.execute"
+            boundary["runtime_capabilities"].append(
+                boundary["planned_capability_phases"][1]["operations"][0]
+            )
             boundary_path.write_bytes(desktop.stable_json_bytes(boundary))
+
+            capability_path = fixture_root / desktop.TAURI_CAPABILITY
+            capability = json.loads(capability_path.read_bytes())
+            capability["permissions"].append("shell:allow-execute")
+            capability_path.write_bytes(desktop.stable_json_bytes(capability))
 
             summary = desktop.validate_structure(fixture_root)
             codes = {item["code"] for item in summary["diagnostics"]}
             self.assertEqual("invalid", summary["status"])
-            self.assertIn("DESKTOP_DEPENDENCY_DECLARATION_PRESENT", codes)
-            self.assertIn("DESKTOP_CAPABILITY_PLAN_INVALID", codes)
-            self.assertIn("DESKTOP_OPERATION_METADATA_DRIFT", codes)
+            self.assertIn("DESKTOP_PACKAGE_INVALID", codes)
+            self.assertIn("DESKTOP_RUNTIME_CAPABILITY_INVALID", codes)
+            self.assertIn("DESKTOP_TAURI_PERMISSION_INVALID", codes)
 
     def test_cli_is_cwd_independent_deterministic_and_read_only(self):
         governed = [ROOT / path for path in desktop.GOVERNED_PATHS]

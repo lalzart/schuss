@@ -14,6 +14,7 @@ compiler, device, and evidence claims independent. Completed detail belongs in
 | Compiler and execution | Reusable front half, exact-handler execution, retained legacy backend, and direct C++ frontend |
 | First executable slice | Exact eight-node Gills graph reaches deterministic local ARM compile/link level 5 |
 | Curated core | Twelve additional reviewed families and two headless references reach structural level 2 with unsupported semantics explicit |
+| First desktop slice | Read-only Tauri/React catalog browser consumes exact shared operations without owning semantic data |
 
 ## Accepted task sequence
 
@@ -40,7 +41,7 @@ row does not authorize the next.
 | 26 | Complete authoring operations and CLI workflow | Complete; project-owned create/edit/history/revert and two-root reverb-free authored ELF reach local level 5 |
 | 27 | Mutable-related catalog provenance and extended-source review | Complete; 72 exact source entries, 60 families preserved, one catalogued-only implementation, levels 1-2 |
 | 28 | Twenty-item direct selectable palette; transparent compounds deferred | Complete; fifteen additions lower locally at levels 1-3, no build |
-| Deferred UI | Object drawer and transparent graph canvas | Unnumbered; architecture authorized, implementation separately gated |
+| Deferred UI | Read-only object drawer complete; transparent graph canvas and later application surfaces deferred | Unnumbered; read-only catalog slice complete, later implementation separately gated |
 
 ## Completed Task 018 gates
 
@@ -98,9 +99,11 @@ compile/link level 5. Task 027 preserves all sixty functional families while
 adding exact Mutable-derived provenance at structural levels 1-2. Task 028
 adds fifteen independently selectable native operation identities to the five
 Task 025 promotions, reaching an exact twenty-item palette at local lowering
-level 3; transparent compounds remain deferred. The authorized design-only
-UI-architecture milestone is eligible but not started. No numbered
-implementation lane is currently planned. The original
+level 3; transparent compounds remain deferred. The explicitly authorized
+unnumbered read-only desktop catalog slice is complete over the same shared
+operations. It does not accept the broader UI architecture or authorize graph,
+project, build, session, device, or packaging work. No numbered implementation
+lane is currently planned. The original
 sessions/jobs/diagnostics outcome is deferred without a replacement number.
 The default ceiling remains two implementation lanes plus one read-only or
 design lane.
@@ -108,8 +111,8 @@ design lane.
 A parent may declare children such as `023A`, `023B`, and `023C`. Those are
 exact parent-owned work packages, not aliases or independent roadmap entries;
 the completed Task 023 parent fixed their dependencies, write ownership, and
-integration order. Tasks 019 and 020 remain deferred. UI implementation
-remains separately gated.
+integration order. Tasks 019 and 020 remain deferred. UI implementation beyond
+the accepted read-only catalog slice remains separately gated.
 
 ## Staying on track
 

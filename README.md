@@ -60,8 +60,10 @@ timing, and state. Evidence stops at level 3; no generated source, ARM build,
 Java/AXP route, device, realtime/resource, or audible result follows. Rings
 reverb and physical resonator support remain gated, and transparent compounds
 remain deferred.
-UI architecture is eligible as a separate unnumbered planning lane but has not
-started; UI implementation remains separately gated.
+The explicitly authorized first unnumbered desktop slice is complete locally:
+a Tauri 2/React catalog browser consumes the exact shared read-only operations
+for `schuss-record-set-000021@1`. Graph, project, build, session, device,
+packaging, and later UI implementation remain separately gated.
 
 The reviewed Task 017 core remains structurally useful but not yet generally
 executable. Its two full-panel successors retain stable unsupported

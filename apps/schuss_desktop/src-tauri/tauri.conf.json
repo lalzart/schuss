@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "app": {
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost; style-src 'self' 'unsafe-inline'"
+    },
+    "windows": [
+      {
+        "center": true,
+        "height": 820,
+        "label": "main",
+        "minHeight": 640,
+        "minWidth": 980,
+        "resizable": true,
+        "title": "Schuss - Catalog",
+        "width": 1360
+      }
+    ],
+    "withGlobalTauri": false
+  },
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev:web",
+    "devUrl": "http://127.0.0.1:1420",
+    "frontendDist": "../dist"
+  },
+  "bundle": {
+    "active": false,
+    "icon": [
+      "icons/512x512.png"
+    ]
+  },
+  "identifier": "org.schuss.desktop",
+  "productName": "Schuss",
+  "version": "0.1.0"
+}

@@ -101,7 +101,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["task_statuses"]["028"],
         )
         self.assertEqual(
-            "unnumbered-architecture-eligible-not-started-implementation-gated",
+            "unnumbered-read-only-catalog-complete-later-implementation-gated",
             summary["ui_milestone_status"],
         )
 

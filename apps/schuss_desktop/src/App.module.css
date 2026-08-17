@@ -1,0 +1,72 @@
+.shell {
+  display: grid;
+  grid-template-rows: var(--titlebar-height) minmax(0, 1fr);
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--surface-0);
+  color: var(--text-1);
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--surface-title);
+  user-select: none;
+}
+
+.wordmark,
+.titlebarMeta,
+.readOnlyStatus {
+  display: flex;
+  align-items: center;
+}
+
+.wordmark {
+  gap: var(--space-2);
+  color: var(--text-strong);
+  font-size: 0.69rem;
+  font-weight: 720;
+  letter-spacing: 0.12em;
+}
+
+.routeMark {
+  display: grid;
+  width: 19px;
+  height: 19px;
+  place-items: center;
+  background: var(--route-yellow);
+  color: #1e1b19;
+  font-size: 0.64rem;
+  line-height: 1;
+}
+
+.sectionName {
+  padding-left: var(--space-2);
+  border-left: 1px solid var(--line-strong);
+  color: var(--text-3);
+  font-weight: 620;
+}
+
+.titlebarMeta {
+  gap: var(--space-4);
+  color: var(--text-4);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+}
+
+.readOnlyStatus {
+  gap: var(--space-1);
+  color: var(--text-2);
+}
+
+.statusLight {
+  width: 6px;
+  height: 6px;
+  background: var(--route-green);
+}

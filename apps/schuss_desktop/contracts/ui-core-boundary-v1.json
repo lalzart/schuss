@@ -8,7 +8,7 @@
       "shell": "Tauri 2",
       "view": "React"
     },
-    "status": "structure-only"
+    "status": "read-only-catalog"
   },
   "ownership": {
     "core_owned_semantics": [
@@ -20,6 +20,7 @@
       "project-and-workspace-records"
     ],
     "direct_catalog_file_access": "forbidden",
+    "direct_renderer_process_access": "forbidden",
     "direct_semantic_json_access": "forbidden",
     "direct_workspace_mutation": "forbidden",
     "semantic_mutation_mode": "shared-operation-only-after-authorization",
@@ -56,7 +57,7 @@
       "prerequisites": [
         "separately-accepted-visual-slice"
       ],
-      "status": "planned-not-implemented"
+      "status": "implemented-read-only"
     },
     {
       "operations": [
@@ -139,13 +140,37 @@
       "status": "gated-not-authorized"
     }
   ],
-  "runtime_capabilities": [],
+  "runtime_capabilities": [
+    {
+      "effect_class": "read-only",
+      "operation": "application.describe",
+      "request_schema_version": "schuss-operation-request-v7",
+      "result_schema_version": "schuss-operation-result-v7"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "catalog.inspect",
+      "request_schema_version": "schuss-operation-request-v2",
+      "result_schema_version": "schuss-operation-result-v2"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "catalog.search",
+      "request_schema_version": "schuss-operation-request-v2",
+      "result_schema_version": "schuss-operation-result-v2"
+    }
+  ],
   "schema_version": "schuss-desktop-core-boundary-v1",
   "transport": {
+    "adapter": "tauri-command-to-persistent-python-core",
     "canonical_result_handling": "consume-unchanged",
+    "command": "dispatch_read_only_operation",
+    "development_verification": "vite-local-read-only-proxy",
     "operation_selection": "closed-listed-allowlist",
+    "renderer_file_access": "absent",
     "request_handling": "submit-one-versioned-schuss-operation",
-    "status": "not-implemented",
+    "selected_record_set": "contracts/record-sets/task028-direct-palette-v1.json",
+    "status": "implemented-read-only",
     "unknown_operation": "reject",
     "unknown_result_schema": "reject",
     "version_mismatch": "reject"

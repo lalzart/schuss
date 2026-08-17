@@ -1,0 +1,48 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  --font-ui: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "SFMono-Regular", "Roboto Mono", Menlo, Consolas, monospace;
+
+  --surface-title: #1c1a19;
+  --surface-0: #24211f;
+  --surface-1: #2a2724;
+  --surface-2: #302d2a;
+  --surface-3: #393531;
+  --surface-selected: #403b35;
+  --surface-hover: #342f2c;
+
+  --line-soft: #3a3632;
+  --line: #46413c;
+  --line-strong: #57504a;
+
+  --text-strong: #f1ede5;
+  --text-1: #ded9d0;
+  --text-2: #b8b1a7;
+  --text-3: #928a80;
+  --text-4: #746d65;
+
+  --route-yellow: #e6b84a;
+  --route-orange: #d98245;
+  --route-red: #c85d58;
+  --route-green: #76ad75;
+  --route-cyan: #65aeb3;
+  --route-blue: #668fca;
+  --route-violet: #9a78b5;
+
+  --focus: #f0c75e;
+  --danger: #d76b63;
+
+  --titlebar-height: 39px;
+  --control-height: 30px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+}

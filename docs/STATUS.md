@@ -167,12 +167,23 @@ their sound-source families or raising their evidence. The Rings reverb
 failure and absent native allocation 000094 remain unchanged; physical
 resonator 000096 remains catalogued-only. Transparent compounds remain
 deferred. No numbered implementation task is automatically active after Task
-028 completion; the authorized UI-architecture lane remains unstarted.
+028 completion.
 
-Task 012B remains retired. The object drawer and transparent graph canvas are
-an unnumbered future client milestone. UI architecture planning is now
-explicitly authorized by ADR 0014, but UI implementation remains separately
-gated and must consume the shared client-neutral operations.
+The explicitly authorized unnumbered desktop catalog slice is complete
+locally. `apps/schuss_desktop/` now runs a Tauri 2 and React shell over exactly
+`application.describe`, `catalog.search`, and `catalog.inspect` for record set
+`schuss-record-set-000021@1`. Its Rust and Python adapter layers independently
+enforce the read-only allowlist and canonical operation metadata. The renderer
+has no direct semantic-record, catalog-file, project-workspace, shell, build,
+network, or hardware capability. Browser and native development-shell checks
+exercise the real shared core rather than copied catalog data. This is host/UI
+evidence only and does not raise any compiler, device, real-time/resource, or
+audible claim.
+
+Task 012B remains retired. The completed read-only object drawer is an
+unnumbered successor and does not revive it. A transparent graph canvas and all
+UI implementation beyond this slice remain separately gated, require explicit
+authorization, and must consume shared client-neutral operations.
 
 Tasks 019 and 020 are deferred and not automatically activated by completion
 of Task 018 or Task 021.
@@ -196,6 +207,7 @@ of Task 018 or Task 021.
 | Complete authoring workflow | Project-owned graph/instrument/request allocation and versioning, atomic multi-record persistence, immutable history/revert, project-aware CLI planning/execution, and two-root authored ELF reproduction | Levels 1-5 passed for the exact reverb-free profile; levels 6-8 not-run |
 | Mutable-related catalog provenance | Exact 19-object extended-source review plus 53 attributed factory candidates, additive per-candidate/per-implementation provenance, 60-family preservation, and one catalogued-only Rings resonator implementation | Levels 1-2 structural/provenance only; compiler/build and levels 3-8 not-run |
 | Twenty-item direct palette | Five retained Task 025 promotions plus fifteen exact independent Task 028 selections and normalized operation-IR lowerings; seven Task 026 support bindings remain separate | Levels 1-3 passed; source generation, ARM, device, realtime/resource, and audible levels 4-8 not-run |
+| Desktop catalog client | Local Tauri 2/React shell over three allowlisted read-only shared operations, exact Task 028 catalog context, function/provenance/readiness browsing, and exact family inspection | Host/UI proof only; no graph/project mutation, build, device, realtime/resource, audible, packaging, or release evidence |
 
 The accepted Task 018 result proves deterministic local ARM compile/link for
 one exact mapped graph/instrument/device/runtime closure. Its exact original
@@ -252,8 +264,9 @@ Task 021 established all of the following:
 - The authenticated Task 009 local content store is ignored and must be
   validated separately when present; a clean checkout cannot claim that local
   evidence merely from tracked manifests.
-- No desktop application or UI client is implemented. UI architecture is
-  eligible but has not started.
+- The desktop implements catalog browsing only. Graph inspection, graph and
+  project mutation, build/session/diagnostic presentation, packaging, release,
+  and every connected-device surface remain unimplemented and gated.
 - The historical Task 011A CLI golden remains byte-identical. Task 023 records
   its successor golden separately and tests the inherited four equal-length
   input-closure digest changes without treating them as semantic catalog drift.
@@ -290,7 +303,8 @@ and is bounded by its completed contract and evidence. Task 027 is bounded by
 its completed source-review and provenance contract and does not activate
 Task 028. Task 028 is bounded by its completed twenty-item direct-palette
 contract; its prior transparent-compound outcome is deferred. No numbered
-implementation lane is currently planned. The already authorized unnumbered
-UI-architecture milestone remains eligible but has not started. The
-original application sessions/jobs/diagnostics outcome is deferred without a
-replacement task number. Tasks 019 and 020 remain deferred.
+implementation lane is currently planned. The first unnumbered desktop slice
+is complete at the read-only catalog boundary; it does not accept the broader
+UI architecture or activate a graph, project, build, session, device, or
+packaging phase. The original application sessions/jobs/diagnostics outcome is
+deferred without a replacement task number. Tasks 019 and 020 remain deferred.

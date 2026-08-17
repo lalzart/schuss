@@ -38,6 +38,8 @@ TASK_025 = "docs/tasks/025-direct-compiler-core-library-tranche.md"
 TASK_026 = "docs/tasks/026-complete-authoring-operations-and-cli-workflow.md"
 TASK_027 = "docs/tasks/027-mutable-instruments-catalog-provenance.md"
 TASK_028 = "docs/tasks/028-twenty-item-direct-palette.md"
+UI_INITIALIZATION = "docs/tasks/ui-desktop-initialization.md"
+UI_READ_ONLY_CATALOG = "docs/tasks/ui-desktop-read-only-catalog.md"
 
 DOCUMENT_PATHS = (
     README,
@@ -66,6 +68,8 @@ DOCUMENT_PATHS = (
     TASK_026,
     TASK_027,
     TASK_028,
+    UI_INITIALIZATION,
+    UI_READ_ONLY_CATALOG,
 )
 
 ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 29))
@@ -82,6 +86,8 @@ EXPECTED_TASK_FILENAMES = {
     "026-complete-authoring-operations-and-cli-workflow.md",
     "027-mutable-instruments-catalog-provenance.md",
     "028-twenty-item-direct-palette.md",
+    "ui-desktop-initialization.md",
+    "ui-desktop-read-only-catalog.md",
 }
 LETTERED_ALIAS = re.compile(r"\bTasks?\s+(01[3-9]|02[01])[A-Z](?:-[A-Z])?\b", re.IGNORECASE)
 INFORMAL_ALIAS = re.compile(r"(?<![A-Za-z0-9])B6(?![A-Za-z0-9])", re.IGNORECASE)
@@ -545,6 +551,45 @@ def validate_documents(
         ),
     )
 
+    if _leading_status(documents.get(UI_INITIALIZATION, "")) != (
+        "accepted and complete on 2026-08-17 at structural level only."
+    ):
+        diagnostics.append(
+            _diagnostic(
+                "UI_INITIALIZATION_CONTRACT_INVALID",
+                UI_INITIALIZATION,
+                "the retained structural boundary must remain complete and inert",
+            )
+        )
+    ui_catalog_status = _leading_status(documents.get(UI_READ_ONLY_CATALOG, "")) or ""
+    for fragment in (
+        "accepted by explicit user authorization and complete locally on 2026-08-17",
+        "read-only host/UI boundary",
+    ):
+        if fragment not in ui_catalog_status:
+            diagnostics.append(
+                _diagnostic(
+                    "UI_READ_ONLY_CATALOG_CONTRACT_INVALID",
+                    UI_READ_ONLY_CATALOG,
+                    f"desktop catalog contract status must contain: {fragment}",
+                )
+            )
+    _require_phrases(
+        diagnostics,
+        code="UI_READ_ONLY_CATALOG_CONTRACT_INVALID",
+        document=UI_READ_ONLY_CATALOG,
+        scope=documents.get(UI_READ_ONLY_CATALOG, ""),
+        phrases=(
+            "application.describe",
+            "catalog.search",
+            "catalog.inspect",
+            "schuss-record-set-000021@1",
+            "read-only catalog browser",
+            "Graph visualization or mutation",
+            "any hardware action",
+        ),
+    )
+
     status_rules = (
         "This document is the single authority for Schuss's current development state.",
         "Task 018 is complete for exact record set `schuss-record-set-000012@1`.",
@@ -602,8 +647,8 @@ def validate_documents(
         "twenty source implementations back counted promotions and sixty-three remain outside this bounded palette",
         "physical resonator 000096 remains catalogued-only",
         "No numbered implementation task is automatically active after Task 028 completion",
-        "UI architecture planning is now explicitly authorized by ADR 0014",
-        "UI implementation remains separately gated",
+        "The explicitly authorized unnumbered desktop catalog slice is complete locally",
+        "all UI implementation beyond this slice remain separately gated",
     )
     _require_phrases(
         diagnostics,
@@ -626,7 +671,7 @@ def validate_documents(
             "Task 026: Complete authoring operations and CLI workflow",
             "Task 027: Mutable-related catalog provenance and extended-source review",
             "Task 028: Twenty-item direct selectable palette",
-            "UI architecture is explicitly authorized now.",
+            "first read-only catalog slice are now implemented",
             "UI implementation remains separately gated.",
             "`023A`, `023B`, and `023C`",
             "The default concurrency ceiling is two implementation lanes plus one read-only/design lane.",
@@ -725,14 +770,14 @@ def validate_documents(
     if (
         len(deferred_ui) != 1
         or "unnumbered" not in deferred_ui[0][2].lower()
-        or "architecture authorized" not in deferred_ui[0][2].lower()
-        or "implementation separately gated" not in deferred_ui[0][2].lower()
+        or "read-only catalog slice complete" not in deferred_ui[0][2].lower()
+        or "later implementation separately gated" not in deferred_ui[0][2].lower()
     ):
         diagnostics.append(
             _diagnostic(
                 "UI_MILESTONE_NUMBERED",
                 ROADMAP,
-                "roadmap must contain one unnumbered architecture-authorized, implementation-gated Deferred UI row",
+                "roadmap must contain one unnumbered completed catalog and later-gated Deferred UI row",
             )
         )
 
@@ -747,7 +792,7 @@ def validate_documents(
             "Tasks 019 and 020 remain deferred.",
             "Tasks 023-028 are accepted complete.",
             "Task 026 consumes the independently accepted reverb-free seven-node executable profile",
-            "UI-architecture milestone is eligible but not started",
+            "unnumbered read-only desktop catalog slice is complete",
             "No numbered implementation lane is currently planned",
             "sessions/jobs/diagnostics outcome is deferred without a replacement number",
             "two implementation lanes plus one",
@@ -855,6 +900,8 @@ def validate_documents(
         TASK_026: documents.get(TASK_026, ""),
         TASK_027: documents.get(TASK_027, ""),
         TASK_028: documents.get(TASK_028, ""),
+        UI_INITIALIZATION: documents.get(UI_INITIALIZATION, ""),
+        UI_READ_ONLY_CATALOG: documents.get(UI_READ_ONLY_CATALOG, ""),
     }
     for document, scope in alias_scopes.items():
         matches = sorted(set(LETTERED_ALIAS.findall(scope)))
@@ -923,7 +970,7 @@ def validate_documents(
             "027": "complete-mutable-catalog-provenance-level-2",
             "028": "complete-twenty-item-direct-palette-level-3",
         },
-        "ui_milestone_status": "unnumbered-architecture-eligible-not-started-implementation-gated",
+        "ui_milestone_status": "unnumbered-read-only-catalog-complete-later-implementation-gated",
     }
 
 

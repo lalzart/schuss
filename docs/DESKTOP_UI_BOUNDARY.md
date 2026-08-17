@@ -1,93 +1,110 @@
 # Desktop UI boundary
 
-Status: unnumbered structural initialization complete; product UI not started.
+Status: the first unnumbered product slice is implemented locally for read-only
+catalog browsing. Schuss core remains the authority; later UI phases remain
+gated.
 
 ## End-to-end boundary
 
 ```text
-future React/TypeScript presentation
-        -> capability-limited desktop adapter (not implemented)
-        -> one versioned Schuss operation request
+React/TypeScript presentation
+        -> one capability-limited Tauri command
+        -> persistent local Python adapter
         -> existing packages/schuss_core dispatcher and services
         -> canonical Schuss operation result
         -> presentation rendering only
 ```
 
-The future application boundary is `apps/schuss_desktop/`, targeting a Tauri 2
-shell and a React/TypeScript frontend. The stack choice does not create a
-runnable client in this task. Transport, Tauri commands, Rust permissions,
-Python process management, packaging, and runtime dependencies remain
-unselected and unimplemented.
+The application lives in `apps/schuss_desktop/`. The Rust adapter accepts one
+structured request, enforces the closed read-only allowlist and expected
+versions, and passes it to a persistent Python process. Python loads exact
+record set `schuss-record-set-000021@1` once, independently enforces the same
+allowlist, dispatches through the existing core, and emits canonical result
+bytes. Unknown operations, request versions, result versions, malformed
+payloads, and oversized requests fail explicitly.
+
+Browser-mode development uses a localhost-only Vite proxy to the same Python
+adapter so visual verification exercises live operations rather than copied
+catalog data. That proxy is absent from production output; production requires
+the Tauri command.
+
+## Implemented capabilities
+
+Exactly three shared operations are exposed:
+
+| Operation | Request | Result | Effect |
+| --- | --- | --- | --- |
+| `application.describe` | `schuss-operation-request-v7` | `schuss-operation-result-v7` | read-only |
+| `catalog.search` | `schuss-operation-request-v2` | `schuss-operation-result-v2` | read-only |
+| `catalog.inspect` | `schuss-operation-request-v2` | `schuss-operation-result-v2` | read-only |
+
+The UI renders function-first browsing, exact search/filter results,
+provenance including `mutable-instruments-derived`, readiness states, signal
+facets, collective named interface facets, source observations, exact
+implementation references, evidence references, and unresolved facts.
+
+`catalog.inspect` currently reports signal facets and collective contract facet
+names; it does not label every name as a port, parameter, attribute, action, or
+display. The desktop therefore preserves that collective label and does not
+guess a kind. A future richer component-inspection operation would be core
+work, not a renderer projection.
 
 ## Semantic ownership
 
-The existing Schuss Python core and its versioned operations remain the sole
-source of catalog, component, graph, instrument, project/workspace,
-compiler-plan, build, and evidence semantics. The desktop may construct one
-allowed versioned request and render its canonical result. It may not:
+The existing Schuss Python core and versioned operations remain the sole source
+of catalog, component, graph, instrument, project/workspace, compiler-plan,
+build, and evidence semantics. The desktop may construct one allowed request
+and render its canonical result. It may not:
 
 - read or edit catalog source files as application state;
 - load, rewrite, or persist semantic JSON records directly;
 - scan project directories to infer record membership;
-- create a UI-private graph edit language, persistence format, compiler path,
-  diagnostic meaning, or result projection; or
-- infer a newer revision, capability, readiness, build, device, real-time, or
-  audible claim.
+- create a UI-private catalog matcher, readiness rule, graph edit language,
+  persistence format, compiler path, diagnostic meaning, or result projection;
+- invoke a shell, build, device, real-time, or audible operation; or
+- infer a newer revision, capability, readiness, evidence, or support claim.
 
-Selection, viewport, panel layout, and unsaved form values are UI-owned
-ephemeral state. Coordinates and groups may later live in a versioned
-presentation overlay, but that overlay must reference stable semantic IDs and
-must never redefine a node, connection, family, graph, or project.
-
-The machine-readable `schuss-desktop-core-boundary-v1` contract lists zero
-runtime capabilities because no adapter exists. Its phased operation lists are
-planning allowlists, not implemented routes or authorization. Unknown
-operations, schema versions, and result shapes must fail closed.
+Selection, filters, query text, scroll state, active tabs, panel layout, and
+loading/error state are UI-owned ephemeral state. The Tauri window has only
+core default permissions. It has no filesystem, shell, network, project-write,
+build, or hardware plugin capability.
 
 ## Capability phases
 
 ### 1. Read-only catalog browsing
 
-The first separately authorized visual slice should call
-`application.describe`, `catalog.search`, and `catalog.inspect`. It should
-present function-first browsing, form filters, provenance, readiness, and exact
-family inspection from canonical results. It must not cache a second catalog
-database or write classifications back from the UI.
+Implemented by the active unnumbered task. It calls `application.describe`,
+`catalog.search`, and `catalog.inspect` and writes no semantic or workspace
+state.
 
 ### 2. Graph visualization
 
-After the catalog slice is accepted, a read-only graph view should call
-`graph.inspect` and render the exact graph plus component-contract closure.
-React Flow is a likely presentation library, but library selection and package
-installation belong to that later task. Canvas coordinates, zoom, selection,
-and collapsed groups are presentation state; compound internals remain
-inspectable and the graph remains core-owned.
+Not implemented. After this slice is accepted, a separately authorized task
+may call `graph.inspect` and render the exact graph plus component-contract
+closure. React Flow remains uninstalled. Compound internals must remain
+inspectable and graph semantics remain core-owned.
 
 ### 3. Project mutation through existing operations
 
-Only after Task 027 is accepted complete and UI implementation is explicitly
-authorized may a later slice expose project changes. Proposal, persistence,
-history, and revert must use the existing `graph.transact`,
-`project.graph.commit`, `project.init`, `project.inspect`,
-`project.validate`, `project.profile.fork`, `project.profile.transact`,
-`project.history.inspect`, and `project.revert` operations with their exact
-references and write-intent gates. The UI never edits workspace JSON files.
+Not authorized. A later task may expose existing project operations only after
+the graph phase and the explicit application gates are satisfied. Proposal,
+persistence, history, and revert must use shared operations and exact write
+intent; the UI never edits workspace JSON files.
 
-Build progress and structured diagnostics additionally depend on the future
-Task 027 session/job boundary. Build, device upload, real-time, and audible
-behavior are not part of these three visual steps.
+Build progress and structured diagnostics still depend on a future contracted
+session/job boundary. Build, device upload, real-time/resource, and audible
+behavior are outside all implemented desktop capabilities.
 
-## Initialization structure
+## Security and dependency boundary
 
-The directory intentionally contains documentation, a private dependency-free
-`package.json`, an inert TypeScript configuration, and reserved `src/` and
-`src-tauri/` directories only. The static validator freezes that boundary and
-fails when product source, Rust/Tauri runtime files, dependencies, lockfiles,
-copied semantic records, or operation metadata drift appears without a new
-accepted task.
+The renderer imports only `@tauri-apps/api/core`; no Tauri plugin package is
+installed. The Rust process uses standard child-process I/O only inside the
+native shell and never exposes a general process command. The selected Radix
+packages are Scroll Area, Tabs, and Tooltip only. No broad visual kit, React
+Flow, Blockly, updater, analytics, telemetry, packaging, or publishing
+dependency is present.
 
-This initialization is not Task 028. ADR 0014 already reserves Task 028 for
-the second catalog/compiler tranche and transparent compounds. The desktop
-work stays in the unnumbered UI-architecture lane, and completing this bounded
-initialization does not complete the broader architecture milestone or
-authorize a visual implementation slice.
+The original structural initialization remains retained in
+`docs/tasks/ui-desktop-initialization.md`. This implementation is the separate
+explicitly authorized task in `docs/tasks/ui-desktop-read-only-catalog.md`; it
+does not rewrite Task 028, revive Task 012B, or activate a later UI phase.

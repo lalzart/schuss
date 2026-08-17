@@ -37,13 +37,18 @@ contracts pending their normal archival step:
   It adds exactly fifteen independently selectable native bindings to the five
   Task 025 promotions, records normalized local lowering at levels 1-3, and
   defers transparent compounds and every build/device/audio claim.
+- `ui-desktop-initialization.md` retains the completed structural desktop
+  boundary.
+- `ui-desktop-read-only-catalog.md` is the completed explicitly authorized
+  first product UI task. It owns only a local read-only Tauri/React catalog
+  slice over three shared operations.
 
 Tasks 023-028 are complete; no numbered implementation task is active. ADR
 0015 retargeted the previously unstarted Task 027 assignment. Task 028's prior
 transparent-compound outcome remains deferred; the original sessions/jobs/diagnostics outcome
 is deferred without a replacement number. Tasks 019 and 020 remain deferred. UI
-architecture is authorized and eligible as an unnumbered planning milestone,
-but has not started; UI implementation remains separately gated.
+architecture boundary and first read-only catalog implementation are complete
+in their unnumbered lane; graph, project, build, and device UI remain gated.
 
 Completed task detail is indexed in `../HISTORY.md` and recoverable byte for
 byte from Git. Accepted architectural choices must move into ADRs, while exact

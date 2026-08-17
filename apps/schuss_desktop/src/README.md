@@ -1,11 +1,10 @@
-# Future frontend boundary
+# React presentation boundary
 
-This directory is reserved for a later, separately authorized React and
-TypeScript frontend. It currently contains no components, application entry
-point, styles, graph canvas, catalog drawer, inspector, drag/drop behavior, or
-semantic state.
+This renderer owns only ephemeral query, filter, selection, tab, panel, and
+loading state. Product data arrives through `src/core/bridge.ts` as canonical
+results from `application.describe`, `catalog.search`, or `catalog.inspect`.
 
-Future code here may own ephemeral selection, viewport, panel-layout, and
-draft-form state. It may not own or directly mutate catalog, component, graph,
-instrument, project, compiler-plan, build, or evidence records.
-
+The renderer has no direct catalog, semantic-record, workspace, filesystem,
+shell, build, network-plugin, or hardware access. The Vite bridge exists only
+for local browser verification and routes through the same read-only Python
+allowlist against exact record set `schuss-record-set-000021@1`.

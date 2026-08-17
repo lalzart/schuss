@@ -1,11 +1,11 @@
-# Future Tauri shell boundary
+# Tauri shell boundary
 
-This directory is reserved for a later, separately authorized Tauri 2 shell.
-It currently contains no Rust source, Cargo metadata, Tauri configuration,
-commands, permissions, process bridge, packaging, or updater behavior.
+The native shell exposes one command: `dispatch_read_only_operation`. Rust
+validates the exact envelope, operation-specific request shape, size limit,
+allowlist, and expected result metadata before returning a canonical Schuss
+result. A persistent Python child loads the exact core context once.
 
-Any later transport must remain a capability-limited adapter over the existing
-versioned Schuss operations. Rust may own shell lifecycle, transport, and
-security policy, but it may not become a source of catalog, graph, project,
-compiler, build, or evidence semantics.
-
+Only `core:default` is granted to the main window. No general process API,
+filesystem, shell, HTTP plugin, project-write, build, device, or hardware
+permission is exposed to the renderer. Bundling and release packaging remain
+disabled.
