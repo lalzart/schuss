@@ -34,9 +34,9 @@ of one row does not authorize the next.
 | 21 | Versioned DMA-safe Gills OLED runtime and exact connected-device evidence | Complete; corrected level 6 |
 | 22 | Connected Gills control-panel diagnostic and evidence | Stopped; failed before level 6 |
 | 23 | CLI v2 and application-surface consolidation | Complete; shared capability surface and CLI v2 |
-| 24 | Complete catalog coverage and deterministic curation | Planned; depends on Task 023 |
-| 25 | Direct-compiler core-library tranche | Planned; depends on Task 024 selection |
-| 26 | Complete authoring operations and CLI workflow | Planned; depends on Tasks 023 and 025 |
+| 24 | Current-Ksoloti-first catalog structure and deterministic lineage | Complete; 685 current first-party candidates, frozen lineage coverage, and 60-family level-2 catalog |
+| 25 | Direct-compiler core-library tranche | Complete fail-closed partial tranche; five level-2 promotions pass, reverb and complete graph fail level 2, no build |
+| 26 | Complete authoring operations and CLI workflow | Complete; project-owned create/edit/history/revert and two-root reverb-free authored ELF reach local level 5 |
 | 27 | Application sessions, jobs, and diagnostics | Planned; depends on Task 026 |
 | 28 | Second catalog/compiler tranche and transparent compounds | Planned; depends on Tasks 024 and 025 |
 | Deferred UI | Object drawer and transparent graph canvas | Unnumbered; architecture authorized, implementation separately gated |
@@ -88,13 +88,15 @@ ADR 0014 selects Tasks 023-028 and the unnumbered UI-architecture milestone.
 The normative dependency, child-task, ownership, and parallel-work rules are
 in `APPLICATION_SPINE_PLAN.md`.
 
-Task 023 is accepted complete. Task 024 is the next numbered contract gate and
-is not active. The authorized design-only UI-architecture milestone is now
-eligible but not started; when separately started, it may run concurrently
-with Task 024. After Task 026, Task 027 and Task 028 may form two implementation
-lanes, with shared status, schemas, stable IDs, record sets, and publication
-integrated serially. The default ceiling is two implementation lanes plus one
-read-only or design lane.
+Tasks 023-026 are accepted complete. Task 025 preserves the exact eight-contract
+Task 024 packet but stops before lowering because reverb is unsupported. Task
+026 consumes the independently accepted reverb-free seven-node executable
+profile and completes project-owned authoring through deterministic local ARM
+compile/link level 5. The authorized design-only UI-architecture milestone is
+eligible but not started. Tasks 027 and 028 may now form two
+implementation lanes, with shared status, schemas, stable IDs, record sets,
+and publication integrated serially. The default ceiling remains two
+implementation lanes plus one read-only or design lane.
 
 A parent may declare children such as `023A`, `023B`, and `023C`. Those are
 exact parent-owned work packages, not aliases or independent roadmap entries;

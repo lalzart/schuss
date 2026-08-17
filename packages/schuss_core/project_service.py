@@ -22,6 +22,7 @@ from .control_plane import (
     _diagnostic,
     dispatch_operation,
     load_repository_context,
+    transact_graph_payload,
     with_compiler_schemas,
 )
 
@@ -31,19 +32,25 @@ from .control_plane import aggregate, component, core, device, record_set_rules,
 PROJECT_SCHEMA = "project-v0.schema.json"
 HEAD_SCHEMA = "workspace-head-v0.schema.json"
 WRITE_PLAN_SCHEMA = "project-write-plan-v0.schema.json"
+WRITE_PLAN_V1_SCHEMA = "project-write-plan-v1.schema.json"
 LOCK_SCHEMA = "workspace-lock-v0.schema.json"
 RECOVERY_SCHEMA = "workspace-recovery-v0.schema.json"
 REQUEST_SCHEMA = "operation-request-v3.schema.json"
 RESULT_SCHEMA = "operation-result-v3.schema.json"
+REQUEST_V8_SCHEMA = "operation-request-v8.schema.json"
+RESULT_V8_SCHEMA = "operation-result-v8.schema.json"
 
 TASK012A_SCHEMA_NAMES = {
     "project": PROJECT_SCHEMA,
     "workspace_head": HEAD_SCHEMA,
     "project_write_plan": WRITE_PLAN_SCHEMA,
+    "project_write_plan_v1": WRITE_PLAN_V1_SCHEMA,
     "workspace_lock": LOCK_SCHEMA,
     "workspace_recovery": RECOVERY_SCHEMA,
     "operation_request_v3": REQUEST_SCHEMA,
     "operation_result_v3": RESULT_SCHEMA,
+    "operation_request_v8": REQUEST_V8_SCHEMA,
+    "operation_result_v8": RESULT_V8_SCHEMA,
 }
 
 HEAD_LOCATOR = "schuss-project.json"
@@ -125,6 +132,22 @@ def _graph_reference(graph: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _instrument_reference(instrument: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "instrument_id": instrument["instrument_id"],
+        "revision": instrument["revision"],
+        "content_hash": instrument["content_hash"],
+    }
+
+
+def _build_request_reference(request: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "build_request_id": request["build_request_id"],
+        "revision": request["revision"],
+        "content_hash": request["content_hash"],
+    }
+
+
 def _member_key(member: dict[str, Any]) -> tuple[str, str, int, str]:
     return (
         member["record_kind"],
@@ -160,7 +183,7 @@ def _schema_value_bytes(value: dict[str, Any], schema: dict[str, Any]) -> bytes:
             "PROJECT_SCHEMA_INVALID",
             "; ".join(errors),
         )
-    if schema.get("$id") in {RECOVERY_SCHEMA, RESULT_SCHEMA}:
+    if schema.get("$id") in {RECOVERY_SCHEMA, RESULT_SCHEMA, RESULT_V8_SCHEMA}:
         canonical = copy.deepcopy(value)
     else:
         canonical = core.canonicalize_with_schema(value, schema, schema)
@@ -200,11 +223,13 @@ def _operation_result(
     status: str,
     value: dict[str, Any] | None,
     diagnostics: Iterable[dict[str, str]] = (),
+    *,
+    version: int = 3,
 ) -> dict[str, Any]:
     ordered = [copy.deepcopy(item) for item in diagnostics]
     ordered.sort(key=core.diagnostic_sort_key)
     return {
-        "schema_version": "schuss-operation-result-v3",
+        "schema_version": f"schuss-operation-result-v{version}",
         "canonical_profile": "schuss-canonical-json-v1",
         "operation": operation,
         "status": status,
@@ -333,6 +358,8 @@ class ProjectService:
         for locator, label in (
             ("project/revisions", "project-revisions"),
             ("records/dsp-graphs", "graph-records"),
+            ("records/instruments", "instrument-records"),
+            ("records/build-requests", "build-request-records"),
             ("assets", "assets"),
             (TMP_LOCATOR, "temporary-state"),
             (".schuss/recovery", "recovery-state"),
@@ -508,6 +535,12 @@ class ProjectService:
 
     def _graph_locator(self, graph_id: str, revision: int) -> str:
         return f"records/dsp-graphs/{graph_id}-r{revision:06d}.json"
+
+    def _instrument_locator(self, instrument_id: str, revision: int) -> str:
+        return f"records/instruments/{instrument_id}-r{revision:06d}.json"
+
+    def _build_request_locator(self, request_id: str, revision: int) -> str:
+        return f"records/build-requests/{request_id}-r{revision:06d}.json"
 
     def _read_schema_value(
         self, locator: str, schema: dict[str, Any]
@@ -849,6 +882,10 @@ class ProjectService:
                     "conformance-probe-result",
                     "conformance-probe-procedure",
                     "prerequisite-environment",
+                    "direct-operation-spec",
+                    "gills-panel-evidence",
+                    "gills-mapping-coverage",
+                    "gills-runtime-realization",
                 )
                 for record in base_loaded.records.get(kind, ())
             ],
@@ -858,8 +895,22 @@ class ProjectService:
             + list(device_summary.get("diagnostics", ()))
             + list(target_result.summary.get("diagnostics", ()))
         )
-        if diagnostics:
-            first = sorted(diagnostics, key=core.diagnostic_sort_key)[0]
+        inherited_diagnostics = {
+            core.canonical_json(item)
+            for summary in (
+                base_context.component_summary,
+                base_context.device_summary,
+                base_context.task007_summary,
+            )
+            for item in summary.get("diagnostics", ())
+        }
+        introduced_diagnostics = [
+            item
+            for item in diagnostics
+            if core.canonical_json(item) not in inherited_diagnostics
+        ]
+        if introduced_diagnostics:
+            first = sorted(introduced_diagnostics, key=core.diagnostic_sort_key)[0]
             raise ProjectError(
                 "PROJECT_SEMANTIC_CLOSURE_INVALID",
                 first["message"],
@@ -984,7 +1035,17 @@ class ProjectService:
             RECOVERY_LOCATOR, self.context.schemas["workspace_recovery"]
         )
         plan = recovery["write_plan"]
-        schema = self.context.schemas["project_write_plan"]
+        plan_schema_key = {
+            "project-write-plan-v0": "project_write_plan",
+            "project-write-plan-v1": "project_write_plan_v1",
+        }.get(plan.get("schema_version"))
+        if plan_schema_key is None or plan_schema_key not in self.context.schemas:
+            raise ProjectError(
+                "PROJECT_RECOVERY_AMBIGUOUS",
+                "pending recovery plan uses an unavailable schema version",
+                subject=RECOVERY_LOCATOR,
+            )
+        schema = self.context.schemas[plan_schema_key]
         errors = core.schema_errors(plan, schema, schema)
         if errors or plan.get("content_hash") != core.record_content_hash(plan, schema):
             raise ProjectError(
@@ -1320,6 +1381,791 @@ class ProjectService:
         _schema_value_bytes(plan, schema)
         return plan
 
+    @staticmethod
+    def _allocate_owned_id(
+        project_id: str,
+        record_kind: str,
+        prefix: str,
+        existing_ids: set[str],
+    ) -> str:
+        seed = hashlib.sha256(
+            f"task026-profile-v1:{project_id}:{record_kind}".encode("utf-8")
+        ).digest()
+        candidate = int.from_bytes(seed[:8], "big") % 999999 + 1
+        for _ in range(999999):
+            stable_id = f"{prefix}-{candidate:06d}"
+            if stable_id not in existing_ids:
+                return stable_id
+            candidate = candidate % 999999 + 1
+        raise ProjectError(
+            "PROJECT_ID_ALLOCATION_EXHAUSTED",
+            "no project-owned stable identity remains available",
+            subject=record_kind,
+        )
+
+    @staticmethod
+    def _owned_member(
+        record_kind: str,
+        stable_id: str,
+        record: dict[str, Any],
+        locator: str,
+        data: bytes,
+    ) -> dict[str, Any]:
+        return {
+            "record_kind": record_kind,
+            "stable_id": stable_id,
+            "revision": record["revision"],
+            "content_hash": record["content_hash"],
+            "schema_version": record["schema_version"],
+            "portable_locator": locator,
+            "byte_sha256": _sha256_bytes(data),
+            "parent_reference": {"status": "omitted"},
+        }
+
+    @staticmethod
+    def _owned_successor_member(
+        record_kind: str,
+        stable_id: str,
+        record: dict[str, Any],
+        locator: str,
+        data: bytes,
+        parent: dict[str, Any],
+    ) -> dict[str, Any]:
+        member = ProjectService._owned_member(
+            record_kind, stable_id, record, locator, data
+        )
+        member["parent_reference"] = {
+            "status": "included",
+            "record_kind": record_kind,
+            "stable_id": stable_id,
+            "revision": parent["revision"],
+            "content_hash": parent["content_hash"],
+        }
+        return member
+
+    def _build_multi_write_plan(
+        self,
+        loaded: LoadedProject,
+        immutable_values: list[tuple[str, bytes]],
+        manifest: dict[str, Any],
+        manifest_locator: str,
+        manifest_bytes: bytes,
+        head_bytes: bytes,
+    ) -> tuple[dict[str, Any], list[tuple[str, bytes]]]:
+        all_immutables = [*immutable_values, (manifest_locator, manifest_bytes)]
+        mutations = [
+            {
+                "ordinal": ordinal,
+                "kind": "create-immutable",
+                "portable_locator": locator,
+                "expected_old": {"status": "absent"},
+                "proposed_new": _new_byte_state(data),
+            }
+            for ordinal, (locator, data) in enumerate(all_immutables, 1)
+        ]
+        acceptance_ordinal = len(mutations) + 1
+        mutations.append(
+            {
+                "ordinal": acceptance_ordinal,
+                "kind": "replace-acceptance-marker",
+                "portable_locator": HEAD_LOCATOR,
+                "expected_old": _byte_state(loaded.head_bytes),
+                "proposed_new": _new_byte_state(head_bytes),
+            }
+        )
+        plan = {
+            "schema_version": "project-write-plan-v1",
+            "canonical_profile": "schuss-canonical-json-v1",
+            "content_hash": "sha256:" + "0" * 64,
+            "project_transition": {
+                "parent_reference": _project_reference(loaded.manifest),
+                "successor_reference": _project_reference(manifest),
+            },
+            "mutations": mutations,
+            "acceptance_boundary": {
+                "mutation_ordinal": acceptance_ordinal,
+                "portable_locator": HEAD_LOCATOR,
+                "meaning": "atomic-workspace-head-replacement",
+            },
+        }
+        schema = self.context.schemas["project_write_plan_v1"]
+        plan["content_hash"] = core.record_content_hash(plan, schema)
+        _schema_value_bytes(plan, schema)
+        return plan, all_immutables
+
+    def _publish_multi_write_plan(
+        self,
+        loaded: LoadedProject,
+        plan: dict[str, Any],
+        immutables: list[tuple[str, bytes]],
+        expected_manifest: dict[str, Any],
+        head_bytes: bytes,
+    ) -> LoadedProject:
+        recovery = {
+            "schema_version": "workspace-recovery-v0",
+            "write_plan": copy.deepcopy(plan),
+        }
+        recovery_bytes = _schema_value_bytes(
+            recovery, loaded.context.schemas["workspace_recovery"]
+        )
+        self._atomic_write(
+            self._safe_workspace_path(RECOVERY_LOCATOR),
+            recovery_bytes,
+            label="recovery",
+            replace_target=False,
+        )
+        for ordinal, (locator, data) in enumerate(immutables, 1):
+            self._atomic_write(
+                self._safe_workspace_path(locator),
+                data,
+                label=f"immutable-{ordinal}",
+                replace_target=False,
+            )
+        self._atomic_write(
+            self._safe_workspace_path(HEAD_LOCATOR),
+            head_bytes,
+            label="head",
+            replace_target=True,
+            expected_old=loaded.head_bytes,
+        )
+        successor = self.load(recover=False)
+        if _project_reference(successor.manifest) != _project_reference(
+            expected_manifest
+        ):
+            raise ProjectError(
+                "PROJECT_POST_WRITE_RELOAD_MISMATCH",
+                "accepted successor reload differs from the proposed project",
+            )
+        self._unlink(self._safe_workspace_path(RECOVERY_LOCATOR), "recovery")
+        return successor
+
+    def fork_profile(self, payload: dict[str, Any]) -> dict[str, Any]:
+        locked = False
+        completed = False
+        try:
+            self._acquire_lock()
+            locked = True
+            loaded = self.load(recover=False)
+            if payload["expected_project_reference"] != _project_reference(
+                loaded.manifest
+            ):
+                raise ProjectError(
+                    "PROJECT_REVISION_STALE",
+                    "profile fork expected a different accepted project revision",
+                    status="conflict",
+                    location="$.payload.expected_project_reference",
+                )
+            expected_selections = (
+                payload["template_graph_reference"],
+                [payload["template_instrument_reference"]],
+                [payload["template_build_request_reference"]],
+            )
+            actual_selections = (
+                loaded.manifest["primary_graph_reference"],
+                loaded.manifest["instrument_references"],
+                loaded.manifest["build_request_references"],
+            )
+            if (
+                loaded.manifest["revision"] != 1
+                or loaded.manifest["owned_members"]
+                or actual_selections != expected_selections
+            ):
+                raise ProjectError(
+                    "PROJECT_PROFILE_FORK_PRECONDITION_FAILED",
+                    "profile fork requires the untouched exact initialized template head",
+                    status="conflict",
+                )
+            template_graph = self._exact_match(
+                loaded.context.records["graphs"],
+                payload["template_graph_reference"],
+                "graph_id",
+            )
+            template_instrument = self._exact_match(
+                loaded.context.records["instruments"],
+                payload["template_instrument_reference"],
+                "instrument_id",
+            )
+            template_request = self._exact_match(
+                loaded.context.records["request"],
+                payload["template_build_request_reference"],
+                "build_request_id",
+            )
+            if None in (template_graph, template_instrument, template_request):
+                raise ProjectError(
+                    "PROJECT_PROFILE_TEMPLATE_UNRESOLVED",
+                    "one exact profile template record is absent",
+                    location="$.payload",
+                )
+            assert template_graph is not None
+            assert template_instrument is not None
+            assert template_request is not None
+            if (
+                template_instrument["graph_reference"]
+                != {"status": "resolved", **payload["template_graph_reference"]}
+                or template_request["graph_reference"]
+                != payload["template_graph_reference"]
+                or template_request["instrument_reference"]
+                != {"status": "included", **payload["template_instrument_reference"]}
+            ):
+                raise ProjectError(
+                    "PROJECT_PROFILE_TEMPLATE_INCOHERENT",
+                    "template graph, instrument, and request do not form one exact closure",
+                )
+
+            graph_id = self._allocate_owned_id(
+                loaded.manifest["project_id"],
+                "dsp-graph",
+                "schuss-graph",
+                {item["graph_id"] for item in loaded.context.records["graphs"]},
+            )
+            instrument_id = self._allocate_owned_id(
+                loaded.manifest["project_id"],
+                "instrument",
+                "schuss-instrument",
+                {
+                    item["instrument_id"]
+                    for item in loaded.context.records["instruments"]
+                },
+            )
+            request_id = self._allocate_owned_id(
+                loaded.manifest["project_id"],
+                "build-request",
+                "schuss-build-request",
+                {
+                    item["build_request_id"]
+                    for item in loaded.context.records["request"]
+                },
+            )
+
+            graph = copy.deepcopy(template_graph)
+            graph.update(
+                {
+                    "graph_id": graph_id,
+                    "revision": 1,
+                    "content_hash": "sha256:" + "0" * 64,
+                }
+            )
+            graph_schema = loaded.context.schemas["graph"]
+            graph["content_hash"] = core.record_content_hash(graph, graph_schema)
+            graph_bytes = _schema_value_bytes(graph, graph_schema)
+            graph_locator = self._graph_locator(graph_id, 1)
+
+            instrument = copy.deepcopy(template_instrument)
+            instrument.update(
+                {
+                    "instrument_id": instrument_id,
+                    "revision": 1,
+                    "content_hash": "sha256:" + "0" * 64,
+                }
+            )
+            instrument["graph_reference"] = {
+                "status": "resolved",
+                **_graph_reference(graph),
+            }
+            instrument_schema = loaded.context.schemas["instrument"]
+            instrument["content_hash"] = core.record_content_hash(
+                instrument, instrument_schema
+            )
+            instrument_bytes = _schema_value_bytes(instrument, instrument_schema)
+            instrument_locator = self._instrument_locator(instrument_id, 1)
+
+            request = copy.deepcopy(template_request)
+            request.update(
+                {
+                    "build_request_id": request_id,
+                    "revision": 1,
+                    "content_hash": "sha256:" + "0" * 64,
+                }
+            )
+            request["graph_reference"] = _graph_reference(graph)
+            request["instrument_reference"] = {
+                "status": "included",
+                **_instrument_reference(instrument),
+            }
+            request_schema = loaded.context.schemas["request"]
+            request["content_hash"] = core.record_content_hash(
+                request, request_schema
+            )
+            request_bytes = _schema_value_bytes(request, request_schema)
+            request_locator = self._build_request_locator(request_id, 1)
+
+            members = [
+                self._owned_member(
+                    "dsp-graph", graph_id, graph, graph_locator, graph_bytes
+                ),
+                self._owned_member(
+                    "instrument",
+                    instrument_id,
+                    instrument,
+                    instrument_locator,
+                    instrument_bytes,
+                ),
+                self._owned_member(
+                    "build-request",
+                    request_id,
+                    request,
+                    request_locator,
+                    request_bytes,
+                ),
+            ]
+            members.sort(key=core.canonical_json)
+            manifest = copy.deepcopy(loaded.manifest)
+            manifest["revision"] = 2
+            manifest["parent_reference"] = {
+                "status": "included",
+                **_project_reference(loaded.manifest),
+            }
+            manifest["owned_members"] = members
+            manifest["primary_graph_reference"] = _graph_reference(graph)
+            manifest["instrument_references"] = [
+                _instrument_reference(instrument)
+            ]
+            manifest["build_request_references"] = [
+                _build_request_reference(request)
+            ]
+            manifest["content_hash"] = "sha256:" + "0" * 64
+            project_schema = loaded.context.schemas["project"]
+            manifest["content_hash"] = core.record_content_hash(
+                manifest, project_schema
+            )
+            manifest_bytes = _schema_value_bytes(manifest, project_schema)
+            manifest_locator = self._project_manifest_locator(
+                manifest["project_id"], manifest["revision"]
+            )
+            head = {
+                "schema_version": "workspace-head-v0",
+                "canonical_profile": "schuss-canonical-json-v1",
+                "accepted_project_reference": _project_reference(manifest),
+                "project_manifest_locator": manifest_locator,
+                "project_manifest_byte_sha256": _sha256_bytes(manifest_bytes),
+            }
+            head_bytes = _schema_value_bytes(
+                head, loaded.context.schemas["workspace_head"]
+            )
+
+            base_context, base_loaded = self._load_base(
+                loaded.manifest["base_record_set"]
+            )
+            proposed_records = {
+                "dsp-graph": (graph,),
+                "instrument": (instrument,),
+                "build-request": (request,),
+            }
+            proposed_context, _ = self._augment_context(
+                base_context, proposed_records, base_loaded
+            )
+            self._validate_selected_references(manifest, proposed_context)
+
+            plan, immutables = self._build_multi_write_plan(
+                loaded,
+                [
+                    (graph_locator, graph_bytes),
+                    (instrument_locator, instrument_bytes),
+                    (request_locator, request_bytes),
+                ],
+                manifest,
+                manifest_locator,
+                manifest_bytes,
+                head_bytes,
+            )
+            successor = self._publish_multi_write_plan(
+                loaded, plan, immutables, manifest, head_bytes
+            )
+            completed = True
+            return {
+                "project": successor.manifest,
+                "graph": graph,
+                "instrument": instrument,
+                "build_request": request,
+                "validation": successor.validation,
+                "write_plan": plan,
+                "persistence_status": "written",
+                "acceptance_boundary": "workspace-head-replaced",
+            }
+        finally:
+            if locked:
+                try:
+                    self._release_lock()
+                except Exception:
+                    if completed:
+                        raise
+
+    def transact_profile(self, payload: dict[str, Any]) -> dict[str, Any]:
+        locked = False
+        completed = False
+        try:
+            self._acquire_lock()
+            locked = True
+            loaded = self.load(recover=False)
+            if payload["expected_project_reference"] != _project_reference(
+                loaded.manifest
+            ):
+                raise ProjectError(
+                    "PROJECT_REVISION_STALE",
+                    "profile transaction expected a different accepted project revision",
+                    status="conflict",
+                    location="$.payload.expected_project_reference",
+                )
+            if payload["graph_reference"] != loaded.manifest["primary_graph_reference"]:
+                raise ProjectError(
+                    "PROJECT_PRIMARY_GRAPH_STALE",
+                    "profile transaction base is not the accepted primary graph",
+                    status="conflict",
+                    location="$.payload.graph_reference",
+                )
+            if (
+                len(loaded.manifest["instrument_references"]) != 1
+                or len(loaded.manifest["build_request_references"]) != 1
+            ):
+                raise ProjectError(
+                    "PROJECT_PROFILE_SELECTION_INVALID",
+                    "profile transaction requires exactly one selected instrument and request",
+                )
+            graph = self._exact_match(
+                loaded.context.records["graphs"],
+                loaded.manifest["primary_graph_reference"],
+                "graph_id",
+            )
+            instrument = self._exact_match(
+                loaded.context.records["instruments"],
+                loaded.manifest["instrument_references"][0],
+                "instrument_id",
+            )
+            request = self._exact_match(
+                loaded.context.records["request"],
+                loaded.manifest["build_request_references"][0],
+                "build_request_id",
+            )
+            if None in (graph, instrument, request):
+                raise ProjectError(
+                    "PROJECT_PROFILE_SELECTION_UNRESOLVED",
+                    "selected profile graph, instrument, or request is unresolved",
+                )
+            assert graph is not None
+            assert instrument is not None
+            assert request is not None
+            selected_member_keys = {
+                _member_revision_key(item) for item in loaded.manifest["owned_members"]
+            }
+            expected_member_keys = {
+                ("dsp-graph", graph["graph_id"], graph["revision"]),
+                ("instrument", instrument["instrument_id"], instrument["revision"]),
+                ("build-request", request["build_request_id"], request["revision"]),
+            }
+            if not expected_member_keys <= selected_member_keys:
+                raise ProjectError(
+                    "PROJECT_PROFILE_SELECTION_NOT_OWNED",
+                    "profile transaction can only version the selected project-owned closure",
+                    status="conflict",
+                )
+            if (
+                instrument["graph_reference"]
+                != {"status": "resolved", **_graph_reference(graph)}
+                or request["graph_reference"] != _graph_reference(graph)
+                or request["instrument_reference"]
+                != {"status": "included", **_instrument_reference(instrument)}
+            ):
+                raise ProjectError(
+                    "PROJECT_PROFILE_SELECTION_INCOHERENT",
+                    "selected project-owned graph, instrument, and request do not form one closure",
+                )
+
+            graph_result = transact_graph_payload(
+                {
+                    "graph_reference": copy.deepcopy(payload["graph_reference"]),
+                    "base_content_hash": payload["base_content_hash"],
+                    "edits": copy.deepcopy(payload["edits"]),
+                },
+                loaded.context,
+            )
+            if graph_result["status"] != "success":
+                raise ProjectTransactionRejected(graph_result)
+            successor_graph = graph_result["value"]["proposed_graph"]
+            graph_schema = loaded.context.schemas["graph"]
+            graph_bytes = _schema_value_bytes(successor_graph, graph_schema)
+            graph_locator = self._graph_locator(
+                successor_graph["graph_id"], successor_graph["revision"]
+            )
+
+            successor_instrument = copy.deepcopy(instrument)
+            successor_instrument["revision"] += 1
+            successor_instrument["content_hash"] = "sha256:" + "0" * 64
+            successor_instrument["graph_reference"] = {
+                "status": "resolved",
+                **_graph_reference(successor_graph),
+            }
+            instrument_schema = loaded.context.schemas["instrument"]
+            successor_instrument["content_hash"] = core.record_content_hash(
+                successor_instrument, instrument_schema
+            )
+            instrument_bytes = _schema_value_bytes(
+                successor_instrument, instrument_schema
+            )
+            instrument_locator = self._instrument_locator(
+                successor_instrument["instrument_id"],
+                successor_instrument["revision"],
+            )
+
+            successor_request = copy.deepcopy(request)
+            successor_request["revision"] += 1
+            successor_request["content_hash"] = "sha256:" + "0" * 64
+            successor_request["graph_reference"] = _graph_reference(
+                successor_graph
+            )
+            successor_request["instrument_reference"] = {
+                "status": "included",
+                **_instrument_reference(successor_instrument),
+            }
+            request_schema = loaded.context.schemas["request"]
+            successor_request["content_hash"] = core.record_content_hash(
+                successor_request, request_schema
+            )
+            request_bytes = _schema_value_bytes(successor_request, request_schema)
+            request_locator = self._build_request_locator(
+                successor_request["build_request_id"], successor_request["revision"]
+            )
+
+            new_members = [
+                self._owned_successor_member(
+                    "dsp-graph",
+                    successor_graph["graph_id"],
+                    successor_graph,
+                    graph_locator,
+                    graph_bytes,
+                    graph,
+                ),
+                self._owned_successor_member(
+                    "instrument",
+                    successor_instrument["instrument_id"],
+                    successor_instrument,
+                    instrument_locator,
+                    instrument_bytes,
+                    instrument,
+                ),
+                self._owned_successor_member(
+                    "build-request",
+                    successor_request["build_request_id"],
+                    successor_request,
+                    request_locator,
+                    request_bytes,
+                    request,
+                ),
+            ]
+            manifest = copy.deepcopy(loaded.manifest)
+            manifest["revision"] += 1
+            manifest["parent_reference"] = {
+                "status": "included",
+                **_project_reference(loaded.manifest),
+            }
+            manifest["owned_members"].extend(new_members)
+            manifest["owned_members"].sort(key=core.canonical_json)
+            manifest["primary_graph_reference"] = _graph_reference(
+                successor_graph
+            )
+            manifest["instrument_references"] = [
+                _instrument_reference(successor_instrument)
+            ]
+            manifest["build_request_references"] = [
+                _build_request_reference(successor_request)
+            ]
+            manifest["content_hash"] = "sha256:" + "0" * 64
+            project_schema = loaded.context.schemas["project"]
+            manifest["content_hash"] = core.record_content_hash(
+                manifest, project_schema
+            )
+            manifest_bytes = _schema_value_bytes(manifest, project_schema)
+            manifest_locator = self._project_manifest_locator(
+                manifest["project_id"], manifest["revision"]
+            )
+            head = {
+                "schema_version": "workspace-head-v0",
+                "canonical_profile": "schuss-canonical-json-v1",
+                "accepted_project_reference": _project_reference(manifest),
+                "project_manifest_locator": manifest_locator,
+                "project_manifest_byte_sha256": _sha256_bytes(manifest_bytes),
+            }
+            head_bytes = _schema_value_bytes(
+                head, loaded.context.schemas["workspace_head"]
+            )
+
+            base_context, base_loaded = self._load_base(
+                loaded.manifest["base_record_set"]
+            )
+            proposed_records = {
+                "dsp-graph": (*loaded.project_records["dsp-graph"], successor_graph),
+                "instrument": (
+                    *loaded.project_records["instrument"],
+                    successor_instrument,
+                ),
+                "build-request": (
+                    *loaded.project_records["build-request"],
+                    successor_request,
+                ),
+            }
+            proposed_context, _ = self._augment_context(
+                base_context, proposed_records, base_loaded
+            )
+            self._validate_selected_references(manifest, proposed_context)
+
+            plan, immutables = self._build_multi_write_plan(
+                loaded,
+                [
+                    (graph_locator, graph_bytes),
+                    (instrument_locator, instrument_bytes),
+                    (request_locator, request_bytes),
+                ],
+                manifest,
+                manifest_locator,
+                manifest_bytes,
+                head_bytes,
+            )
+            successor = self._publish_multi_write_plan(
+                loaded, plan, immutables, manifest, head_bytes
+            )
+            completed = True
+            return {
+                "project": successor.manifest,
+                "graph": successor_graph,
+                "instrument": successor_instrument,
+                "build_request": successor_request,
+                "graph_transaction_result": graph_result,
+                "validation": successor.validation,
+                "write_plan": plan,
+                "persistence_status": "written",
+                "acceptance_boundary": "workspace-head-replaced",
+            }
+        finally:
+            if locked:
+                try:
+                    self._release_lock()
+                except Exception:
+                    if completed:
+                        raise
+
+    def history(self) -> dict[str, Any]:
+        loaded = self.load()
+        history, _, _ = self._load_project_history(loaded.head)
+        return {
+            "head_project_reference": _project_reference(loaded.manifest),
+            "revision_count": len(history),
+            "ancestry": [
+                {
+                    "project_reference": _project_reference(manifest),
+                    "parent_reference": copy.deepcopy(
+                        manifest["parent_reference"]
+                    ),
+                    "primary_graph_reference": copy.deepcopy(
+                        manifest["primary_graph_reference"]
+                    ),
+                    "instrument_references": copy.deepcopy(
+                        manifest["instrument_references"]
+                    ),
+                    "build_request_references": copy.deepcopy(
+                        manifest["build_request_references"]
+                    ),
+                    "owned_member_count": len(manifest["owned_members"]),
+                }
+                for manifest in history
+            ],
+            "persistence_status": "not-written",
+        }
+
+    def revert(self, payload: dict[str, Any]) -> dict[str, Any]:
+        locked = False
+        completed = False
+        try:
+            self._acquire_lock()
+            locked = True
+            loaded = self.load(recover=False)
+            if payload["expected_project_reference"] != _project_reference(
+                loaded.manifest
+            ):
+                raise ProjectError(
+                    "PROJECT_REVISION_STALE",
+                    "revert expected a different accepted project revision",
+                    status="conflict",
+                    location="$.payload.expected_project_reference",
+                )
+            history, _, _ = self._load_project_history(loaded.head)
+            target = next(
+                (
+                    manifest
+                    for manifest in history[:-1]
+                    if _project_reference(manifest)
+                    == payload["target_project_reference"]
+                ),
+                None,
+            )
+            if target is None:
+                raise ProjectError(
+                    "PROJECT_REVERT_TARGET_NOT_ANCESTOR",
+                    "revert target is not an exact prior project revision",
+                    status="conflict",
+                    location="$.payload.target_project_reference",
+                )
+            manifest = copy.deepcopy(loaded.manifest)
+            manifest["revision"] += 1
+            manifest["parent_reference"] = {
+                "status": "included",
+                **_project_reference(loaded.manifest),
+            }
+            for field in (
+                "primary_graph_reference",
+                "instrument_references",
+                "build_request_references",
+                "asset_references",
+            ):
+                manifest[field] = copy.deepcopy(target[field])
+            manifest["content_hash"] = "sha256:" + "0" * 64
+            self._validate_selected_references(manifest, loaded.context)
+            project_schema = loaded.context.schemas["project"]
+            manifest["content_hash"] = core.record_content_hash(
+                manifest, project_schema
+            )
+            manifest_bytes = _schema_value_bytes(manifest, project_schema)
+            manifest_locator = self._project_manifest_locator(
+                manifest["project_id"], manifest["revision"]
+            )
+            head = {
+                "schema_version": "workspace-head-v0",
+                "canonical_profile": "schuss-canonical-json-v1",
+                "accepted_project_reference": _project_reference(manifest),
+                "project_manifest_locator": manifest_locator,
+                "project_manifest_byte_sha256": _sha256_bytes(manifest_bytes),
+            }
+            head_bytes = _schema_value_bytes(
+                head, loaded.context.schemas["workspace_head"]
+            )
+            plan, immutables = self._build_multi_write_plan(
+                loaded,
+                [],
+                manifest,
+                manifest_locator,
+                manifest_bytes,
+                head_bytes,
+            )
+            successor = self._publish_multi_write_plan(
+                loaded, plan, immutables, manifest, head_bytes
+            )
+            completed = True
+            return {
+                "project": successor.manifest,
+                "reverted_to_project_reference": copy.deepcopy(
+                    payload["target_project_reference"]
+                ),
+                "validation": successor.validation,
+                "write_plan": plan,
+                "persistence_status": "written",
+                "acceptance_boundary": "workspace-head-replaced",
+            }
+        finally:
+            if locked:
+                try:
+                    self._release_lock()
+                except Exception:
+                    if completed:
+                        raise
+
     def commit_graph(self, payload: dict[str, Any]) -> dict[str, Any]:
         locked = False
         completed = False
@@ -1475,10 +2321,15 @@ class ProjectService:
 def dispatch_project_operation(
     request: dict[str, Any], service: ProjectService
 ) -> dict[str, Any]:
-    """Dispatch one additive v3 project request through the shared service."""
+    """Dispatch one additive project request through the shared service."""
 
     operation = request.get("operation") if isinstance(request, dict) else None
-    schema = service.context.schemas["operation_request_v3"]
+    request_version = request.get("schema_version") if isinstance(request, dict) else None
+    is_v8 = request_version == "schuss-operation-request-v8"
+    schema_key = "operation_request_v8" if is_v8 else "operation_request_v3"
+    result_schema_key = "operation_result_v8" if is_v8 else "operation_result_v3"
+    result_version = 8 if is_v8 else 3
+    schema = service.context.schemas[schema_key]
     errors: list[str] = []
     try:
         core.assert_portable_json_value(request)
@@ -1488,7 +2339,7 @@ def dispatch_project_operation(
         errors.append("$: operation request must be an object")
     else:
         errors.extend(core.schema_errors(request, schema, schema))
-    allowed = {
+    allowed_v3 = {
         "records.validate",
         "graph.inspect",
         "build.resolve",
@@ -1500,6 +2351,13 @@ def dispatch_project_operation(
         "project.validate",
         "project.graph.commit",
     }
+    allowed_v8 = {
+        "project.profile.fork",
+        "project.profile.transact",
+        "project.history.inspect",
+        "project.revert",
+    }
+    allowed = allowed_v8 if is_v8 else allowed_v3
     if errors:
         result = _operation_result(
             operation if operation in allowed else "invalid-request",
@@ -1514,11 +2372,20 @@ def dispatch_project_operation(
                 )
                 for message in sorted(set(errors))
             ],
+            version=result_version,
         )
-        _schema_value_bytes(result, service.context.schemas["operation_result_v3"])
+        _schema_value_bytes(result, service.context.schemas[result_schema_key])
         return result
     try:
-        if operation == "project.init":
+        if operation == "project.profile.fork":
+            value = service.fork_profile(request["payload"])
+        elif operation == "project.profile.transact":
+            value = service.transact_profile(request["payload"])
+        elif operation == "project.history.inspect":
+            value = service.history()
+        elif operation == "project.revert":
+            value = service.revert(request["payload"])
+        elif operation == "project.init":
             value = service.init(request["payload"])
         elif operation == "project.inspect":
             value = service.inspect()
@@ -1526,7 +2393,7 @@ def dispatch_project_operation(
             value = service.validate()
         elif operation == "project.graph.commit":
             value = service.commit_graph(request["payload"])
-        else:
+        elif not is_v8:
             loaded = service.load()
             downgraded = copy.deepcopy(request)
             if operation in {"catalog.search", "catalog.inspect"}:
@@ -1539,7 +2406,14 @@ def dispatch_project_operation(
                 result, loaded.context.schemas["operation_result_v3"]
             )
             return result
-        result = _operation_result(operation, "success", value)
+        else:
+            raise ProjectError(
+                "OPERATION_REQUEST_INVALID",
+                "unsupported project operation version",
+            )
+        result = _operation_result(
+            operation, "success", value, version=result_version
+        )
     except ProjectTransactionRejected as exc:
         graph_result = exc.result
         result = _operation_result(
@@ -1550,6 +2424,7 @@ def dispatch_project_operation(
                 "persistence_status": "not-written",
             },
             graph_result["diagnostics"],
+            version=result_version,
         )
     except ProjectError as exc:
         result = _operation_result(
@@ -1564,6 +2439,7 @@ def dispatch_project_operation(
                     str(exc),
                 )
             ],
+            version=result_version,
         )
-    _schema_value_bytes(result, service.context.schemas["operation_result_v3"])
+    _schema_value_bytes(result, service.context.schemas[result_schema_key])
     return result

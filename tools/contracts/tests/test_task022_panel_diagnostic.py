@@ -119,7 +119,7 @@ class Task022PanelDiagnosticTest(unittest.TestCase):
                     "execute",
                     "schuss-build-request-000002@5",
                     "--handler",
-                    "schuss-build-handler-000004@1",
+                    "schuss-build-handler-999999@1",
                     "--output-root",
                     str(Path(raw) / "must-not-exist"),
                     "--execute",

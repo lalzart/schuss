@@ -483,9 +483,9 @@ class CliContractHardeningTest(unittest.TestCase):
             "fish": "71c0ad6df74fe040824f423f8292cdda2ca77fa34ccc8616df8f52e15fd0f040",
         }
         project_hashes = {
-            "bash": "f8c907c42387842d2beac1682f70d6de5a867e8e6537e7e768e90a10851795c2",
-            "zsh": "5435f7e059f2693a596af4cf0afaab5f9bd2050d33d27033c9923c4121b2639f",
-            "fish": "6b8bfec5d4f1f5e90b5b10892c1c7d01f48114b297192ba05da5946716f70e81",
+            "bash": "a913b555368ed8373f759fe79661b0f4c95f32c86fceccf0b822e3e7376f2795",
+            "zsh": "740b48ca76c79b42bfada4bbc1be5e912e875d6cb4e12438128305f06f9211a3",
+            "fish": "7166b109a88c03eb121d3ce1441f992f7907d71f368c97f0ce5a168860c7f64c",
         }
         build_hashes = {
             "bash": "fc7febb26170a49705d7542cac1ad6f9e091a96aca1c8e80f2f1a070b0d96ef0",

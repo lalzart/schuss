@@ -57,6 +57,16 @@ TASK014_SCHEMA_NAMES = {
     "operation_result_v5": "operation-result-v5.schema.json",
 }
 
+TASK026A_SCHEMA_NAMES = {
+    "build_handler_descriptor_v1": "build-handler-descriptor-v1.schema.json",
+}
+
+TASK026B_SCHEMA_NAMES = {
+    "application_capability_description_v1": "application-capability-description-v1.schema.json",
+    "operation_request_v8": "operation-request-v8.schema.json",
+    "operation_result_v8": "operation-result-v8.schema.json",
+}
+
 TASK015_SCHEMA_NAMES = {
     "normalized_dsp_module": "normalized-dsp-module-v0.schema.json",
     "direct_frontend_result": "direct-frontend-result-v0.schema.json",
@@ -94,6 +104,7 @@ DOMAIN_GROUPS = (
     "mapping_coverage",
     "runtime_realizations",
     "direct_operation_specs",
+    "selection_packets",
     *tuple(target.SCHEMA_SPECS),
 )
 
@@ -164,9 +175,16 @@ def load_repository_context(
     catalog_records = _stable_records(selected.records.get("catalog-corpus", ()))
     catalog_selectors = _stable_records(selected.records.get("catalog-selection", ()))
     if catalog_selectors:
-        if len(catalog_selectors) != 1:
-            raise ValueError("selected record set must contain exactly one catalog selector")
-        reference = catalog_selectors[0]["corpus_reference"]
+        selector_ids = {item["catalog_selection_id"] for item in catalog_selectors}
+        if len(selector_ids) != 1:
+            raise ValueError("selected record set contains competing catalog selectors")
+        selected_revision = max(item["revision"] for item in catalog_selectors)
+        current_selectors = [
+            item for item in catalog_selectors if item["revision"] == selected_revision
+        ]
+        if len(current_selectors) != 1:
+            raise ValueError("selected record set has an ambiguous catalog selector revision")
+        reference = current_selectors[0]["corpus_reference"]
         matches = [
             record
             for record in catalog_records
@@ -212,6 +230,7 @@ def load_repository_context(
         "panel_evidence": _stable_records(selected.records.get("gills-panel-evidence", ())),
         "mapping_coverage": _stable_records(selected.records.get("gills-mapping-coverage", ())),
         "runtime_realizations": _stable_records(selected.records.get("gills-runtime-realization", ())),
+        "selection_packets": _stable_records(selected.records.get("core-selection-packet", ())),
     }
     target_records = {
         kind: list(selected.records.get(kind, ()))
@@ -253,6 +272,20 @@ def load_repository_context(
         if version in selected.schemas
     }
     schemas["binding_versions"] = binding_versions
+    direct_operation_spec_versions = {
+        version: selected.schemas[version]
+        for version in ("direct-operation-spec-v0", "direct-operation-spec-v1", "direct-operation-spec-v2")
+        if version in selected.schemas
+    }
+    if direct_operation_spec_versions:
+        schemas["direct_operation_spec_versions"] = direct_operation_spec_versions
+    selection_packet_versions = {
+        version: selected.schemas[version]
+        for version in ("core-selection-packet-v0", "task025-selection-packet-v0")
+        if version in selected.schemas
+    }
+    if selection_packet_versions:
+        schemas["selection_packet_versions"] = selection_packet_versions
     for version, name in (
         ("operation-request-v2", "operation_request_v2"),
         ("operation-result-v2", "operation_result_v2"),
@@ -266,10 +299,17 @@ def load_repository_context(
         if catalog_schema_version not in selected.schemas:
             raise ValueError("selected catalog corpus schema is absent")
         schemas["catalog_corpus"] = selected.schemas[catalog_schema_version]
-        if catalog_schema_version == "catalog-corpus-v2":
-            if "catalog-projection-v2" not in selected.schemas:
-                raise ValueError("selected catalog corpus v2 requires projection schema v2")
-            schemas["catalog_projection"] = selected.schemas["catalog-projection-v2"]
+        projection_versions = {
+            "catalog-corpus-v2": "catalog-projection-v2",
+            "catalog-corpus-v3": "catalog-projection-v3",
+        }
+        projection_version = projection_versions.get(catalog_schema_version)
+        if projection_version is not None:
+            if projection_version not in selected.schemas:
+                raise ValueError(
+                    f"selected {catalog_schema_version} requires {projection_version}"
+                )
+            schemas["catalog_projection"] = selected.schemas[projection_version]
     for key, filename in TASK013_SCHEMA_NAMES.items():
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
@@ -294,6 +334,18 @@ def load_repository_context(
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
+    for key, filename in TASK026A_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    for key, filename in TASK026B_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    if "application_capability_description_v1" in schemas:
+        schemas["application_capability_description"] = schemas[
+            "application_capability_description_v1"
+        ]
 
     overlay = core.load_json(overlay_path)
     observations = component._observations(snapshot_root)
@@ -513,6 +565,7 @@ def canonical_result_bytes(
         "schuss-operation-result-v5": "operation_result_v5",
         "schuss-operation-result-v6": "operation_result_v6",
         "schuss-operation-result-v7": "operation_result_v7",
+        "schuss-operation-result-v8": "operation_result_v8",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -1270,6 +1323,25 @@ def _apply_edit(graph: dict[str, Any], edit: dict[str, Any]) -> None:
             values[values.index(matches[0])] = replacement
         else:
             values.append(replacement)
+    elif kind == "set-public-parameter-default":
+        parameter = _find_unique(
+            graph["public_parameters"], "facet_id", edit["facet_id"]
+        )
+        parameter["default"] = edit["value"]
+    elif kind == "set-parameter-binding-point":
+        binding = _find_unique(
+            graph["parameter_bindings"], "binding_id", edit["binding_id"]
+        )
+        points = binding["transform"]["points"]
+        index = edit["point_index"]
+        if index >= len(points):
+            raise _TransactionEditError(
+                f"binding point index {index} is outside the exact point sequence"
+            )
+        points[index] = {
+            "source": edit["source"],
+            "destination": edit["destination"],
+        }
     else:
         raise _TransactionEditError(f"unsupported graph edit {kind!r}")
 
@@ -1409,6 +1481,14 @@ def _graph_transact(payload: dict[str, Any], context: OperationContext) -> dict[
     )
 
 
+def transact_graph_payload(
+    payload: dict[str, Any], context: OperationContext
+) -> dict[str, Any]:
+    """Apply an already schema-validated shared graph transaction payload."""
+
+    return _graph_transact(payload, context)
+
+
 def dispatch_operation(
     request: dict[str, Any],
     context: OperationContext,
@@ -1417,6 +1497,16 @@ def dispatch_operation(
     execution_service: execution.ExecutionService | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v8"
+    ):
+        if project_service is None:
+            raise ValueError("v8 project operations require an explicit project service")
+        from .project_service import dispatch_project_operation
+
+        return dispatch_project_operation(request, project_service)
 
     if (
         isinstance(request, dict)

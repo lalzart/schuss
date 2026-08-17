@@ -31,19 +31,22 @@ class BackboneGovernanceTest(unittest.TestCase):
     def test_live_repository_is_valid(self):
         summary = governance.validate_documents(self.documents, self.task_filenames)
         self.assertEqual("valid", summary["status"])
-        self.assertEqual("backbone-governance-summary-v11", summary["schema_version"])
+        self.assertEqual("backbone-governance-summary-v15", summary["schema_version"])
         self.assertEqual([], summary["diagnostics"])
         self.assertEqual(
             ["ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014"],
             summary["authoritative_decisions"],
         )
-        self.assertEqual("none", summary["active_product_task"])
+        self.assertEqual(
+            "none-task026-complete-next-task-requires-contract",
+            summary["active_product_task"],
+        )
         self.assertEqual(
             "022-failed-diagnostic-promotion-stopped",
             summary["active_evidence_task"],
         )
         self.assertEqual(
-            "task024-contract-creation-and-acceptance-pending",
+            "task026-complete-level-5-reverb-unsupported",
             summary["promotion_gate"],
         )
         self.assertEqual(
@@ -54,10 +57,11 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["active_task_sequence"],
         )
         self.assertEqual(
-            "024-contract-not-created", summary["next_planned_task"]
+            "027-or-028-contract-required",
+            summary["next_planned_task"],
         )
         self.assertEqual(
-            ["024", "025", "026", "027", "028"],
+            ["027", "028"],
             summary["planned_task_sequence"],
         )
         self.assertEqual("complete-mapped-local-level-5", summary["task_statuses"]["018"])
@@ -72,6 +76,18 @@ class BackboneGovernanceTest(unittest.TestCase):
         self.assertEqual(
             "complete-application-surface-cli-v2",
             summary["task_statuses"]["023"],
+        )
+        self.assertEqual(
+            "complete-current-ksoloti-catalog-lineage-level-2",
+            summary["task_statuses"]["024"],
+        )
+        self.assertEqual(
+            "complete-fail-closed-partial-level-2",
+            summary["task_statuses"]["025"],
+        )
+        self.assertEqual(
+            "complete-reverb-free-authoring-level-5",
+            summary["task_statuses"]["026"],
         )
         self.assertEqual(
             "unnumbered-architecture-eligible-not-started-implementation-gated",

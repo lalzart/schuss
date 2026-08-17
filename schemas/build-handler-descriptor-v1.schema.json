@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "build-handler-descriptor-v1.schema.json",
+  "title": "Schuss exact semantic-profile build handler descriptor v1",
+  "type": "object",
+  "required": [
+    "schema_version", "canonical_profile", "build_handler_id", "revision",
+    "content_hash", "backend_reference", "supported_semantic_profile",
+    "execution_policy", "adapter_kind", "mid_handler_cancellation"
+  ],
+  "properties": {
+    "schema_version": {"const": "build-handler-descriptor-v1"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "build_handler_id": {"type": "string", "pattern": "^schuss-build-handler-[0-9]{6}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "backend_reference": {"$ref": "#/$defs/backendReference"},
+    "supported_semantic_profile": {
+      "type": "object",
+      "required": ["profile_id", "version", "content_hash"],
+      "properties": {
+        "profile_id": {"type": "string", "pattern": "^schuss-semantic-profile-[0-9]{6}$"},
+        "version": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "execution_policy": {"const": "exact-semantic-profile"},
+    "adapter_kind": {"const": "direct"},
+    "mid_handler_cancellation": {"type": "boolean"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "backendReference": {
+      "type": "object",
+      "required": ["backend_id", "revision", "content_hash"],
+      "properties": {
+        "backend_id": {"type": "string", "pattern": "^schuss-backend-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

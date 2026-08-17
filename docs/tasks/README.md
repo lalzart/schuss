@@ -17,14 +17,24 @@ contracts pending their normal archival step:
 - `023-cli-v2-and-application-surface-consolidation.md` is the complete parent
   contract accepted and completed on 2026-08-16. Its declared children `023A`,
   `023B`, and `023C` are integrated under the parent result.
+- `024-complete-catalog-coverage-and-deterministic-curation.md` is the complete
+  current-Ksoloti-first catalog and lineage contract. It indexes 685 pinned
+  first-party candidates, retains all 3,602 frozen observations as lineage and
+  gap evidence, records exactly 20 reviewed families and 29 variants, and
+  freezes the exact eight-contract Task 025 selection packet.
+- `025-direct-compiler-core-library-tranche.md` is the complete fail-closed
+  compiler-semantic contract. It records five passed level-2 promotions, one
+  failed reverb claim, seven selected graph nodes, and no lowering or build.
+- `026-complete-authoring-operations-and-cli-workflow.md` is the completed
+  reverb-free authoring contract. Its two children establish the exact
+  executable profile and the project-owned create/edit/history/revert/build
+  workflow through deterministic local level 5.
 
-No new implementation task is active. ADR 0014 and
-`../APPLICATION_SPINE_PLAN.md` accept Tasks 023-028 as the next planned
-sequence. Task 024 is the next contract gate but is not active. The completed
-Task 023 children are not independent roadmap tasks. Tasks 019 and 020 remain
-deferred. UI architecture is authorized and now eligible as an unnumbered
-planning milestone, but has not started; UI implementation remains separately
-gated.
+Tasks 023-026 are complete; no numbered implementation task is active. ADR
+0014 and `../APPLICATION_SPINE_PLAN.md` retain Tasks 027-028 as the next
+planned sequence. Tasks 019 and 020 remain deferred. UI
+architecture is authorized and eligible as an unnumbered planning milestone,
+but has not started; UI implementation remains separately gated.
 
 Completed task detail is indexed in `../HISTORY.md` and recoverable byte for
 byte from Git. Accepted architectural choices must move into ADRs, while exact

@@ -35,9 +35,19 @@ now accepts the [application-spine plan](docs/APPLICATION_SPINE_PLAN.md). The
 [Task 023 contract](docs/tasks/023-cli-v2-and-application-surface-consolidation.md)
 is accepted and complete: one client-neutral capability description, one
 coherent CLI v2 grammar, one exact application record set, and a read-only
-cross-service smoke path now form the application boundary. Task 024 is the
-next contract gate. UI architecture is eligible as a separate unnumbered
-planning lane but has not started; UI implementation remains separately gated.
+cross-service smoke path now form the application boundary. The
+[Task 024 contract](docs/tasks/024-complete-catalog-coverage-and-deterministic-curation.md)
+is also complete: all 3,602 frozen observations have deterministic factual
+lineage dispositions, the current pinned first-party Ksoloti corpus contains
+666 normal-definition cohorts plus 19 compounds, the reviewed projection
+contains 60 families, and one exact eight-contract packet gates Task 025. Task
+025 is complete as a fail-closed partial semantic tranche: five promotions
+pass level 2, but the selected reverb allocation is inconsistent and the
+complete graph fails before lowering. Task 026 is also complete: a separately
+accepted reverb-free seven-node profile now supports project-owned
+create/edit/history/revert and deterministic local ARM builds through level 5.
+UI architecture is eligible as a separate unnumbered planning lane but has not
+started; UI implementation remains separately gated.
 
 The reviewed Task 017 core remains structurally useful but not yet generally
 executable. Its two full-panel successors retain stable unsupported
@@ -56,6 +66,16 @@ and audible proof also remain `not-run` and require new authorization.
   lettered children, dependencies, and safe parallel lanes.
 - [Task 023 contract](docs/tasks/023-cli-v2-and-application-surface-consolidation.md):
   the completed CLI v2/application-surface boundary.
+- [Task 024 contract](docs/tasks/024-complete-catalog-coverage-and-deterministic-curation.md):
+  current-Ksoloti-first candidate structure, frozen lineage coverage, 20
+  reviewed families with complete overload cohorts, and the exact Task 025
+  selection packet.
+- [Task 025 contract](docs/tasks/025-direct-compiler-core-library-tranche.md):
+  complete fail-closed semantic tranche with five passed promotions and one
+  failed reverb boundary.
+- [Task 026 contract](docs/tasks/026-complete-authoring-operations-and-cli-workflow.md):
+  completed client-neutral empty-workspace-to-project-owned-build workflow over
+  the exact reverb-free executable profile.
 - [Decision log](docs/decisions/README.md): accepted and superseded choices.
 - [Development history](docs/HISTORY.md): concise completed-work index and Git
   retrieval instructions.
@@ -69,7 +89,8 @@ and compiler-front-half documents under `docs/`.
 `bin/schuss` is the product and machine-operation boundary. CLI v2 visibly
 exposes validation, application capabilities, catalog, project, graph, Gills,
 build, completion, and canonical-operation routes. Non-project commands use
-exact record set `schuss-record-set-000015@1` by default. Historical CLI
+exact application record set `schuss-record-set-000015@1` by default; the
+Task 024 catalog successor is `schuss-record-set-000016@1`. Historical CLI
 goldens remain retained separately rather than being rewritten.
 
 Representative read-only commands are:
@@ -102,6 +123,13 @@ python3 tools/contracts/validate_task022_contract.py
 python3 tools/contracts/validate_task023_contract.py
 python3 tools/contracts/generate_task023_records.py --check
 python3 tools/contracts/validate_task023.py
+python3 tools/contracts/validate_task024_contract.py
+python3 tools/contracts/generate_task024_records.py --check
+python3 tools/contracts/validate_task024.py
+python3 tools/contracts/validate_task025_contract.py
+python3 tools/contracts/generate_task025_records.py --check
+python3 tools/contracts/generate_task025_evidence.py --check
+python3 tools/contracts/validate_task025.py
 python3 tools/contracts/validate_task022.py
 ```
 

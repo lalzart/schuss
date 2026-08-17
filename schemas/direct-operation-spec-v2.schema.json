@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "direct-operation-spec-v2.schema.json",
+  "title": "Schuss exact Task 026A operation-application specification v2",
+  "type": "object",
+  "required": [
+    "schema_version", "canonical_profile", "direct_operation_spec_id",
+    "revision", "content_hash", "opcode", "compatibility_mode",
+    "contract_reference", "source_binding_reference", "source_authority",
+    "runtime_dependencies", "numeric_semantics", "state_semantics",
+    "schedule_semantics", "golden_vector_set"
+  ],
+  "properties": {
+    "schema_version": {"const": "direct-operation-spec-v2"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "direct_operation_spec_id": {"const": "schuss-direct-operation-spec-000014"},
+    "revision": {"const": 1},
+    "content_hash": {"$ref": "#/$defs/contentHash"},
+    "opcode": {"const": "linear-mix-current-block-q27"},
+    "compatibility_mode": {"const": "legacy-equivalent-task026a-v1"},
+    "contract_reference": {"$ref": "#/$defs/contractReference"},
+    "source_binding_reference": {"$ref": "#/$defs/implementationReference"},
+    "source_authority": {"type": "array", "x-schuss-array-kind": "set", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceAuthority"}},
+    "runtime_dependencies": {"type": "array", "x-schuss-array-kind": "set", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "numeric_semantics": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "state_semantics": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "schedule_semantics": {"type": "array", "x-schuss-array-kind": "sequence", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "golden_vector_set": {
+      "type": "object",
+      "required": ["schema_version", "portable_path", "section", "byte_sha256"],
+      "properties": {
+        "schema_version": {"const": "task026a-semantic-goldens-v1"},
+        "portable_path": {"const": "evidence/task026a-executable-profile-v1/semantic-goldens.json"},
+        "section": {"const": "operations.linear-mix-current-block-q27"},
+        "byte_sha256": {"$ref": "#/$defs/rawSha256"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "rawSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "contractReference": {"type": "object", "required": ["component_contract_id", "revision", "content_hash"], "properties": {"component_contract_id": {"type": "string", "pattern": "^schuss-component-contract-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "implementationReference": {"type": "object", "required": ["implementation_id", "revision", "content_hash"], "properties": {"implementation_id": {"type": "string", "pattern": "^schuss-implementation-[0-9]{6}$"}, "revision": {"type": "integer", "minimum": 1}, "content_hash": {"$ref": "#/$defs/contentHash"}}, "additionalProperties": false},
+    "sourceAuthority": {"type": "object", "required": ["source_id", "commit", "portable_path", "byte_sha256", "license_declaration"], "properties": {"source_id": {"enum": ["axoloti-factory", "axoloti-contrib", "patcher", "schuss"]}, "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "portable_path": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._ -]*(?:/[A-Za-z0-9][A-Za-z0-9._ -]*)*$"}, "byte_sha256": {"$ref": "#/$defs/rawSha256"}, "license_declaration": {"type": "string", "minLength": 1}}, "additionalProperties": false}
+  }
+}

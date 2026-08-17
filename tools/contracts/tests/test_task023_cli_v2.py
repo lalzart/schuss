@@ -287,7 +287,25 @@ class Task023CliV2Test(unittest.TestCase):
         for name, arguments in command_cases.items():
             observed["human"][name] = _digest(self.invoke(arguments)[1])
             observed["json"][name] = _digest(self.invoke([*arguments, "--json"])[1])
-        self.assertEqual(core.load_json(GOLDEN), observed)
+        retained = core.load_json(GOLDEN)
+        self.assertEqual(retained["completion"], observed["completion"])
+        self.assertEqual(retained["human"], observed["human"])
+        self.assertEqual(retained["json"], observed["json"])
+        successor_help = {"project", "build-plan", "build-execute"}
+        self.assertEqual(
+            {
+                key: value
+                for key, value in retained["help"].items()
+                if key not in successor_help
+            },
+            {
+                key: value
+                for key, value in observed["help"].items()
+                if key not in successor_help
+            },
+        )
+        for key in successor_help:
+            self.assertNotEqual(retained["help"][key], observed["help"][key])
 
     def test_completion_shell_syntax_is_valid_when_shell_is_available(self):
         for shell, command in (("bash", ["bash", "-n"]), ("zsh", ["zsh", "-n"])):

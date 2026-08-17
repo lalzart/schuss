@@ -120,6 +120,70 @@ def project_graph_commit_request(
     }
 
 
+def project_profile_fork_request(
+    expected_project_reference: dict[str, Any],
+    template_graph_reference: dict[str, Any],
+    template_instrument_reference: dict[str, Any],
+    template_build_request_reference: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "schema_version": "schuss-operation-request-v8",
+        "canonical_profile": "schuss-canonical-json-v1",
+        "operation": "project.profile.fork",
+        "payload": {
+            "expected_project_reference": expected_project_reference,
+            "template_graph_reference": template_graph_reference,
+            "template_instrument_reference": template_instrument_reference,
+            "template_build_request_reference": template_build_request_reference,
+            "write_intent": "explicit",
+        },
+    }
+
+
+def project_profile_transact_request(
+    expected_project_reference: dict[str, Any],
+    graph_reference: dict[str, Any],
+    edits: list[Any],
+) -> dict[str, Any]:
+    return {
+        "schema_version": "schuss-operation-request-v8",
+        "canonical_profile": "schuss-canonical-json-v1",
+        "operation": "project.profile.transact",
+        "payload": {
+            "expected_project_reference": expected_project_reference,
+            "graph_reference": graph_reference,
+            "base_content_hash": graph_reference["content_hash"],
+            "edits": edits,
+            "write_intent": "explicit",
+        },
+    }
+
+
+def project_history_request() -> dict[str, Any]:
+    return {
+        "schema_version": "schuss-operation-request-v8",
+        "canonical_profile": "schuss-canonical-json-v1",
+        "operation": "project.history.inspect",
+        "payload": {"scope": "immutable-ancestry"},
+    }
+
+
+def project_revert_request(
+    expected_project_reference: dict[str, Any],
+    target_project_reference: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "schema_version": "schuss-operation-request-v8",
+        "canonical_profile": "schuss-canonical-json-v1",
+        "operation": "project.revert",
+        "payload": {
+            "expected_project_reference": expected_project_reference,
+            "target_project_reference": target_project_reference,
+            "write_intent": "explicit",
+        },
+    }
+
+
 def _reference_text(reference: dict[str, Any]) -> str:
     for field in (
         "project_id",
@@ -185,6 +249,13 @@ def render_project_result(result: dict[str, Any]) -> bytes:
                 "graph_transaction_status: "
                 + value["graph_transaction_result"]["status"]
             )
+        if "head_project_reference" in value:
+            lines.append(
+                "head_project: " + _reference_text(value["head_project_reference"])
+            )
+            lines.append(f"revision_count: {value['revision_count']}")
+            lines.append("ancestry:")
+            _append_tree(lines, value["ancestry"], "  ")
     lines.append("diagnostics:")
     if not result["diagnostics"]:
         lines.append("  none")
@@ -205,11 +276,14 @@ _schuss_project_complete() {
   if [[ ${COMP_CWORD} -eq 1 ]]; then
     choices="project"
   elif [[ ${COMP_CWORD} -eq 2 ]]; then
-    choices="init inspect validate transact op completion --help"
+    choices="create edit init inspect validate history revert transact op completion --help"
   else
     case "${COMP_WORDS[2]}" in
+      create) choices="--project --project-id --record-set --json --help" ;;
+      edit) choices="--project --expected-project --project-content-hash --graph-content-hash --edits --write --json --help" ;;
       init) choices="--project --project-id --record-set --graph --instrument --build-request --json --help" ;;
-      inspect|validate) choices="--project --json --help" ;;
+      inspect|validate|history) choices="--project --json --help" ;;
+      revert) choices="--project --expected-project --project-content-hash --target-project --target-content-hash --write --json --help" ;;
       transact) choices="--project --expected-project --project-content-hash --graph-content-hash --edits --write --json --help" ;;
       op) choices="--project --request --json --help" ;;
       completion) choices="bash zsh fish --help" ;;
@@ -224,7 +298,7 @@ PROJECT_ZSH_COMPLETION = """#compdef schuss
 # Schuss Task 012A project completion for Zsh
 _schuss_project() {
   local -a project_commands shells
-  project_commands=(init inspect validate transact op completion)
+  project_commands=(create edit init inspect validate history revert transact op completion)
   shells=(bash zsh fish)
   if (( CURRENT == 2 )); then
     _values 'command' project
@@ -232,8 +306,11 @@ _schuss_project() {
     _describe 'project command' project_commands
   else
     case ${words[3]} in
+      create) _values 'option' --project --project-id --record-set --json --help ;;
+      edit) _values 'option' --project --expected-project --project-content-hash --graph-content-hash --edits --write --json --help ;;
       init) _values 'option' --project --project-id --record-set --graph --instrument --build-request --json --help ;;
-      inspect|validate) _values 'option' --project --json --help ;;
+      inspect|validate|history) _values 'option' --project --json --help ;;
+      revert) _values 'option' --project --expected-project --project-content-hash --target-project --target-content-hash --write --json --help ;;
       transact) _values 'option' --project --expected-project --project-content-hash --graph-content-hash --edits --write --json --help ;;
       op) _values 'option' --project --request --json --help ;;
       completion) _describe 'shell' shells ;;
@@ -246,10 +323,10 @@ _schuss_project "$@"
 PROJECT_FISH_COMPLETION = """# Schuss Task 012A project completion for Fish
 complete -c schuss -f
 complete -c schuss -n '__fish_use_subcommand' -a project
-complete -c schuss -n '__fish_seen_subcommand_from project' -a 'init inspect validate transact op completion'
-complete -c schuss -n '__fish_seen_subcommand_from init inspect validate transact op' -l project -r
-complete -c schuss -n '__fish_seen_subcommand_from init' -l project-id -r
-complete -c schuss -n '__fish_seen_subcommand_from init' -l record-set -r
+complete -c schuss -n '__fish_seen_subcommand_from project' -a 'create edit init inspect validate history revert transact op completion'
+complete -c schuss -n '__fish_seen_subcommand_from create edit init inspect validate history revert transact op' -l project -r
+complete -c schuss -n '__fish_seen_subcommand_from create init' -l project-id -r
+complete -c schuss -n '__fish_seen_subcommand_from create init' -l record-set -r
 complete -c schuss -n '__fish_seen_subcommand_from init' -l graph -r
 complete -c schuss -n '__fish_seen_subcommand_from init' -l instrument -r
 complete -c schuss -n '__fish_seen_subcommand_from init' -l build-request -r
@@ -258,8 +335,18 @@ complete -c schuss -n '__fish_seen_subcommand_from transact' -l project-content-
 complete -c schuss -n '__fish_seen_subcommand_from transact' -l graph-content-hash -r
 complete -c schuss -n '__fish_seen_subcommand_from transact' -l edits -r
 complete -c schuss -n '__fish_seen_subcommand_from transact' -l write
+complete -c schuss -n '__fish_seen_subcommand_from edit' -l expected-project -r
+complete -c schuss -n '__fish_seen_subcommand_from edit' -l project-content-hash -r
+complete -c schuss -n '__fish_seen_subcommand_from edit' -l graph-content-hash -r
+complete -c schuss -n '__fish_seen_subcommand_from edit' -l edits -r
+complete -c schuss -n '__fish_seen_subcommand_from edit' -l write
+complete -c schuss -n '__fish_seen_subcommand_from revert' -l expected-project -r
+complete -c schuss -n '__fish_seen_subcommand_from revert' -l project-content-hash -r
+complete -c schuss -n '__fish_seen_subcommand_from revert' -l target-project -r
+complete -c schuss -n '__fish_seen_subcommand_from revert' -l target-content-hash -r
+complete -c schuss -n '__fish_seen_subcommand_from revert' -l write
 complete -c schuss -n '__fish_seen_subcommand_from op' -l request -r
-complete -c schuss -n '__fish_seen_subcommand_from init inspect validate transact' -l json
+complete -c schuss -n '__fish_seen_subcommand_from create edit init inspect validate history revert transact' -l json
 complete -c schuss -l help
 """
 

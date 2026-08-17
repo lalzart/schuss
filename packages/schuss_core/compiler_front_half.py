@@ -147,7 +147,11 @@ class CompilationContext:
         schema_values: list[tuple[str, str]] = []
         for key in sorted(schemas):
             value = schemas[key]
-            if key in {"contract_versions", "binding_versions"}:
+            if key in {
+                "contract_versions",
+                "binding_versions",
+                "direct_operation_spec_versions",
+            }:
                 for version, schema in sorted(value.items()):
                     schema_values.append((f"{key}:{version}", core.canonical_json(schema)))
             elif isinstance(value, dict) and "$id" in value:
@@ -178,6 +182,10 @@ class CompilationContext:
                 result.setdefault("contract_versions", {})[key.split(":", 1)[1]] = json.loads(value)
             elif key.startswith("binding_versions:"):
                 result.setdefault("binding_versions", {})[key.split(":", 1)[1]] = json.loads(value)
+            elif key.startswith("direct_operation_spec_versions:"):
+                result.setdefault("direct_operation_spec_versions", {})[
+                    key.split(":", 1)[1]
+                ] = json.loads(value)
             else:
                 result[key] = json.loads(value)
         return result
@@ -285,6 +293,10 @@ def _schema_for(group: str, record: Mapping[str, Any], schemas: Mapping[str, Any
         return schemas.get("contract_versions", {}).get(record.get("schema_version"))
     if group == "bindings":
         return schemas.get("binding_versions", {}).get(record.get("schema_version"))
+    if group == "direct_operation_specs":
+        return schemas.get("direct_operation_spec_versions", {}).get(
+            record.get("schema_version")
+        )
     key = SCHEMA_KEYS.get(group)
     return schemas.get(key) if key is not None else None
 
@@ -459,28 +471,6 @@ def _stage1(
         )
         return {}
 
-    selected_runtime = None
-    if records["runtime_realizations"]:
-        matches = [
-            value
-            for value in records["runtime_realizations"]
-            if any(
-                build["build_request_reference"] == request_ref
-                for build in value["supported_builds"]
-            )
-        ]
-        if len(matches) != 1:
-            _diagnostic(
-                diagnostics,
-                "COMPILER_RUNTIME_REALIZATION_NOT_EXACT",
-                stage,
-                _subject("build-request", request["build_request_id"], request["revision"]),
-                "$.runtime_realizations",
-                f"expected one exact runtime realization for the build request, found {len(matches)}",
-            )
-            return {}
-        selected_runtime = matches[0]
-
     graph_registry = _registry(records["graphs"], "graph_id")
     contract_registry = _registry(records["contracts"], "component_contract_id")
     target_registry = _registry(records["target"], "compute_target_id")
@@ -504,6 +494,33 @@ def _stage1(
                 f"$.build_request.{kind}_reference",
                 f"the exact {kind} reference does not resolve",
             )
+    selected_runtime = None
+    instrument_included = request.get("instrument_reference", {}).get("status") == "included"
+    instrument_closure_only = (
+        backend is not None
+        and backend.get("bridge_boundary", {}).get("kind")
+        == "direct-runtime-abi-instrument-closure-only"
+    )
+    if records["runtime_realizations"] and instrument_included and not instrument_closure_only:
+        matches = [
+            value
+            for value in records["runtime_realizations"]
+            if any(
+                build["build_request_reference"] == request_ref
+                for build in value["supported_builds"]
+            )
+        ]
+        if len(matches) != 1:
+            _diagnostic(
+                diagnostics,
+                "COMPILER_RUNTIME_REALIZATION_NOT_EXACT",
+                stage,
+                _subject("build-request", request["build_request_id"], request["revision"]),
+                "$.runtime_realizations",
+                f"expected one exact runtime realization for the build request, found {len(matches)}",
+            )
+            return {}
+        selected_runtime = matches[0]
     instrument = None
     instrument_ref = request["instrument_reference"]
     if instrument_ref["status"] == "included":

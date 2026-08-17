@@ -39,8 +39,12 @@ from .project_cli import (
     exact_project_reference,
     project_completion_script,
     project_graph_commit_request,
+    project_history_request,
     project_init_request,
     project_inspect_request,
+    project_profile_fork_request,
+    project_profile_transact_request,
+    project_revert_request,
     project_validate_request,
     render_project_result,
 )
@@ -57,6 +61,12 @@ APPLICATION_RECORD_SET_PATH = (
     Path(__file__).resolve().parents[2]
     / "contracts/record-sets/task023-application-spine-v1.json"
 )
+
+TASK026_PROFILE_LOCATORS = {
+    "graph": "schuss-graph-000006@1",
+    "instrument": "schuss-instrument-000005@1",
+    "build-request": "schuss-build-request-000005@1",
+}
 
 PRODUCT_HELP_EPILOG = (
     "Default output is deterministic plain text over schuss-record-set-000015@1. "
@@ -204,12 +214,58 @@ def _parser() -> argparse.ArgumentParser:
             "Task 012A project commands require an explicit workspace path and use "
             "the shared project service. No nearest-parent discovery is performed."
         ),
-        epilog="Choose init, inspect, validate, transact, op, or completion.",
+        epilog="Choose create, edit, init, inspect, validate, history, revert, transact, op, or completion.",
     )
     _add_help(project)
     project_commands = project.add_subparsers(
         dest="project_command", required=True, metavar="COMMAND"
     )
+    project_create = project_commands.add_parser(
+        "create",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="create the complete project-owned seven-node authoring profile",
+        description=(
+            "Initialize the exact Task 026A template and atomically fork its graph, "
+            "instrument, and request into operation-allocated project identities."
+        ),
+        epilog="No blank or partially valid graph is persisted; --record-set is explicit.",
+    )
+    project_create.add_argument("--project", required=True, metavar="WORKSPACE")
+    project_create.add_argument("--project-id", required=True, metavar="PROJECT_ID")
+    project_create.add_argument("--record-set", required=True, metavar="MANIFEST")
+    project_create.add_argument("--json", action="store_true")
+    _add_help(project_create)
+
+    project_edit = project_commands.add_parser(
+        "edit",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="atomically version the selected project-owned profile closure",
+        description=(
+            "Apply one ordered graph edit batch, then version the selected graph, "
+            "instrument, request, and project through one shared operation."
+        ),
+        epilog="--write is mandatory; invalid final graphs leave the prior head unchanged.",
+    )
+    project_edit.add_argument("locator", metavar="GRAPH_ID@REVISION")
+    project_edit.add_argument("--project", required=True, metavar="WORKSPACE")
+    project_edit.add_argument(
+        "--expected-project", required=True, metavar="PROJECT_ID@REVISION"
+    )
+    project_edit.add_argument(
+        "--project-content-hash", required=True, metavar="SHA256"
+    )
+    project_edit.add_argument(
+        "--graph-content-hash", required=True, metavar="SHA256"
+    )
+    project_edit.add_argument("--edits", required=True, metavar="FILE_OR_STDIN")
+    project_edit.add_argument("--write", action="store_true", required=True)
+    project_edit.add_argument("--json", action="store_true")
+    _add_help(project_edit)
+
     project_init = project_commands.add_parser(
         "init",
         add_help=False,
@@ -238,6 +294,7 @@ def _parser() -> argparse.ArgumentParser:
     for name, help_text in (
         ("inspect", "inspect the accepted project and durable/local classification"),
         ("validate", "validate the exact base-plus-project closure read only"),
+        ("history", "inspect deterministic immutable project ancestry read only"),
     ):
         child = project_commands.add_parser(
             name,
@@ -251,6 +308,35 @@ def _parser() -> argparse.ArgumentParser:
         child.add_argument("--project", required=True, metavar="WORKSPACE")
         child.add_argument("--json", action="store_true")
         _add_help(child)
+
+    project_revert = project_commands.add_parser(
+        "revert",
+        add_help=False,
+        allow_abbrev=False,
+        formatter_class=_FixedHelpFormatter,
+        help="create a successor selecting one exact prior project state",
+        description=(
+            "Preserve every immutable revision and create a new head whose selected "
+            "graph, instrument, request, and assets match one exact ancestor."
+        ),
+        epilog="--write is mandatory; history is never deleted or rewritten.",
+    )
+    project_revert.add_argument("--project", required=True, metavar="WORKSPACE")
+    project_revert.add_argument(
+        "--expected-project", required=True, metavar="PROJECT_ID@REVISION"
+    )
+    project_revert.add_argument(
+        "--project-content-hash", required=True, metavar="SHA256"
+    )
+    project_revert.add_argument(
+        "--target-project", required=True, metavar="PROJECT_ID@REVISION"
+    )
+    project_revert.add_argument(
+        "--target-content-hash", required=True, metavar="SHA256"
+    )
+    project_revert.add_argument("--write", action="store_true", required=True)
+    project_revert.add_argument("--json", action="store_true")
+    _add_help(project_revert)
 
     project_transact = project_commands.add_parser(
         "transact",
@@ -293,9 +379,9 @@ def _parser() -> argparse.ArgumentParser:
         add_help=False,
         allow_abbrev=False,
         formatter_class=_FixedHelpFormatter,
-        help="dispatch one canonical v3 project operation",
-        description="Canonical-JSON process adapter over the shared Task 012A service.",
-        epilog="Stdout is the canonical v3 operation result plus one LF.",
+        help="dispatch one canonical project operation",
+        description="Canonical-JSON process adapter over the shared project service.",
+        epilog="Stdout is the matching canonical operation result plus one LF.",
     )
     project_op.add_argument("--project", required=True, metavar="WORKSPACE")
     project_op.add_argument("--request", required=True, metavar="FILE_OR_STDIN")
@@ -487,6 +573,10 @@ def _parser() -> argparse.ArgumentParser:
     )
     plan.add_argument("locator", metavar="REQUEST_ID@REVISION")
     _add_product_options(plan)
+    plan.add_argument(
+        "--project", metavar="WORKSPACE",
+        help="resolve the exact request from one explicit project workspace",
+    )
 
     execute = build_commands.add_parser(
         "execute", add_help=False, allow_abbrev=False,
@@ -500,6 +590,10 @@ def _parser() -> argparse.ArgumentParser:
     execute.add_argument("--output-root", required=True, metavar="DIRECTORY")
     execute.add_argument("--execute", action="store_true", required=True)
     _add_product_options(execute)
+    execute.add_argument(
+        "--project", metavar="WORKSPACE",
+        help="resolve and execute the exact request from one explicit project workspace",
+    )
 
     build_completion = build_commands.add_parser(
         "completion", add_help=False, allow_abbrev=False,
@@ -756,6 +850,7 @@ def _registered_execution_service(output_root: Path):
     from .gills_direct_backend import registration as direct_registration
     from .gills_mapped_backend import registration as mapped_registration
     from .gills_mapped_backend_v2 import registration as mapped_v2_registration
+    from .effects_profile_backend import registration as effects_profile_registration
 
     return ExecutionService.from_values(
         (
@@ -763,6 +858,7 @@ def _registered_execution_service(output_root: Path):
             direct_registration(),
             mapped_registration(),
             mapped_v2_registration(),
+            effects_profile_registration(),
         ),
         output_root,
     )
@@ -774,21 +870,44 @@ def _project_request(
     stdin: BinaryIO,
     stderr: TextIO,
 ):
+    if args.project_command == "history":
+        return project_history_request(), None
     if args.project_command == "inspect":
         return project_inspect_request(), None
     if args.project_command == "validate":
         return project_validate_request(), None
-    if args.project_command == "init":
+    if args.project_command in {"create", "init"}:
         assert context is not None
-        graph = resolve_locator(args.graph, expected_kind="graph", context=context)
-        instruments = [
-            resolve_locator(item, expected_kind="instrument", context=context)
-            for item in args.instrument
-        ]
-        build_requests = [
-            resolve_locator(item, expected_kind="build-request", context=context)
-            for item in args.build_request
-        ]
+        if args.project_command == "create":
+            graph = resolve_locator(
+                TASK026_PROFILE_LOCATORS["graph"],
+                expected_kind="graph",
+                context=context,
+            )
+            instruments = [
+                resolve_locator(
+                    TASK026_PROFILE_LOCATORS["instrument"],
+                    expected_kind="instrument",
+                    context=context,
+                )
+            ]
+            build_requests = [
+                resolve_locator(
+                    TASK026_PROFILE_LOCATORS["build-request"],
+                    expected_kind="build-request",
+                    context=context,
+                )
+            ]
+        else:
+            graph = resolve_locator(args.graph, expected_kind="graph", context=context)
+            instruments = [
+                resolve_locator(item, expected_kind="instrument", context=context)
+                for item in args.instrument
+            ]
+            build_requests = [
+                resolve_locator(item, expected_kind="build-request", context=context)
+                for item in args.build_request
+            ]
         request = project_init_request(
             args.project_id,
             {
@@ -800,6 +919,34 @@ def _project_request(
             build_requests,
         )
         return request, None
+    if args.project_command == "revert":
+        return (
+            project_revert_request(
+                exact_project_reference(
+                    args.expected_project, args.project_content_hash
+                ),
+                exact_project_reference(
+                    args.target_project, args.target_content_hash
+                ),
+            ),
+            None,
+        )
+    if args.project_command == "edit":
+        edits, exit_code = _read_edits(args, stdin, stderr)
+        if exit_code is not None:
+            return None, exit_code
+        project_reference = exact_project_reference(
+            args.expected_project, args.project_content_hash
+        )
+        graph_reference = exact_graph_reference(
+            args.locator, args.graph_content_hash
+        )
+        return (
+            project_profile_transact_request(
+                project_reference, graph_reference, edits
+            ),
+            None,
+        )
     if args.project_command == "transact":
         edits, exit_code = _read_edits(args, stdin, stderr)
         if exit_code is not None:
@@ -922,7 +1069,7 @@ def run(
 
         if args.command == "project":
             initial_context = None
-            if args.project_command == "init":
+            if args.project_command in {"create", "init"}:
                 initial_context, exit_code = _load_context_or_report(
                     args.record_set, context_loader, stderr
                 )
@@ -946,6 +1093,38 @@ def run(
             result = dispatch_operation(
                 request, service.context, project_service=service
             )
+            if args.project_command == "create" and result["status"] == "success":
+                initialized = result["value"]["project"]
+                assert initial_context is not None
+                graph = resolve_locator(
+                    TASK026_PROFILE_LOCATORS["graph"],
+                    expected_kind="graph",
+                    context=initial_context,
+                )
+                instrument = resolve_locator(
+                    TASK026_PROFILE_LOCATORS["instrument"],
+                    expected_kind="instrument",
+                    context=initial_context,
+                )
+                build_request = resolve_locator(
+                    TASK026_PROFILE_LOCATORS["build-request"],
+                    expected_kind="build-request",
+                    context=initial_context,
+                )
+                result = dispatch_operation(
+                    project_profile_fork_request(
+                        {
+                            "project_id": initialized["project_id"],
+                            "revision": initialized["revision"],
+                            "content_hash": initialized["content_hash"],
+                        },
+                        graph,
+                        instrument,
+                        build_request,
+                    ),
+                    service.context,
+                    project_service=service,
+                )
             output = (
                 canonical_result_bytes(result, service.context) + b"\n"
                 if args.json
@@ -967,6 +1146,48 @@ def run(
                 return exit_code
             result = dispatch_operation(request, context)
             _emit_bytes(stdout, canonical_result_bytes(result, context) + b"\n")
+            return 0 if result["status"] == "success" else 1
+
+        if (
+            args.command == "build"
+            and args.build_command in {"plan", "execute"}
+            and args.project is not None
+        ):
+            if args.record_set is not None:
+                _write_stderr(
+                    stderr,
+                    "schuss: CLI_CONTEXT_CONFLICT: --project and --record-set are mutually exclusive\n",
+                )
+                return 2
+            service = ProjectService(Path(args.project))
+            loaded = service.load()
+            context = loaded.context
+            try:
+                execution_service = None
+                if args.build_command == "execute":
+                    execution_service = _registered_execution_service(
+                        Path(args.output_root)
+                    )
+                request, exit_code = _product_request(
+                    args, context, stdin, stderr, execution_service
+                )
+            except ProductInputError as exc:
+                _write_stderr(stderr, f"schuss: {exc.code}: {exc}\n")
+                return 2
+            if exit_code is not None:
+                return exit_code
+            result = dispatch_operation(
+                request,
+                context,
+                project_service=service,
+                execution_service=execution_service,
+            )
+            output = (
+                canonical_result_bytes(result, service.context) + b"\n"
+                if args.json
+                else render_human_result(result, service.context, request)
+            )
+            _emit_bytes(stdout, output)
             return 0 if result["status"] == "success" else 1
 
         manifest = args.record_set or str(APPLICATION_RECORD_SET_PATH)

@@ -7,6 +7,7 @@ from typing import Any, Iterable, Mapping
 
 
 APPLICATION_DESCRIPTION_VERSION = "schuss-application-capability-description-v0"
+APPLICATION_DESCRIPTION_VERSION_V1 = "schuss-application-capability-description-v1"
 
 
 class CapabilityRegistryError(ValueError):
@@ -176,8 +177,70 @@ CAPABILITY_ENTRIES = (
     ),
 )
 
+TASK026_CAPABILITY_ENTRIES = (
+    _entry(
+        "project.history.inspect",
+        "project",
+        "Inspect deterministic immutable project ancestry.",
+        8,
+        ("explicit-project-workspace",),
+        "read-only",
+        ("explicit-project-workspace", "immutable-history"),
+    ),
+    _entry(
+        "project.profile.fork",
+        "project",
+        "Allocate and persist one complete project-owned profile closure.",
+        8,
+        ("exact-record-set", "explicit-project-workspace"),
+        "workspace-write",
+        (
+            "expected-project-reference",
+            "explicit-project-workspace",
+            "profile-template-reference",
+            "write-intent",
+        ),
+    ),
+    _entry(
+        "project.profile.transact",
+        "project",
+        "Atomically version one project-owned graph, instrument, and build request.",
+        8,
+        ("explicit-project-workspace",),
+        "workspace-write",
+        (
+            "base-content-hash",
+            "expected-project-reference",
+            "explicit-project-workspace",
+            "exact-reference",
+            "write-intent",
+        ),
+    ),
+    _entry(
+        "project.revert",
+        "project",
+        "Create a successor selecting one exact immutable ancestor state.",
+        8,
+        ("explicit-project-workspace",),
+        "workspace-write",
+        (
+            "expected-project-reference",
+            "explicit-project-workspace",
+            "immutable-history",
+            "target-project-reference",
+            "write-intent",
+        ),
+    ),
+)
+
 
 EXPECTED_OPERATIONS = tuple(sorted(entry["operation"] for entry in CAPABILITY_ENTRIES))
+EXPECTED_OPERATIONS_V1 = tuple(
+    sorted(
+        entry["operation"]
+        for entry in (*CAPABILITY_ENTRIES, *TASK026_CAPABILITY_ENTRIES)
+    )
+)
 
 
 def _schema_key(version: str, kind: str) -> str:
@@ -218,11 +281,18 @@ def build_application_description(
 ) -> dict[str, Any]:
     """Return the deterministic application description for one exact context."""
 
-    selected = list(CAPABILITY_ENTRIES if entries is None else entries)
+    uses_v1 = "application_capability_description_v1" in schemas
+    default_entries = (
+        (*CAPABILITY_ENTRIES, *TASK026_CAPABILITY_ENTRIES)
+        if uses_v1
+        else CAPABILITY_ENTRIES
+    )
+    selected = list(default_entries if entries is None else entries)
+    expected_operations = EXPECTED_OPERATIONS_V1 if uses_v1 else EXPECTED_OPERATIONS
     operations = [entry.get("operation") for entry in selected]
     if (
         len(operations) != len(set(operations))
-        or tuple(sorted(operations)) != EXPECTED_OPERATIONS
+        or tuple(sorted(operations)) != expected_operations
     ):
         raise CapabilityRegistryError(
             "application capability registry must contain every accepted operation exactly once"
@@ -240,9 +310,17 @@ def build_application_description(
         )
         described.append(entry)
     return {
-        "schema_version": "application-capability-description-v0",
+        "schema_version": (
+            "application-capability-description-v1"
+            if uses_v1
+            else "application-capability-description-v0"
+        ),
         "canonical_profile": "schuss-canonical-json-v1",
-        "description_version": APPLICATION_DESCRIPTION_VERSION,
+        "description_version": (
+            APPLICATION_DESCRIPTION_VERSION_V1
+            if uses_v1
+            else APPLICATION_DESCRIPTION_VERSION
+        ),
         "record_set_reference": copy.deepcopy(dict(record_set_reference)),
         "operations": described,
     }

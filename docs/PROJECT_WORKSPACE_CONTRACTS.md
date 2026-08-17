@@ -25,11 +25,12 @@ Scanning is used only after the union is known, to reject missing or extra
 governed files.
 
 Each owned member records kind, stable ID, revision, semantic hash, schema
-version, normalized locator, byte hash, and exact parent. Task 012A creates
-only `dsp-graph-v0` successors. The graph bytes remain the authoritative
-semantic record and are not changed merely to add filesystem policy. The
-project member index retains the exact graph revision parent, keeping the
-representation acyclic:
+version, normalized locator, byte hash, and exact parent. Task 012A first
+created only `dsp-graph-v0` successors. Task 026 additively creates and versions
+project-owned `dsp-graph-v0`, `instrument-v0`, and `build-request-v0` closures.
+The semantic-record bytes remain authoritative and are not changed merely to
+add filesystem policy. The project member index retains every exact revision
+parent, keeping the representation acyclic:
 
 ```text
 project r2 -> graph r2 -> component contracts
@@ -51,6 +52,8 @@ The governed layout is:
 schuss-project.json
 project/revisions/schuss-project-NNNNNN-rRRRRRR.json
 records/dsp-graphs/schuss-graph-NNNNNN-rRRRRRR.json
+records/instruments/schuss-instrument-NNNNNN-rRRRRRR.json
+records/build-requests/schuss-build-request-NNNNNN-rRRRRRR.json
 assets/...                         # only exact manifest-owned assets
 ```
 
@@ -105,6 +108,12 @@ The implementation rechecks the expected old head bytes immediately before
 replacement. A changed head, stale project, stale graph, live writer, or
 pre-existing immutable target rejects without acceptance.
 
+Task 026 adds `project-write-plan-v1`, which retains the same exact project
+transition and atomic head boundary while permitting any ordered set of
+project-owned graph, instrument, and build-request immutable records before
+the new project manifest. Recovery selects the plan schema explicitly and
+never infers it from the mutation count.
+
 ## Recovery
 
 Recovery reads only a closed local plan and compares the current head with the
@@ -156,10 +165,28 @@ unchanged and remains proposal-only with `persistence_status: not-written`.
 Task 012A completion is additive so the accepted legacy completion bytes also
 remain unchanged.
 
+Task 026 additively supplies closed request/result v8 operations:
+
+- `project.profile.fork` allocates opaque project-owned graph, instrument, and
+  request identities from one exact complete template closure;
+- `project.profile.transact` applies one ordered shared graph-edit batch and
+  versions the selected graph, instrument, request, and project atomically;
+- `project.history.inspect` returns deterministic immutable ancestry; and
+- `project.revert` creates a successor selecting one exact ancestor state and
+  never deletes history.
+
+The corresponding ergonomic commands are `project create`, `project edit`,
+`project history`, and `project revert`. `build plan` and `build execute` accept
+an explicit `--project` workspace and consume its exact selected request. The
+Task 023 CLI golden remains retained; Task 026 records a separate successor
+golden for the expanded help and project-completion surface.
+
 ## Evidence and exclusions
 
 Task 012A proves portable structural project validation and recoverable local
-persistence. It runs no backend, compiler, Java bridge, artifact generation,
-device communication, upload, flash, real-time measurement, or listening.
+persistence. Task 026 separately proves the exact reverb-free authored closure
+through local ARM compile/link level 5 in two fresh roots. Neither task proves
+connected-device execution, real-time/resource suitability, audible behavior,
+safety, or release readiness; Task 026 uses no Java or `.axp` fallback.
 It defines no presentation overlay, drawer state, canvas geometry, GUI, build
 execution, compiler front half, or collaboration protocol.

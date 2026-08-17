@@ -1,0 +1,287 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "operation-request-v8.schema.json",
+  "title": "Schuss complete authoring project operation request v8",
+  "oneOf": [
+    {"$ref": "#/$defs/profileFork"},
+    {"$ref": "#/$defs/profileTransact"},
+    {"$ref": "#/$defs/historyInspect"},
+    {"$ref": "#/$defs/projectRevert"}
+  ],
+  "$defs": {
+    "contentHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "projectReference": {
+      "type": "object",
+      "required": ["project_id", "revision", "content_hash"],
+      "properties": {
+        "project_id": {"type": "string", "pattern": "^schuss-project-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "graphReference": {
+      "type": "object",
+      "required": ["graph_id", "revision", "content_hash"],
+      "properties": {
+        "graph_id": {"type": "string", "pattern": "^schuss-graph-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "instrumentReference": {
+      "type": "object",
+      "required": ["instrument_id", "revision", "content_hash"],
+      "properties": {
+        "instrument_id": {"type": "string", "pattern": "^schuss-instrument-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "buildRequestReference": {
+      "type": "object",
+      "required": ["build_request_id", "revision", "content_hash"],
+      "properties": {
+        "build_request_id": {"type": "string", "pattern": "^schuss-build-request-[0-9]{6}$"},
+        "revision": {"type": "integer", "minimum": 1},
+        "content_hash": {"$ref": "#/$defs/contentHash"}
+      },
+      "additionalProperties": false
+    },
+    "facetValue": {
+      "type": "object",
+      "required": ["facet_id", "value"],
+      "properties": {
+        "facet_id": {"type": "string", "pattern": "^component-(parameter|attribute)-[0-9]{6}$"},
+        "value": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "node": {
+      "type": "object",
+      "required": ["node_id", "contract_reference", "parameter_values", "attribute_values"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "contract_reference": {
+          "type": "object",
+          "required": ["component_contract_id", "revision", "content_hash"],
+          "properties": {
+            "component_contract_id": {"type": "string", "pattern": "^schuss-component-contract-[0-9]{6}$"},
+            "revision": {"type": "integer", "minimum": 1},
+            "content_hash": {"$ref": "#/$defs/contentHash"}
+          },
+          "additionalProperties": false
+        },
+        "parameter_values": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/facetValue"}
+        },
+        "attribute_values": {
+          "type": "array",
+          "x-schuss-array-kind": "set",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/facetValue"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "portEndpoint": {
+      "type": "object",
+      "required": ["node_id", "facet_id"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+        "facet_id": {"type": "string", "pattern": "^component-port-[0-9]{6}$"}
+      },
+      "additionalProperties": false
+    },
+    "connection": {
+      "type": "object",
+      "required": ["connection_id", "source", "destination"],
+      "properties": {
+        "connection_id": {"type": "string", "pattern": "^graph-connection-[0-9]{6}$"},
+        "source": {"$ref": "#/$defs/portEndpoint"},
+        "destination": {"$ref": "#/$defs/portEndpoint"}
+      },
+      "additionalProperties": false
+    },
+    "edit": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["edit", "node"],
+          "properties": {"edit": {"const": "add-node"}, "node": {"$ref": "#/$defs/node"}},
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["edit", "node_id"],
+          "properties": {
+            "edit": {"const": "remove-node"},
+            "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["edit", "connection"],
+          "properties": {"edit": {"const": "add-connection"}, "connection": {"$ref": "#/$defs/connection"}},
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["edit", "connection_id"],
+          "properties": {
+            "edit": {"const": "remove-connection"},
+            "connection_id": {"type": "string", "pattern": "^graph-connection-[0-9]{6}$"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["edit", "node_id", "facet_id", "value"],
+          "properties": {
+            "edit": {"const": "set-node-parameter"},
+            "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+            "facet_id": {"type": "string", "pattern": "^component-parameter-[0-9]{6}$"},
+            "value": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["edit", "node_id", "facet_id", "value"],
+          "properties": {
+            "edit": {"const": "set-node-attribute"},
+            "node_id": {"type": "string", "pattern": "^graph-node-[0-9]{6}$"},
+            "facet_id": {"type": "string", "pattern": "^component-attribute-[0-9]{6}$"},
+            "value": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["edit", "facet_id", "value"],
+          "properties": {
+            "edit": {"const": "set-public-parameter-default"},
+            "facet_id": {"type": "string", "pattern": "^graph-facet-[0-9]{6}$"},
+            "value": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["edit", "binding_id", "point_index", "source", "destination"],
+          "properties": {
+            "edit": {"const": "set-parameter-binding-point"},
+            "binding_id": {"type": "string", "pattern": "^graph-binding-[0-9]{6}$"},
+            "point_index": {"type": "integer", "minimum": 0},
+            "source": {"type": "string", "minLength": 1},
+            "destination": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "profileFork": {
+      "type": "object",
+      "required": ["schema_version", "canonical_profile", "operation", "payload"],
+      "properties": {
+        "schema_version": {"const": "schuss-operation-request-v8"},
+        "canonical_profile": {"const": "schuss-canonical-json-v1"},
+        "operation": {"const": "project.profile.fork"},
+        "payload": {
+          "type": "object",
+          "required": [
+            "expected_project_reference",
+            "template_graph_reference",
+            "template_instrument_reference",
+            "template_build_request_reference",
+            "write_intent"
+          ],
+          "properties": {
+            "expected_project_reference": {"$ref": "#/$defs/projectReference"},
+            "template_graph_reference": {"$ref": "#/$defs/graphReference"},
+            "template_instrument_reference": {"$ref": "#/$defs/instrumentReference"},
+            "template_build_request_reference": {"$ref": "#/$defs/buildRequestReference"},
+            "write_intent": {"const": "explicit"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileTransact": {
+      "type": "object",
+      "required": ["schema_version", "canonical_profile", "operation", "payload"],
+      "properties": {
+        "schema_version": {"const": "schuss-operation-request-v8"},
+        "canonical_profile": {"const": "schuss-canonical-json-v1"},
+        "operation": {"const": "project.profile.transact"},
+        "payload": {
+          "type": "object",
+          "required": [
+            "expected_project_reference",
+            "graph_reference",
+            "base_content_hash",
+            "edits",
+            "write_intent"
+          ],
+          "properties": {
+            "expected_project_reference": {"$ref": "#/$defs/projectReference"},
+            "graph_reference": {"$ref": "#/$defs/graphReference"},
+            "base_content_hash": {"$ref": "#/$defs/contentHash"},
+            "edits": {
+              "type": "array",
+              "x-schuss-array-kind": "sequence",
+              "minItems": 1,
+              "items": {"$ref": "#/$defs/edit"}
+            },
+            "write_intent": {"const": "explicit"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "historyInspect": {
+      "type": "object",
+      "required": ["schema_version", "canonical_profile", "operation", "payload"],
+      "properties": {
+        "schema_version": {"const": "schuss-operation-request-v8"},
+        "canonical_profile": {"const": "schuss-canonical-json-v1"},
+        "operation": {"const": "project.history.inspect"},
+        "payload": {
+          "type": "object",
+          "required": ["scope"],
+          "properties": {"scope": {"const": "immutable-ancestry"}},
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "projectRevert": {
+      "type": "object",
+      "required": ["schema_version", "canonical_profile", "operation", "payload"],
+      "properties": {
+        "schema_version": {"const": "schuss-operation-request-v8"},
+        "canonical_profile": {"const": "schuss-canonical-json-v1"},
+        "operation": {"const": "project.revert"},
+        "payload": {
+          "type": "object",
+          "required": ["expected_project_reference", "target_project_reference", "write_intent"],
+          "properties": {
+            "expected_project_reference": {"$ref": "#/$defs/projectReference"},
+            "target_project_reference": {"$ref": "#/$defs/projectReference"},
+            "write_intent": {"const": "explicit"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

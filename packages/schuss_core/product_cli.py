@@ -574,7 +574,17 @@ def _append_catalog_search(lines: list[str], result: dict[str, Any]) -> None:
         lines.append(f"    display_name: {_safe_text(item['display_name'])}")
         lines.append(f"    primary_function: {_safe_text(item['primary_function'])}")
         lines.append(f"    abstraction_level: {_safe_text(item['abstraction_level'])}")
+        if "curation_treatment" in item:
+            lines.append(f"    curation_treatment: {_safe_text(item['curation_treatment'])}")
+            lines.append(f"    drawer_visibility: {_safe_text(item['drawer_visibility'])}")
         _append_list(lines, "technique_tags", item["technique_tags"], "    ")
+        if "current_ksoloti_base_refs" in item:
+            _append_list(
+                lines,
+                "current_ksoloti_base_refs",
+                item["current_ksoloti_base_refs"],
+                "    ",
+            )
         _append_list(
             lines, "implementation_forms", item["implementation_forms"], "    "
         )
@@ -601,6 +611,17 @@ def _append_catalog_inspect(lines: list[str], result: dict[str, Any]) -> None:
     lines.append(f"description: {_safe_text(family['description'])}")
     lines.append(f"primary_function: {_safe_text(family['primary_function'])}")
     lines.append(f"abstraction_level: {_safe_text(family['abstraction_level'])}")
+    if "curation_treatment" in family:
+        lines.append(f"curation_treatment: {_safe_text(family['curation_treatment'])}")
+        lines.append(f"drawer_visibility: {_safe_text(family['drawer_visibility'])}")
+        _append_list(
+            lines,
+            "current_ksoloti_base_refs",
+            family["current_ksoloti_base_refs"],
+            "",
+        )
+        lines.append("current_variant_coverage:")
+        _append_tree(lines, family["current_variant_coverage"], "  ")
     _append_list(lines, "aliases", family["aliases"], "")
     _append_list(lines, "technique_tags", family["technique_tags"], "")
     _append_list(lines, "implementation_forms", family["implementation_forms"], "")

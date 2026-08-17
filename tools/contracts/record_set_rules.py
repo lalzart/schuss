@@ -28,6 +28,7 @@ ID_FIELDS = (
     "conformance_probe_id",
     "conformance_probe_result_id",
     "coverage_report_id",
+    "current_ksoloti_corpus_id",
     "device_profile_id",
     "direct_operation_spec_id",
     "evidence_claim_id",

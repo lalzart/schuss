@@ -244,13 +244,23 @@ def _select_handler(
             f"expected one exact planned build request, found {len(requests)}",
         )
     backend_reference = requests[0]["backend_reference"]
-    matches = [
-        item
-        for item in service.registrations
-        if handler_reference(item.descriptor) == dict(reference)
-        and item.descriptor["supported_build_request_reference"] == request_reference
-        and item.descriptor["backend_reference"] == backend_reference
-    ]
+    matches = []
+    for item in service.registrations:
+        descriptor = item.descriptor
+        if (
+            handler_reference(descriptor) != dict(reference)
+            or descriptor["backend_reference"] != backend_reference
+        ):
+            continue
+        if descriptor.get("schema_version") == "build-handler-descriptor-v0":
+            if descriptor["supported_build_request_reference"] != request_reference:
+                continue
+        elif descriptor.get("schema_version") == "build-handler-descriptor-v1":
+            if descriptor.get("execution_policy") != "exact-semantic-profile":
+                continue
+        else:
+            continue
+        matches.append(item)
     if len(matches) != 1:
         raise ExecutionFailure(
             "BUILD_HANDLER_NOT_EXACT",

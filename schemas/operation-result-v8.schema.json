@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "operation-result-v8.schema.json",
+  "title": "Schuss complete authoring project operation result v8",
+  "type": "object",
+  "required": ["schema_version", "canonical_profile", "operation", "status", "value", "diagnostics"],
+  "properties": {
+    "schema_version": {"const": "schuss-operation-result-v8"},
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "operation": {
+      "enum": [
+        "project.profile.fork",
+        "project.profile.transact",
+        "project.history.inspect",
+        "project.revert",
+        "invalid-request"
+      ]
+    },
+    "status": {"enum": ["success", "invalid", "unresolved", "unsupported", "ambiguous", "conflict"]},
+    "value": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "object", "x-schuss-domain-value": true}
+      ]
+    },
+    "diagnostics": {
+      "type": "array",
+      "x-schuss-array-kind": "sequence",
+      "items": {"$ref": "#/$defs/diagnostic"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "diagnostic": {
+      "type": "object",
+      "required": ["code", "severity", "subject", "location", "message"],
+      "properties": {
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+        "severity": {"enum": ["error", "warning", "info"]},
+        "subject": {"type": "string", "minLength": 1},
+        "location": {"type": "string", "minLength": 1},
+        "message": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

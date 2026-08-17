@@ -1,8 +1,12 @@
 # Application-spine sequence and parallel-work plan
 
-Status: accepted planning authority under ADR 0014. Task 023 is accepted and
-complete. No Task 024-028 contract has been created or activated; the
-unnumbered UI-architecture milestone is eligible but not started.
+Status: accepted planning authority under ADR 0014. Tasks 023-026 are accepted
+and complete. Task 025 retained a fail-closed partial semantic tranche after
+the selected reverb allocation contradiction prevented lowering and ARM
+evidence. Task 026 then accepted a separate reverb-free seven-node executable
+profile and completed the client-neutral authoring flow through local level 5.
+Tasks 027-028 and the unnumbered UI-architecture milestone are eligible but not
+started.
 
 ## Goal
 
@@ -67,10 +71,11 @@ Required outcomes:
 Task 023 does not expand DSP semantics, catalog families, project write
 semantics, UI implementation, or hardware evidence.
 
-### Task 024: Complete catalog coverage and deterministic curation
+### Task 024: Current-Ksoloti-first catalog structure and deterministic lineage
 
-Goal: make the full frozen object population accountable without inventing
-semantics or equating inventory with readiness.
+Goal: use the current pinned Ksoloti library/import model as the primary
+candidate reference while keeping the full frozen object population as
+immutable lineage and gap evidence.
 
 Required outcomes:
 
@@ -83,9 +88,9 @@ Required outcomes:
   inspection, source evidence, uncertainty, and readiness separation;
 - produce a broader reviewed catalog successor and an exact selection packet
   for Task 025; and
-- initially target 16-24 additional high-value reviewed families, with the
-  exact bounded count fixed by the Task 024 contract after audit rather than
-  filled through weak or inferred reviews.
+- index the exact current first-party base-reference and compound cohorts,
+  retain library/import/dependency facets separately, and review twenty
+  bounded families with complete exact overload cohorts.
 
 Catalogued-only, contracted, bound, eligible, compile-proven, device-tested,
 real-time-tested, audible-tested, and unresolved remain distinct states.
@@ -106,6 +111,14 @@ unsupported diagnostics, two fresh builds, and ARM compile/link evidence level
 5 without Java or `.axp` fallback. Device, real-time, and audible evidence
 remain separately authorized.
 
+Retained result: the authenticated wrapper/header/runtime audit proved that
+the selected reverb reserves 32,768 bytes while its exact engine clears 65,536
+bytes. Task 025 therefore completed as five passed level-2 operation promotions
+plus one failed reverb claim. Its exact plan selects seven nodes, rejects only
+reverb, and stops before lowering; complete-graph level 2 failed and levels
+3-8 were `not-run`. This preserves the original product goal as an explicit
+unmet gate rather than masking it with a compile-only result.
+
 ### Task 026: Complete authoring operations and CLI workflow
 
 Goal: allow a client to progress from an empty explicit workspace to an exact
@@ -113,7 +126,8 @@ built artifact without fabricating records or editing canonical JSON by hand.
 
 Required outcomes:
 
-- create a blank graph/project through client-neutral operations;
+- create a valid project-owned graph/instrument/request closure through
+  client-neutral operations without ever persisting a blank or invalid graph;
 - select an exact reviewed catalog contract, add/remove nodes, connect them,
   and edit parameters and attributes;
 - create and version instrument and build-request records and include them in
@@ -123,7 +137,15 @@ Required outcomes:
 - save, close, reopen, validate, plan, and build through the same service used
   by every client; and
 - pass one scripted empty-workspace-to-deterministic-ELF acceptance flow using
-  the Task 025 executable tranche.
+  the separately accepted reverb-free Task 026A executable profile.
+
+Retained result: the accepted preflight selected the bounded seven-node,
+reverb-free route. Task 026A established identity-independent authored graph
+support and local level-5 compile/link. Task 026B then completed exact
+project-owned creation/versioning, immutable five-revision undo/redo history,
+atomic recovery, close/reopen, project-based planning, and two-root authored
+ELF reproduction. The reverb allocation contradiction remains unresolved and
+outside this result; levels 6-8 remain `not-run`.
 
 ### Task 027: Application sessions, jobs, and diagnostics
 
@@ -216,9 +238,9 @@ Useful parallel windows are intentionally bounded:
    semantic specifications and host vectors may use disjoint child work
    packages. Shared normalized-operation vocabulary and stable IDs are fixed
    first; integration is serialized.
-3. Task 026 contract/design work may overlap late Task 025 validation, but its
-   end-to-end implementation gate waits for the accepted Task 025 executable
-   tranche.
+3. Task 026 closed its executable-profile prerequisite serially before the
+   authoring operations were integrated; the retained Task 025 result alone did
+   not satisfy that gate.
 4. After Task 026 is accepted, Task 027 session/job implementation and Task 028
    family/compound work may run as two implementation lanes because their
    primary code ownership differs. Record-set publication, shared status, and
@@ -251,10 +273,9 @@ separate output namespaces.
 
 ## Activation and approval rules
 
-- This plan did not itself start Task 023 and does not create or activate any
-  Task 024-028 contract.
-- Task 023 is accepted complete; that completion does not activate Task 024 or
-  the eligible UI-architecture planning lane.
+- This plan did not itself start Task 023 or create any numbered task contract.
+- Tasks 023-026 are accepted complete. Tasks 027-028 and the eligible
+  UI-architecture planning lane remain unstarted.
 - Each numbered task requires a complete contract before implementation.
 - Completion of one task does not automatically authorize the next.
 - UI architecture planning is authorized; UI implementation remains gated.

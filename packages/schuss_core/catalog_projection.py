@@ -272,6 +272,7 @@ def _validate_corpus(
         }
     )
     implementation_ids: set[str] = set()
+    implementation_family_ids: dict[str, str] = {}
     for implementation in corpus["implementation_additions"]:
         identifier = implementation["implementation_id"]
         if identifier in implementation_ids:
@@ -282,6 +283,7 @@ def _validate_corpus(
                 f"catalog implementation content hash is stale: {identifier}"
             )
         family_id = implementation["family_reference"]["family_id"]
+        implementation_family_ids[identifier] = family_id
         if implementation["family_reference"] != exact_refs.get(family_id):
             raise CatalogProjectionError(
                 f"catalog implementation family reference is stale: {identifier}"
@@ -293,6 +295,38 @@ def _validate_corpus(
         "schuss-implementation-000041",
     }:
         raise CatalogProjectionError("catalog implementation additions exceed slice scope")
+    if corpus["schema_version"] == "catalog-corpus-v3":
+        review = corpus.get("current_ksoloti_review")
+        if not isinstance(review, dict):
+            raise CatalogProjectionError("catalog v3 current-Ksoloti review is absent")
+        expected_family_ids = {f"schuss-family-{value:06d}" for value in range(41, 61)}
+        treatments = review["family_treatments"]
+        treatment_ids = {
+            item["family_reference"]["family_id"] for item in treatments
+        }
+        if treatment_ids != expected_family_ids or len(treatments) != 20:
+            raise CatalogProjectionError(
+                "catalog v3 current-Ksoloti family treatments do not cover IDs 41-60 exactly"
+            )
+        for treatment in treatments:
+            family_id = treatment["family_reference"]["family_id"]
+            if treatment["family_reference"] != exact_refs.get(family_id):
+                raise CatalogProjectionError(
+                    f"catalog v3 current-Ksoloti family reference is stale: {family_id}"
+                )
+            selected_ids = treatment["implementation_ids"]
+            if len(selected_ids) != treatment["catalogued_variant_count"]:
+                raise CatalogProjectionError(
+                    f"catalog v3 current-Ksoloti implementation count is stale: {family_id}"
+                )
+            if treatment["catalogued_variant_count"] != treatment["candidate_variant_count"]:
+                raise CatalogProjectionError(
+                    f"catalog v3 current-Ksoloti variant cohort is incomplete: {family_id}"
+                )
+            if any(implementation_family_ids.get(identifier) != family_id for identifier in selected_ids):
+                raise CatalogProjectionError(
+                    f"catalog v3 current-Ksoloti implementation family is stale: {family_id}"
+                )
 
 
 def _evidence_for_binding(
@@ -401,6 +435,12 @@ def build_catalog_projection(
         value["implementation_id"]: value
         for value in corpus["implementation_additions"]
     }
+    treatment_by_family = {
+        value["family_reference"]["family_id"]: value
+        for value in corpus.get("current_ksoloti_review", {}).get(
+            "family_treatments", ()
+        )
+    }
 
     family_values: dict[str, dict[str, Any]] = {}
     family_refs: dict[str, dict[str, Any]] = {}
@@ -476,6 +516,7 @@ def build_catalog_projection(
     }
     entries: list[dict[str, Any]] = []
     for family_id, family in family_values.items():
+        treatment = treatment_by_family.get(family_id)
         contracts = sorted(
             contracts_by_family.get(family_id, ()),
             key=core.canonical_json,
@@ -731,6 +772,30 @@ def build_catalog_projection(
             "implementations": implementation_summaries,
             "unresolved_facts": sorted(family_unresolved),
         }
+        if corpus["schema_version"] == "catalog-corpus-v3":
+            entry.update(
+                {
+                    "curation_treatment": (
+                        treatment["treatment"] if treatment is not None else "accepted"
+                    ),
+                    "drawer_visibility": (
+                        treatment["drawer_visibility"] if treatment is not None else "default"
+                    ),
+                    "current_ksoloti_base_refs": (
+                        copy.deepcopy(treatment["current_base_refs"])
+                        if treatment is not None
+                        else []
+                    ),
+                    "current_variant_coverage": {
+                        "candidate_variant_count": (
+                            treatment["candidate_variant_count"] if treatment is not None else 0
+                        ),
+                        "catalogued_variant_count": (
+                            treatment["catalogued_variant_count"] if treatment is not None else 0
+                        ),
+                    },
+                }
+            )
         entries.append(entry)
     entries.sort(
         key=lambda entry: (
@@ -755,6 +820,7 @@ def build_catalog_projection(
                 for record in records.get(group, ())
             ]
             for group in sorted(records)
+            if group != "selection_packets"
         },
     }
     projection = {
@@ -900,6 +966,20 @@ def search_catalog(
         }
         for score, entry in scored
     ]
+    for summary, (_, entry) in zip(summaries, scored):
+        if "curation_treatment" in entry:
+            summary.update(
+                {
+                    "curation_treatment": entry["curation_treatment"],
+                    "drawer_visibility": entry["drawer_visibility"],
+                    "current_ksoloti_base_refs": copy.deepcopy(
+                        entry["current_ksoloti_base_refs"]
+                    ),
+                    "current_variant_coverage": copy.deepcopy(
+                        entry["current_variant_coverage"]
+                    ),
+                }
+            )
     return normalized_query, normalized_filters, summaries
 
 

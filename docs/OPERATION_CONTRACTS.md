@@ -249,6 +249,24 @@ does not execute, access hardware, or infer a handler; it only exposes the
 same accepted closure consumed by planning and execution. Its detailed layer,
 mapping, and evidence rules are in `docs/GILLS_PANEL_RUNTIME_CONTRACTS.md`.
 
+Task 023 additively supplies operation v7 `application.describe`. Its original
+record set retains the exact fourteen-operation capability description. Task
+026 supplies `application-capability-description-v1`, which adds the four v8
+project operations for a total of eighteen only when the selected record set
+contains their exact schemas. Historical Task 023 description bytes remain
+unchanged.
+
+Task 026 additively supplies operation v8 `project.profile.fork`,
+`project.profile.transact`, `project.history.inspect`, and `project.revert`.
+All four require an explicit project service. Fork and transact are
+workspace-writing operations with exact expected-project and write-intent
+gates; transact reuses the shared graph edit semantics and versions the exact
+instrument/request references with the graph. Revert creates a new project
+revision whose selected state matches one exact ancestor; it never changes the
+parent chain or removes owned history. Project-aware v4/v5 build operations
+then plan and execute the selected project-owned request without substituting a
+canonical fixture.
+
 Task 012B is retired. A future explicitly authorized UI client must consume
 these same project, graph, catalog, build, compiler, and diagnostic operations;
 it may not define a parallel persistence, build, or compiler path.

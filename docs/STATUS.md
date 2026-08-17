@@ -51,8 +51,73 @@ services. The parent integrated Tasks 023A, 023B, and 023C in order.
 The read-only Task 023 smoke passes in two copied fresh roots and fresh
 processes with varied CWD, locale, timezone, hash seed, terminal width, and
 harmless host noise. Repository snapshots remained unchanged; backend
-execution, project writes, and hardware access were `not-run`. Tasks 024-028
-remain ordered planned successors rather than ambient authorization.
+execution, project writes, and hardware access were `not-run`.
+
+Task 024 is accepted complete for exact record set
+`schuss-record-set-000016@1`. Its primary current-Ksoloti corpus records the
+four configured source libraries while indexing the pinned first-party
+`axoloti-factory` and `ksoloti-objects` cohorts: 668 `.axo` files, 835 normal
+definitions, 666 canonical base references, and 19 separately marked `.axs`
+compounds. Contrib libraries remain deferred provenance cohorts, and the
+thirteen function-first Schuss categories remain independent of library paths.
+
+The retained generated coverage packet gives all 3,602
+frozen resolved observations one factual disposition: 69 reviewed-family,
+2,929 implementation-variant, 414 overload-group, zero duplicate, two explicit
+editor-only/non-headless, 187 unresolved, and one queued-human-review. The
+counts are deterministic lineage accounting, not readiness, quality, or a
+product backlog. The catalog projection retains all 40 prior families and adds
+exactly 20 reviewed source-backed families for a total of 60. Their review
+treatment is eleven retain, seven revise, and two reconsider; complete current
+overload cohorts produce 29 Task 024 implementation records. Every new family
+remains catalogued-only and unresolved, with default, advanced, or review-only
+drawer visibility kept separate from readiness.
+
+Task 024 also freezes `schuss-core-selection-000002@1`, containing exactly the
+eight distinct component contracts already used by
+`schuss-graph-000004@1`. This is Task 025 input authority, not compiler proof.
+Task 024 reproduced levels 1-2 only; compiler/build and evidence levels 3-8
+were `not-run`.
+
+Task 025 is accepted complete for exact record set
+`schuss-record-set-000017@1`. Five source-backed operations—saw, PWM,
+exponential smoothing, audio soft clipping, and interpolated VCA—now have
+distinct native semantic identities and passed level-2 promotion claims.
+Together with the retained Task 016 crossfade and output bindings, the ordinary
+compiler plan selects seven exact nodes.
+
+The selected reverb wrapper allocates 32,768 bytes while its exact
+`uint16_t` engine clears 65,536 bytes. Task 025 records that contradiction as
+failed level-2 evidence and an explicitly unsupported eligibility. It creates
+no reverb operation, native binding, handler, generated C++, or ARM evidence.
+The complete plan rejects only reverb at implementation resolution, so level 1
+passes, complete-graph level 2 fails, and levels 3-8 remain `not-run`. Two
+fresh roots reproduced identical record-set, semantic-golden, and unsupported
+plan bytes.
+
+Task 026 is accepted complete for exact schema successor record set
+`schuss-record-set-000019@1`. Its child 026A first established an
+identity-independent seven-node, reverb-free semantic profile and exact direct
+handler at local ARM compile/link level 5. Child 026B adds closed v8 operations
+for project-owned profile creation/versioning, immutable history, explicit
+revert/redo, and atomic multi-record recovery. CLI routes now expose
+`project create`, `project edit`, `project history`, `project revert`, and
+project-aware `build plan`/`build execute` over those same services.
+The Task 026 application-capability successor describes eighteen operations;
+the historical fourteen-operation Task 023 description remains byte-exact in
+its own record set.
+
+The deterministic acceptance flow begins with no project metadata, creates a
+valid template head, atomically forks new project-owned graph, instrument, and
+request identities, applies one complete edit batch, versions the whole
+closure, performs undo and redo without rewriting history, closes/reopens,
+plans the exact authored request, and produces an ARM ELF. Two fresh workspaces
+reproduced byte-identical history, plan, generated source, and ELF. Exact
+completion evidence is in `evidence/task026-completion-v1/`; levels 1-5 pass
+and levels 6-8 remain `not-run`. Reverb is still explicitly unsupported and no
+Java, `.axp`, device, real-time, audible, Git, or publication action occurred.
+Tasks 027-028 and the authorized UI-architecture lane remain unstarted; no new
+numbered task is automatically active.
 
 Task 012B remains retired. The object drawer and transparent graph canvas are
 an unnumbered future client milestone. UI architecture planning is now
@@ -76,6 +141,9 @@ of Task 018 or Task 021.
 | Corrected Gills OLED/runtime | Versioned DMA-safe command transport plus one exact volatile-RAM board/OLED observation | Level 6 |
 | Gills panel diagnostic | Separate omitted-instrument telemetry source, deterministic host vectors, exact ARM artifacts, and one retained failed connected observation | Level 5; connected attempt failed before level 6 |
 | Application surface | Fourteen client-neutral capability descriptions, coherent CLI v2, exact schema-only record-set successor, and read-only cross-service smoke | Host structural/application proof only; no new compile, device, real-time, audible, safety, or release evidence |
+| Catalog structure and lineage | Current pinned first-party Ksoloti corpus with 666 normal-definition cohorts plus 19 compounds, all 3,602 frozen observations retained as lineage/gap evidence, 60-family reviewed projection, and exact eight-contract Task 025 packet | Level 2 structural/provenance only; new families remain catalogued-only |
+| Effects semantic tranche | Five exact Task 025 native-operation promotions plus two reused routing operations; reverb remains explicitly unsupported | Five component claims pass level 2; complete graph fails level 2; levels 3-8 not-run |
+| Complete authoring workflow | Project-owned graph/instrument/request allocation and versioning, atomic multi-record persistence, immutable history/revert, project-aware CLI planning/execution, and two-root authored ELF reproduction | Levels 1-5 passed for the exact reverb-free profile; levels 6-8 not-run |
 
 The accepted Task 018 result proves deterministic local ARM compile/link for
 one exact mapped graph/instrument/device/runtime closure. Its exact original
@@ -137,6 +205,12 @@ Task 021 established all of the following:
 - The historical Task 011A CLI golden remains byte-identical. Task 023 records
   its successor golden separately and tests the inherited four equal-length
   input-closure digest changes without treating them as semantic catalog drift.
+- The 20 Task 024 families and their 29 exact current variants have no Task 024-created component contract,
+  binding, compiler eligibility, or execution evidence. Their unresolved state
+  is intentional.
+- Rings-derived reverb remains ineligible until its exact allocation and
+  ownership contract is independently resolved; Task 026 does not redesign or
+  consume it.
 
 ## Current planning boundary
 
@@ -146,9 +220,11 @@ Task 021 product-binary replacement, firmware flash, SD-card write, persistent
 installation, or reset. Any diagnostic successor or repeated hardware
 procedure requires a new bounded decision and explicit approval.
 
-Task 023 is accepted complete. Task 024 is the next numbered implementation
-gate, but no Task 024 contract exists and no successor task is active. The
-already authorized unnumbered UI-architecture milestone is now eligible as a
-separate planning lane but has not started. Task 023 completion does not
-authorize staging, commit, push, publication, project writes, build execution,
-hardware action, or UI implementation. Tasks 019 and 020 remain deferred.
+Tasks 023-026 are accepted complete. Task 025's retained fail-closed result is
+bounded by `docs/tasks/025-direct-compiler-core-library-tranche.md` and
+`contracts/task025/reverb-allocation-boundary.md`; it does not authorize or
+claim lowering, ARM, device, real-time, audible, Git, or publication action.
+Task 026 consumes only the separately accepted reverb-free seven-node profile
+and is bounded by its completed contract and evidence. Task 027, Task 028, and
+the already authorized unnumbered UI-architecture milestone are eligible next
+lanes but have not started. Tasks 019 and 020 remain deferred.
