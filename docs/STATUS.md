@@ -242,10 +242,67 @@ Task 030 does not activate compiler promotion, Machine Builder, UI
 implementation, hardware work, or publication. No numbered implementation
 task is automatically active after Task 030 completion.
 
-Task 012B remains retired. The object drawer and transparent graph canvas are
-an unnumbered future client milestone. UI architecture planning is now
-explicitly authorized by ADR 0014, but UI implementation remains separately
-gated and must consume the shared client-neutral operations.
+The unnumbered desktop patcher implementation is locally complete for exact
+prospective successor record set `schuss-record-set-000024@1`, parented by
+Task 030. `apps/schuss_desktop/` is the sole maintained product UI: one Tauri
+shell now exposes Patches and Objects, an exact React Flow graph projection,
+contract-driven node inspection, proposal validation, project-backed Save,
+and immutable history/revert through the shared operation layer. Additive v11
+adds `component.inspect` and `set-graph-display-name`; application-capability
+v4 describes twenty-one shared operations. The closed desktop adapter permits
+only fourteen catalog, graph, and project operations and grants the renderer
+only Tauri `core:default`.
+
+ADR 0014 established that UI implementation remains separately gated. This
+unnumbered lane began only after explicit user authorization. The earlier
+object drawer and transparent graph canvas names remain historical planning
+language; Task 012B remains retired and is not the authority for this work.
+
+The live browser acceptance created and reopened a scratch Task 026 profile,
+rendered seven nodes/seven connections, staged one exact contract-backed node,
+and rejected one catalogued-only Mutable-derived object without changing the
+graph. The scratch workspace was moved to Trash. Frontend, Rust, bridge,
+structure, proposal, persistence, and reload regressions pass. Build execution,
+compiler expansion, device sessions, USB upload, hardware, real-time/resource,
+audible behavior, packaging, Git publication, and user acceptance remain
+separate and `not-run`.
+
+The final aggregate for this UI slice passed inventory 14/14 and catalog 6/6.
+Contracts ran 397 tests in 1,428.008 seconds and retained only the three
+pre-existing Task 011A/Task 023 golden and Task 027 projection-hash failures
+already bounded by Task 030 and VH-001; each reproduces from untouched HEAD.
+All desktop patcher, governance, project-authoring, and Task 030 tests pass.
+
+The active unnumbered desktop authoring-performance slice is implemented
+locally under its explicit 2026-08-18 authorization. The persistent process
+now reuses the exact already validated record-set base only when both its
+manifest path and full record-set reference match. A service-scoped eight-entry
+LRU reuses only derived semantic augmentation keyed by that exact base and the
+canonical project-owned records. Every project load still rereads and
+validates governed workspace bytes, ancestry, schemas, hashes, assets,
+symlinks, recovery state, and exact membership before semantic reuse.
+
+On the same scratch workspace used for the baseline, core initialization
+remains about 9.41 seconds, first project inspection falls from about 18.5
+seconds to about 0.92 seconds, and warm repeated inspection falls from about
+18.7 seconds to about 0.012 seconds. These host timings are performance
+evidence only. Cache-enabled and cache-disabled transactions produce
+canonical-byte-identical results and governed files; tampered owned bytes fail
+before a semantic cache hit. The renderer now announces create/open/save
+stages, prevents duplicate actions, confirms navigation away from unsaved
+work. Failed or conflicted saves retain the draft for retry or explicit
+accepted-project reload. No operation, schema, record-set,
+allowlist, renderer capability, build, USB, or device boundary changed.
+
+Focused cache/parity, frontend, bridge, native-shell, browser, shared-operation,
+Task 012A atomicity/recovery, and Task 026 authoring checks pass. The final
+performance-slice aggregate passes inventory 14/14 and catalog 6/6. Contracts
+ran 402 tests in 960.044 seconds and retained exactly the three previously
+audited Task 011A/Task 023 golden and Task 027 projection-hash failures; no
+desktop, performance, project, governance, or current Task 030 test failed.
+
+This desktop uses Task 026 project operations rather than reviving Task 012B's
+design.
 
 Tasks 019 and 020 are deferred and not automatically activated by completion
 of Task 018 or Task 021.
@@ -271,6 +328,7 @@ of Task 018 or Task 021.
 | Complete Mutable-derived catalog cohort | All 56 exactly attributed Task 027 entries catalogued as individual implementations across 107 function-first families, with shared implementation search and CLI v3 object browsing | Levels 1-2 structural/provenance only; all 50 additions remain catalogued-only and levels 3-8 not-run |
 | Twenty-item direct palette | Five retained Task 025 promotions plus fifteen exact independent Task 028 selections and normalized operation-IR lowerings; seven Task 026 support bindings remain separate | Levels 1-3 passed; source generation, ARM, device, realtime/resource, and audible levels 4-8 not-run |
 | Gills machine layer | Exact Palimpsest and Tide Pit source reviews, source-evidenced inspection presentations, editable v0.6 panel plus semantic map, fail-closed completed-machine schema, shared read-only inspection operation, and isolated Viewer | Level 1 structural/source-identity/host inspection proof; completed machines zero; levels 2-8 not-run |
+| Desktop patcher | One consolidated Tauri shell, exact 133-implementation browsing, seven-node template creation, graph projection/proposal, atomic project save, and history/revert through shared operations | Host UI and project-persistence proof only; build, device, real-time/resource, audible, packaging, and publication not-run |
 
 The accepted Task 018 result proves deterministic local ARM compile/link for
 one exact mapped graph/instrument/device/runtime closure. Its exact original
@@ -327,8 +385,12 @@ Task 021 established all of the following:
 - The authenticated Task 009 local content store is ignored and must be
   validated separately when present; a clean checkout cannot claim that local
   evidence merely from tracked manifests.
-- No desktop application or UI client is implemented. UI architecture is
-  eligible but has not started.
+- The desktop patcher has no build session/job or device-session contract; its
+  status bar is informational and cannot execute, upload, flash, or claim
+  connected-device evidence. Process-local reuse now removes repeated semantic
+  validation of an unchanged exact closure, but cold startup still validates
+  the full selected record set and remains about nine seconds on the measured
+  development machine.
 - The historical Task 011A CLI golden remains byte-identical. Task 023 records
   its successor golden separately and tests the inherited four equal-length
   input-closure digest changes without treating them as semantic catalog drift.
@@ -369,7 +431,8 @@ Task 028. Task 028 is bounded by its completed twenty-item direct-palette
 contract; its prior transparent-compound outcome is deferred. Task 029 is
 bounded to source-evidenced machine inspection and Task 030 to catalog
 provenance plus read-only object discovery. No numbered
-implementation lane is currently planned. The already authorized unnumbered
-UI-architecture milestone remains eligible but has not started. The
-original application sessions/jobs/diagnostics outcome is deferred without a
-replacement task number. Tasks 019 and 020 remain deferred.
+implementation lane is currently planned. The unnumbered desktop patcher is
+implemented locally and awaits user acceptance/publication; build/device work
+is a separate future contract. The original application
+sessions/jobs/diagnostics outcome is deferred without a replacement task
+number. Tasks 019 and 020 remain deferred.

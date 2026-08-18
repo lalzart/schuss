@@ -42,7 +42,7 @@ row does not authorize the next.
 | 28 | Twenty-item direct selectable palette; transparent compounds deferred | Complete; fifteen additions lower locally at levels 1-3, no build |
 | 29 | Complete-machine inspection layer and isolated Viewer | Complete; two exact source reviews, zero completed machines, structural level 1 |
 | 30 | Complete exact Mutable-derived catalog cohort and object CLI | Complete; 56 attributed implementations, 107 families, shared CLI v3 discovery, levels 1-2 |
-| Deferred UI | Object drawer and transparent graph canvas | Unnumbered; architecture authorized, implementation separately gated |
+| Deferred UI | Consolidated desktop catalog and node patcher | Unnumbered; implemented locally after explicit authorization; authoring performance active; publication/build/device separately gated |
 
 ## Completed Task 018 gates
 
@@ -100,9 +100,12 @@ compile/link level 5. Task 027 preserves all sixty functional families while
 adding exact Mutable-derived provenance at structural levels 1-2. Task 028
 adds fifteen independently selectable native operation identities to the five
 Task 025 promotions, reaching an exact twenty-item palette at local lowering
-level 3; transparent compounds remain deferred. The authorized design-only
-UI-architecture milestone is eligible but not started. No numbered
-implementation lane is currently planned. The original
+level 3; transparent compounds remain deferred. The unnumbered UI lane was
+explicitly authorized after its architecture planning boundary; the desktop
+catalog and patcher are implemented locally. No numbered implementation lane
+is currently planned. Authoring performance and reliability are active locally
+inside that same explicitly authorized unnumbered lane. Publication, build
+execution, and device communication remain separately gated. The original
 sessions/jobs/diagnostics outcome is deferred without a replacement number.
 The default ceiling remains two implementation lanes plus one read-only or
 design lane.
@@ -116,8 +119,8 @@ Both are complete; no numbered implementation lane is active.
 A parent may declare children such as `023A`, `023B`, and `023C`. Those are
 exact parent-owned work packages, not aliases or independent roadmap entries;
 the completed Task 023 parent fixed their dependencies, write ownership, and
-integration order. Tasks 019 and 020 remain deferred. UI implementation
-remains separately gated.
+integration order. Tasks 019 and 020 remain deferred. UI implementation was
+separately gated and began only after explicit user authorization.
 
 ## Staying on track
 

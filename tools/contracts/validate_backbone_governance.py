@@ -39,6 +39,10 @@ TASK_026 = "docs/tasks/026-complete-authoring-operations-and-cli-workflow.md"
 TASK_027 = "docs/tasks/027-mutable-instruments-catalog-provenance.md"
 TASK_028 = "docs/tasks/028-twenty-item-direct-palette.md"
 TASK_030 = "docs/tasks/030-complete-mutable-catalog-and-object-cli.md"
+UI_DESKTOP_INITIALIZATION = "docs/tasks/ui-desktop-initialization.md"
+UI_DESKTOP_CATALOG = "docs/tasks/ui-desktop-read-only-catalog.md"
+UI_DESKTOP_PATCHER = "docs/tasks/ui-desktop-patcher-authoring.md"
+UI_DESKTOP_PERFORMANCE = "docs/tasks/ui-desktop-authoring-performance.md"
 
 DOCUMENT_PATHS = (
     README,
@@ -68,6 +72,10 @@ DOCUMENT_PATHS = (
     TASK_027,
     TASK_028,
     TASK_030,
+    UI_DESKTOP_INITIALIZATION,
+    UI_DESKTOP_CATALOG,
+    UI_DESKTOP_PATCHER,
+    UI_DESKTOP_PERFORMANCE,
 )
 
 ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 31))
@@ -86,6 +94,9 @@ EXPECTED_TASK_FILENAMES = {
     "028-twenty-item-direct-palette.md",
     "030-complete-mutable-catalog-and-object-cli.md",
     "ui-desktop-initialization.md",
+    "ui-desktop-read-only-catalog.md",
+    "ui-desktop-patcher-authoring.md",
+    "ui-desktop-authoring-performance.md",
 }
 LETTERED_ALIAS = re.compile(r"\bTasks?\s+(01[3-9]|02[01])[A-Z](?:-[A-Z])?\b", re.IGNORECASE)
 INFORMAL_ALIAS = re.compile(r"(?<![A-Za-z0-9])B6(?![A-Za-z0-9])", re.IGNORECASE)
@@ -586,6 +597,93 @@ def validate_documents(
         ),
     )
 
+    for document, status_fragments, required in (
+        (
+            UI_DESKTOP_INITIALIZATION,
+            ("accepted and complete on 2026-08-17", "structural level only"),
+            (
+                "## Goal and why it exists",
+                "## In scope",
+                "## Out of scope",
+                "## Inputs and deliverables",
+                "## Acceptance tests",
+                "## Decisions this task may make",
+                "## Decisions this task must not make",
+                "unnumbered child boundary",
+                "Task 012B remains retired",
+            ),
+        ),
+        (
+            UI_DESKTOP_CATALOG,
+            ("accepted by explicit user authorization", "complete locally"),
+            (
+                "## Goal and why it exists",
+                "## In scope",
+                "## Out of scope",
+                "## Inputs and deliverables",
+                "## Acceptance tests",
+                "## Decisions this task may make",
+                "## Decisions this task must not make",
+                "first product implementation inside the unnumbered UI lane",
+                "does not revive Task 012B",
+            ),
+        ),
+        (
+            UI_DESKTOP_PATCHER,
+            ("implemented locally from explicit user authorization",),
+            (
+                "## Goal and why it exists",
+                "## In scope",
+                "## Out of scope",
+                "## Inputs and deliverables",
+                "## Acceptance tests",
+                "## Decisions this task may make",
+                "## Decisions this task must not make",
+                "second product implementation inside the unnumbered desktop UI",
+                "schuss-record-set-000024@1",
+                "build execution, USB, device upload",
+            ),
+        ),
+        (
+            UI_DESKTOP_PERFORMANCE,
+            (
+                "accepted by explicit user authorization and active locally on 2026-08-18",
+                "Git publication remains separate",
+            ),
+            (
+                "## Goal and why it exists",
+                "## In scope",
+                "## Out of scope",
+                "## Inputs and deliverables",
+                "## Acceptance tests",
+                "## Decisions this task may make",
+                "## Decisions this task must not make",
+                "same immutable 421-record base closure",
+                "bounded in-memory cache",
+                "Continue reading, parsing, hashing, schema-validating",
+                "Build planning/execution, compiler changes, artifacts, USB discovery",
+                "warm repeated inspection improves by at least 10x",
+            ),
+        ),
+    ):
+        status = _leading_status(documents.get(document, "")) or ""
+        for fragment in status_fragments:
+            if fragment not in status:
+                diagnostics.append(
+                    _diagnostic(
+                        "UI_TASK_CONTRACT_INVALID",
+                        document,
+                        f"UI task status must contain: {fragment}",
+                    )
+                )
+        _require_phrases(
+            diagnostics,
+            code="UI_TASK_CONTRACT_INVALID",
+            document=document,
+            scope=documents.get(document, ""),
+            phrases=required,
+        )
+
     status_rules = (
         "This document is the single authority for Schuss's current development state.",
         "Task 018 is complete for exact record set `schuss-record-set-000012@1`.",
@@ -648,8 +746,14 @@ def validate_documents(
         "bring the catalog to 107 families and 133 implementations",
         "`catalog.implementations.search`",
         "No numbered implementation task is automatically active after Task 030 completion",
-        "UI architecture planning is now explicitly authorized by ADR 0014",
-        "UI implementation remains separately gated",
+        "The unnumbered desktop patcher implementation is locally complete",
+        "The active unnumbered desktop authoring-performance slice",
+        "warm repeated inspection falls from about 18.7 seconds to about 0.012 seconds",
+        "Every project load still rereads and validates governed workspace bytes",
+        "Failed or conflicted saves retain the draft",
+        "Contracts ran 402 tests in 960.044 seconds",
+        "ADR 0014 established that UI implementation remains separately gated",
+        "began only after explicit user authorization",
     )
     _require_phrases(
         diagnostics,
@@ -702,12 +806,31 @@ def validate_documents(
         phrases=history_rules,
     )
 
-    ui_scopes = {
-        STATUS: documents.get(STATUS, ""),
+    current_ui_scope = _normalized(documents.get(STATUS, "")).lower()
+    if any(
+        phrase not in current_ui_scope
+        for phrase in (
+            "object drawer",
+            "transparent graph canvas",
+            "unnumbered",
+            "explicit user authorization",
+            "task 012b remains retired",
+            "apps/schuss_desktop/",
+        )
+    ):
+        diagnostics.append(
+            _diagnostic(
+                "UI_MILESTONE_ROUTING_INVALID",
+                STATUS,
+                "current UI implementation must remain unnumbered, explicitly authorized, and distinct from Task 012B",
+            )
+        )
+
+    historical_ui_scopes = {
         TASK_012B: documents.get(TASK_012B, ""),
         ADR_0010: _section(documents.get(ADR_0010, ""), "## Decision"),
     }
-    for document, scope in ui_scopes.items():
+    for document, scope in historical_ui_scopes.items():
         normalized = _normalized(scope).lower()
         if any(
             phrase not in normalized
@@ -774,14 +897,16 @@ def validate_documents(
     if (
         len(deferred_ui) != 1
         or "unnumbered" not in deferred_ui[0][2].lower()
-        or "architecture authorized" not in deferred_ui[0][2].lower()
-        or "implementation separately gated" not in deferred_ui[0][2].lower()
+        or "implemented locally" not in deferred_ui[0][2].lower()
+        or "explicit authorization" not in deferred_ui[0][2].lower()
+        or "authoring performance active" not in deferred_ui[0][2].lower()
+        or "publication/build/device separately gated" not in deferred_ui[0][2].lower()
     ):
         diagnostics.append(
             _diagnostic(
                 "UI_MILESTONE_NUMBERED",
                 ROADMAP,
-                "roadmap must contain one unnumbered architecture-authorized, implementation-gated Deferred UI row",
+                "roadmap must contain one unnumbered explicitly authorized local UI implementation row with later gates",
             )
         )
 
@@ -797,7 +922,8 @@ def validate_documents(
             "Tasks 023-028 are accepted complete.",
             "Tasks 029 and 030 were later activated by explicit user requests",
             "Task 026 consumes the independently accepted reverb-free seven-node executable profile",
-            "UI-architecture milestone is eligible but not started",
+            "desktop catalog and patcher are implemented locally",
+            "Authoring performance and reliability are active locally",
             "No numbered implementation lane is currently planned",
             "sessions/jobs/diagnostics outcome is deferred without a replacement number",
             "two implementation lanes plus one",
@@ -906,6 +1032,10 @@ def validate_documents(
         TASK_027: documents.get(TASK_027, ""),
         TASK_028: documents.get(TASK_028, ""),
         TASK_030: documents.get(TASK_030, ""),
+        UI_DESKTOP_INITIALIZATION: documents.get(UI_DESKTOP_INITIALIZATION, ""),
+        UI_DESKTOP_CATALOG: documents.get(UI_DESKTOP_CATALOG, ""),
+        UI_DESKTOP_PATCHER: documents.get(UI_DESKTOP_PATCHER, ""),
+        UI_DESKTOP_PERFORMANCE: documents.get(UI_DESKTOP_PERFORMANCE, ""),
     }
     for document, scope in alias_scopes.items():
         matches = sorted(set(LETTERED_ALIAS.findall(scope)))
@@ -940,7 +1070,7 @@ def validate_documents(
 
     diagnostics.sort(key=lambda item: (item["code"], item["document"], item["detail"]))
     return {
-        "active_product_task": "none-task030-complete-next-task-requires-contract",
+        "active_product_task": "unnumbered-desktop-authoring-performance-local-implementation-awaiting-acceptance",
         "active_evidence_task": "022-failed-diagnostic-promotion-stopped",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
         "authoritative_decisions": [
@@ -953,7 +1083,7 @@ def validate_documents(
         "next_planned_task": "none-task030-complete",
         "planned_task_sequence": list(PLANNED_SEQUENCE),
         "promotion_gate": "task030-complete-catalog-level-2-no-support-promotion",
-        "schema_version": "backbone-governance-summary-v18",
+        "schema_version": "backbone-governance-summary-v19",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -976,7 +1106,7 @@ def validate_documents(
             "029": "complete-machine-inspection-level-1",
             "030": "complete-mutable-catalog-cohort-level-2-cli-v3",
         },
-        "ui_milestone_status": "unnumbered-architecture-eligible-not-started-implementation-gated",
+        "ui_milestone_status": "unnumbered-desktop-authoring-performance-implemented-locally-publication-build-device-gated",
     }
 
 

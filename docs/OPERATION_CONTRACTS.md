@@ -284,6 +284,14 @@ request and dispatches exactly once. Catalog commands default to
 `schuss-record-set-000023@1`; other product commands and raw `op` retain their
 existing defaults.
 
-Task 012B is retired. A future explicitly authorized UI client must consume
-these same project, graph, catalog, build, compiler, and diagnostic operations;
-it may not define a parallel persistence, build, or compiler path.
+The unnumbered desktop patcher slice additively supplies request/result v11
+and application-capability-description v4 in exact record set
+`schuss-record-set-000024@1`. `component.inspect` returns one exact governed
+component contract. The v11 graph edit language retains the v8 edit set and
+adds only `set-graph-display-name`; `graph.transact` remains proposal-only and
+`project.profile.transact` remains an explicit atomic workspace write. The
+desktop uses these same operations and defines no parallel persistence path.
+
+Task 012B remains retired. Any later build or device UI must consume shared
+session/job and device operations; it may not define a client-owned build,
+compiler, USB, or evidence path.

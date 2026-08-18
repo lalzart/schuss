@@ -1,0 +1,13 @@
+.node { width: 210px; border: 1px solid #3a414c; border-radius: 2px; background: #171b21; box-shadow: 0 2px 7px rgb(0 0 0 / 25%); color: #cdd2da; }
+.node[data-selected="true"] { border-color: #c7a85a; }
+.node header { display: flex; justify-content: space-between; align-items: center; min-height: 33px; padding: 0 9px; border-bottom: 1px solid #303640; background: #1d222a; }
+.node header strong { overflow: hidden; font-size: .67rem; font-weight: 620; text-overflow: ellipsis; white-space: nowrap; }
+.node header code { color: #697485; font-size: .5rem; }
+.ports { display: grid; padding: 5px 0; }
+.portRow { display: grid; grid-template-columns: 1fr 1fr; align-items: center; }
+.input, .output { display: flex; gap: 6px; align-items: center; min-width: 0; color: #8f99a8; }
+.output { justify-content: end; text-align: right; }
+.input small, .output small { overflow: hidden; font-size: .54rem; text-overflow: ellipsis; white-space: nowrap; }
+.handle { position: relative !important; inset: auto !important; width: 8px !important; height: 8px !important; flex: 0 0 8px; border: 1px solid #101318 !important; transform: none !important; background: #69a7d7 !important; }
+.handle[data-rate="audio"] { background: #d79a58 !important; }
+.handle[data-rate="event"] { background: #a884d7 !important; }

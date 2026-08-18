@@ -1,0 +1,11 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "description": "Core window capability with no filesystem, shell, network, build, or hardware plugin permissions.",
+  "identifier": "main-desktop-patcher",
+  "permissions": [
+    "core:default"
+  ],
+  "windows": [
+    "main"
+  ]
+}

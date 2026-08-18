@@ -1,0 +1,137 @@
+import { emptyCatalogFilters } from "./requests";
+import type {
+  ComponentReference,
+  DesktopOperationRequest,
+  ExactRecordSetReference,
+  GraphEdit,
+  GraphReference,
+  ProjectReference,
+} from "./types";
+
+export const DESKTOP_RECORD_SET: ExactRecordSetReference = {
+  record_set_id: "schuss-record-set-000024",
+  revision: 1,
+  content_hash: "sha256:2b30be20d72ba619da33664a6c4391d92199e3eead33818ecb27a56b29a24cbb",
+};
+
+export const STARTER_GRAPH: GraphReference = {
+  graph_id: "schuss-graph-000006",
+  revision: 1,
+  content_hash: "sha256:1c3e3e66245cf497b507d60d21d3a8ebd8cdc5117f02eab8b793853a4bef5aa2",
+};
+
+export const STARTER_INSTRUMENT = {
+  instrument_id: "schuss-instrument-000005",
+  revision: 1,
+  content_hash: "sha256:e4d8d801dba7f8c557295444d3de22ad212601b88d3bd4bf7dfa7f4025aa2679",
+};
+
+export const STARTER_BUILD_REQUEST = {
+  build_request_id: "schuss-build-request-000005",
+  revision: 1,
+  content_hash: "sha256:8f40ac2f996f32f10f59b862da566f1d66f145cdf1780f29d786c9b2f42f03c2",
+};
+
+function request(
+  schema_version: string,
+  operation: string,
+  payload: Record<string, unknown>,
+): DesktopOperationRequest {
+  return {
+    schema_version,
+    canonical_profile: "schuss-canonical-json-v1",
+    operation,
+    payload,
+  };
+}
+
+export function implementationSearchRequest(query: string): DesktopOperationRequest {
+  return request("schuss-operation-request-v10", "catalog.implementations.search", {
+    query,
+    filters: emptyCatalogFilters(),
+  });
+}
+
+export function componentInspectRequest(reference: ComponentReference): DesktopOperationRequest {
+  return request("schuss-operation-request-v11", "component.inspect", {
+    component_contract_reference: reference,
+  });
+}
+
+export function graphInspectRequest(reference: GraphReference): DesktopOperationRequest {
+  return request("schuss-operation-request-v1", "graph.inspect", {
+    graph_reference: reference,
+  });
+}
+
+export function projectInspectRequest(): DesktopOperationRequest {
+  return request("schuss-operation-request-v3", "project.inspect", {
+    scope: "accepted-project",
+  });
+}
+
+export function projectHistoryRequest(): DesktopOperationRequest {
+  return request("schuss-operation-request-v8", "project.history.inspect", {
+    scope: "immutable-ancestry",
+  });
+}
+
+export function projectRevertRequest(
+  expected: ProjectReference,
+  target: ProjectReference,
+): DesktopOperationRequest {
+  return request("schuss-operation-request-v8", "project.revert", {
+    expected_project_reference: expected,
+    target_project_reference: target,
+    write_intent: "explicit",
+  });
+}
+
+export function projectInitRequest(projectId: string): DesktopOperationRequest {
+  return request("schuss-operation-request-v3", "project.init", {
+    project_id: projectId,
+    base_record_set: {
+      reference: DESKTOP_RECORD_SET,
+      portable_locator: "contracts/record-sets/ui-desktop-patcher-authoring-v1.json",
+    },
+    primary_graph_reference: STARTER_GRAPH,
+    instrument_references: [STARTER_INSTRUMENT],
+    build_request_references: [STARTER_BUILD_REQUEST],
+    asset_references: [],
+  });
+}
+
+export function projectForkRequest(project: ProjectReference): DesktopOperationRequest {
+  return request("schuss-operation-request-v8", "project.profile.fork", {
+    expected_project_reference: project,
+    template_graph_reference: STARTER_GRAPH,
+    template_instrument_reference: STARTER_INSTRUMENT,
+    template_build_request_reference: STARTER_BUILD_REQUEST,
+    write_intent: "explicit",
+  });
+}
+
+export function graphTransactRequest(
+  graph: GraphReference,
+  edits: GraphEdit[],
+): DesktopOperationRequest {
+  return request("schuss-operation-request-v11", "graph.transact", {
+    graph_reference: graph,
+    base_content_hash: graph.content_hash,
+    edits,
+  });
+}
+
+export function profileTransactRequest(
+  project: ProjectReference,
+  graph: GraphReference,
+  edits: GraphEdit[],
+): DesktopOperationRequest {
+  return request("schuss-operation-request-v11", "project.profile.transact", {
+    expected_project_reference: project,
+    graph_reference: graph,
+    base_content_hash: graph.content_hash,
+    edits,
+    write_intent: "explicit",
+  });
+}

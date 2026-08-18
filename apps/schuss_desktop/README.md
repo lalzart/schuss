@@ -1,40 +1,84 @@
 # Schuss desktop
 
-Status: structure-only initialization; no desktop application is implemented.
+Status: one consolidated local desktop application with exact catalog browsing
+and project-backed node patching. Build execution, device sessions, USB
+upload, flash, packaging, and hardware access are not implemented.
 
-This directory is the future application boundary for a Tauri 2 shell with a
-React and TypeScript frontend. It is intentionally inert: there is no HTML
-entry point, React component, Rust source, Cargo project, Tauri configuration,
-transport adapter, package dependency, or lockfile.
+The app is a Tauri 2 shell around React, TypeScript, and React Flow. Schuss
+core remains the semantic authority: the renderer submits versioned operations
+through one closed adapter and never reads or writes catalog, graph, or project
+JSON directly.
 
-The existing Schuss Python core remains the sole semantic authority. A future
-desktop adapter may submit only the named, versioned operations in
-`contracts/ui-core-boundary-v1.json` and must consume their canonical results
-without client-specific reshaping. The UI must never edit catalog files,
-semantic JSON records, or project workspace files directly.
+## Launch
 
-## Layout
+Requirements are Python 3, Node.js/npm, stable Rust/Cargo, and the normal
+macOS Xcode command-line tools.
 
-- `contracts/` contains the versioned, capability-limited client boundary.
-- `src/` reserves the future React/TypeScript frontend location.
-- `src-tauri/` reserves the future Tauri 2 shell and transport location.
-- `package.json` and `tsconfig.json` record only inert project metadata and
-  intended TypeScript constraints; they install or execute nothing.
+```bash
+cd apps/schuss_desktop
+npm install
+npm run dev
+```
 
-The normative ownership rules and next-slice sequence are in
-`../../docs/DESKTOP_UI_BOUNDARY.md`. The completed bounded task contract is
-`../../docs/tasks/ui-desktop-initialization.md`.
+The first core load validates exact record set
+`schuss-record-set-000024@1`; the persistent bridge reuses that exact validated
+base and a bounded process-local semantic augmentation cache. Each project load
+still rereads and validates all governed workspace bytes before any cache hit.
+Renderer-only verification uses the same Python adapter:
 
-## Static validation
+```bash
+npm run dev:web
+```
+
+## Product surfaces
+
+- **Patches** opens explicit Schuss workspaces and creates a project-owned fork
+  of the accepted seven-object Task 026 profile.
+- **Objects** lists the 133 Task 030 implementation records by function, form,
+  readiness, and provenance without requiring prose descriptions.
+- **Patcher** renders exact graph nodes, contract-owned ports, and connections;
+  node movement and viewport state remain non-semantic.
+- **Inspector** edits contract-owned parameter values. Save validates the
+  ordered proposal and versions graph/instrument/build-request/project through
+  one `project.profile.transact` operation.
+- **History** reads immutable ancestry and makes revert an explicit successor
+  operation.
+
+Catalogued-only implementations stay visible. Add resolves the exact family
+and requires exactly one component contract; it fails closed otherwise.
+
+## Runtime boundary
+
+One Tauri command, `dispatch_desktop_operation`, carries a closed fourteen
+operation allowlist covering catalog/object inspection, graph inspection and
+proposal, and explicit project creation/inspection/versioning/history/revert.
+Rust and Python independently enforce request/result versions, size limits,
+canonical metadata, and absolute workspace paths.
+
+The main window grants only `core:default`. No filesystem, shell, HTTP, build,
+device, or hardware plugin is installed or granted. React Flow `12.11.3` is a
+presentation dependency, not a semantic graph model.
+
+## Validation
+
+```bash
+npm run build
+npm test
+cargo test --manifest-path src-tauri/Cargo.toml
+python3 ../../tools/contracts/validate_desktop_ui_structure.py
+```
 
 From the repository root:
 
 ```bash
-python3 tools/contracts/validate_desktop_ui_structure.py
-python3 -m unittest tools.contracts.tests.test_desktop_ui_structure
+python3 -m unittest \
+  tools.contracts.tests.test_desktop_authoring_performance \
+  tools.contracts.tests.test_desktop_patcher_bridge \
+  tools.contracts.tests.test_desktop_patcher_operations \
+  tools.contracts.tests.test_desktop_ui_structure
 ```
 
-The validator is dependency-free and read-only. It intentionally fails if
-product source, package dependencies, lockfiles, semantic-record copies, or an
-unreviewed capability change appears in this initialization boundary.
-
+The patcher and performance contracts are
+`../../docs/tasks/ui-desktop-patcher-authoring.md` and
+`../../docs/tasks/ui-desktop-authoring-performance.md`; ownership and future
+build/device seams are in `../../docs/DESKTOP_UI_BOUNDARY.md`.

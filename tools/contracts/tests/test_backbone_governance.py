@@ -31,7 +31,7 @@ class BackboneGovernanceTest(unittest.TestCase):
     def test_live_repository_is_valid(self):
         summary = governance.validate_documents(self.documents, self.task_filenames)
         self.assertEqual("valid", summary["status"])
-        self.assertEqual("backbone-governance-summary-v18", summary["schema_version"])
+        self.assertEqual("backbone-governance-summary-v19", summary["schema_version"])
         self.assertEqual([], summary["diagnostics"])
         self.assertEqual(
             [
@@ -41,7 +41,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["authoritative_decisions"],
         )
         self.assertEqual(
-            "none-task030-complete-next-task-requires-contract",
+            "unnumbered-desktop-authoring-performance-local-implementation-awaiting-acceptance",
             summary["active_product_task"],
         )
         self.assertEqual(
@@ -110,7 +110,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["task_statuses"]["030"],
         )
         self.assertEqual(
-            "unnumbered-architecture-eligible-not-started-implementation-gated",
+            "unnumbered-desktop-authoring-performance-implemented-locally-publication-build-device-gated",
             summary["ui_milestone_status"],
         )
 

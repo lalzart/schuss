@@ -10,6 +10,7 @@ APPLICATION_DESCRIPTION_VERSION = "schuss-application-capability-description-v0"
 APPLICATION_DESCRIPTION_VERSION_V1 = "schuss-application-capability-description-v1"
 APPLICATION_DESCRIPTION_VERSION_V2 = "schuss-application-capability-description-v2"
 APPLICATION_DESCRIPTION_VERSION_V3 = "schuss-application-capability-description-v3"
+APPLICATION_DESCRIPTION_VERSION_V4 = "schuss-application-capability-description-v4"
 
 
 class CapabilityRegistryError(ValueError):
@@ -259,6 +260,61 @@ TASK030_CAPABILITY_ENTRIES = (
     ),
 )
 
+DESKTOP_PATCHER_CAPABILITY_ENTRIES = (
+    _entry(
+        "component.inspect",
+        "component",
+        "Inspect one exact governed component contract for client-neutral authoring.",
+        11,
+        ("exact-record-set",),
+        "read-only",
+        ("exact-record-set", "exact-reference"),
+    ),
+)
+
+DESKTOP_PATCHER_REPLACEMENTS = {
+    "graph.transact": _entry(
+        "graph.transact",
+        "graph",
+        "Propose and validate one in-memory graph successor without persistence.",
+        11,
+        ("exact-record-set",),
+        "proposal-only",
+        ("base-content-hash", "exact-record-set", "exact-reference"),
+    ),
+    "project.profile.transact": _entry(
+        "project.profile.transact",
+        "project",
+        "Atomically version one project-owned graph, instrument, and build request.",
+        11,
+        ("explicit-project-workspace",),
+        "workspace-write",
+        (
+            "base-content-hash",
+            "expected-project-reference",
+            "explicit-project-workspace",
+            "exact-reference",
+            "write-intent",
+        ),
+    ),
+}
+
+
+def _desktop_patcher_entries() -> tuple[dict[str, Any], ...]:
+    inherited = (
+        *CAPABILITY_ENTRIES,
+        *TASK026_CAPABILITY_ENTRIES,
+        *TASK029_CAPABILITY_ENTRIES,
+        *TASK030_CAPABILITY_ENTRIES,
+    )
+    return tuple(
+        copy.deepcopy(DESKTOP_PATCHER_REPLACEMENTS.get(entry["operation"], entry))
+        for entry in inherited
+    ) + tuple(copy.deepcopy(entry) for entry in DESKTOP_PATCHER_CAPABILITY_ENTRIES)
+
+
+APPLICATION_CAPABILITY_ENTRIES_V4 = _desktop_patcher_entries()
+
 
 EXPECTED_OPERATIONS = tuple(sorted(entry["operation"] for entry in CAPABILITY_ENTRIES))
 EXPECTED_OPERATIONS_V1 = tuple(
@@ -287,6 +343,9 @@ EXPECTED_OPERATIONS_V3 = tuple(
             *TASK030_CAPABILITY_ENTRIES,
         )
     )
+)
+EXPECTED_OPERATIONS_V4 = tuple(
+    sorted(entry["operation"] for entry in APPLICATION_CAPABILITY_ENTRIES_V4)
 )
 
 
@@ -328,34 +387,35 @@ def build_application_description(
 ) -> dict[str, Any]:
     """Return the deterministic application description for one exact context."""
 
-    uses_v3 = "application_capability_description_v3" in schemas
+    uses_v4 = "application_capability_description_v4" in schemas
+    uses_v3 = uses_v4 or "application_capability_description_v3" in schemas
     uses_v2 = uses_v3 or "application_capability_description_v2" in schemas
     uses_v1 = uses_v2 or "application_capability_description_v1" in schemas
-    default_entries = (
-        (
+    if uses_v4:
+        default_entries = APPLICATION_CAPABILITY_ENTRIES_V4
+        expected_operations = EXPECTED_OPERATIONS_V4
+    elif uses_v3:
+        default_entries = (
             *CAPABILITY_ENTRIES,
             *TASK026_CAPABILITY_ENTRIES,
             *TASK029_CAPABILITY_ENTRIES,
             *TASK030_CAPABILITY_ENTRIES,
         )
-        if uses_v3
-        else
-        (*CAPABILITY_ENTRIES, *TASK026_CAPABILITY_ENTRIES, *TASK029_CAPABILITY_ENTRIES)
-        if uses_v2
-        else (*CAPABILITY_ENTRIES, *TASK026_CAPABILITY_ENTRIES)
-        if uses_v1
-        else CAPABILITY_ENTRIES
-    )
+        expected_operations = EXPECTED_OPERATIONS_V3
+    elif uses_v2:
+        default_entries = (
+            *CAPABILITY_ENTRIES,
+            *TASK026_CAPABILITY_ENTRIES,
+            *TASK029_CAPABILITY_ENTRIES,
+        )
+        expected_operations = EXPECTED_OPERATIONS_V2
+    elif uses_v1:
+        default_entries = (*CAPABILITY_ENTRIES, *TASK026_CAPABILITY_ENTRIES)
+        expected_operations = EXPECTED_OPERATIONS_V1
+    else:
+        default_entries = CAPABILITY_ENTRIES
+        expected_operations = EXPECTED_OPERATIONS
     selected = list(default_entries if entries is None else entries)
-    expected_operations = (
-        EXPECTED_OPERATIONS_V3
-        if uses_v3
-        else EXPECTED_OPERATIONS_V2
-        if uses_v2
-        else EXPECTED_OPERATIONS_V1
-        if uses_v1
-        else EXPECTED_OPERATIONS
-    )
     operations = [entry.get("operation") for entry in selected]
     if (
         len(operations) != len(set(operations))
@@ -378,7 +438,9 @@ def build_application_description(
         described.append(entry)
     return {
         "schema_version": (
-            "application-capability-description-v3"
+            "application-capability-description-v4"
+            if uses_v4
+            else "application-capability-description-v3"
             if uses_v3
             else "application-capability-description-v2"
             if uses_v2
@@ -388,7 +450,9 @@ def build_application_description(
         ),
         "canonical_profile": "schuss-canonical-json-v1",
         "description_version": (
-            APPLICATION_DESCRIPTION_VERSION_V3
+            APPLICATION_DESCRIPTION_VERSION_V4
+            if uses_v4
+            else APPLICATION_DESCRIPTION_VERSION_V3
             if uses_v3
             else APPLICATION_DESCRIPTION_VERSION_V2
             if uses_v2

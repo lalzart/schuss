@@ -1,11 +1,35 @@
 {
-  "description": "Inert boundary metadata for the future Schuss Tauri 2, React, and TypeScript desktop client.",
+  "dependencies": {
+    "@radix-ui/react-scroll-area": "1.2.18",
+    "@radix-ui/react-tabs": "1.1.21",
+    "@radix-ui/react-tooltip": "1.2.16",
+    "@tauri-apps/api": "2.11.1",
+    "@xyflow/react": "12.11.3",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "description": "Schuss patch authoring and catalog desktop application.",
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.4",
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.0.5",
+    "jsdom": "30.0.1",
+    "typescript": "7.0.2",
+    "vite": "8.2.1",
+    "vitest": "4.1.10"
+  },
   "name": "@schuss/desktop",
   "private": true,
   "schuss": {
     "applicationBoundary": "apps/schuss_desktop",
     "coreBoundaryContract": "contracts/ui-core-boundary-v1.json",
-    "status": "structure-only",
+    "recordSet": "schuss-record-set-000024@1",
+    "status": "project-backed-patcher",
     "targetStack": {
       "language": "TypeScript",
       "shell": "Tauri 2",
@@ -13,6 +37,11 @@
     }
   },
   "scripts": {
+    "build": "tsc && vite build",
+    "dev": "tauri dev",
+    "dev:web": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "validate:structure": "python3 ../../tools/contracts/validate_desktop_ui_structure.py"
   },
   "type": "module",

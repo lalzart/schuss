@@ -12,6 +12,7 @@ import copy
 import hashlib
 import os
 import re
+from collections import OrderedDict
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Callable, Iterable
@@ -39,6 +40,8 @@ REQUEST_SCHEMA = "operation-request-v3.schema.json"
 RESULT_SCHEMA = "operation-result-v3.schema.json"
 REQUEST_V8_SCHEMA = "operation-request-v8.schema.json"
 RESULT_V8_SCHEMA = "operation-result-v8.schema.json"
+RESULT_V11_SCHEMA = "operation-result-v11.schema.json"
+DEFAULT_SEMANTIC_CACHE_SIZE = 8
 
 TASK012A_SCHEMA_NAMES = {
     "project": PROJECT_SCHEMA,
@@ -183,7 +186,12 @@ def _schema_value_bytes(value: dict[str, Any], schema: dict[str, Any]) -> bytes:
             "PROJECT_SCHEMA_INVALID",
             "; ".join(errors),
         )
-    if schema.get("$id") in {RECOVERY_SCHEMA, RESULT_SCHEMA, RESULT_V8_SCHEMA}:
+    if schema.get("$id") in {
+        RECOVERY_SCHEMA,
+        RESULT_SCHEMA,
+        RESULT_V8_SCHEMA,
+        RESULT_V11_SCHEMA,
+    }:
         canonical = copy.deepcopy(value)
     else:
         canonical = core.canonicalize_with_schema(value, schema, schema)
@@ -250,17 +258,47 @@ class ProjectService:
         failure_injector: Callable[[str], None] | None = None,
         pid_provider: Callable[[], int] = os.getpid,
         process_alive: Callable[[int], bool] | None = None,
+        semantic_cache_size: int = DEFAULT_SEMANTIC_CACHE_SIZE,
     ) -> None:
+        if (
+            isinstance(semantic_cache_size, bool)
+            or not isinstance(semantic_cache_size, int)
+            or semantic_cache_size < 0
+        ):
+            raise ValueError("semantic cache size must be a non-negative integer")
         self.workspace = Path(workspace).absolute()
         self.repository_root = Path(repository_root).resolve()
         self.failure_injector = failure_injector
         self.pid_provider = pid_provider
         self.process_alive = process_alive or self._default_process_alive
-        self._context = (
+        prepared_context = (
             with_project_schemas(initial_context, self.repository_root)
             if initial_context is not None
             else None
         )
+        self._context = prepared_context
+        self._base_context = prepared_context
+        self._base_loaded = (
+            prepared_context.loaded_record_set
+            if prepared_context is not None
+            else None
+        )
+        self._base_record_set_path = (
+            prepared_context.record_set_path
+            if prepared_context is not None
+            else None
+        )
+        self._semantic_cache_size = semantic_cache_size
+        self._semantic_cache: OrderedDict[
+            tuple[str, ...], tuple[OperationContext, dict[str, Any]]
+        ] = OrderedDict()
+        self._cache_metrics = {
+            "base_loads": 0,
+            "base_reuses": 0,
+            "semantic_hits": 0,
+            "semantic_misses": 0,
+            "semantic_evictions": 0,
+        }
         self._recovery_status = "not-needed"
 
     @property
@@ -269,7 +307,20 @@ class ProjectService:
             self._context = with_project_schemas(
                 load_repository_context(self.repository_root), self.repository_root
             )
+            self._base_context = self._context
+            self._base_loaded = self._context.loaded_record_set
+            self._base_record_set_path = self._context.record_set_path
         return self._context
+
+    @property
+    def cache_metrics(self) -> dict[str, int]:
+        """Return private-process cache evidence without exposing semantic state."""
+
+        return {
+            **self._cache_metrics,
+            "semantic_entries": len(self._semantic_cache),
+            "semantic_capacity": self._semantic_cache_size,
+        }
 
     @staticmethod
     def _default_process_alive(pid: int) -> bool:
@@ -469,9 +520,16 @@ class ProjectService:
     def _load_base(
         self, base: dict[str, Any]
     ) -> tuple[OperationContext, record_set_rules.LoadedRecordSet]:
-        path = self._repository_path(base["portable_locator"])
+        path = self._repository_path(base["portable_locator"]).resolve()
+        if (
+            self._base_context is not None
+            and self._base_loaded is not None
+            and self._base_record_set_path == path
+            and self._base_context.record_set_reference == base["reference"]
+        ):
+            self._cache_metrics["base_reuses"] += 1
+            return self._base_context, self._base_loaded
         try:
-            loaded = record_set_rules.load_record_set(self.repository_root, path)
             context = load_repository_context(
                 self.repository_root,
                 record_set_path=path,
@@ -489,6 +547,11 @@ class ProjectService:
                 subject=base["portable_locator"],
             )
         context = with_project_schemas(context, self.repository_root)
+        loaded = context.loaded_record_set
+        self._cache_metrics["base_loads"] += 1
+        self._base_context = context
+        self._base_loaded = loaded
+        self._base_record_set_path = context.record_set_path
         self._context = context
         return context, loaded
 
@@ -769,7 +832,48 @@ class ProjectService:
             locators,
         )
 
+    @staticmethod
+    def _semantic_cache_key(
+        base_context: OperationContext,
+        project_records: dict[str, tuple[dict[str, Any], ...]],
+    ) -> tuple[str, ...]:
+        return (
+            core.canonical_json(base_context.record_set_reference),
+            *(
+                f"{kind}:{core.canonical_json(record)}"
+                for kind in sorted(project_records)
+                for record in sorted(
+                    project_records[kind], key=core.canonical_json
+                )
+            ),
+        )
+
     def _augment_context(
+        self,
+        base_context: OperationContext,
+        project_records: dict[str, tuple[dict[str, Any], ...]],
+        base_loaded: record_set_rules.LoadedRecordSet,
+    ) -> tuple[OperationContext, dict[str, Any]]:
+        key = self._semantic_cache_key(base_context, project_records)
+        cached = self._semantic_cache.get(key)
+        if cached is not None:
+            self._semantic_cache.move_to_end(key)
+            self._cache_metrics["semantic_hits"] += 1
+            context, validation = cached
+            return context, copy.deepcopy(validation)
+
+        self._cache_metrics["semantic_misses"] += 1
+        context, validation = self._augment_context_uncached(
+            base_context, project_records, base_loaded
+        )
+        if self._semantic_cache_size > 0:
+            self._semantic_cache[key] = (context, copy.deepcopy(validation))
+            if len(self._semantic_cache) > self._semantic_cache_size:
+                self._semantic_cache.popitem(last=False)
+                self._cache_metrics["semantic_evictions"] += 1
+        return context, validation
+
+    def _augment_context_uncached(
         self,
         base_context: OperationContext,
         project_records: dict[str, tuple[dict[str, Any], ...]],
@@ -2326,9 +2430,23 @@ def dispatch_project_operation(
     operation = request.get("operation") if isinstance(request, dict) else None
     request_version = request.get("schema_version") if isinstance(request, dict) else None
     is_v8 = request_version == "schuss-operation-request-v8"
-    schema_key = "operation_request_v8" if is_v8 else "operation_request_v3"
-    result_schema_key = "operation_result_v8" if is_v8 else "operation_result_v3"
-    result_version = 8 if is_v8 else 3
+    is_v11 = request_version == "schuss-operation-request-v11"
+    is_authoring = is_v8 or is_v11
+    schema_key = (
+        "operation_request_v11"
+        if is_v11
+        else "operation_request_v8"
+        if is_v8
+        else "operation_request_v3"
+    )
+    result_schema_key = (
+        "operation_result_v11"
+        if is_v11
+        else "operation_result_v8"
+        if is_v8
+        else "operation_result_v3"
+    )
+    result_version = 11 if is_v11 else 8 if is_v8 else 3
     schema = service.context.schemas[schema_key]
     errors: list[str] = []
     try:
@@ -2357,7 +2475,8 @@ def dispatch_project_operation(
         "project.history.inspect",
         "project.revert",
     }
-    allowed = allowed_v8 if is_v8 else allowed_v3
+    allowed_v11 = {"project.profile.transact"}
+    allowed = allowed_v11 if is_v11 else allowed_v8 if is_v8 else allowed_v3
     if errors:
         result = _operation_result(
             operation if operation in allowed else "invalid-request",
@@ -2393,7 +2512,7 @@ def dispatch_project_operation(
             value = service.validate()
         elif operation == "project.graph.commit":
             value = service.commit_graph(request["payload"])
-        elif not is_v8:
+        elif not is_authoring:
             loaded = service.load()
             downgraded = copy.deepcopy(request)
             if operation in {"catalog.search", "catalog.inspect"}:

@@ -8,7 +8,7 @@
       "shell": "Tauri 2",
       "view": "React"
     },
-    "status": "structure-only"
+    "status": "project-backed-patcher"
   },
   "ownership": {
     "core_owned_semantics": [
@@ -20,12 +20,14 @@
       "project-and-workspace-records"
     ],
     "direct_catalog_file_access": "forbidden",
+    "direct_renderer_process_access": "forbidden",
     "direct_semantic_json_access": "forbidden",
     "direct_workspace_mutation": "forbidden",
-    "semantic_mutation_mode": "shared-operation-only-after-authorization",
+    "semantic_mutation_mode": "shared-operation-only",
     "ui_owned_ephemeral_state": [
       "draft-form-state",
       "panel-layout",
+      "recent-workspace-paths",
       "selection",
       "viewport"
     ]
@@ -33,119 +35,144 @@
   "planned_capability_phases": [
     {
       "operations": [
-        {
-          "effect_class": "read-only",
-          "operation": "application.describe",
-          "request_schema_version": "schuss-operation-request-v7",
-          "result_schema_version": "schuss-operation-result-v7"
-        },
-        {
-          "effect_class": "read-only",
-          "operation": "catalog.inspect",
-          "request_schema_version": "schuss-operation-request-v2",
-          "result_schema_version": "schuss-operation-result-v2"
-        },
-        {
-          "effect_class": "read-only",
-          "operation": "catalog.search",
-          "request_schema_version": "schuss-operation-request-v2",
-          "result_schema_version": "schuss-operation-result-v2"
-        }
+        "application.describe",
+        "catalog.implementations.search",
+        "catalog.inspect",
+        "catalog.search",
+        "component.inspect"
       ],
-      "phase": "read-only-catalog",
-      "prerequisites": [
-        "separately-accepted-visual-slice"
-      ],
-      "status": "planned-not-implemented"
+      "phase": "catalog-and-object-drawer",
+      "status": "implemented"
     },
     {
       "operations": [
-        {
-          "effect_class": "read-only",
-          "operation": "graph.inspect",
-          "request_schema_version": "schuss-operation-request-v1",
-          "result_schema_version": "schuss-operation-result-v1"
-        }
+        "graph.inspect",
+        "graph.transact"
       ],
-      "phase": "graph-visualization",
-      "prerequisites": [
-        "read-only-catalog-accepted"
-      ],
-      "status": "planned-not-implemented"
+      "phase": "graph-visualization-and-proposal",
+      "status": "implemented"
     },
     {
       "operations": [
-        {
-          "effect_class": "proposal-only",
-          "operation": "graph.transact",
-          "request_schema_version": "schuss-operation-request-v1",
-          "result_schema_version": "schuss-operation-result-v1"
-        },
-        {
-          "effect_class": "workspace-write",
-          "operation": "project.graph.commit",
-          "request_schema_version": "schuss-operation-request-v3",
-          "result_schema_version": "schuss-operation-result-v3"
-        },
-        {
-          "effect_class": "read-only",
-          "operation": "project.history.inspect",
-          "request_schema_version": "schuss-operation-request-v8",
-          "result_schema_version": "schuss-operation-result-v8"
-        },
-        {
-          "effect_class": "workspace-write",
-          "operation": "project.init",
-          "request_schema_version": "schuss-operation-request-v3",
-          "result_schema_version": "schuss-operation-result-v3"
-        },
-        {
-          "effect_class": "read-only",
-          "operation": "project.inspect",
-          "request_schema_version": "schuss-operation-request-v3",
-          "result_schema_version": "schuss-operation-result-v3"
-        },
-        {
-          "effect_class": "workspace-write",
-          "operation": "project.profile.fork",
-          "request_schema_version": "schuss-operation-request-v8",
-          "result_schema_version": "schuss-operation-result-v8"
-        },
-        {
-          "effect_class": "workspace-write",
-          "operation": "project.profile.transact",
-          "request_schema_version": "schuss-operation-request-v8",
-          "result_schema_version": "schuss-operation-result-v8"
-        },
-        {
-          "effect_class": "workspace-write",
-          "operation": "project.revert",
-          "request_schema_version": "schuss-operation-request-v8",
-          "result_schema_version": "schuss-operation-result-v8"
-        },
-        {
-          "effect_class": "read-only",
-          "operation": "project.validate",
-          "request_schema_version": "schuss-operation-request-v3",
-          "result_schema_version": "schuss-operation-result-v3"
-        }
+        "project.history.inspect",
+        "project.init",
+        "project.inspect",
+        "project.profile.fork",
+        "project.profile.transact",
+        "project.revert",
+        "project.validate"
       ],
-      "phase": "project-mutation-through-shared-operations",
-      "prerequisites": [
-        "explicit-ui-implementation-authorization",
-        "graph-visualization-accepted",
-        "task-027-accepted-complete"
+      "phase": "project-backed-authoring",
+      "status": "implemented"
+    },
+    {
+      "operations": [
+        "build.plan",
+        "build.execute",
+        "device.session.inspect",
+        "device.upload"
       ],
-      "status": "gated-not-authorized"
+      "phase": "build-and-device-deployment",
+      "status": "planned-not-implemented"
     }
   ],
-  "runtime_capabilities": [],
+  "runtime_capabilities": [
+    {
+      "effect_class": "read-only",
+      "operation": "application.describe",
+      "request_schema_version": "schuss-operation-request-v7",
+      "result_schema_version": "schuss-operation-result-v7"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "catalog.implementations.search",
+      "request_schema_version": "schuss-operation-request-v10",
+      "result_schema_version": "schuss-operation-result-v10"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "catalog.inspect",
+      "request_schema_version": "schuss-operation-request-v2",
+      "result_schema_version": "schuss-operation-result-v2"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "catalog.search",
+      "request_schema_version": "schuss-operation-request-v2",
+      "result_schema_version": "schuss-operation-result-v2"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "component.inspect",
+      "request_schema_version": "schuss-operation-request-v11",
+      "result_schema_version": "schuss-operation-result-v11"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "graph.inspect",
+      "request_schema_version": "schuss-operation-request-v1",
+      "result_schema_version": "schuss-operation-result-v1"
+    },
+    {
+      "effect_class": "proposal-only",
+      "operation": "graph.transact",
+      "request_schema_version": "schuss-operation-request-v11",
+      "result_schema_version": "schuss-operation-result-v11"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "project.history.inspect",
+      "request_schema_version": "schuss-operation-request-v8",
+      "result_schema_version": "schuss-operation-result-v8"
+    },
+    {
+      "effect_class": "workspace-write",
+      "operation": "project.init",
+      "request_schema_version": "schuss-operation-request-v3",
+      "result_schema_version": "schuss-operation-result-v3"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "project.inspect",
+      "request_schema_version": "schuss-operation-request-v3",
+      "result_schema_version": "schuss-operation-result-v3"
+    },
+    {
+      "effect_class": "workspace-write",
+      "operation": "project.profile.fork",
+      "request_schema_version": "schuss-operation-request-v8",
+      "result_schema_version": "schuss-operation-result-v8"
+    },
+    {
+      "effect_class": "workspace-write",
+      "operation": "project.profile.transact",
+      "request_schema_version": "schuss-operation-request-v11",
+      "result_schema_version": "schuss-operation-result-v11"
+    },
+    {
+      "effect_class": "workspace-write",
+      "operation": "project.revert",
+      "request_schema_version": "schuss-operation-request-v8",
+      "result_schema_version": "schuss-operation-result-v8"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "project.validate",
+      "request_schema_version": "schuss-operation-request-v3",
+      "result_schema_version": "schuss-operation-result-v3"
+    }
+  ],
   "schema_version": "schuss-desktop-core-boundary-v1",
   "transport": {
+    "adapter": "tauri-command-to-persistent-python-core",
     "canonical_result_handling": "consume-unchanged",
+    "command": "dispatch_desktop_operation",
+    "development_verification": "vite-local-operation-proxy",
     "operation_selection": "closed-listed-allowlist",
-    "request_handling": "submit-one-versioned-schuss-operation",
-    "status": "not-implemented",
+    "renderer_file_access": "absent",
+    "request_handling": "submit-one-versioned-schuss-operation-and-explicit-workspace",
+    "selected_record_set": "contracts/record-sets/ui-desktop-patcher-authoring-v1.json",
+    "status": "implemented-project-authoring",
     "unknown_operation": "reject",
     "unknown_result_schema": "reject",
     "version_mismatch": "reject"

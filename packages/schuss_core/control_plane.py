@@ -84,6 +84,12 @@ TASK030_SCHEMA_NAMES = {
     "operation_result_v10": "operation-result-v10.schema.json",
 }
 
+DESKTOP_PATCHER_SCHEMA_NAMES = {
+    "application_capability_description_v4": "application-capability-description-v4.schema.json",
+    "operation_request_v11": "operation-request-v11.schema.json",
+    "operation_result_v11": "operation-result-v11.schema.json",
+}
+
 TASK015_SCHEMA_NAMES = {
     "normalized_dsp_module": "normalized-dsp-module-v0.schema.json",
     "direct_frontend_result": "direct-frontend-result-v0.schema.json",
@@ -156,6 +162,8 @@ class OperationContext:
     machine_summary: dict[str, Any]
     record_set_reference: dict[str, Any]
     catalog_projection: dict[str, Any] | None
+    loaded_record_set: record_set_rules.LoadedRecordSet
+    record_set_path: Path
 
     def with_records(
         self, **groups: Iterable[dict[str, Any]]
@@ -387,7 +395,15 @@ def load_repository_context(
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
-    if "application_capability_description_v3" in schemas:
+    for key, filename in DESKTOP_PATCHER_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    if "application_capability_description_v4" in schemas:
+        schemas["application_capability_description"] = schemas[
+            "application_capability_description_v4"
+        ]
+    elif "application_capability_description_v3" in schemas:
         schemas["application_capability_description"] = schemas[
             "application_capability_description_v3"
         ]
@@ -583,6 +599,12 @@ def load_repository_context(
         machine_summary=copy.deepcopy(machine_summary),
         record_set_reference=copy.deepcopy(selected.reference),
         catalog_projection=derived_catalog,
+        loaded_record_set=selected,
+        record_set_path=(
+            record_set_path.resolve()
+            if record_set_path.is_absolute()
+            else (repository_root / record_set_path).resolve()
+        ),
     )
 
 
@@ -651,6 +673,7 @@ def canonical_result_bytes(
         "schuss-operation-result-v8": "operation_result_v8",
         "schuss-operation-result-v9": "operation_result_v9",
         "schuss-operation-result-v10": "operation_result_v10",
+        "schuss-operation-result-v11": "operation_result_v11",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -975,6 +998,100 @@ def _dispatch_catalog_implementation_operation(
         canonical_result_bytes(result, context)
         return result
     result = _catalog_implementation_search(request["payload"], context)
+    canonical_result_bytes(result, context)
+    return result
+
+
+def _component_inspect(
+    payload: dict[str, Any], context: OperationContext
+) -> dict[str, Any]:
+    reference = payload["component_contract_reference"]
+    contracts = _exact_registry(
+        context.records["contracts"], "component_contract_id"
+    )
+    contract = contracts.get(
+        core.reference_key(reference, "component_contract_id")
+    )
+    if contract is None:
+        return _result(
+            "component.inspect",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "OPERATION_REFERENCE_UNRESOLVED",
+                    f"{reference['component_contract_id']}@{reference['revision']}",
+                    "$.payload.component_contract_reference",
+                    "the exact component contract is absent from the selected context",
+                )
+            ],
+            version=11,
+        )
+    return _result(
+        "component.inspect",
+        "success",
+        {"component_contract": copy.deepcopy(contract)},
+        version=11,
+    )
+
+
+def _dispatch_desktop_patcher_operation(
+    request: dict[str, Any], context: OperationContext
+) -> dict[str, Any]:
+    operation = request.get("operation") if isinstance(request, dict) else None
+    errors: list[str] = []
+    try:
+        core.assert_portable_json_value(request)
+    except ValueError as exc:
+        errors.append(str(exc))
+    schema = context.schemas.get("operation_request_v11")
+    if schema is None:
+        errors.append(
+            "$: operation schema 'schuss-operation-request-v11' is unavailable in the selected context"
+        )
+    elif isinstance(request, dict):
+        errors.extend(core.schema_errors(request, schema, schema))
+    else:
+        errors.append("$: operation request must be an object")
+    allowed = {"component.inspect", "graph.transact"}
+    if errors:
+        version = 11 if "operation_result_v11" in context.schemas else 1
+        result = _result(
+            operation if version == 11 and operation in allowed else "invalid-request",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "OPERATION_REQUEST_INVALID",
+                    operation if isinstance(operation, str) else "invalid-request",
+                    "$",
+                    error,
+                )
+                for error in sorted(set(errors))
+            ],
+            version=version,
+        )
+        canonical_result_bytes(result, context)
+        return result
+    if operation == "component.inspect":
+        result = _component_inspect(request["payload"], context)
+    elif operation == "graph.transact":
+        result = _graph_transact(request["payload"], context, version=11)
+    else:
+        result = _result(
+            "invalid-request",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "OPERATION_REQUEST_INVALID",
+                    operation if isinstance(operation, str) else "invalid-request",
+                    "$.operation",
+                    "the v11 operation is not available without a project workspace",
+                )
+            ],
+            version=11,
+        )
     canonical_result_bytes(result, context)
     return result
 
@@ -1667,7 +1784,9 @@ def _find_unique(
 
 def _apply_edit(graph: dict[str, Any], edit: dict[str, Any]) -> None:
     kind = edit["edit"]
-    if kind == "add-node":
+    if kind == "set-graph-display-name":
+        graph["display_name"] = edit["display_name"]
+    elif kind == "add-node":
         identifier = edit["node"]["node_id"]
         if any(item["node_id"] == identifier for item in graph["nodes"]):
             raise _TransactionEditError(f"node {identifier!r} already exists")
@@ -1792,7 +1911,12 @@ def _validate_transacted_graph(
     return component_result, device_summary
 
 
-def _graph_transact(payload: dict[str, Any], context: OperationContext) -> dict[str, Any]:
+def _graph_transact(
+    payload: dict[str, Any],
+    context: OperationContext,
+    *,
+    version: int = 1,
+) -> dict[str, Any]:
     graph_ref = payload["graph_reference"]
     graph = _exact_registry(context.records["graphs"], "graph_id").get(
         core.reference_key(graph_ref, "graph_id")
@@ -1810,6 +1934,7 @@ def _graph_transact(payload: dict[str, Any], context: OperationContext) -> dict[
                     "the transaction base does not match the exact current graph",
                 )
             ],
+            version=version,
         )
 
     candidate = copy.deepcopy(graph)
@@ -1832,6 +1957,7 @@ def _graph_transact(payload: dict[str, Any], context: OperationContext) -> dict[
                     str(exc),
                 )
             ],
+            version=version,
         )
 
     candidate["revision"] = graph["revision"] + 1
@@ -1848,6 +1974,7 @@ def _graph_transact(payload: dict[str, Any], context: OperationContext) -> dict[
             "invalid",
             None,
             diagnostics,
+            version=version,
         )
     return _result(
         "graph.transact",
@@ -1860,6 +1987,7 @@ def _graph_transact(payload: dict[str, Any], context: OperationContext) -> dict[
             },
             "persistence_status": "not-written",
         },
+        version=version,
     )
 
 
@@ -1879,6 +2007,24 @@ def dispatch_operation(
     execution_service: execution.ExecutionService | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v11"
+    ):
+        operation = request.get("operation")
+        if operation == "project.profile.transact":
+            if project_service is None:
+                raise ValueError(
+                    "v11 project operations require an explicit project service"
+                )
+            from .project_service import dispatch_project_operation
+
+            return dispatch_project_operation(request, project_service)
+        if project_service is not None:
+            loaded = project_service.load()
+            return _dispatch_desktop_patcher_operation(request, loaded.context)
+        return _dispatch_desktop_patcher_operation(request, context)
 
     if (
         isinstance(request, dict)
@@ -2016,6 +2162,10 @@ def dispatch_operation(
         from .project_service import dispatch_project_operation
 
         return dispatch_project_operation(request, project_service)
+
+    if project_service is not None:
+        loaded = project_service.load()
+        context = loaded.context
 
     operation = request.get("operation") if isinstance(request, dict) else None
     request_version = (

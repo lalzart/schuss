@@ -1,0 +1,327 @@
+export const FILTER_NAMES = [
+  "function",
+  "abstraction",
+  "form",
+  "signal_domain",
+  "signal_rate",
+  "signal_role",
+  "capability",
+  "technique",
+  "readiness",
+  "provenance",
+] as const;
+
+export type CatalogFilterName = (typeof FILTER_NAMES)[number];
+export type CatalogFilters = Record<CatalogFilterName, string[]>;
+
+export type ExactFamilyReference = {
+  family_id: string;
+  revision: number;
+  content_hash: string;
+};
+
+export type ExactRecordSetReference = {
+  record_set_id: string;
+  revision: number;
+  content_hash: string;
+};
+
+export type CatalogSearchItem = {
+  family_reference: ExactFamilyReference;
+  display_name: string;
+  aliases: string[];
+  description: string;
+  primary_function: string;
+  technique_tags: string[];
+  abstraction_level: string;
+  implementation_forms: string[];
+  readiness_states: string[];
+  contract_facets_available: boolean;
+  provenance_facets: string[];
+  score: number;
+  curation_treatment?: string;
+  drawer_visibility?: string;
+};
+
+export type SignalFacet = {
+  domain: string;
+  rate: string;
+  role: string;
+  channel_count: number;
+};
+
+export type ExactReference = {
+  stable_id: string;
+  revision: number;
+  content_hash: string;
+};
+
+export type CatalogImplementation = {
+  implementation_id: string;
+  exact_reference: ExactReference;
+  display_name: string;
+  form: string;
+  provenance_sources: string[];
+  observation_references: string[];
+  contract_references: ExactReference[];
+  binding_references: ExactReference[];
+  eligibility_references: ExactReference[];
+  target_references: ExactReference[];
+  backend_references: ExactReference[];
+  result_references: ExactReference[];
+  artifact_references: ExactReference[];
+  evidence_references: ExactReference[];
+  readiness_states: string[];
+  unresolved_facts: string[];
+  provenance_tags?: string[];
+};
+
+export type CatalogFamilyInspection = {
+  family_reference: ExactFamilyReference;
+  display_name: string;
+  aliases: string[];
+  description: string;
+  primary_function: string;
+  technique_tags: string[];
+  abstraction_level: string;
+  implementation_forms: string[];
+  signal_facets: SignalFacet[];
+  contract_facet_names: string[];
+  capability_keys: string[];
+  provenance_facets: string[];
+  readiness_states: string[];
+  contract_facets_available: boolean;
+  implementations: CatalogImplementation[];
+  unresolved_facts: string[];
+  curation_treatment?: string;
+  drawer_visibility?: string;
+};
+
+export type CatalogSearchValue = {
+  record_set_reference: ExactRecordSetReference;
+  projection_version: string;
+  match_algorithm: string;
+  query: string;
+  filters: CatalogFilters;
+  results: CatalogSearchItem[];
+  total_matches: number;
+};
+
+export type CatalogInspectValue = {
+  record_set_reference: ExactRecordSetReference;
+  projection_version: string;
+  match_algorithm: string;
+  family: CatalogFamilyInspection;
+};
+
+export type ApplicationCapability = {
+  operation: string;
+  availability: string;
+  effect_class: string;
+};
+
+export type ApplicationDescription = {
+  description_version: string;
+  operations: ApplicationCapability[];
+  record_set_reference: ExactRecordSetReference;
+};
+
+export type OperationDiagnostic = {
+  code: string;
+  severity: "error" | "warning" | "info";
+  subject: string;
+  location: string;
+  message: string;
+};
+
+export type OperationResult<T, O extends string> = {
+  schema_version: string;
+  canonical_profile: "schuss-canonical-json-v1";
+  operation: O;
+  status: "success" | "invalid" | "unresolved" | "unsupported" | "ambiguous" | "conflict";
+  value: T | null;
+  diagnostics: OperationDiagnostic[];
+};
+
+export type ApplicationDescribeRequest = {
+  schema_version: "schuss-operation-request-v7";
+  canonical_profile: "schuss-canonical-json-v1";
+  operation: "application.describe";
+  payload: { scope: "selected-context" };
+};
+
+export type CatalogSearchRequest = {
+  schema_version: "schuss-operation-request-v2";
+  canonical_profile: "schuss-canonical-json-v1";
+  operation: "catalog.search";
+  payload: { query: string; filters: CatalogFilters };
+};
+
+export type CatalogInspectRequest = {
+  schema_version: "schuss-operation-request-v2";
+  canonical_profile: "schuss-canonical-json-v1";
+  operation: "catalog.inspect";
+  payload: { family_reference: ExactFamilyReference };
+};
+
+export type ReadOnlyRequest =
+  | ApplicationDescribeRequest
+  | CatalogSearchRequest
+  | CatalogInspectRequest;
+
+export type GraphReference = {
+  graph_id: string;
+  revision: number;
+  content_hash: string;
+};
+
+export type ProjectReference = {
+  project_id: string;
+  revision: number;
+  content_hash: string;
+};
+
+export type ComponentReference = {
+  component_contract_id: string;
+  revision: number;
+  content_hash: string;
+};
+
+export type FacetValue = { facet_id: string; value: string };
+
+export type GraphNodeRecord = {
+  node_id: string;
+  contract_reference: ComponentReference;
+  parameter_values: FacetValue[];
+  attribute_values: FacetValue[];
+};
+
+export type GraphConnectionRecord = {
+  connection_id: string;
+  source: { node_id: string; facet_id: string };
+  destination: { node_id: string; facet_id: string };
+};
+
+export type DspGraph = {
+  schema_version: string;
+  canonical_profile: "schuss-canonical-json-v1";
+  graph_id: string;
+  revision: number;
+  content_hash: string;
+  display_name: string;
+  nodes: GraphNodeRecord[];
+  connections: GraphConnectionRecord[];
+  public_parameters: Array<{
+    facet_id: string;
+    display_label: string;
+    default: string;
+  }>;
+  [key: string]: unknown;
+};
+
+export type ComponentPort = {
+  facet_id: string;
+  semantic_key: string;
+  display_label: string;
+  direction: "inlet" | "outlet";
+  port_type: { domain: string; rate: string; semantic_role: string };
+};
+
+export type ComponentParameter = {
+  facet_id: string;
+  semantic_key: string;
+  display_label: string;
+  default: string;
+  unit?: string;
+};
+
+export type ComponentContract = {
+  component_contract_id: string;
+  revision: number;
+  content_hash: string;
+  display_name: string;
+  ports: ComponentPort[];
+  parameters: ComponentParameter[];
+  attributes: Array<{
+    facet_id: string;
+    semantic_key: string;
+    display_label: string;
+    default: string;
+  }>;
+};
+
+export type GraphInspectValue = {
+  graph: DspGraph;
+  component_contract_closure: ComponentContract[];
+};
+
+export type ProjectManifest = {
+  project_id: string;
+  revision: number;
+  content_hash: string;
+  primary_graph_reference: GraphReference;
+  instrument_references: ExactReference[];
+  build_request_references: ExactReference[];
+};
+
+export type ProjectInspectValue = {
+  project: ProjectManifest;
+  validation: Record<string, unknown>;
+};
+
+export type ProjectHistoryValue = {
+  head_project_reference: ProjectReference;
+  revision_count: number;
+  ancestry: Array<{
+    project_reference: ProjectReference;
+    primary_graph_reference: GraphReference;
+    owned_member_count: number;
+  }>;
+};
+
+export type ImplementationSearchItem = {
+  implementation_id: string;
+  exact_reference: ExactReference | null;
+  display_name: string;
+  form: string;
+  family_reference: ExactFamilyReference;
+  family_display_name: string;
+  primary_function: string;
+  abstraction_level: string;
+  provenance_sources: string[];
+  provenance_tags: string[];
+  readiness_states: string[];
+  score: number;
+};
+
+export type ImplementationSearchValue = {
+  record_set_reference: ExactRecordSetReference;
+  results: ImplementationSearchItem[];
+  total_matches: number;
+};
+
+export type GraphEdit =
+  | { edit: "add-node"; node: GraphNodeRecord }
+  | { edit: "remove-node"; node_id: string }
+  | { edit: "add-connection"; connection: GraphConnectionRecord }
+  | { edit: "remove-connection"; connection_id: string }
+  | {
+      edit: "set-node-parameter";
+      node_id: string;
+      facet_id: string;
+      value: string;
+    }
+  | {
+      edit: "set-node-attribute";
+      node_id: string;
+      facet_id: string;
+      value: string;
+    }
+  | { edit: "set-graph-display-name"; display_name: string };
+
+export type DesktopOperationRequest = {
+  schema_version: string;
+  canonical_profile: "schuss-canonical-json-v1";
+  operation: string;
+  payload: Record<string, unknown>;
+};
