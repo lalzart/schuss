@@ -135,6 +135,11 @@ Project-local object and patch authoring:
   --project /absolute/path/to/a/schuss-project
 ```
 
+New projects created by the maintained desktop application pin exact record
+set `schuss-record-set-000026@1` and can therefore be selected here directly.
+Historical projects keep their immutable earlier base; Schuss never rewrites a
+project's base record set merely to enable AI tools.
+
 Codex CLI can register the same fixed command and project arguments:
 
 ```bash

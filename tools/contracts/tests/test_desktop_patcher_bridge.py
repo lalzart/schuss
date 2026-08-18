@@ -94,7 +94,11 @@ class DesktopPatcherBridgeTest(unittest.TestCase):
         capabilities = {
             item["operation"]: item for item in results[3]["value"]["operations"]
         }
-        self.assertEqual(27, len(capabilities))
+        self.assertEqual(35, len(capabilities))
+        self.assertEqual(
+            "requires-project-workspace",
+            capabilities["authoring.draft.create"]["availability"],
+        )
         self.assertEqual("workspace-write", capabilities["project.profile.transact"]["effect_class"])
         self.assertEqual(
             "requires-execution-service", capabilities["build.execute"]["availability"]

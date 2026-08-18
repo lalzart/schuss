@@ -28,7 +28,7 @@
   "schuss": {
     "applicationBoundary": "apps/schuss_desktop",
     "coreBoundaryContract": "contracts/ui-core-boundary-v1.json",
-    "recordSet": "schuss-record-set-000025@1",
+    "recordSet": "schuss-record-set-000026@1",
     "status": "project-build-device-workflow",
     "targetStack": {
       "language": "TypeScript",

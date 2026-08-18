@@ -390,6 +390,24 @@ governance, desktop, or current Task 030 test failed. No historical golden was
 rebaselined. The AI operations themselves invoked no package, model provider,
 network listener, compiler/build, USB, or hardware authority.
 
+A subsequent local Codex integration smoke exposed one fail-closed seam: the
+desktop still created projects against `schuss-record-set-000025@1`, which does
+not contain the v13 AI-authoring contract required by project-mode MCP. The
+desktop creation context now selects the additive exact successor
+`schuss-record-set-000026@1` without adding v13 operations to its closed
+allowlist. One existing revision-3 project pinned to `000025` still loaded
+successfully, proving that no historical base migration is required or
+performed. A fresh desktop-equivalent project pinned to `000026` initialized
+the MCP `2025-11-25` compatibility flow, advertised all fourteen project-mode
+tools, and completed `project.objects.list` successfully. Renderer tests pass
+12/12, focused bridge/structure checks pass 5/5, and the adjacent desktop,
+project, session, MCP, and sonic-authoring set passes 33/33. This integration
+test performed no AI acceptance, compiler/build, USB, upload, or hardware
+action. The post-repair aggregate passes inventory 14/14 and catalog 6/6;
+contracts ran 428 tests in 1,045.075 seconds and retained exactly the same
+three Task 011A/Task 023 golden and Task 027 freshness failures, with no new
+desktop, project, MCP, or AI failure.
+
 Tasks 019 and 020 are deferred and not automatically activated by completion
 of Task 018 or Task 021.
 

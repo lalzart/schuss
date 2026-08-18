@@ -211,7 +211,7 @@
     "operation_selection": "closed-listed-allowlist",
     "renderer_file_access": "absent",
     "request_handling": "submit-one-versioned-schuss-operation-and-explicit-workspace",
-    "selected_record_set": "contracts/record-sets/ui-desktop-build-device-v1.json",
+    "selected_record_set": "contracts/record-sets/ai-sonic-authoring-v1.json",
     "status": "implemented-project-build-device-workflow",
     "unknown_operation": "reject",
     "unknown_result_schema": "reject",

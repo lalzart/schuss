@@ -26,7 +26,7 @@ from tools.contracts import validator_core as core  # noqa: E402
 
 RECORD_SET_PATH = (
     REPOSITORY_ROOT
-    / "contracts/record-sets/ui-desktop-build-device-v1.json"
+    / "contracts/record-sets/ai-sonic-authoring-v1.json"
 )
 ALLOWED_OPERATIONS = {
     "application.describe": (

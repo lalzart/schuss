@@ -22,10 +22,13 @@ npm install
 npm run dev
 ```
 
-The first core load validates exact record set
-`schuss-record-set-000025@1`; the persistent bridge reuses that exact validated
-base and a bounded process-local semantic augmentation cache. Each project load
-still rereads and validates all governed workspace bytes before any cache hit.
+The first core load validates exact additive record set
+`schuss-record-set-000026@1`; new desktop projects pin that AI-authoring-capable
+base while the desktop operation allowlist remains unchanged. The persistent
+bridge reuses the validated context and a bounded process-local semantic
+augmentation cache. Existing projects retain and load their exact immutable
+base, and each project load rereads and validates all governed workspace bytes
+before any cache hit.
 Renderer-only verification uses the same Python adapter:
 
 ```bash

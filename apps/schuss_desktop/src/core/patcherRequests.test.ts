@@ -19,7 +19,7 @@ describe("desktop patcher operation requests", () => {
         project_id: "schuss-project-000123",
         base_record_set: {
           reference: DESKTOP_RECORD_SET,
-          portable_locator: "contracts/record-sets/ui-desktop-build-device-v1.json",
+          portable_locator: "contracts/record-sets/ai-sonic-authoring-v1.json",
         },
         primary_graph_reference: STARTER_GRAPH,
       },

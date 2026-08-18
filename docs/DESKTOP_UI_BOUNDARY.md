@@ -22,7 +22,11 @@ React/TypeScript presentation
 The product application is `apps/schuss_desktop/`. Browser-mode development
 uses a localhost Vite proxy to the same Python adapter; production has no
 renderer fallback. Both paths select exact record set
-`schuss-record-set-000025@1`.
+`schuss-record-set-000026@1` for new-project creation. The desktop allowlist
+does not gain the v13 AI operations; selecting the additive successor only
+makes a newly created project eligible for a separately configured MCP
+authoring service. Existing workspaces continue to load the immutable base
+record set pinned in their project manifest.
 
 ## Implemented capability groups
 

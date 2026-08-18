@@ -10,9 +10,9 @@ import type {
 } from "./types";
 
 export const DESKTOP_RECORD_SET: ExactRecordSetReference = {
-  record_set_id: "schuss-record-set-000025",
+  record_set_id: "schuss-record-set-000026",
   revision: 1,
-  content_hash: "sha256:dc360bb12c5d2272061431ce99f5e6476a41e7a3c92ae27db96c518abe7cfd39",
+  content_hash: "sha256:4ca86d5f870c7c70e39ead9b8793dde68a3f1cec9053f9bd34fb209ed619d67e",
 };
 
 export const STARTER_GRAPH: GraphReference = {
@@ -93,7 +93,7 @@ export function projectInitRequest(projectId: string): DesktopOperationRequest {
     project_id: projectId,
     base_record_set: {
       reference: DESKTOP_RECORD_SET,
-      portable_locator: "contracts/record-sets/ui-desktop-build-device-v1.json",
+      portable_locator: "contracts/record-sets/ai-sonic-authoring-v1.json",
     },
     primary_graph_reference: STARTER_GRAPH,
     instrument_references: [STARTER_INSTRUMENT],
