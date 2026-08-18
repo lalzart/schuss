@@ -44,6 +44,8 @@ UI_DESKTOP_CATALOG = "docs/tasks/ui-desktop-read-only-catalog.md"
 UI_DESKTOP_PATCHER = "docs/tasks/ui-desktop-patcher-authoring.md"
 UI_DESKTOP_PERFORMANCE = "docs/tasks/ui-desktop-authoring-performance.md"
 UI_DESKTOP_BUILD_DEVICE = "docs/tasks/ui-desktop-build-device-workflow.md"
+UI_DESKTOP_PROJECT_OBJECT_HANDOFF = "docs/tasks/ui-desktop-project-object-handoff.md"
+UI_DESKTOP_WORKSPACE_SHELL = "docs/tasks/ui-desktop-workspace-shell.md"
 AI_MCP_READ_ONLY = "docs/tasks/ai-mcp-read-only-foundation.md"
 AI_SONIC_AUTHORING = "docs/tasks/ai-sonic-authoring-foundation.md"
 
@@ -80,6 +82,8 @@ DOCUMENT_PATHS = (
     UI_DESKTOP_PATCHER,
     UI_DESKTOP_PERFORMANCE,
     UI_DESKTOP_BUILD_DEVICE,
+    UI_DESKTOP_PROJECT_OBJECT_HANDOFF,
+    UI_DESKTOP_WORKSPACE_SHELL,
     AI_MCP_READ_ONLY,
     AI_SONIC_AUTHORING,
 )
@@ -104,6 +108,8 @@ EXPECTED_TASK_FILENAMES = {
     "ui-desktop-patcher-authoring.md",
     "ui-desktop-authoring-performance.md",
     "ui-desktop-build-device-workflow.md",
+    "ui-desktop-project-object-handoff.md",
+    "ui-desktop-workspace-shell.md",
     "ai-mcp-read-only-foundation.md",
     "ai-sonic-authoring-foundation.md",
 }
@@ -695,6 +701,27 @@ def validate_documents(
                 "renderer never receives an output root",
             ),
         ),
+        (
+            UI_DESKTOP_WORKSPACE_SHELL,
+            (
+                "accepted by explicit user authorization and active locally on 2026-08-18",
+                "Git publication, packaging, target lowering, and connected-hardware execution remain separate",
+            ),
+            (
+                "## Goal and why it exists",
+                "## In scope",
+                "## Out of scope",
+                "## Inputs and deliverables",
+                "## Acceptance tests",
+                "## Decisions this task may make",
+                "## Decisions this task must not make",
+                "workspace.projects.list",
+                "workspace.project.create",
+                "always-present patcher shell",
+                "direct renderer directory scanning",
+                "No operation in this task performs automatic hardware access",
+            ),
+        ),
     ):
         status = _leading_status(documents.get(document, "")) or ""
         for fragment in status_fragments:
@@ -784,6 +811,9 @@ def validate_documents(
         "Contracts ran 402 tests in 960.044 seconds",
         "ADR 0014 established that UI implementation remains separately gated",
         "began only after explicit user authorization",
+        "The explicitly authorized unnumbered desktop project-object handoff",
+        "`project.objects.list` and `project.object.inspect`",
+        "never discards its draft without confirmation",
     )
     _require_phrases(
         diagnostics,
@@ -1100,7 +1130,7 @@ def validate_documents(
 
     diagnostics.sort(key=lambda item: (item["code"], item["document"], item["detail"]))
     return {
-        "active_product_task": "unnumbered-desktop-build-device-local-implementation-awaiting-acceptance",
+        "active_product_task": "unnumbered-desktop-workspace-shell-local-implementation-active",
         "active_evidence_task": "022-failed-diagnostic-promotion-stopped",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
         "authoritative_decisions": [
@@ -1113,7 +1143,7 @@ def validate_documents(
         "next_planned_task": "none-task030-complete",
         "planned_task_sequence": list(PLANNED_SEQUENCE),
         "promotion_gate": "task030-complete-catalog-level-2-no-support-promotion",
-        "schema_version": "backbone-governance-summary-v19",
+        "schema_version": "backbone-governance-summary-v20",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -1136,7 +1166,7 @@ def validate_documents(
             "029": "complete-machine-inspection-level-1",
             "030": "complete-mutable-catalog-cohort-level-2-cli-v3",
         },
-        "ui_milestone_status": "unnumbered-desktop-build-device-implemented-locally-real-hardware-publication-gated",
+        "ui_milestone_status": "unnumbered-desktop-workspace-shell-implemented-locally-target-hardware-publication-gated",
     }
 
 

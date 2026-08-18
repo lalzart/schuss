@@ -1,150 +1,234 @@
-import { useCallback, useState } from "react";
-import type { AppRoute } from "../App";
-import { dispatchDesktopOperation } from "../core/bridge";
-import { projectForkRequest, projectInitRequest, profileTransactRequest } from "../core/patcherRequests";
-import type { DspGraph, ProjectManifest, ProjectReference } from "../core/types";
-import { ObjectLibrary } from "./ObjectLibrary";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { CoreOperationError, dispatchDesktopOperation } from "../core/bridge";
+import {
+  loadDesktopPreferences,
+  saveDesktopPreferences,
+  type DesktopPreferences,
+  type DrawerTab,
+} from "../core/desktopPreferences";
+import {
+  workspaceProjectCreateRequest,
+  workspaceProjectsListRequest,
+} from "../core/patcherRequests";
+import type {
+  WorkspaceProject,
+  WorkspaceProjectCreateValue,
+  WorkspaceProjectsValue,
+} from "../core/types";
 import { PatchEditor } from "./PatchEditor";
 import styles from "./DesktopApp.module.css";
 
-const RECENTS_KEY = "schuss.desktop.recent-projects.v1";
-
-type Props = {
-  route: AppRoute;
-  navigate: (route: AppRoute) => void;
-  onEditorDirtyChange: (dirty: boolean) => void;
-};
-type ForkValue = { project: ProjectManifest; graph: DspGraph };
-
-function projectReference(project: ProjectManifest): ProjectReference {
-  return { project_id: project.project_id, revision: project.revision, content_hash: project.content_hash };
-}
-
-function loadRecents(): string[] {
-  try {
-    const value = JSON.parse(localStorage.getItem(RECENTS_KEY) ?? "[]") as unknown;
-    return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
-  } catch {
-    return [];
-  }
-}
-
-export function DesktopApp({ route, navigate, onEditorDirtyChange }: Props) {
-  const [recents, setRecents] = useState(loadRecents);
-  const [workspace, setWorkspace] = useState(recents[0] ?? "");
-  const [showNew, setShowNew] = useState(false);
-  const [projectId, setProjectId] = useState("schuss-project-000100");
-  const [patchName, setPatchName] = useState("Untitled patch");
-  const [createStage, setCreateStage] = useState<string | null>(null);
+export function DesktopApp() {
+  const [preferences, setPreferences] = useState(loadDesktopPreferences);
+  const [workspace, setWorkspace] = useState("");
+  const [projects, setProjects] = useState<WorkspaceProject[]>([]);
+  const [libraryStage, setLibraryStage] = useState<string | null>(
+    preferences.projectsRoot ? "Starting Schuss core…" : null,
+  );
   const [error, setError] = useState<string | null>(null);
-  const creating = createStage !== null;
+  const [dirty, setDirty] = useState(false);
+  const [showSettings, setShowSettings] = useState(!preferences.projectsRoot);
+  const [showNew, setShowNew] = useState(false);
+  const [rootDraft, setRootDraft] = useState(preferences.projectsRoot);
+  const [patchName, setPatchName] = useState("Untitled patch");
+  const [creating, setCreating] = useState(false);
+  const automaticCreation = useRef<{ root: string; promise: Promise<WorkspaceProjectCreateValue> } | null>(null);
+  const preferredWorkspace = useRef(preferences.lastWorkspace);
 
-  const remember = useCallback((path: string) => {
-    setRecents((current) => {
-      const next = [path, ...current.filter((item) => item !== path)].slice(0, 8);
-      localStorage.setItem(RECENTS_KEY, JSON.stringify(next));
-      return next;
-    });
-  }, []);
+  useEffect(() => {
+    saveDesktopPreferences(preferences);
+  }, [preferences]);
 
-  const open = useCallback((path: string) => {
-    const normalized = path.trim();
-    if (!normalized.startsWith("/")) {
-      setError("Enter an absolute project workspace path.");
-      return;
+  const selectProject = useCallback((nextWorkspace: string) => {
+    if (
+      workspace
+      && workspace !== nextWorkspace
+      && dirty
+      && !window.confirm("Open another patch and discard these unsaved edits?")
+    ) return;
+    setDirty(false);
+    setWorkspace(nextWorkspace);
+    preferredWorkspace.current = nextWorkspace;
+    setPreferences((current) => ({ ...current, lastWorkspace: nextWorkspace }));
+  }, [dirty, workspace]);
+
+  useEffect(() => {
+    const root = preferences.projectsRoot;
+    if (!root) {
+      setProjects([]);
+      setWorkspace("");
+      setLibraryStage(null);
+      return undefined;
     }
+    let active = true;
+    setLibraryStage("Starting Schuss core and browsing projects…");
     setError(null);
-    remember(normalized);
-    navigate({ view: "editor", workspace: normalized });
-  }, [navigate, remember]);
+    dispatchDesktopOperation<WorkspaceProjectsValue>(workspaceProjectsListRequest(), root)
+      .then(async (value) => {
+        if (!active) return;
+        let nextProjects = value.projects;
+        if (nextProjects.length === 0) {
+          setLibraryStage("Creating the first Untitled patch…");
+          if (automaticCreation.current?.root !== root) {
+            automaticCreation.current = {
+              root,
+              promise: dispatchDesktopOperation<WorkspaceProjectCreateValue>(
+                workspaceProjectCreateRequest("Untitled patch"),
+                root,
+              ),
+            };
+          }
+          const created = await automaticCreation.current.promise;
+          if (!active) return;
+          nextProjects = [created.project];
+        }
+        setProjects(nextProjects);
+        const preferred = nextProjects.find((item) => item.workspace === preferredWorkspace.current)
+          ?? nextProjects[0]
+          ?? null;
+        if (preferred) {
+          setWorkspace(preferred.workspace);
+          preferredWorkspace.current = preferred.workspace;
+          setPreferences((current) => (
+            current.lastWorkspace === preferred.workspace
+              ? current
+              : { ...current, lastWorkspace: preferred.workspace }
+          ));
+        }
+        if (value.rejected_child_count > 0) {
+          setError(`${value.rejected_child_count} folder${value.rejected_child_count === 1 ? " was" : "s were"} skipped because they are not valid accepted Schuss projects.`);
+        }
+      })
+      .catch(async (caught: unknown) => {
+        if (!active) return;
+        if (caught instanceof CoreOperationError && caught.code === "WORKSPACE_ROOT_NOT_FOUND") {
+          try {
+            setLibraryStage("Creating the first Untitled patch…");
+            if (automaticCreation.current?.root !== root) {
+              automaticCreation.current = {
+                root,
+                promise: dispatchDesktopOperation<WorkspaceProjectCreateValue>(
+                  workspaceProjectCreateRequest("Untitled patch"),
+                  root,
+                ),
+              };
+            }
+            const created = await automaticCreation.current.promise;
+            if (!active) return;
+            setProjects([created.project]);
+            setWorkspace(created.project.workspace);
+            preferredWorkspace.current = created.project.workspace;
+            setPreferences((current) => ({ ...current, lastWorkspace: created.project.workspace }));
+            return;
+          } catch (creationError) {
+            if (automaticCreation.current?.root === root) automaticCreation.current = null;
+            if (!active) return;
+            setError(creationError instanceof Error ? creationError.message : "The first patch could not be created.");
+            return;
+          }
+        }
+        if (automaticCreation.current?.root === root) automaticCreation.current = null;
+        setProjects([]);
+        setWorkspace("");
+        setError(caught instanceof Error ? caught.message : "Projects could not be browsed.");
+      })
+      .finally(() => active && setLibraryStage(null));
+    return () => { active = false; };
+  }, [preferences.projectsRoot]);
 
-  const create = useCallback(async () => {
-    const path = workspace.trim();
-    if (!path.startsWith("/")) {
-      setError("Enter an absolute workspace path for the new patch.");
-      return;
-    }
-    if (!/^schuss-project-[0-9]{6}$/.test(projectId)) {
-      setError("Project ID must use the form schuss-project-000000.");
-      return;
-    }
-    if (!patchName.trim()) {
+  const createProject = useCallback(async () => {
+    const displayName = patchName.trim();
+    if (!displayName) {
       setError("Patch name cannot be empty.");
       return;
     }
-    setCreateStage("Preparing workspace…");
+    if (!preferences.projectsRoot) {
+      setShowNew(false);
+      setShowSettings(true);
+      return;
+    }
+    setCreating(true);
     setError(null);
     try {
-      const initialized = await dispatchDesktopOperation<{ project: ProjectManifest }>(projectInitRequest(projectId), path);
-      setCreateStage("Copying accepted profile…");
-      const forked = await dispatchDesktopOperation<ForkValue>(projectForkRequest(projectReference(initialized.project)), path);
-      setCreateStage("Naming patch…");
-      await dispatchDesktopOperation(
-        profileTransactRequest(
-          projectReference(forked.project),
-          { graph_id: forked.graph.graph_id, revision: forked.graph.revision, content_hash: forked.graph.content_hash },
-          [{ edit: "set-graph-display-name", display_name: patchName.trim() }],
-        ),
-        path,
+      const value = await dispatchDesktopOperation<WorkspaceProjectCreateValue>(
+        workspaceProjectCreateRequest(displayName),
+        preferences.projectsRoot,
       );
-      remember(path);
+      setProjects((current) => [...current, value.project].sort((a, b) => a.display_name.localeCompare(b.display_name)));
       setShowNew(false);
-      navigate({ view: "editor", workspace: path });
+      setPatchName("Untitled patch");
+      selectProject(value.project.workspace);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "The patch could not be created.");
     } finally {
-      setCreateStage(null);
+      setCreating(false);
     }
-  }, [navigate, patchName, projectId, remember, workspace]);
+  }, [patchName, preferences.projectsRoot, selectProject]);
 
-  if (route.view === "editor") {
-    return (
-      <PatchEditor
-        workspace={route.workspace}
-        onClose={() => navigate({ view: "patches" })}
-        onDirtyChange={onEditorDirtyChange}
-      />
-    );
-  }
-  if (route.view === "objects") return <ObjectLibrary mode="page" />;
+  const saveSettings = useCallback(() => {
+    const root = rootDraft.trim();
+    if (!root.startsWith("/")) {
+      setError("Projects root must be an absolute path.");
+      return;
+    }
+    if (dirty && root !== preferences.projectsRoot && !window.confirm("Change projects root and discard these unsaved edits?")) return;
+    setDirty(false);
+    setWorkspace("");
+    setProjects([]);
+    setError(null);
+    setPreferences((current) => ({ ...current, projectsRoot: root, lastWorkspace: "" }));
+    setShowSettings(false);
+  }, [dirty, preferences.projectsRoot, rootDraft]);
+
+  const updateDrawer = useCallback((next: Partial<DesktopPreferences["drawer"]>) => {
+    setPreferences((current) => ({
+      ...current,
+      drawer: { ...current.drawer, ...next },
+    }));
+  }, []);
+
+  const chooseDrawer = useCallback((tab: DrawerTab) => {
+    updateDrawer({ tab, open: preferences.drawer.open && preferences.drawer.tab === tab ? false : true });
+  }, [preferences.drawer.open, preferences.drawer.tab, updateDrawer]);
 
   return (
-    <section className={styles.patches}>
-      <header className={styles.pageHeader}>
-        <div><span className={styles.eyebrow}>PROJECTS</span><h1>Patches</h1></div>
-        <button className={styles.primaryButton} type="button" onClick={() => setShowNew(true)}>New patch</button>
-      </header>
-      <div className={styles.openBar}>
-        <label htmlFor="workspace">Project workspace</label>
-        <input id="workspace" value={workspace} onChange={(event) => setWorkspace(event.currentTarget.value)} placeholder="/absolute/path/to/patch" spellCheck={false} />
-        <button type="button" onClick={() => open(workspace)}>Open</button>
-      </div>
-      {error && <p className={styles.error} role="alert">{error}</p>}
-      <div className={styles.recentHeader}><span>RECENT</span><span>{recents.length}</span></div>
-      <div className={styles.recentList}>
-        {recents.length === 0 ? (
-          <div className={styles.empty}><strong>No recent patches</strong><span>Create a patch or open an existing Schuss workspace.</span></div>
-        ) : recents.map((path) => (
-          <button className={styles.recentRow} type="button" key={path} onClick={() => open(path)}>
-            <span className={styles.patchIcon} aria-hidden="true" />
-            <strong>{path.split("/").filter(Boolean).at(-1)}</strong><code>{path}</code><span>Open</span>
-          </button>
-        ))}
-      </div>
-      {showNew && (
-        <div className={styles.scrim} role="presentation" onMouseDown={() => !creating && setShowNew(false)}>
-          <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="new-patch-title" onMouseDown={(event) => event.stopPropagation()}>
-            <header><div><span className={styles.eyebrow}>NEW PROJECT</span><h2 id="new-patch-title">Create patch</h2></div><button type="button" disabled={creating} onClick={() => setShowNew(false)} aria-label="Close">×</button></header>
-            <label>Patch name<input disabled={creating} value={patchName} onChange={(event) => setPatchName(event.currentTarget.value)} /></label>
-            <label>Workspace<input disabled={creating} value={workspace} onChange={(event) => setWorkspace(event.currentTarget.value)} placeholder="/absolute/path/to/patch" /></label>
-            <label>Project ID<input disabled={creating} value={projectId} onChange={(event) => setProjectId(event.currentTarget.value)} /></label>
-            <p>Starts from the accepted seven-object profile. The ID is explicit until a shared allocator exists.</p>
+    <>
+      <PatchEditor
+        workspace={workspace || null}
+        projects={projects}
+        projectsRoot={preferences.projectsRoot}
+        drawer={preferences.drawer}
+        libraryStage={libraryStage}
+        shellError={error}
+        onDirtyChange={setDirty}
+        onSelectProject={selectProject}
+        onCreateProject={() => setShowNew(true)}
+        onOpenSettings={() => { setRootDraft(preferences.projectsRoot); setShowSettings(true); }}
+        onChooseDrawer={chooseDrawer}
+        onDrawerWidth={(width) => updateDrawer({ width })}
+      />
+      {showSettings && (
+        <div className={styles.scrim} role="presentation" onMouseDown={() => preferences.projectsRoot && setShowSettings(false)}>
+          <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="settings-title" onMouseDown={(event) => event.stopPropagation()}>
+            <header><div><span className={styles.eyebrow}>WORKSPACE</span><h2 id="settings-title">Desktop settings</h2></div>{preferences.projectsRoot && <button type="button" onClick={() => setShowSettings(false)} aria-label="Close settings">×</button>}</header>
+            <label>Projects root<input autoFocus value={rootDraft} onChange={(event) => setRootDraft(event.currentTarget.value)} placeholder="/absolute/path/to/projects" spellCheck={false} /></label>
+            <p>Schuss remembers this folder. Valid projects directly inside it appear in the Patches drawer; IDs and project directories are allocated by the core.</p>
             {error && <p className={styles.error} role="alert">{error}</p>}
-            {createStage && <p className={styles.progress} role="status" aria-live="polite">{createStage}</p>}
-            <footer><button type="button" disabled={creating} onClick={() => setShowNew(false)}>Cancel</button><button className={styles.primaryButton} type="button" disabled={creating} onClick={create}>{creating ? createStage : "Create patch"}</button></footer>
+            <footer><button className={styles.primaryButton} type="button" onClick={saveSettings}>Use projects root</button></footer>
           </section>
         </div>
       )}
-    </section>
+      {showNew && (
+        <div className={styles.scrim} role="presentation" onMouseDown={() => !creating && setShowNew(false)}>
+          <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="new-patch-title" onMouseDown={(event) => event.stopPropagation()}>
+            <header><div><span className={styles.eyebrow}>NEW PATCH</span><h2 id="new-patch-title">Create patch</h2></div><button type="button" disabled={creating} onClick={() => setShowNew(false)} aria-label="Close new patch">×</button></header>
+            <label>Patch name<input autoFocus disabled={creating} value={patchName} onChange={(event) => setPatchName(event.currentTarget.value)} onKeyDown={(event) => { if (event.key === "Enter") void createProject(); }} /></label>
+            <p>The accepted starter profile, stable project ID, and collision-safe directory are handled automatically.</p>
+            {error && <p className={styles.error} role="alert">{error}</p>}
+            <footer><button type="button" disabled={creating} onClick={() => setShowNew(false)}>Cancel</button><button className={styles.primaryButton} type="button" disabled={creating} onClick={() => void createProject()}>{creating ? "Creating accepted project…" : "Create patch"}</button></footer>
+          </section>
+        </div>
+      )}
+    </>
   );
 }

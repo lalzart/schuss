@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
 import {
   Background,
   Controls,
@@ -10,6 +10,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { dispatchDesktopOperation } from "../core/bridge";
+import type { DrawerTab } from "../core/desktopPreferences";
 import {
   buildSessionInspectRequest,
   buildSessionStartRequest,
@@ -38,19 +39,30 @@ import type {
   ProjectManifest,
   ProjectReference,
   UploadSessionValue,
+  WorkspaceProject,
 } from "../core/types";
 import { ObjectLibrary } from "./ObjectLibrary";
 import { PatchNode, type PatchFlowNode } from "./PatchNode";
 import styles from "./PatchEditor.module.css";
 
 type Props = {
-  workspace: string;
-  onClose: () => void;
+  workspace: string | null;
+  projects: WorkspaceProject[];
+  projectsRoot: string;
+  drawer: { open: boolean; tab: DrawerTab; width: number };
+  libraryStage: string | null;
+  shellError: string | null;
   onDirtyChange: (dirty: boolean) => void;
+  onSelectProject: (workspace: string) => void;
+  onCreateProject: () => void;
+  onOpenSettings: () => void;
+  onChooseDrawer: (tab: DrawerTab) => void;
+  onDrawerWidth: (width: number) => void;
 };
 type PositionMap = Record<string, { x: number; y: number }>;
 const NODE_TYPES = { patchNode: PatchNode };
 const ACTIVE_SESSION_STATUSES = new Set(["queued", "running"]);
+const ACCEPTED_PROJECT_CHECK_MS = 4_000;
 
 function graphReference(graph: DspGraph): GraphReference {
   return { graph_id: graph.graph_id, revision: graph.revision, content_hash: graph.content_hash };
@@ -73,7 +85,20 @@ function initialPositions(nodes: GraphNodeRecord[]): PositionMap {
   return Object.fromEntries(nodes.map((node, index) => [node.node_id, { x: 90 + (index % 3) * 300, y: 70 + Math.floor(index / 3) * 210 }]));
 }
 
-export function PatchEditor({ workspace, onClose, onDirtyChange }: Props) {
+export function PatchEditor({
+  workspace,
+  projects,
+  projectsRoot,
+  drawer,
+  libraryStage,
+  shellError,
+  onDirtyChange,
+  onSelectProject,
+  onCreateProject,
+  onOpenSettings,
+  onChooseDrawer,
+  onDrawerWidth,
+}: Props) {
   const [project, setProject] = useState<ProjectManifest | null>(null);
   const [graph, setGraph] = useState<DspGraph | null>(null);
   const [contracts, setContracts] = useState<Record<string, ComponentContract>>({});
@@ -81,14 +106,16 @@ export function PatchEditor({ workspace, onClose, onDirtyChange }: Props) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [pending, setPending] = useState<GraphEdit[]>([]);
   const [draftName, setDraftName] = useState("");
-  const [loadStage, setLoadStage] = useState<string | null>("Opening accepted project…");
+  const [loadStage, setLoadStage] = useState<string | null>(null);
   const [saveStage, setSaveStage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [showObjects, setShowObjects] = useState(true);
   const [history, setHistory] = useState<ProjectHistoryValue | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [loadToken, setLoadToken] = useState(0);
+  const [externalProject, setExternalProject] = useState<ProjectManifest | null>(null);
+  const [syncNotice, setSyncNotice] = useState<string | null>(null);
+  const externalRefresh = useRef<{ previousNodeIds: string[]; revision: number } | null>(null);
   const [showWorkflow, setShowWorkflow] = useState(false);
   const [buildSession, setBuildSession] = useState<BuildSessionValue | null>(null);
   const [devices, setDevices] = useState<DeviceSessionValue[]>([]);
@@ -100,8 +127,21 @@ export function PatchEditor({ workspace, onClose, onDirtyChange }: Props) {
   const [startAfterVerify, setStartAfterVerify] = useState(true);
   const loading = loadStage !== null;
   const saving = saveStage !== null;
+  const hasNameChange = graph !== null && draftName.trim() !== graph.display_name;
+  const dirty = pending.length > 0 || hasNameChange;
+  const unsavedCount = pending.length + (hasNameChange ? 1 : 0);
 
   useEffect(() => {
+    if (!workspace) {
+      setProject(null);
+      setGraph(null);
+      setContracts({});
+      setPending([]);
+      setDraftName("");
+      setSelectedNodeId(null);
+      setLoadStage(null);
+      return undefined;
+    }
     let active = true;
     setLoadStage("Opening accepted project…");
     setError(null);
@@ -110,13 +150,29 @@ export function PatchEditor({ workspace, onClose, onDirtyChange }: Props) {
         if (active) setLoadStage("Loading graph closure…");
         const graphValue = await dispatchDesktopOperation<GraphInspectValue>(graphInspectRequest(projectValue.project.primary_graph_reference), workspace);
         if (!active) return;
+        const nextContracts = Object.fromEntries(graphValue.component_contract_closure.map((contract) => [contract.component_contract_id, contract]));
+        const refresh = externalRefresh.current;
+        const priorNodes = new Set(refresh?.previousNodeIds ?? []);
+        const addedNode = refresh
+          ? graphValue.graph.nodes.find((node) => !priorNodes.has(node.node_id)) ?? null
+          : null;
         setProject(projectValue.project);
         setGraph(graphValue.graph);
         setDraftName(graphValue.graph.display_name);
-        setContracts(Object.fromEntries(graphValue.component_contract_closure.map((contract) => [contract.component_contract_id, contract])));
+        setContracts(nextContracts);
         setPositions(initialPositions(graphValue.graph.nodes));
-        setSelectedNodeId(graphValue.graph.nodes[0]?.node_id ?? null);
+        setSelectedNodeId(addedNode?.node_id ?? graphValue.graph.nodes[0]?.node_id ?? null);
         setPending([]);
+        setExternalProject(null);
+        if (refresh) {
+          const displayName = addedNode
+            ? nextContracts[addedNode.contract_reference.component_contract_id]?.display_name
+            : null;
+          setSyncNotice(displayName
+            ? `Accepted revision r${refresh.revision} loaded. ${displayName} is selected and ready to connect.`
+            : `Accepted revision r${refresh.revision} loaded.`);
+          externalRefresh.current = null;
+        }
         setBuildSession(null);
         setUploadSession(null);
         setDevices([]);
@@ -126,6 +182,44 @@ export function PatchEditor({ workspace, onClose, onDirtyChange }: Props) {
       .finally(() => active && setLoadStage(null));
     return () => { active = false; };
   }, [loadToken, workspace]);
+
+  useEffect(() => {
+    if (!workspace || !project || !graph || loading || saving) return undefined;
+    let active = true;
+    let checking = false;
+    let refreshScheduled = false;
+    const checkAcceptedProject = async () => {
+      if (!active || checking || refreshScheduled || document.hidden) return;
+      checking = true;
+      try {
+        const value = await dispatchDesktopOperation<ProjectInspectValue>(projectInspectRequest(), workspace);
+        if (!active || value.project.content_hash === project.content_hash) return;
+        if (dirty) {
+          setExternalProject((current) => current?.content_hash === value.project.content_hash ? current : value.project);
+          return;
+        }
+        refreshScheduled = true;
+        externalRefresh.current = {
+          previousNodeIds: graph.nodes.map((node) => node.node_id),
+          revision: value.project.revision,
+        };
+        setLoadStage("Loading accepted external revision…");
+        setLoadToken((current) => current + 1);
+      } catch {
+        // The active project remains authoritative; a later focus or interval retries.
+      } finally {
+        checking = false;
+      }
+    };
+    const onFocus = () => { void checkAcceptedProject(); };
+    window.addEventListener("focus", onFocus);
+    const timer = window.setInterval(() => { void checkAcceptedProject(); }, ACCEPTED_PROJECT_CHECK_MS);
+    return () => {
+      active = false;
+      window.removeEventListener("focus", onFocus);
+      window.clearInterval(timer);
+    };
+  }, [dirty, graph, loading, project, saving, workspace]);
 
   useEffect(() => {
     if (!buildSession || !ACTIVE_SESSION_STATUSES.has(buildSession.status)) return undefined;
@@ -152,8 +246,8 @@ export function PatchEditor({ workspace, onClose, onDirtyChange }: Props) {
   const flowNodes = useMemo<PatchFlowNode[]>(() => (graph?.nodes ?? []).flatMap((node) => {
     const contract = contracts[node.contract_reference.component_contract_id];
     if (!contract) return [];
-    return [{ id: node.node_id, type: "patchNode", position: positions[node.node_id] ?? { x: 0, y: 0 }, data: { contract, nodeId: node.node_id } }];
-  }), [contracts, graph, positions]);
+    return [{ id: node.node_id, type: "patchNode", position: positions[node.node_id] ?? { x: 0, y: 0 }, selected: node.node_id === selectedNodeId, data: { contract, nodeId: node.node_id } }];
+  }), [contracts, graph, positions, selectedNodeId]);
 
   const flowEdges = useMemo<Edge[]>(() => (graph?.connections ?? []).map((connection) => ({
     id: connection.connection_id,
@@ -166,9 +260,6 @@ export function PatchEditor({ workspace, onClose, onDirtyChange }: Props) {
 
   const selectedNode = graph?.nodes.find((node) => node.node_id === selectedNodeId) ?? null;
   const selectedContract = selectedNode ? contracts[selectedNode.contract_reference.component_contract_id] : null;
-  const hasNameChange = graph !== null && draftName.trim() !== graph.display_name;
-  const dirty = pending.length > 0 || hasNameChange;
-  const unsavedCount = pending.length + (hasNameChange ? 1 : 0);
   const buildRequest = project?.build_request_references.length === 1 ? project.build_request_references[0] : null;
   const buildBusy = buildSession !== null && ACTIVE_SESSION_STATUSES.has(buildSession.status);
   const uploadBusy = uploadStarting || (uploadSession !== null && ACTIVE_SESSION_STATUSES.has(uploadSession.status));
@@ -296,9 +387,17 @@ export function PatchEditor({ workspace, onClose, onDirtyChange }: Props) {
     ) {
       return;
     }
+    if (graph && externalProject) {
+      externalRefresh.current = {
+        previousNodeIds: graph.nodes.map((node) => node.node_id),
+        revision: externalProject.revision,
+      };
+    }
+    setExternalProject(null);
+    setSyncNotice(null);
     setLoadStage("Reloading accepted project…");
     setLoadToken((value) => value + 1);
-  }, [dirty]);
+  }, [dirty, externalProject, graph]);
 
   const openHistory = useCallback(async () => {
     setShowWorkflow(false);
@@ -386,26 +485,68 @@ export function PatchEditor({ workspace, onClose, onDirtyChange }: Props) {
     setPositions((current) => ({ ...current, [node.id]: node.position }));
   }, []);
 
-  if (loading) return <div className={styles.startup} role="status" aria-live="polite">{loadStage}</div>;
-  if (!graph || !project) return <div className={styles.startup}><strong>Project unavailable</strong><span role="alert">{error}</span><div className={styles.startupActions}><button type="button" onClick={() => reloadAccepted(false)}>Retry</button><button type="button" onClick={onClose}>Back to patches</button></div></div>;
+  const beginDrawerResize = useCallback((event: ReactPointerEvent<HTMLElement>) => {
+    const startX = event.clientX;
+    const startWidth = drawer.width;
+    const move = (next: PointerEvent) => onDrawerWidth(Math.min(460, Math.max(280, startWidth + next.clientX - startX)));
+    const stop = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", stop);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", stop, { once: true });
+  }, [drawer.width, onDrawerWidth]);
+
+  const resizeDrawerWithKeyboard = useCallback((event: ReactKeyboardEvent<HTMLElement>) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    onDrawerWidth(drawer.width + (event.key === "ArrowRight" ? 16 : -16));
+  }, [drawer.width, onDrawerWidth]);
+
+  const editorStyle = { "--drawer-width": `${drawer.width}px` } as CSSProperties;
 
   return (
-    <section className={styles.editor} data-library={showObjects}>
+    <section className={styles.editor} data-library={drawer.open} style={editorStyle}>
       <header className={styles.toolbar}>
-        <button className={styles.back} type="button" onClick={onClose}>‹ Patches</button>
-        <input disabled={saving} value={draftName} onChange={(event) => setDraftName(event.currentTarget.value)} aria-label="Patch name" />
-        <code>{project.project_id} · r{project.revision}</code>
+        <div className={styles.drawerTabs} aria-label="Patcher drawers">
+          <button type="button" data-active={drawer.open && drawer.tab === "objects"} aria-pressed={drawer.open && drawer.tab === "objects"} onClick={() => onChooseDrawer("objects")}>Objects</button>
+          <button type="button" data-active={drawer.open && drawer.tab === "patches"} aria-pressed={drawer.open && drawer.tab === "patches"} onClick={() => onChooseDrawer("patches")}>Patches</button>
+        </div>
+        <input disabled={saving || !graph} value={draftName} placeholder="No patch open" onChange={(event) => setDraftName(event.currentTarget.value)} aria-label="Patch name" />
+        {project && <code>{project.project_id} · r{project.revision}</code>}
         <span className={styles.spacer} />
-        <button type="button" disabled={saving} onClick={() => setShowObjects((value) => !value)}>{showObjects ? "Hide objects" : "Objects"}</button>
         <button type="button" disabled={saving || dirty || buildBusy || !buildRequest} onClick={() => void startBuild()}>{buildBusy ? "Building…" : "Build"}</button>
         <button type="button" disabled={saving || discovering || !buildRequest} onClick={() => void discoverDevices()}>{discovering ? "Finding…" : "Device"}</button>
-        <button type="button" disabled={saving || historyLoading} onClick={() => void openHistory()}>{historyLoading ? "Loading history…" : "History"}</button>
+        <button type="button" disabled={saving || historyLoading || !project} onClick={() => void openHistory()}>{historyLoading ? "Loading history…" : "History"}</button>
         <button type="button" disabled={!dirty || saving} onClick={() => reloadAccepted(false)}>Discard</button>
         <button className={styles.save} type="button" disabled={!dirty || saving} onClick={() => void save()}>{saveStage ?? "Save"}</button>
+        <button className={styles.settings} type="button" onClick={onOpenSettings} aria-label="Desktop settings">Settings</button>
       </header>
-      {showObjects && <aside className={styles.objectDrawer}><ObjectLibrary mode="drawer" onAdd={addComponent} /></aside>}
+      {drawer.open && <aside className={styles.objectDrawer} aria-label={drawer.tab === "objects" ? "Objects drawer" : "Patches drawer"}>
+        {drawer.tab === "objects" ? (
+          <ObjectLibrary onAdd={addComponent} projectRevision={project?.revision} workspace={workspace ?? undefined} />
+        ) : (
+          <div className={styles.patchDrawer}>
+            <header><div><span>PATCHES</span><strong>{projects.length}</strong></div><button type="button" onClick={onCreateProject}>New</button></header>
+            <div className={styles.projectRoot}><span>PROJECTS ROOT</span><code>{projectsRoot || "Not configured"}</code></div>
+            <div className={styles.patchRows}>
+              {projects.map((item) => <button
+                type="button"
+                key={item.project_reference.content_hash}
+                data-active={item.workspace === workspace}
+                onClick={() => onSelectProject(item.workspace)}
+              ><span className={styles.patchRoute} /><span><strong>{item.display_name}</strong><code>{item.project_reference.project_id} · r{item.project_reference.revision}</code></span></button>)}
+              {!libraryStage && projects.length === 0 && <p>No accepted projects in this root.</p>}
+            </div>
+            {libraryStage && <p className={styles.drawerStage} role="status">{libraryStage}</p>}
+            {shellError && <p className={styles.drawerError} role="status">{shellError}</p>}
+          </div>
+        )}
+        <div className={styles.drawerResize} role="separator" aria-label="Resize drawer" aria-orientation="vertical" aria-valuemin={280} aria-valuemax={460} aria-valuenow={drawer.width} tabIndex={0} onKeyDown={resizeDrawerWithKeyboard} onPointerDown={beginDrawerResize} />
+      </aside>}
       <div className={styles.canvas}>
         <ReactFlow
+          key={graph?.content_hash ?? workspace ?? "empty-patcher"}
           nodes={flowNodes}
           edges={flowEdges}
           nodeTypes={NODE_TYPES}
@@ -422,7 +563,18 @@ export function PatchEditor({ workspace, onClose, onDirtyChange }: Props) {
           <Background color="#252b33" gap={20} size={1} />
           <Controls showInteractive={false} />
         </ReactFlow>
-        {error && <div className={styles.canvasError} role="alert"><span>{error}</span><div>{dirty && <button type="button" disabled={saving} onClick={() => void save()}>Retry save</button>}<button type="button" disabled={saving} onClick={() => reloadAccepted(true)}>Reload accepted</button></div></div>}
+        {(!workspace || loading || !graph || !project) && <div className={styles.startup} role="status" aria-live="polite">
+          {!projectsRoot ? <><strong>Choose a projects root</strong><span>Set it once; Schuss will remember it and open directly into the patcher next time.</span><button type="button" onClick={onOpenSettings}>Open settings</button></> : loading || libraryStage ? <><span className={styles.startupPulse} /><strong>{loadStage ?? libraryStage}</strong><span>The canvas is ready while the accepted project closure loads.</span></> : <><strong>Project unavailable</strong><span role="alert">{error ?? shellError ?? "No accepted project could be opened."}</span><div className={styles.startupActions}><button type="button" onClick={() => reloadAccepted(false)}>Retry</button><button type="button" onClick={() => onChooseDrawer("patches")}>Browse patches</button></div></>}
+        </div>}
+        {externalProject && <div className={styles.externalUpdate} role="status">
+          <span>Accepted revision r{externalProject.revision} is available. Your unsaved edits are preserved.</span>
+          <button type="button" disabled={saving} onClick={() => reloadAccepted(true)}>Review and reload</button>
+        </div>}
+        {!externalProject && syncNotice && <div className={styles.syncNotice} role="status">
+          <span>{syncNotice}</span>
+          <button type="button" onClick={() => setSyncNotice(null)} aria-label="Dismiss project update">×</button>
+        </div>}
+        {workspace && graph && error && <div className={styles.canvasError} role="alert"><span>{error}</span><div>{dirty && <button type="button" disabled={saving} onClick={() => void save()}>Retry save</button>}<button type="button" disabled={saving} onClick={() => reloadAccepted(true)}>Reload accepted</button></div></div>}
       </div>
       <aside className={styles.inspector}>
         {selectedNode && selectedContract ? <>
@@ -447,8 +599,8 @@ export function PatchEditor({ workspace, onClose, onDirtyChange }: Props) {
         </> : <div className={styles.noSelection}>Select a node to inspect it.</div>}
       </aside>
       <footer className={styles.statusbar}>
-        <span aria-live="polite">{saveStage ?? (dirty ? `${unsavedCount} unsaved edit${unsavedCount === 1 ? "" : "s"}` : "Saved")}</span>
-        <span>{graph.nodes.length} nodes · {graph.connections.length} cables</span>
+        <span aria-live="polite">{libraryStage ?? saveStage ?? (graph ? dirty ? `${unsavedCount} unsaved edit${unsavedCount === 1 ? "" : "s"}` : "Saved" : "Patcher ready")}</span>
+        <span>{graph?.nodes.length ?? 0} nodes · {graph?.connections.length ?? 0} cables</span>
         <span aria-live="polite">Build {buildSession?.status ?? "not run"} · Device {selectedDevice?.compatibility ?? "not checked"}</span>
       </footer>
       {showWorkflow && <aside className={styles.workflow} aria-label="Build and device">

@@ -6,13 +6,14 @@ import type {
   ExactRecordSetReference,
   GraphEdit,
   GraphReference,
+  ProjectObjectReference,
   ProjectReference,
 } from "./types";
 
 export const DESKTOP_RECORD_SET: ExactRecordSetReference = {
-  record_set_id: "schuss-record-set-000026",
+  record_set_id: "schuss-record-set-000027",
   revision: 1,
-  content_hash: "sha256:4ca86d5f870c7c70e39ead9b8793dde68a3f1cec9053f9bd34fb209ed619d67e",
+  content_hash: "sha256:90bd454c4bf3c66f216496d461acf54d05b816927da8056907bf6fde51032bf9",
 };
 
 export const STARTER_GRAPH: GraphReference = {
@@ -46,6 +47,16 @@ function request(
   };
 }
 
+export function workspaceProjectsListRequest(): DesktopOperationRequest {
+  return request("schuss-operation-request-v14", "workspace.projects.list", {});
+}
+
+export function workspaceProjectCreateRequest(displayName: string): DesktopOperationRequest {
+  return request("schuss-operation-request-v14", "workspace.project.create", {
+    display_name: displayName,
+  });
+}
+
 export function implementationSearchRequest(query: string): DesktopOperationRequest {
   return request("schuss-operation-request-v10", "catalog.implementations.search", {
     query,
@@ -71,6 +82,16 @@ export function projectInspectRequest(): DesktopOperationRequest {
   });
 }
 
+export function projectObjectsListRequest(): DesktopOperationRequest {
+  return request("schuss-operation-request-v13", "project.objects.list", {});
+}
+
+export function projectObjectInspectRequest(reference: ProjectObjectReference): DesktopOperationRequest {
+  return request("schuss-operation-request-v13", "project.object.inspect", {
+    object_reference: reference,
+  });
+}
+
 export function projectHistoryRequest(): DesktopOperationRequest {
   return request("schuss-operation-request-v8", "project.history.inspect", {
     scope: "immutable-ancestry",
@@ -93,7 +114,7 @@ export function projectInitRequest(projectId: string): DesktopOperationRequest {
     project_id: projectId,
     base_record_set: {
       reference: DESKTOP_RECORD_SET,
-      portable_locator: "contracts/record-sets/ai-sonic-authoring-v1.json",
+      portable_locator: "contracts/record-sets/ui-desktop-workspace-shell-v1.json",
     },
     primary_graph_reference: STARTER_GRAPH,
     instrument_references: [STARTER_INSTRUMENT],

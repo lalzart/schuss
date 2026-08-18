@@ -361,6 +361,34 @@ workspace; their schemas remain derived from v13 and their annotations reflect
 their actual effects. No generic operation, arbitrary code, build, device, or
 hardware authority is added.
 
+The desktop project-object handoff reuses only `project.objects.list` and
+`project.object.inspect` from v13. Its closed adapter still rejects every
+authoring mutation operation. A selected local object's exact component
+contract enters the ordinary unsaved graph edit draft through v11 `add-node`;
+no second object store or graph edit language is introduced.
+
+## Projects-root workspace shell
+
+The desktop workspace-shell successor additively supplies operation
+request/result v14 and application-capability-description v7 in exact record
+set `schuss-record-set-000027@1`. It adds two shared operations to the
+thirty-five-operation v6 registry:
+
+- `workspace.projects.list` is read-only and requires one explicit absolute
+  projects root. The core examines a bounded set of direct child directories,
+  rejects symlinks, escapes, and duplicate project identities, and returns only
+  projects that pass the ordinary `ProjectService` load and validation path.
+- `workspace.project.create` is an explicit workspace write. It accepts a
+  display name, allocates a collision-safe child directory and stable project
+  ID, initializes and forks the accepted starter closure, applies the name
+  through the existing profile transaction semantics, and atomically publishes
+  the complete child directory.
+
+The projects root is adapter context rather than semantic project data. Local
+preference persistence does not select a graph revision, change a project, or
+authorize recursive scanning. The desktop renderer receives canonical project
+summaries only and retains no second workspace index.
+
 Task 012B remains retired. Any later build or device UI must consume shared
 session/job and device operations. Firmware/SD/persistent-install successors
 must remain separately contracted; no client may define a parallel build,

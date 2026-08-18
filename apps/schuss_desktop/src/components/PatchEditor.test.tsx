@@ -72,6 +72,75 @@ const graphValue = {
   }],
 };
 
+const externalProjectValue = {
+  project: {
+    ...projectValue.project,
+    revision: 3,
+    content_hash: hash("e"),
+    primary_graph_reference: {
+      ...graphReference,
+      revision: 2,
+      content_hash: hash("f"),
+    },
+  },
+  validation: {},
+};
+
+const externalGraphValue = {
+  graph: {
+    ...graphValue.graph,
+    ...externalProjectValue.project.primary_graph_reference,
+    nodes: [
+      ...graphValue.graph.nodes,
+      {
+        node_id: "graph-node-000002",
+        contract_reference: {
+          component_contract_id: "schuss-component-contract-000002",
+          revision: 1,
+          content_hash: hash("2"),
+        },
+        parameter_values: [],
+        attribute_values: [],
+      },
+    ],
+  },
+  component_contract_closure: [
+    ...graphValue.component_contract_closure,
+    {
+      component_contract_id: "schuss-component-contract-000002",
+      revision: 1,
+      content_hash: hash("2"),
+      display_name: "New project voice",
+      ports: [],
+      parameters: [],
+      attributes: [],
+    },
+  ],
+};
+
+const shellProps = {
+  projects: [{
+    workspace: "/tmp/test-patch",
+    project_reference: {
+      project_id: projectValue.project.project_id,
+      revision: projectValue.project.revision,
+      content_hash: projectValue.project.content_hash,
+    },
+    graph_reference: graphReference,
+    display_name: "Test patch",
+  }],
+  projectsRoot: "/tmp",
+  drawer: { open: true, tab: "objects" as const, width: 340 },
+  libraryStage: null,
+  shellError: null,
+  onDirtyChange: vi.fn(),
+  onSelectProject: vi.fn(),
+  onCreateProject: vi.fn(),
+  onOpenSettings: vi.fn(),
+  onChooseDrawer: vi.fn(),
+  onDrawerWidth: vi.fn(),
+};
+
 function deferred<T>() {
   let resolve!: (value: T) => void;
   let reject!: (reason: unknown) => void;
@@ -95,7 +164,7 @@ describe("PatchEditor reliability states", () => {
       .mockImplementationOnce(() => project.promise)
       .mockImplementationOnce(() => graph.promise);
 
-    render(<PatchEditor workspace="/tmp/test-patch" onClose={vi.fn()} onDirtyChange={vi.fn()} />);
+    render(<PatchEditor {...shellProps} workspace="/tmp/test-patch" />);
     expect(screen.getByRole("status")).toHaveTextContent("Opening accepted project");
 
     await act(async () => project.resolve(projectValue));
@@ -116,7 +185,7 @@ describe("PatchEditor reliability states", () => {
     });
     const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
     const onDirtyChange = vi.fn();
-    render(<PatchEditor workspace="/tmp/test-patch" onClose={vi.fn()} onDirtyChange={onDirtyChange} />);
+    render(<PatchEditor {...shellProps} workspace="/tmp/test-patch" onDirtyChange={onDirtyChange} />);
 
     const name = await screen.findByRole("textbox", { name: "Patch name" });
     await user.clear(name);
@@ -201,7 +270,7 @@ describe("PatchEditor reliability states", () => {
       throw new Error(`Unexpected operation ${request.operation}`);
     });
     const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
-    render(<PatchEditor workspace="/tmp/test-patch" onClose={vi.fn()} onDirtyChange={vi.fn()} />);
+    render(<PatchEditor {...shellProps} workspace="/tmp/test-patch" />);
 
     await user.click(await screen.findByRole("button", { name: "Build" }));
     expect(await screen.findByText("4 KB target executable")).toBeInTheDocument();
@@ -222,5 +291,55 @@ describe("PatchEditor reliability states", () => {
       upload_intent: "explicit-volatile-ram",
       start_patch: true,
     });
+  });
+
+  it("reloads a clean external successor and selects its newly inserted node", async () => {
+    let projectInspections = 0;
+    dispatchMock.mockImplementation((request: { operation: string; payload: Record<string, unknown> }) => {
+      if (request.operation === "project.inspect") {
+        projectInspections += 1;
+        return Promise.resolve(projectInspections === 1 ? projectValue : externalProjectValue);
+      }
+      if (request.operation === "graph.inspect") {
+        const reference = request.payload.graph_reference as { revision: number };
+        return Promise.resolve(reference.revision === 1 ? graphValue : externalGraphValue);
+      }
+      throw new Error(`Unexpected operation ${request.operation}`);
+    });
+    render(<PatchEditor {...shellProps} workspace="/tmp/test-patch" />);
+    expect(await screen.findByRole("textbox", { name: "Patch name" })).toHaveValue("Test patch");
+    await waitFor(() => expect(projectInspections).toBe(1));
+
+    await act(async () => { window.dispatchEvent(new Event("focus")); });
+    await waitFor(() => expect(projectInspections).toBeGreaterThanOrEqual(2));
+
+    expect(await screen.findByText(/Accepted revision r3 loaded.*New project voice is selected and ready to connect/)).toBeVisible();
+    expect(screen.getByText("schuss-project-900001 · r3")).toBeVisible();
+  });
+
+  it("preserves a dirty draft when an external accepted revision appears", async () => {
+    const user = userEvent.setup();
+    let projectInspections = 0;
+    dispatchMock.mockImplementation((request: { operation: string }) => {
+      if (request.operation === "project.inspect") {
+        projectInspections += 1;
+        return Promise.resolve(projectInspections === 1 ? projectValue : externalProjectValue);
+      }
+      if (request.operation === "graph.inspect") return Promise.resolve(graphValue);
+      throw new Error(`Unexpected operation ${request.operation}`);
+    });
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    render(<PatchEditor {...shellProps} workspace="/tmp/test-patch" />);
+    const name = await screen.findByRole("textbox", { name: "Patch name" });
+    await user.clear(name);
+    await user.type(name, "Keep this draft");
+
+    await act(async () => { window.dispatchEvent(new Event("focus")); });
+
+    expect(await screen.findByText(/Accepted revision r3 is available.*unsaved edits are preserved/)).toBeVisible();
+    expect(name).toHaveValue("Keep this draft");
+    await user.click(screen.getByRole("button", { name: "Review and reload" }));
+    expect(confirm).toHaveBeenCalledOnce();
+    expect(name).toHaveValue("Keep this draft");
   });
 });

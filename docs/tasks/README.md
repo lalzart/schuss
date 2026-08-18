@@ -62,6 +62,13 @@ contracts pending their normal archival step:
   locally complete successor for core-owned build jobs, explicit Ksoloti
   discovery, and a read-back-verified volatile-RAM upload path. Its device
   tests use fakes and authorize no real hardware action.
+- `ui-desktop-project-object-handoff.md` is the explicitly authorized bounded
+  successor that presents accepted project-local objects and safely follows an
+  externally accepted workspace head without exposing AI mutation operations.
+- `ui-desktop-workspace-shell.md` is the explicitly authorized, locally complete
+  visual successor that makes the canvas the desktop home, moves Objects and
+  Patches into contextual drawers, and adds core-owned workspace
+  browsing/creation.
 - `ai-mcp-read-only-foundation.md` is the explicitly authorized first AI-client
   slice. It exposes six existing read-only operations over local MCP stdio and
   adds no model-provider, mutation, project, build, device, or network authority.

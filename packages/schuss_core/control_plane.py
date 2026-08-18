@@ -106,6 +106,12 @@ AI_SONIC_AUTHORING_SCHEMA_NAMES = {
     "project_v1": "project-v1.schema.json",
 }
 
+DESKTOP_WORKSPACE_SCHEMA_NAMES = {
+    "application_capability_description_v7": "application-capability-description-v7.schema.json",
+    "operation_request_v14": "operation-request-v14.schema.json",
+    "operation_result_v14": "operation-result-v14.schema.json",
+}
+
 TASK015_SCHEMA_NAMES = {
     "normalized_dsp_module": "normalized-dsp-module-v0.schema.json",
     "direct_frontend_result": "direct-frontend-result-v0.schema.json",
@@ -424,7 +430,15 @@ def load_repository_context(
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
-    if "application_capability_description_v6" in schemas:
+    for key, filename in DESKTOP_WORKSPACE_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    if "application_capability_description_v7" in schemas:
+        schemas["application_capability_description"] = schemas[
+            "application_capability_description_v7"
+        ]
+    elif "application_capability_description_v6" in schemas:
         schemas["application_capability_description"] = schemas[
             "application_capability_description_v6"
         ]
@@ -709,6 +723,7 @@ def canonical_result_bytes(
         "schuss-operation-result-v11": "operation_result_v11",
         "schuss-operation-result-v12": "operation_result_v12",
         "schuss-operation-result-v13": "operation_result_v13",
+        "schuss-operation-result-v14": "operation_result_v14",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -748,6 +763,7 @@ def _dispatch_application_operation(
     execution_service_available: bool = False,
     session_services_available: bool = False,
     authoring_service_available: bool = False,
+    workspace_library_available: bool = False,
 ) -> dict[str, Any]:
     operation = request.get("operation") if isinstance(request, dict) else None
     required_schemas = (
@@ -818,6 +834,7 @@ def _dispatch_application_operation(
             execution_service_available=execution_service_available,
             session_services_available=session_services_available,
             authoring_service_available=authoring_service_available,
+            workspace_library_available=workspace_library_available,
         )
         value_schema = context.schemas["application_capability_description"]
         value_errors = core.schema_errors(value, value_schema, value_schema)
@@ -2192,8 +2209,17 @@ def dispatch_operation(
     build_session_service: Any | None = None,
     device_session_service: Any | None = None,
     authoring_service: Any | None = None,
+    workspace_service: Any | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v14"
+    ):
+        from .workspace_library import dispatch_workspace_operation
+
+        return dispatch_workspace_operation(request, context, workspace_service)
 
     if (
         isinstance(request, dict)
@@ -2291,6 +2317,7 @@ def dispatch_operation(
                     and device_session_service is not None
                 ),
                 authoring_service_available=authoring_service is not None,
+                workspace_library_available=workspace_service is not None,
             )
         return _dispatch_application_operation(
             request,
@@ -2301,6 +2328,7 @@ def dispatch_operation(
                 and device_session_service is not None
             ),
             authoring_service_available=authoring_service is not None,
+            workspace_library_available=workspace_service is not None,
         )
 
     if (

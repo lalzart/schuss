@@ -19,6 +19,8 @@ TAURI_CAPABILITY = APP_ROOT / "src-tauri/capabilities/default.json"
 TASK_CONTRACT = Path("docs/tasks/ui-desktop-patcher-authoring.md")
 PERFORMANCE_TASK_CONTRACT = Path("docs/tasks/ui-desktop-authoring-performance.md")
 BUILD_DEVICE_TASK_CONTRACT = Path("docs/tasks/ui-desktop-build-device-workflow.md")
+PROJECT_OBJECT_TASK_CONTRACT = Path("docs/tasks/ui-desktop-project-object-handoff.md")
+WORKSPACE_SHELL_TASK_CONTRACT = Path("docs/tasks/ui-desktop-workspace-shell.md")
 BOUNDARY_DOCUMENT = Path("docs/DESKTOP_UI_BOUNDARY.md")
 
 REQUIRED_APP_FILES = {
@@ -58,6 +60,8 @@ REQUIRED_APP_FILES = {
         "src/components/PatchNode.module.css",
         "src/components/PatchNode.tsx",
         "src/core/bridge.ts",
+        "src/core/desktopPreferences.ts",
+        "src/core/desktopPreferences.test.ts",
         "src/core/patcherRequests.test.ts",
         "src/core/patcherRequests.ts",
         "src/core/requests.test.ts",
@@ -76,7 +80,7 @@ REQUIRED_APP_FILES = {
 GOVERNED_PATHS = tuple(
     sorted(
         [APP_ROOT / path for path in REQUIRED_APP_FILES]
-        + [TASK_CONTRACT, PERFORMANCE_TASK_CONTRACT, BUILD_DEVICE_TASK_CONTRACT, BOUNDARY_DOCUMENT],
+        + [TASK_CONTRACT, PERFORMANCE_TASK_CONTRACT, BUILD_DEVICE_TASK_CONTRACT, PROJECT_OBJECT_TASK_CONTRACT, WORKSPACE_SHELL_TASK_CONTRACT, BOUNDARY_DOCUMENT],
         key=lambda path: path.as_posix(),
     )
 )
@@ -102,10 +106,14 @@ EXPECTED_RUNTIME = (
     "project.history.inspect",
     "project.init",
     "project.inspect",
+    "project.object.inspect",
+    "project.objects.list",
     "project.profile.fork",
     "project.profile.transact",
     "project.revert",
     "project.validate",
+    "workspace.project.create",
+    "workspace.projects.list",
 )
 EXPECTED_DEPENDENCIES = {
     "@radix-ui/react-scroll-area": "1.2.18",
@@ -164,7 +172,7 @@ def validate_structure(root: Path) -> dict[str, Any]:
             _diagnostic(diagnostics, "DESKTOP_SEMANTIC_RECORD_OWNERSHIP_INVALID", APP_ROOT / relative, "renderer may not own semantic records")
 
     package = _load(root, PACKAGE, diagnostics)
-    if not isinstance(package, dict) or package.get("dependencies") != EXPECTED_DEPENDENCIES or package.get("schuss", {}).get("recordSet") != "schuss-record-set-000026@1" or package.get("schuss", {}).get("status") != "project-build-device-workflow":
+    if not isinstance(package, dict) or package.get("dependencies") != EXPECTED_DEPENDENCIES or package.get("schuss", {}).get("recordSet") != "schuss-record-set-000027@1" or package.get("schuss", {}).get("status") != "workspace-patcher-shell":
         _diagnostic(diagnostics, "DESKTOP_PACKAGE_INVALID", PACKAGE, "desktop dependency or boundary metadata drifted")
     lock = _load(root, PACKAGE_LOCK, diagnostics)
     if not isinstance(lock, dict) or lock.get("packages", {}).get("", {}).get("dependencies") != EXPECTED_DEPENDENCIES:
@@ -173,7 +181,7 @@ def validate_structure(root: Path) -> dict[str, Any]:
     boundary = _load(root, BOUNDARY, diagnostics)
     runtime_count = 0
     planned_count = 0
-    if not isinstance(boundary, dict) or boundary.get("schema_version") != "schuss-desktop-core-boundary-v1" or boundary.get("client", {}).get("status") != "project-build-device-workflow":
+    if not isinstance(boundary, dict) or boundary.get("schema_version") != "schuss-desktop-core-boundary-v1" or boundary.get("client", {}).get("status") != "workspace-patcher-shell":
         _diagnostic(diagnostics, "DESKTOP_CORE_BOUNDARY_INVALID", BOUNDARY, "desktop workflow boundary identity drifted")
     else:
         runtime = boundary.get("runtime_capabilities")
@@ -185,7 +193,7 @@ def validate_structure(root: Path) -> dict[str, Any]:
         if isinstance(phases, list):
             planned_count = sum(len(item.get("operations", [])) for item in phases if isinstance(item, dict))
         transport = boundary.get("transport", {})
-        if transport.get("command") != "dispatch_desktop_operation" or transport.get("selected_record_set") != "contracts/record-sets/ai-sonic-authoring-v1.json":
+        if transport.get("command") != "dispatch_desktop_operation" or transport.get("selected_record_set") != "contracts/record-sets/ui-desktop-workspace-shell-v1.json":
             _diagnostic(diagnostics, "DESKTOP_TRANSPORT_BOUNDARY_INVALID", BOUNDARY, "desktop transport or exact record set drifted")
         ownership = boundary.get("ownership", {})
         if any(ownership.get(key) != "forbidden" for key in ("direct_catalog_file_access", "direct_renderer_process_access", "direct_semantic_json_access", "direct_workspace_mutation")):
@@ -208,7 +216,7 @@ def validate_structure(root: Path) -> dict[str, Any]:
     for token in ("@tauri-apps/plugin-fs", "@tauri-apps/plugin-shell"):
         if token in source:
             _diagnostic(diagnostics, "DESKTOP_FORBIDDEN_CAPABILITY_PRESENT", APP_ROOT, f"forbidden runtime token {token!r} is present")
-    for token in ("ReactFlow", "project.profile.transact", "component.inspect", "build.session.start", "device.upload.start", "dispatch_desktop_operation"):
+    for token in ("ReactFlow", "project.profile.transact", "project.objects.list", "workspace.projects.list", "workspace.project.create", "component.inspect", "build.session.start", "device.upload.start", "dispatch_desktop_operation"):
         if token not in source:
             _diagnostic(diagnostics, "DESKTOP_REQUIRED_CAPABILITY_MISSING", APP_ROOT, f"required implementation token {token!r} is absent")
 

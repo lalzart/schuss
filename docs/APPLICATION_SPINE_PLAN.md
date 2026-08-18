@@ -13,7 +13,9 @@ levels 1-2. Task 028 completed its bounded twenty-item direct palette at levels
 unnumbered UI lane is complete locally through the consolidated desktop
 patcher, bounded authoring-performance slice, and explicitly authorized
 process-local build/device workflow. Connected-hardware acceptance remains
-separate. The separately authorized AI lane now exposes sonic-first planning
+separate. A bounded desktop successor presents accepted project-local objects
+and follows external accepted-project revisions through the shared operation
+boundary without gaining AI mutation authority. The separately authorized AI lane now exposes sonic-first planning
 and explicit project-local object/patch authoring through shared operations and
 local MCP stdio. Native target lowering, build/device authority, model
 orchestration, and remote serving remain separate.
@@ -57,7 +59,7 @@ before offline catalog, compiler, CLI, or UI-architecture development.
   completion surfaces. `gills.inspect` has a shared operation but no equivalent
   ordinary product command.
 - One maintained Tauri/React desktop application consumes the shared catalog,
-  graph, project, build-session, and device-session operations. Compiler,
+  graph, project, project-object, build-session, and device-session operations. Compiler,
   artifact, and libusb authority remain in core; the renderer has no raw
   filesystem, process, or USB authority.
 - One separate local MCP process exposes seven read-only discovery/planning
@@ -293,9 +295,11 @@ Useful parallel windows are intentionally bounded:
 4. ADR 0015 retargeted Task 027 to catalog provenance; it is now complete.
    Task 028's bounded twenty-item palette is now complete; transparent
    compound work remains deferred without a numbered lane.
-5. The desktop patcher and its process-local build/device successor are
-   complete locally. Real connected-hardware acceptance remains separate;
-   neither desktop workflow may become client-owned semantics or persistence.
+5. The desktop patcher, workspace-shell successor, and process-local
+   build/device successor are complete locally. The shell's remembered root is
+   presentation state; project discovery/creation remain shared core
+   operations. Real connected-hardware acceptance remains separate; neither
+   desktop workflow may become client-owned semantics or persistence.
 6. The MCP adapter remains separate from the desktop. Its project-authoring
    successor requires an explicit workspace and uses the shared project
    acceptance boundary. Build, device, model-provider, listening, or

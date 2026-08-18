@@ -7,6 +7,10 @@ import {
   graphTransactRequest,
   profileTransactRequest,
   projectInitRequest,
+  projectObjectInspectRequest,
+  projectObjectsListRequest,
+  workspaceProjectCreateRequest,
+  workspaceProjectsListRequest,
 } from "./patcherRequests";
 
 describe("desktop patcher operation requests", () => {
@@ -19,10 +23,25 @@ describe("desktop patcher operation requests", () => {
         project_id: "schuss-project-000123",
         base_record_set: {
           reference: DESKTOP_RECORD_SET,
-          portable_locator: "contracts/record-sets/ai-sonic-authoring-v1.json",
+          portable_locator: "contracts/record-sets/ui-desktop-workspace-shell-v1.json",
         },
         primary_graph_reference: STARTER_GRAPH,
       },
+    });
+  });
+
+  it("uses v14 for core-owned workspace browsing and creation", () => {
+    expect(workspaceProjectsListRequest()).toEqual({
+      schema_version: "schuss-operation-request-v14",
+      canonical_profile: "schuss-canonical-json-v1",
+      operation: "workspace.projects.list",
+      payload: {},
+    });
+    expect(workspaceProjectCreateRequest("New patch")).toEqual({
+      schema_version: "schuss-operation-request-v14",
+      canonical_profile: "schuss-canonical-json-v1",
+      operation: "workspace.project.create",
+      payload: { display_name: "New patch" },
     });
   });
 
@@ -68,6 +87,26 @@ describe("desktop patcher operation requests", () => {
       expected_project_reference: project,
       graph_reference: STARTER_GRAPH,
       write_intent: "explicit",
+    });
+  });
+
+  it("uses only the exact v13 read operations for project-local objects", () => {
+    const reference = {
+      object_definition_id: "schuss-project-object-000123",
+      revision: 1,
+      content_hash: `sha256:${"f".repeat(64)}`,
+    };
+    expect(projectObjectsListRequest()).toEqual({
+      schema_version: "schuss-operation-request-v13",
+      canonical_profile: "schuss-canonical-json-v1",
+      operation: "project.objects.list",
+      payload: {},
+    });
+    expect(projectObjectInspectRequest(reference)).toEqual({
+      schema_version: "schuss-operation-request-v13",
+      canonical_profile: "schuss-canonical-json-v1",
+      operation: "project.object.inspect",
+      payload: { object_reference: reference },
     });
   });
 });

@@ -138,7 +138,12 @@ Project-local object and patch authoring:
 New projects created by the maintained desktop application pin exact record
 set `schuss-record-set-000026@1` and can therefore be selected here directly.
 Historical projects keep their immutable earlier base; Schuss never rewrites a
-project's base record set merely to enable AI tools.
+project’s base record set merely to enable AI tools.
+
+The maintained desktop may consume the two accepted project-object read
+operations so an MCP-accepted object appears in its owning project and graph.
+It does not expose draft, evaluation, preview, or acceptance operations and
+does not infer the MCP project from the desktop selection.
 
 Codex CLI can register the same fixed command and project arguments:
 

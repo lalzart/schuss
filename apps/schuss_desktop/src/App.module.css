@@ -44,6 +44,8 @@
   line-height: 1;
 }
 
+.appTitle { color: var(--text-3); font-family: var(--font-mono); font-size: .58rem; letter-spacing: .12em; }
+
 .appNav { display: flex; height: 100%; }
 .appNav button {
   min-width: 86px;

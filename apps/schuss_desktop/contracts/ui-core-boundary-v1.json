@@ -8,7 +8,7 @@
       "shell": "Tauri 2",
       "view": "React"
     },
-    "status": "project-build-device-workflow"
+    "status": "workspace-patcher-shell"
   },
   "ownership": {
     "core_owned_semantics": [
@@ -28,8 +28,10 @@
     "semantic_mutation_mode": "shared-operation-only",
     "ui_owned_ephemeral_state": [
       "draft-form-state",
+      "external-project-notice",
       "panel-layout",
-      "recent-workspace-paths",
+      "projects-root-preference",
+      "recent-workspace-reference",
       "selection",
       "viewport"
     ]
@@ -65,6 +67,22 @@
         "project.validate"
       ],
       "phase": "project-backed-authoring",
+      "status": "implemented"
+    },
+    {
+      "operations": [
+        "project.objects.list",
+        "project.object.inspect"
+      ],
+      "phase": "project-object-handoff",
+      "status": "implemented"
+    },
+    {
+      "operations": [
+        "workspace.projects.list",
+        "workspace.project.create"
+      ],
+      "phase": "workspace-patcher-shell",
       "status": "implemented"
     },
     {
@@ -178,6 +196,18 @@
       "result_schema_version": "schuss-operation-result-v3"
     },
     {
+      "effect_class": "read-only",
+      "operation": "project.object.inspect",
+      "request_schema_version": "schuss-operation-request-v13",
+      "result_schema_version": "schuss-operation-result-v13"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "project.objects.list",
+      "request_schema_version": "schuss-operation-request-v13",
+      "result_schema_version": "schuss-operation-result-v13"
+    },
+    {
       "effect_class": "workspace-write",
       "operation": "project.profile.fork",
       "request_schema_version": "schuss-operation-request-v8",
@@ -200,6 +230,18 @@
       "operation": "project.validate",
       "request_schema_version": "schuss-operation-request-v3",
       "result_schema_version": "schuss-operation-result-v3"
+    },
+    {
+      "effect_class": "workspace-write",
+      "operation": "workspace.project.create",
+      "request_schema_version": "schuss-operation-request-v14",
+      "result_schema_version": "schuss-operation-result-v14"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "workspace.projects.list",
+      "request_schema_version": "schuss-operation-request-v14",
+      "result_schema_version": "schuss-operation-result-v14"
     }
   ],
   "schema_version": "schuss-desktop-core-boundary-v1",
@@ -211,8 +253,8 @@
     "operation_selection": "closed-listed-allowlist",
     "renderer_file_access": "absent",
     "request_handling": "submit-one-versioned-schuss-operation-and-explicit-workspace",
-    "selected_record_set": "contracts/record-sets/ai-sonic-authoring-v1.json",
-    "status": "implemented-project-build-device-workflow",
+    "selected_record_set": "contracts/record-sets/ui-desktop-workspace-shell-v1.json",
+    "status": "implemented-workspace-patcher-shell",
     "unknown_operation": "reject",
     "unknown_result_schema": "reject",
     "version_mismatch": "reject"

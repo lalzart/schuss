@@ -256,6 +256,73 @@ export type ComponentContract = {
   }>;
 };
 
+export type ProjectObjectReference = {
+  object_definition_id: string;
+  revision: number;
+  content_hash: string;
+};
+
+export type ProjectObjectEvidence = {
+  structural: string;
+  host_evaluation: {
+    status: string;
+    artifact?: {
+      content_hash: string;
+      sample_rate: number;
+      frame_count: number;
+      channel_count: number;
+      sample_format: string;
+      byte_length: number;
+      measurements: Record<string, string | number>;
+    };
+  };
+  target_lowering: string;
+  arm_build: string;
+  connected_device: string;
+  real_time_resources: string;
+  audible_listening: string;
+};
+
+export type ProjectObjectSummary = {
+  object_reference: ProjectObjectReference;
+  display_name: string;
+  function: string;
+  form: "transparent-compound" | "native-kernel";
+  evidence: ProjectObjectEvidence;
+};
+
+export type ProjectObjectsListValue = {
+  project_reference: ProjectReference;
+  object_count: number;
+  objects: ProjectObjectSummary[];
+};
+
+export type ProjectObjectDefinition = {
+  object_definition_id: string;
+  revision: number;
+  content_hash: string;
+  family: {
+    family_id: string;
+    revision: number;
+    content_hash: string;
+    display_name: string;
+    aliases: string[];
+    function: string;
+    desired_character: string[];
+    provenance: "ai-authored" | "user-authored";
+  };
+  component_contract: ComponentContract;
+  implementation_binding: Record<string, unknown>;
+  realization: { form: "transparent-compound" | "native-kernel" } & Record<string, unknown>;
+  intent: Record<string, unknown>;
+  evidence: ProjectObjectEvidence;
+};
+
+export type ProjectObjectInspectValue = {
+  project_reference: ProjectReference;
+  object_definition: ProjectObjectDefinition;
+};
+
 export type GraphInspectValue = {
   graph: DspGraph;
   component_contract_closure: ComponentContract[];
@@ -268,6 +335,32 @@ export type ProjectManifest = {
   primary_graph_reference: GraphReference;
   instrument_references: ExactReference[];
   build_request_references: BuildRequestReference[];
+};
+
+export type WorkspaceProject = {
+  workspace: string;
+  project_reference: ProjectReference;
+  graph_reference: GraphReference;
+  display_name: string;
+};
+
+export type WorkspaceProjectsValue = {
+  projects_root: string;
+  project_count: number;
+  rejected_child_count: number;
+  truncated: boolean;
+  projects: WorkspaceProject[];
+};
+
+export type WorkspaceProjectCreateValue = {
+  projects_root: string;
+  project: WorkspaceProject;
+  creation: {
+    project_id_allocated: string;
+    template_profile_forked: boolean;
+    display_name_revision: number;
+    publication: string;
+  };
 };
 
 export type BuildArtifact = {

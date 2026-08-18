@@ -98,6 +98,19 @@ impl DesktopBridge {
         })
     }
 
+    pub fn prepare(&self) -> Result<(), BridgeError> {
+        let mut guard = self.process.lock().map_err(|_| {
+            BridgeError::new(
+                "BRIDGE_STATE_UNAVAILABLE",
+                "the local Schuss core bridge is unavailable",
+            )
+        })?;
+        if guard.is_none() {
+            *guard = Some(self.spawn_process()?);
+        }
+        Ok(())
+    }
+
     fn exchange(process: &mut BridgeProcess, request: &[u8]) -> Result<Value, BridgeError> {
         process.stdin.write_all(request).map_err(|_| {
             BridgeError::new(
@@ -210,6 +223,8 @@ fn operation_versions(operation: &str) -> Option<(&'static str, &'static str, bo
         "graph.transact" | "project.profile.transact" => Some(("schuss-operation-request-v11", "schuss-operation-result-v11", true)),
         "project.history.inspect" | "project.profile.fork" | "project.revert" => Some(("schuss-operation-request-v8", "schuss-operation-result-v8", true)),
         "project.init" | "project.inspect" | "project.validate" => Some(("schuss-operation-request-v3", "schuss-operation-result-v3", true)),
+        "project.object.inspect" | "project.objects.list" => Some(("schuss-operation-request-v13", "schuss-operation-result-v13", true)),
+        "workspace.project.create" | "workspace.projects.list" => Some(("schuss-operation-request-v14", "schuss-operation-result-v14", true)),
         _ => None,
     }
 }
@@ -324,6 +339,21 @@ mod tests {
             "schuss-operation-request-v12"
         ))
         .is_ok());
+        assert!(validate_request(&request(
+            "project.objects.list",
+            "schuss-operation-request-v13"
+        ))
+        .is_ok());
+        assert!(validate_request(&request(
+            "workspace.projects.list",
+            "schuss-operation-request-v14"
+        ))
+        .is_ok());
+        assert!(validate_request(&request(
+            "authoring.draft.create",
+            "schuss-operation-request-v13"
+        ))
+        .is_err());
         assert!(validate_request(&request("build.execute", "schuss-operation-request-v5")).is_err());
         assert!(validate_request(&request("component.inspect", "schuss-operation-request-v1")).is_err());
     }

@@ -394,8 +394,8 @@ A subsequent local Codex integration smoke exposed one fail-closed seam: the
 desktop still created projects against `schuss-record-set-000025@1`, which does
 not contain the v13 AI-authoring contract required by project-mode MCP. The
 desktop creation context now selects the additive exact successor
-`schuss-record-set-000026@1` without adding v13 operations to its closed
-allowlist. One existing revision-3 project pinned to `000025` still loaded
+`schuss-record-set-000026@1` without adding v13 mutation operations to its
+closed allowlist. One existing revision-3 project pinned to `000025` still loaded
 successfully, proving that no historical base migration is required or
 performed. A fresh desktop-equivalent project pinned to `000026` initialized
 the MCP `2025-11-25` compatibility flow, advertised all fourteen project-mode
@@ -407,6 +407,65 @@ action. The post-repair aggregate passes inventory 14/14 and catalog 6/6;
 contracts ran 428 tests in 1,045.075 seconds and retained exactly the same
 three Task 011A/Task 023 golden and Task 027 freshness failures, with no new
 desktop, project, MCP, or AI failure.
+
+The explicitly authorized unnumbered desktop project-object handoff is active
+locally. The closed desktop adapter now adds only the read-only v13
+`project.objects.list` and `project.object.inspect` operations. The patch drawer
+presents accepted project-local definitions separately from the permanent
+catalog, resolves their exact component contracts, and reuses the ordinary
+unsaved `add-node` graph edit. The editor checks the accepted project reference
+through `project.inspect`: a clean external successor reloads and selects one
+identifiable inserted node, while a dirty editor reports the successor revision
+and never discards its draft without confirmation. The exact prior
+`Throat Ripper` workspace resolves one local object through this desktop path;
+its host evaluation remains distinct from target lowering `not-run`. Focused
+renderer/request tests pass 11/11, the production frontend build succeeds,
+Python bridge/structure tests pass 5/5, and Rust bridge tests pass 3/3. No AI
+draft/evaluate/preview/accept, catalog promotion, compiler, build execution,
+USB, upload, or hardware action is added by this slice.
+
+The explicitly authorized unnumbered desktop workspace-shell successor is
+active locally for exact schema-only record set `schuss-record-set-000027@1`,
+parented by `000026`. Additive v14 exposes only
+`workspace.projects.list` and `workspace.project.create`; application
+capability v7 describes thirty-seven shared operations. The core validates a
+bounded set of direct project children, rejects symlinks, escaping paths,
+duplicate project IDs, and malformed projects, and owns collision-safe stable
+ID/path allocation plus atomic template-backed creation. The renderer stores
+only a versioned projects-root, last-workspace, and drawer preference.
+
+The desktop now always mounts the patcher canvas. Separate Patches and Objects
+application routes are removed; both are compact left-drawer tabs, the drawer
+is bounded/resizable and remembered, and the existing node inspector remains
+contextual on the right. Objects default to the existing contracted readiness
+projection, All catalog retains the complete 133-item implementation view, and
+form/readiness/provenance/evidence detail expands in the drawer. One Add action
+performs exact contract resolution and then emits only the existing unsaved
+`add-node` edit. New Patch asks only for a name, reopens the last valid project,
+and creates one valid Untitled starter through v14 when a configured root is
+empty.
+
+The native shell now spawns its persistent Python core during application
+setup and renders truthful core/project/graph stages over the already mounted
+canvas. Full cold semantic validation is unchanged and remains a separately
+measured roughly nine-second boundary; no weakened or stale semantic cache was
+introduced. Focused frontend tests pass 21/21, the production bundle succeeds,
+workspace-service tests pass 6/6, structure checks pass 4/4 with 24 closed
+runtime operations and zero semantic renderer records, the Python bridge smoke
+passes 1/1, and Rust adapter tests pass 3/3. The adjacent project, session,
+application, MCP, and sonic-authoring regression set passes 60/60. A live
+browser smoke verified first-run setup, automatic Untitled creation, remembered
+reopen, 21-item Patcher and 133-item All catalog projections, one successful
+ordinary add/discard flow, and the closed catalog-only add path over a
+disposable workspace now moved to Trash. The reviewed diff and generated
+record set are clean. The final aggregate passes inventory 14/14 and catalog
+6/6. Contracts ran 434 tests in 1,090.532 seconds and retained exactly the
+three previously audited failures: the Task 011A historical/Task 023 successor
+catalog golden, the Task 023 CLI-v2 successor/historical golden, and Task 027
+generated-output freshness assertion. No desktop workspace-shell, project,
+bridge, governance, renderer, or current-record test failed. No build
+execution, USB, upload, hardware, package, Git publication, or audible action
+was performed by this successor.
 
 Tasks 019 and 020 are deferred and not automatically activated by completion
 of Task 018 or Task 021.
@@ -543,8 +602,8 @@ contract; its prior transparent-compound outcome is deferred. Task 029 is
 bounded to source-evidenced machine inspection and Task 030 to catalog
 provenance plus read-only object discovery. No numbered
 implementation lane is currently planned. The unnumbered desktop patcher is
-implemented locally with its process-local build/device successor and awaits
-user acceptance/publication. The unnumbered AI/MCP lane is implemented locally
+implemented locally with its process-local build/device and project-object
+handoff successors and awaits user acceptance/publication. The unnumbered AI/MCP lane is implemented locally
 through explicit project-scoped object and patch authoring. Real
 connected-device execution, firmware/SD
 mutation, packaging, real-time/resource, and audible work remain separately

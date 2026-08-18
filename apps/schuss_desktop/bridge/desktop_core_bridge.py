@@ -21,12 +21,14 @@ from packages.schuss_core.control_plane import (  # noqa: E402
 from packages.schuss_core.project_service import ProjectService  # noqa: E402
 from packages.schuss_core.build_sessions import BuildSessionService  # noqa: E402
 from packages.schuss_core.device_sessions import DeviceSessionService  # noqa: E402
+from packages.schuss_core.ai_authoring import SonicAuthoringService  # noqa: E402
+from packages.schuss_core.workspace_library import WorkspaceLibraryService  # noqa: E402
 from tools.contracts import validator_core as core  # noqa: E402
 
 
 RECORD_SET_PATH = (
     REPOSITORY_ROOT
-    / "contracts/record-sets/ai-sonic-authoring-v1.json"
+    / "contracts/record-sets/ui-desktop-workspace-shell-v1.json"
 )
 ALLOWED_OPERATIONS = {
     "application.describe": (
@@ -109,6 +111,16 @@ ALLOWED_OPERATIONS = {
         "schuss-operation-result-v3",
         True,
     ),
+    "project.object.inspect": (
+        "schuss-operation-request-v13",
+        "schuss-operation-result-v13",
+        True,
+    ),
+    "project.objects.list": (
+        "schuss-operation-request-v13",
+        "schuss-operation-result-v13",
+        True,
+    ),
     "project.profile.fork": (
         "schuss-operation-request-v8",
         "schuss-operation-result-v8",
@@ -127,6 +139,16 @@ ALLOWED_OPERATIONS = {
     "project.validate": (
         "schuss-operation-request-v3",
         "schuss-operation-result-v3",
+        True,
+    ),
+    "workspace.project.create": (
+        "schuss-operation-request-v14",
+        "schuss-operation-result-v14",
+        True,
+    ),
+    "workspace.projects.list": (
+        "schuss-operation-request-v14",
+        "schuss-operation-result-v14",
         True,
     ),
 }
@@ -218,6 +240,7 @@ class DesktopCore:
             record_set_path=RECORD_SET_PATH,
         )
         self.services: dict[Path, ProjectService] = {}
+        self.authoring_services: dict[Path, SonicAuthoringService] = {}
         self.build_sessions = BuildSessionService()
         self.device_sessions = DeviceSessionService(self.build_sessions)
 
@@ -234,13 +257,41 @@ class DesktopCore:
         return service
 
     def dispatch(self, request: dict[str, Any], workspace: Path | None) -> dict[str, Any]:
-        service = self.service(workspace) if workspace is not None else None
+        is_workspace_operation = request.get("schema_version") == "schuss-operation-request-v14"
+        service = (
+            self.service(workspace)
+            if workspace is not None and not is_workspace_operation
+            else None
+        )
+        workspace_service = (
+            WorkspaceLibraryService(
+                workspace,
+                repository_root=REPOSITORY_ROOT,
+                initial_context=self.context,
+            )
+            if workspace is not None and is_workspace_operation
+            else None
+        )
+        authoring_service: SonicAuthoringService | None = None
+        if service is not None and request.get("schema_version") == "schuss-operation-request-v13":
+            if "operation_request_v13" not in service.load().context.schemas:
+                raise BridgeRequestError(
+                    "BRIDGE_PROJECT_OBJECTS_UNAVAILABLE",
+                    "the project's immutable base predates project-local object operations",
+                )
+            normalized = workspace.resolve(strict=False)
+            authoring_service = self.authoring_services.get(normalized)
+            if authoring_service is None:
+                authoring_service = SonicAuthoringService(service)
+                self.authoring_services[normalized] = authoring_service
         return dispatch_operation(
             request,
             self.context,
             project_service=service,
             build_session_service=self.build_sessions,
             device_session_service=self.device_sessions,
+            authoring_service=authoring_service,
+            workspace_service=workspace_service,
         )
 
 
@@ -266,7 +317,10 @@ def dispatch_line(line: bytes, desktop: DesktopCore) -> bytes:
         )
     context = (
         desktop.context
-        if result.get("schema_version") == "schuss-operation-result-v12"
+        if result.get("schema_version") in {
+            "schuss-operation-result-v12",
+            "schuss-operation-result-v14",
+        }
         else desktop.service(workspace).context
         if workspace is not None
         else desktop.context
