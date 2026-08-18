@@ -211,6 +211,13 @@ digits. Timestamps and machine-local paths are prohibited from semantic hash
 material. Values outside the RFC 8785/I-JSON number model MUST fail closed or
 use a schema-defined exact string/rational representation.
 
+Project-local object definitions may embed a complete domain record only at an
+explicit `x-schuss-domain-value` schema boundary naming its exact external
+schema. The object service must validate that nested value against the external
+schema before hashing or admission, and canonicalization must use the nested
+schema's own set/sequence annotations recursively. This marker is not an open
+extension point and never permits arbitrary client-owned members.
+
 The initial digest algorithm is SHA-256, named with the digest so a future
 algorithm can coexist. External assets are stored or located by byte hash and
 portable source ID. Absolute checkout paths remain only in ignored local
@@ -463,6 +470,11 @@ The following are invalid architecture:
   v3 envelopes. The project owns an explicit base-plus-overlay closure and
   exact revision parentage; it does not revise accepted records or make
   workspace paths semantic identity.
+- The sonic-authoring successor `project-v1`,
+  `project-object-definition-v0`, `native-kernel-v0`, and
+  `implementation-binding-v3` schemas. Project object definitions embed exact
+  separately validated component/binding/graph-or-kernel values; native
+  bindings remain target-ineligible until a later explicit lowering contract.
 
 ### Implemented schema boundary
 

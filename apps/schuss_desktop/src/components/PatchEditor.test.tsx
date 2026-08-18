@@ -34,7 +34,11 @@ const projectValue = {
     content_hash: hash("b"),
     primary_graph_reference: graphReference,
     instrument_references: [],
-    build_request_references: [],
+    build_request_references: [{
+      build_request_id: "schuss-build-request-000005",
+      revision: 1,
+      content_hash: hash("d"),
+    }],
   },
   validation: {},
 };
@@ -137,5 +141,86 @@ describe("PatchEditor reliability states", () => {
     expect(dispatchMock.mock.calls.some(
       ([request]) => (request as { operation: string }).operation === "graph.transact",
     )).toBe(false);
+  });
+
+  it("keeps build and USB authority behind explicit session operations", async () => {
+    const user = userEvent.setup();
+    const target = {
+      artifact_kind: "target-executable",
+      media_type: "application/x-elf",
+      producer_stage: "target-compile-link",
+      byte_sha256: "e".repeat(64),
+      byte_length: 4096,
+      portable_locator: `sha256/${"e".repeat(64)}`,
+    };
+    dispatchMock.mockImplementation((request: { operation: string }) => {
+      if (request.operation === "project.inspect") return Promise.resolve(projectValue);
+      if (request.operation === "graph.inspect") return Promise.resolve(graphValue);
+      if (request.operation === "build.session.start") return Promise.resolve({
+        session_id: "build-session-000001",
+        status: "success",
+        phase: "completed",
+        build_request_reference: projectValue.project.build_request_references[0],
+        progress: [],
+        stage_outcomes: [],
+        artifacts: [target],
+        evidence_levels: [],
+        diagnostics: [],
+      });
+      if (request.operation === "device.session.discover") return Promise.resolve({
+        status: "complete",
+        device_count: 1,
+        discovery_was_explicit: true,
+        background_monitoring: false,
+        sessions: [{
+          session_id: "device-session-000001",
+          status: "available",
+          transport: "usb-bulk-libusb",
+          transport_location: "usb:bus-001/ports-2",
+          usb_identity: { vendor_id: "0x16C0", product_id: "0x0444", usb_serial: "core" },
+          board_identity: { product: "Ksoloti Core", cpu_serial: "cpu", firmware: { version: "1.1.0.0", crc: "5021D42A", patch_entrypoint: "0x20011000" } },
+          identity_status: "complete",
+          compatibility: "compatible",
+          diagnostics: [],
+        }],
+      });
+      if (request.operation === "device.upload.start") return Promise.resolve({
+        session_id: "upload-session-000001",
+        status: "success",
+        phase: "completed",
+        device_session_id: "device-session-000001",
+        build_session_id: "build-session-000001",
+        artifact: target,
+        device_binary: { byte_sha256: "f".repeat(64), byte_length: 512, load_address: "0x20011000" },
+        start_patch_requested: true,
+        progress: [],
+        verification: "byte-for-byte-match",
+        outcome: {},
+        diagnostics: [],
+      });
+      throw new Error(`Unexpected operation ${request.operation}`);
+    });
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<PatchEditor workspace="/tmp/test-patch" onClose={vi.fn()} onDirtyChange={vi.fn()} />);
+
+    await user.click(await screen.findByRole("button", { name: "Build" }));
+    expect(await screen.findByText("4 KB target executable")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Device" }));
+    expect(await screen.findByText("compatible · 1.1.0.0")).toBeInTheDocument();
+    expect(screen.getByText("CPU cpu · CRC 5021D42A")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Upload to volatile RAM" })).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: /Ksoloti Core/ }));
+    await user.click(screen.getByRole("button", { name: "Upload to volatile RAM" }));
+
+    expect(confirm).toHaveBeenCalledWith(expect.stringContaining("volatile RAM"));
+    expect(confirm).toHaveBeenCalledWith(expect.stringContaining("cpu"));
+    const upload = dispatchMock.mock.calls.find(([request]) => (request as { operation: string }).operation === "device.upload.start")?.[0] as { payload: Record<string, unknown> };
+    expect(upload.payload).toMatchObject({
+      device_session_id: "device-session-000001",
+      build_session_id: "build-session-000001",
+      artifact_sha256: "e".repeat(64),
+      upload_intent: "explicit-volatile-ram",
+      start_patch: true,
+    });
   });
 });

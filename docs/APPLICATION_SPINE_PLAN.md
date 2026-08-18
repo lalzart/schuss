@@ -9,9 +9,14 @@ evidence. Task 026 then accepted a separate reverb-free seven-node executable
 profile and completed the client-neutral authoring flow through local level 5.
 Task 027 completed its bounded Mutable-related catalog provenance review at
 levels 1-2. Task 028 completed its bounded twenty-item direct palette at levels
-1-3; transparent compounds remain deferred. The explicitly authorized
+1-3; general transparent-compound target lowering remains deferred. The explicitly authorized
 unnumbered UI lane is complete locally through the consolidated desktop
-patcher and its bounded authoring-performance slice.
+patcher, bounded authoring-performance slice, and explicitly authorized
+process-local build/device workflow. Connected-hardware acceptance remains
+separate. The separately authorized AI lane now exposes sonic-first planning
+and explicit project-local object/patch authoring through shared operations and
+local MCP stdio. Native target lowering, build/device authority, model
+orchestration, and remote serving remain separate.
 
 ## Goal
 
@@ -52,8 +57,13 @@ before offline catalog, compiler, CLI, or UI-architecture development.
   completion surfaces. `gills.inspect` has a shared operation but no equivalent
   ordinary product command.
 - One maintained Tauri/React desktop application consumes the shared catalog,
-  graph, and project operations. It has no build-session, USB/device, or
-  hardware authority.
+  graph, project, build-session, and device-session operations. Compiler,
+  artifact, and libusb authority remain in core; the renderer has no raw
+  filesystem, process, or USB authority.
+- One separate local MCP process exposes seven read-only discovery/planning
+  tools by default. An explicit absolute project startup argument adds seven
+  shared draft/evaluate/preview/accept/object tools. It still has no build,
+  device, model-provider, arbitrary filesystem, or network authority.
 
 ## Numbered application-spine tasks
 
@@ -223,8 +233,13 @@ The first explicitly authorized vertical slice is complete locally: browse by
 function, inspect exact contracts, create/open/save projects, place and connect
 exact components, and present immutable history/revert through the shared
 operations. Build progress, structured background jobs, packaging, and every
-USB/device action remain separately gated. Catalog completion does not satisfy
-those deferred orchestration and device gates.
+USB/device action were originally separately gated. A later explicit
+authorization added bounded process-local build jobs, structured
+progress/diagnostics, explicit Ksoloti discovery/identity, and verified
+volatile-RAM upload through six v12 shared operations. Packaging, firmware/SD
+mutation, background monitoring, connected-hardware acceptance,
+real-time/resource, and audible claims remain gated. Catalog or build
+completion does not satisfy those device/evidence gates.
 
 ## Subtask identifiers
 
@@ -256,7 +271,12 @@ Task 023
   |                     `------------------------- semantic dependencies
   `-- UI architecture -- desktop patcher (complete locally)
 
-Desktop patcher + future session/job gate -> gated build/diagnostic UI
+Desktop patcher -> process-local build/device workflow (implemented locally)
+                -> connected-hardware acceptance and later release gates
+
+Shared read-only operations -> local MCP adapter
+                            -> sonic-first project object/patch authoring
+                            -> target lowering, listening, and model UX gates
 ```
 
 Useful parallel windows are intentionally bounded:
@@ -273,10 +293,13 @@ Useful parallel windows are intentionally bounded:
 4. ADR 0015 retargeted Task 027 to catalog provenance; it is now complete.
    Task 028's bounded twenty-item palette is now complete; transparent
    compound work remains deferred without a numbered lane.
-5. The desktop patcher is complete locally. Build/session/diagnostic UI still
-   requires a future explicit session/job contract, and device communication
-   requires its own bounded authorization. Neither may become client-owned
-   semantics or persistence.
+5. The desktop patcher and its process-local build/device successor are
+   complete locally. Real connected-hardware acceptance remains separate;
+   neither desktop workflow may become client-owned semantics or persistence.
+6. The MCP adapter remains separate from the desktop. Its project-authoring
+   successor requires an explicit workspace and uses the shared project
+   acceptance boundary. Build, device, model-provider, listening, or
+   remote-server expansion still requires its own explicit boundary.
 
 The default concurrency ceiling is two implementation lanes plus one
 read-only/design lane. More concurrency is not considered a speedup when it
@@ -303,15 +326,17 @@ separate output namespaces.
 ## Activation and approval rules
 
 - This plan did not itself start Task 023 or create any numbered task contract.
-- Tasks 023-030 are accepted complete. The unnumbered desktop patcher and
-  authoring-performance slices are complete locally; no numbered
-  implementation task is active.
+- Tasks 023-030 are accepted complete. The unnumbered desktop patcher,
+  authoring-performance, and build/device workflow slices are implemented
+  locally. The unnumbered sonic-first AI/MCP authoring slice is also
+  implemented locally; no numbered implementation task is active.
 - The original Task 027 sessions/jobs/diagnostics outcome is deferred without
   a replacement task number under ADR 0015.
 - Each numbered task requires a complete contract before implementation.
 - Completion of one task does not automatically authorize the next.
-- Later build/session/device UI remains gated beyond the accepted desktop
-  authoring boundary.
+- Real connected-hardware acceptance, firmware/SD mutation, packaging,
+  background device monitoring, and release work remain gated beyond the
+  process-local desktop workflow.
 - Tasks 019 and 020 remain deferred.
 - A new hardware diagnostic or connected-device action requires its own exact
   task boundary and explicit approval.

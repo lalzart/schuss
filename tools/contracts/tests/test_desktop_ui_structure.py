@@ -35,8 +35,8 @@ class DesktopUiStructureTest(unittest.TestCase):
         self.assertEqual("valid", summary["status"], summary["diagnostics"])
         self.assertEqual("schuss-desktop-ui-structure-validation-v3", summary["schema_version"])
         self.assertEqual(len(desktop.REQUIRED_APP_FILES), summary["file_count"])
-        self.assertEqual(18, summary["planned_operation_count"])
-        self.assertEqual(14, summary["runtime_capability_count"])
+        self.assertEqual(20, summary["planned_operation_count"])
+        self.assertEqual(20, summary["runtime_capability_count"])
         self.assertEqual(0, summary["semantic_record_count"])
 
     def test_unreviewed_source_and_copied_semantic_record_fail_closed(self):

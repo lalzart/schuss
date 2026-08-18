@@ -301,8 +301,94 @@ ran 402 tests in 960.044 seconds and retained exactly the three previously
 audited Task 011A/Task 023 golden and Task 027 projection-hash failures; no
 desktop, performance, project, governance, or current Task 030 test failed.
 
+The explicitly authorized unnumbered desktop build/device workflow is
+implemented locally for exact schema-only successor record set
+`schuss-record-set-000025@1`, parented by the desktop patcher set. Additive v12
+defines six client-neutral operations: start/inspect build, discover/inspect
+device, and start/inspect upload. Application-capability v5 describes
+twenty-seven shared operations; the closed desktop allowlist exposes twenty.
+
+Build start snapshots one accepted project revision and exact project-owned
+request, selects the one uniquely matching registered handler, and executes
+the existing compiler/build boundary in a fresh core-owned temporary root.
+Inspection exposes monotonic progress, stages, diagnostics, evidence levels,
+and portable artifact kind/hash/size while host paths and bytes remain private.
+Sessions are bounded to eight and disappear with the core process.
+
+Ksoloti discovery is lazy and only follows explicit intent. The core-owned
+libusb transport inspects exact USB, CPU serial, firmware version/CRC, and patch
+entrypoint; compatibility is currently fail-closed to the retained Ksoloti
+1.1.0.0 / `5021D42A` boundary. A separately confirmed upload request accepts
+only the exact target executable from one successful build session, derives raw bytes
+with the authenticated ARM objcopy, revalidates the endpoint CPU and complete
+firmware identity, stops the current patch, writes fixed
+volatile address `0x20011000`, verifies byte-for-byte read-back, and starts only
+when requested. Flash, DFU, reset, SD writes, persistent install, arbitrary
+memory access, background monitoring, and automatic upload remain absent.
+
+All device protocol tests use deterministic fakes. No USB enumeration, real
+board connection, upload, start, reset, flash, SD write, or other hardware
+action was performed for this implementation. Session outcomes are runtime
+observations only and create no governed evidence record or automatic level-6,
+real-time/resource, or audible claim.
+
+A live browser smoke created one disposable seven-node project, rendered the
+build/device drawer without an error overlay or page-console error, and
+completed one local ARM build reported as a 69-KB target executable. The
+scratch workspace and screenshots were moved to Trash. Renderer tests pass
+12/12, the production bundle succeeds, Rust bridge tests pass 3/3, and the
+focused build/device module passes 11/11. The final aggregate passed inventory
+14/14 and catalog 6/6. Contracts ran 411 tests in 974.684 seconds and retained
+only the three previously audited Task 011A/Task 023 golden and Task 027
+freshness failures; no desktop build/device test failed.
+
 This desktop uses Task 026 project operations rather than reviving Task 012B's
 design.
+
+The explicitly authorized unnumbered AI lane is implemented locally through
+exact schema-only successor record set `schuss-record-set-000026@1`. Additive
+request/result v13 supplies sonic planning, process-local object drafts,
+deterministic host evaluation, exact preview/accept, and project-object
+inspection. Application-capability v6 describes thirty-five shared operations.
+Project manifest v1 additively indexes project-owned object definitions while
+mixed project-v0/v1 history remains readable.
+
+Sonic planning returns exact existing-object, transparent-compound, and native
+kernel lanes in parallel. Validity is a hard gate; no cost objective exists,
+and catalog matches carry no fabricated sonic-quality score. Transparent
+compounds preserve exact internal graphs and public mappings. Native objects
+use a closed 128-instruction declarative kernel, deterministic bounded host
+audition, and a non-governed content-addressed WAV cache. Their bindings remain
+target-ineligible; host metrics do not imply listening, quality, ARM, device,
+or real-time/resource evidence.
+
+`bin/schuss-mcp` defaults to seven read-only discovery/planning tools over
+stable MCP `2026-07-28` plus the exact `2025-11-25` compatibility era. Supplying
+one explicit absolute `--project` workspace adds seven project-scoped
+draft/evaluate/preview/accept/object tools with schemas derived from v13 and
+truthful effect annotations. The adapter still exposes no generic operation,
+arbitrary code, arbitrary filesystem/process/network, build, device, USB,
+upload, reset, flash, SD, persistent-install, model-provider, sampling, task,
+or remote HTTP authority.
+
+The focused sonic-authoring run passes 5/5 and the MCP run passes 10/10. They
+cover both object forms, the closed function taxonomy, schema-valid but
+semantically invalid kernel reload, deterministic and input-sensitive WAV
+hashes, no governed write before acceptance, foreign/stale/fingerprint/
+expiry/replay rejection, atomic acceptance, fresh-service reload,
+project-scoped MCP tools, and interrupted-publication recovery to the exact
+prior project. The neighboring project/compiler/desktop regression run passes
+42/42; governance passes 5/5, generated-record freshness passes, Python
+compilation passes, and `git diff --check` is clean.
+
+The final aggregate passes inventory 14/14 and catalog 6/6. Contracts ran 428
+tests in 1,043.013 seconds and retained exactly the three previously audited
+failures: the Task 011A historical/Task 023 successor catalog golden, the Task
+023 CLI-v2 successor/historical golden, and Task 027 generated-output
+freshness. No AI authoring, project-v1, native-kernel, MCP, recovery,
+governance, desktop, or current Task 030 test failed. No historical golden was
+rebaselined. The AI operations themselves invoked no package, model provider,
+network listener, compiler/build, USB, or hardware authority.
 
 Tasks 019 and 020 are deferred and not automatically activated by completion
 of Task 018 or Task 021.
@@ -329,6 +415,8 @@ of Task 018 or Task 021.
 | Twenty-item direct palette | Five retained Task 025 promotions plus fifteen exact independent Task 028 selections and normalized operation-IR lowerings; seven Task 026 support bindings remain separate | Levels 1-3 passed; source generation, ARM, device, realtime/resource, and audible levels 4-8 not-run |
 | Gills machine layer | Exact Palimpsest and Tide Pit source reviews, source-evidenced inspection presentations, editable v0.6 panel plus semantic map, fail-closed completed-machine schema, shared read-only inspection operation, and isolated Viewer | Level 1 structural/source-identity/host inspection proof; completed machines zero; levels 2-8 not-run |
 | Desktop patcher | One consolidated Tauri shell, exact 133-implementation browsing, seven-node template creation, graph projection/proposal, atomic project save, and history/revert through shared operations | Host UI and project-persistence proof only; build, device, real-time/resource, audible, packaging, and publication not-run |
+| Desktop build/device workflow | Core-owned process-local build jobs, structured progress/diagnostics, explicit Ksoloti identity/compatibility sessions, and a fake-tested read-back-verified volatile-RAM upload path | Host implementation, local ARM build, and fake-transport proof; real connected-device action, governed level 6, real-time/resource, audible, packaging, and publication not-run |
+| AI/MCP authoring | Dual-era local stdio adapter with seven default read-only tools plus seven explicitly project-scoped sonic planning/object/patch tools; bounded transparent compounds/native kernels and atomic project acceptance | Host structural, deterministic host-audition, protocol, and project-persistence proof only; target lowering, model behavior, build, device, real-time/resource, audible, remote security, packaging, and publication not-run |
 
 The accepted Task 018 result proves deterministic local ARM compile/link for
 one exact mapped graph/instrument/device/runtime closure. Its exact original
@@ -385,12 +473,17 @@ Task 021 established all of the following:
 - The authenticated Task 009 local content store is ignored and must be
   validated separately when present; a clean checkout cannot claim that local
   evidence merely from tracked manifests.
-- The desktop patcher has no build session/job or device-session contract; its
-  status bar is informational and cannot execute, upload, flash, or claim
-  connected-device evidence. Process-local reuse now removes repeated semantic
-  validation of an unchanged exact closure, but cold startup still validates
-  the full selected record set and remains about nine seconds on the measured
-  development machine.
+- The desktop now has process-local build and Ksoloti device/upload session
+  contracts, but this implementation performed no real discovery or upload and
+  created no governed connected-device evidence. Firmware/SD mutation,
+  persistent install, background monitoring, real-time/resource, audible, and
+  release paths remain absent. Cold startup still validates the full selected
+  record set and remains about nine seconds on the measured development machine.
+- The MCP adapter is local and has not been tested through every third-party
+  host. Explicit project mode can author bounded project-local objects and
+  patches, but provides no model-provider, desktop chat, target lowering,
+  build, device, remote HTTP/OAuth, or autonomous background-agent behavior.
+  Those remain separate product and security decisions.
 - The historical Task 011A CLI golden remains byte-identical. Task 023 records
   its successor golden separately and tests the inherited four equal-length
   input-closure digest changes without treating them as semantic catalog drift.
@@ -432,7 +525,11 @@ contract; its prior transparent-compound outcome is deferred. Task 029 is
 bounded to source-evidenced machine inspection and Task 030 to catalog
 provenance plus read-only object discovery. No numbered
 implementation lane is currently planned. The unnumbered desktop patcher is
-implemented locally and awaits user acceptance/publication; build/device work
-is a separate future contract. The original application
-sessions/jobs/diagnostics outcome is deferred without a replacement task
-number. Tasks 019 and 020 remain deferred.
+implemented locally with its process-local build/device successor and awaits
+user acceptance/publication. The unnumbered AI/MCP lane is implemented locally
+through explicit project-scoped object and patch authoring. Real
+connected-device execution, firmware/SD
+mutation, packaging, real-time/resource, and audible work remain separately
+gated. The original numbered application sessions/jobs/diagnostics outcome
+remains retired without a replacement number; its bounded product need is now
+served by the unnumbered v12 workflow. Tasks 019 and 020 remain deferred.

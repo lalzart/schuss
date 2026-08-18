@@ -11,6 +11,8 @@ APPLICATION_DESCRIPTION_VERSION_V1 = "schuss-application-capability-description-
 APPLICATION_DESCRIPTION_VERSION_V2 = "schuss-application-capability-description-v2"
 APPLICATION_DESCRIPTION_VERSION_V3 = "schuss-application-capability-description-v3"
 APPLICATION_DESCRIPTION_VERSION_V4 = "schuss-application-capability-description-v4"
+APPLICATION_DESCRIPTION_VERSION_V5 = "schuss-application-capability-description-v5"
+APPLICATION_DESCRIPTION_VERSION_V6 = "schuss-application-capability-description-v6"
 
 
 class CapabilityRegistryError(ValueError):
@@ -315,6 +317,153 @@ def _desktop_patcher_entries() -> tuple[dict[str, Any], ...]:
 
 APPLICATION_CAPABILITY_ENTRIES_V4 = _desktop_patcher_entries()
 
+DESKTOP_SESSION_CAPABILITY_ENTRIES = (
+    _entry(
+        "build.session.start",
+        "build",
+        "Start one process-local build job for an exact accepted project request.",
+        12,
+        ("exact-project-snapshot", "process-local-build-service"),
+        "build-output-write",
+        ("exact-handler", "exact-reference", "execute-intent", "fresh-output-root"),
+    ),
+    _entry(
+        "build.session.inspect",
+        "build",
+        "Inspect progress, diagnostics, stages, and artifact facts for one build job.",
+        12,
+        ("process-local-build-service",),
+        "read-only",
+        ("exact-session",),
+    ),
+    _entry(
+        "device.session.discover",
+        "device",
+        "Explicitly discover and inspect exact Ksoloti Core device identities.",
+        12,
+        ("explicit-project-workspace", "process-local-device-service"),
+        "device-read",
+        ("discovery-intent", "exact-reference"),
+    ),
+    _entry(
+        "device.session.inspect",
+        "device",
+        "Inspect one process-local device identity and compatibility result.",
+        12,
+        ("process-local-device-service",),
+        "read-only",
+        ("exact-session",),
+    ),
+    _entry(
+        "device.upload.start",
+        "device",
+        "Start one verified volatile-RAM upload from an exact successful build.",
+        12,
+        ("process-local-build-service", "process-local-device-service"),
+        "device-volatile-write",
+        ("exact-artifact", "exact-session", "volatile-upload-intent"),
+    ),
+    _entry(
+        "device.upload.inspect",
+        "device",
+        "Inspect progress and verification for one volatile upload session.",
+        12,
+        ("process-local-device-service",),
+        "read-only",
+        ("exact-session",),
+    ),
+)
+
+APPLICATION_CAPABILITY_ENTRIES_V5 = (
+    *APPLICATION_CAPABILITY_ENTRIES_V4,
+    *DESKTOP_SESSION_CAPABILITY_ENTRIES,
+)
+
+AI_SONIC_AUTHORING_CAPABILITY_ENTRIES = (
+    _entry(
+        "sonic.intent.plan",
+        "authoring",
+        "Plan parallel valid existing, compound, and native creation lanes without a cost objective.",
+        13,
+        ("exact-record-set",),
+        "read-only",
+        ("exact-record-set", "sonic-validity-gate"),
+    ),
+    _entry(
+        "authoring.draft.create",
+        "authoring",
+        "Create one process-local project-scoped object draft.",
+        13,
+        ("explicit-project-workspace", "process-local-authoring-service"),
+        "authoring-draft",
+        ("exact-reference", "sonic-validity-gate"),
+    ),
+    _entry(
+        "authoring.draft.inspect",
+        "authoring",
+        "Inspect one process-local project-scoped object draft.",
+        13,
+        ("explicit-project-workspace", "process-local-authoring-service"),
+        "read-only",
+        ("draft-handle",),
+    ),
+    _entry(
+        "authoring.draft.evaluate",
+        "authoring",
+        "Run bounded structural or native-kernel host evaluation and cache one audition artifact.",
+        13,
+        ("explicit-project-workspace", "process-local-authoring-service"),
+        "workspace-cache-write",
+        ("draft-handle", "sonic-validity-gate"),
+    ),
+    _entry(
+        "authoring.change.preview",
+        "authoring",
+        "Preview exact project-local object and optional graph successor bytes without acceptance.",
+        13,
+        ("explicit-project-workspace", "process-local-authoring-service"),
+        "proposal-only",
+        ("draft-handle", "expected-project-reference", "sonic-validity-gate"),
+    ),
+    _entry(
+        "authoring.change.accept",
+        "authoring",
+        "Atomically accept one exact previewed project-local object and optional graph insertion.",
+        13,
+        ("explicit-project-workspace", "process-local-authoring-service"),
+        "workspace-write",
+        (
+            "confirmation-fingerprint",
+            "expected-project-reference",
+            "preview-handle",
+            "write-intent",
+        ),
+    ),
+    _entry(
+        "project.objects.list",
+        "project",
+        "List exact project-local object definitions in the accepted project closure.",
+        13,
+        ("explicit-project-workspace", "process-local-authoring-service"),
+        "read-only",
+        ("explicit-project-workspace",),
+    ),
+    _entry(
+        "project.object.inspect",
+        "project",
+        "Inspect one exact accepted project-local object definition.",
+        13,
+        ("explicit-project-workspace", "process-local-authoring-service"),
+        "read-only",
+        ("exact-reference", "explicit-project-workspace"),
+    ),
+)
+
+APPLICATION_CAPABILITY_ENTRIES_V6 = (
+    *APPLICATION_CAPABILITY_ENTRIES_V5,
+    *AI_SONIC_AUTHORING_CAPABILITY_ENTRIES,
+)
+
 
 EXPECTED_OPERATIONS = tuple(sorted(entry["operation"] for entry in CAPABILITY_ENTRIES))
 EXPECTED_OPERATIONS_V1 = tuple(
@@ -347,6 +496,12 @@ EXPECTED_OPERATIONS_V3 = tuple(
 EXPECTED_OPERATIONS_V4 = tuple(
     sorted(entry["operation"] for entry in APPLICATION_CAPABILITY_ENTRIES_V4)
 )
+EXPECTED_OPERATIONS_V5 = tuple(
+    sorted(entry["operation"] for entry in APPLICATION_CAPABILITY_ENTRIES_V5)
+)
+EXPECTED_OPERATIONS_V6 = tuple(
+    sorted(entry["operation"] for entry in APPLICATION_CAPABILITY_ENTRIES_V6)
+)
 
 
 def _schema_key(version: str, kind: str) -> str:
@@ -360,8 +515,18 @@ def _availability(
     *,
     project_workspace_available: bool,
     execution_service_available: bool,
+    session_services_available: bool,
+    authoring_service_available: bool,
 ) -> str:
     operation = entry["operation"]
+    if operation.startswith("authoring.") or operation in {
+        "project.objects.list",
+        "project.object.inspect",
+    }:
+        if not project_workspace_available:
+            return "requires-project-workspace"
+        if not authoring_service_available:
+            return "requires-authoring-service"
     if operation.startswith("project."):
         return (
             "available"
@@ -374,6 +539,12 @@ def _availability(
         return "unavailable-in-selected-record-set"
     if operation == "build.execute" and not execution_service_available:
         return "requires-execution-service"
+    if (
+        operation.startswith("build.session.")
+        or operation.startswith("device.session.")
+        or operation.startswith("device.upload.")
+    ) and not session_services_available:
+        return "requires-session-services"
     return "available"
 
 
@@ -384,14 +555,24 @@ def build_application_description(
     entries: Iterable[Mapping[str, Any]] | None = None,
     project_workspace_available: bool = False,
     execution_service_available: bool = False,
+    session_services_available: bool = False,
+    authoring_service_available: bool = False,
 ) -> dict[str, Any]:
     """Return the deterministic application description for one exact context."""
 
-    uses_v4 = "application_capability_description_v4" in schemas
+    uses_v6 = "application_capability_description_v6" in schemas
+    uses_v5 = uses_v6 or "application_capability_description_v5" in schemas
+    uses_v4 = uses_v5 or "application_capability_description_v4" in schemas
     uses_v3 = uses_v4 or "application_capability_description_v3" in schemas
     uses_v2 = uses_v3 or "application_capability_description_v2" in schemas
     uses_v1 = uses_v2 or "application_capability_description_v1" in schemas
-    if uses_v4:
+    if uses_v6:
+        default_entries = APPLICATION_CAPABILITY_ENTRIES_V6
+        expected_operations = EXPECTED_OPERATIONS_V6
+    elif uses_v5:
+        default_entries = APPLICATION_CAPABILITY_ENTRIES_V5
+        expected_operations = EXPECTED_OPERATIONS_V5
+    elif uses_v4:
         default_entries = APPLICATION_CAPABILITY_ENTRIES_V4
         expected_operations = EXPECTED_OPERATIONS_V4
     elif uses_v3:
@@ -434,11 +615,17 @@ def build_application_description(
             schemas,
             project_workspace_available=project_workspace_available,
             execution_service_available=execution_service_available,
+            session_services_available=session_services_available,
+            authoring_service_available=authoring_service_available,
         )
         described.append(entry)
     return {
         "schema_version": (
-            "application-capability-description-v4"
+            "application-capability-description-v6"
+            if uses_v6
+            else "application-capability-description-v5"
+            if uses_v5
+            else "application-capability-description-v4"
             if uses_v4
             else "application-capability-description-v3"
             if uses_v3
@@ -450,7 +637,11 @@ def build_application_description(
         ),
         "canonical_profile": "schuss-canonical-json-v1",
         "description_version": (
-            APPLICATION_DESCRIPTION_VERSION_V4
+            APPLICATION_DESCRIPTION_VERSION_V6
+            if uses_v6
+            else APPLICATION_DESCRIPTION_VERSION_V5
+            if uses_v5
+            else APPLICATION_DESCRIPTION_VERSION_V4
             if uses_v4
             else APPLICATION_DESCRIPTION_VERSION_V3
             if uses_v3

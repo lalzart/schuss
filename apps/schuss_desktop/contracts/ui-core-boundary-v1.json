@@ -8,13 +8,15 @@
       "shell": "Tauri 2",
       "view": "React"
     },
-    "status": "project-backed-patcher"
+    "status": "project-build-device-workflow"
   },
   "ownership": {
     "core_owned_semantics": [
       "build-plans-and-results",
+      "build-session-state-and-artifacts",
       "catalog-and-component-records",
       "compiler-and-binding-records",
+      "device-identity-and-upload-sessions",
       "evidence-records",
       "graph-and-instrument-records",
       "project-and-workspace-records"
@@ -67,21 +69,59 @@
     },
     {
       "operations": [
-        "build.plan",
-        "build.execute",
+        "build.session.start",
+        "build.session.inspect",
+        "device.session.discover",
         "device.session.inspect",
-        "device.upload"
+        "device.upload.start",
+        "device.upload.inspect"
       ],
       "phase": "build-and-device-deployment",
-      "status": "planned-not-implemented"
+      "status": "implemented"
     }
   ],
   "runtime_capabilities": [
+    {
+      "effect_class": "build-output-write",
+      "operation": "build.session.start",
+      "request_schema_version": "schuss-operation-request-v12",
+      "result_schema_version": "schuss-operation-result-v12"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "build.session.inspect",
+      "request_schema_version": "schuss-operation-request-v12",
+      "result_schema_version": "schuss-operation-result-v12"
+    },
     {
       "effect_class": "read-only",
       "operation": "application.describe",
       "request_schema_version": "schuss-operation-request-v7",
       "result_schema_version": "schuss-operation-result-v7"
+    },
+    {
+      "effect_class": "device-read",
+      "operation": "device.session.discover",
+      "request_schema_version": "schuss-operation-request-v12",
+      "result_schema_version": "schuss-operation-result-v12"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "device.session.inspect",
+      "request_schema_version": "schuss-operation-request-v12",
+      "result_schema_version": "schuss-operation-result-v12"
+    },
+    {
+      "effect_class": "device-volatile-write",
+      "operation": "device.upload.start",
+      "request_schema_version": "schuss-operation-request-v12",
+      "result_schema_version": "schuss-operation-result-v12"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "device.upload.inspect",
+      "request_schema_version": "schuss-operation-request-v12",
+      "result_schema_version": "schuss-operation-result-v12"
     },
     {
       "effect_class": "read-only",
@@ -171,8 +211,8 @@
     "operation_selection": "closed-listed-allowlist",
     "renderer_file_access": "absent",
     "request_handling": "submit-one-versioned-schuss-operation-and-explicit-workspace",
-    "selected_record_set": "contracts/record-sets/ui-desktop-patcher-authoring-v1.json",
-    "status": "implemented-project-authoring",
+    "selected_record_set": "contracts/record-sets/ui-desktop-build-device-v1.json",
+    "status": "implemented-project-build-device-workflow",
     "unknown_operation": "reject",
     "unknown_result_schema": "reject",
     "version_mismatch": "reject"

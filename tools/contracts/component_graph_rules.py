@@ -32,6 +32,7 @@ BINDING_SCHEMA_VERSIONS = (
     "implementation-binding-v0",
     "implementation-binding-v1",
     "implementation-binding-v2",
+    "implementation-binding-v3",
 )
 GRAPH_SCHEMA_VERSION = "dsp-graph-v0"
 

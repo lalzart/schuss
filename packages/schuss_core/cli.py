@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import copy
-import importlib.util
 import os
 import sys
 from pathlib import Path
@@ -874,38 +873,17 @@ def _portable_record_set_locator(manifest: str) -> str:
 
 def _registered_execution_service(output_root: Path):
     """Register exact retained, direct, and mapped handlers without fallback."""
-
-    from .build_execution import ExecutionService
-
-    adapter_path = (
-        Path(__file__).resolve().parents[2]
-        / "legacy/ksoloti-bridge/task011c_adapter.py"
+    from .execution_registry import (
+        ExecutionRegistryError,
+        registered_execution_service,
     )
-    specification = importlib.util.spec_from_file_location(
-        "schuss_task011c_product_adapter", adapter_path
-    )
-    if specification is None or specification.loader is None:
+
+    try:
+        return registered_execution_service(output_root)
+    except ExecutionRegistryError as exc:
         raise ProductInputError(
-            "CLI_EXECUTION_ADAPTER_UNAVAILABLE",
-            "exact Task 011C adapter cannot be loaded",
-        )
-    module = importlib.util.module_from_spec(specification)
-    specification.loader.exec_module(module)
-    from .gills_direct_backend import registration as direct_registration
-    from .gills_mapped_backend import registration as mapped_registration
-    from .gills_mapped_backend_v2 import registration as mapped_v2_registration
-    from .effects_profile_backend import registration as effects_profile_registration
-
-    return ExecutionService.from_values(
-        (
-            module.registration(),
-            direct_registration(),
-            mapped_registration(),
-            mapped_v2_registration(),
-            effects_profile_registration(),
-        ),
-        output_root,
-    )
+            "CLI_EXECUTION_ADAPTER_UNAVAILABLE", str(exc)
+        ) from exc
 
 
 def _project_request(

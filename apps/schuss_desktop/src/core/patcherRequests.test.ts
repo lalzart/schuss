@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   DESKTOP_RECORD_SET,
   STARTER_GRAPH,
+  buildSessionStartRequest,
+  deviceUploadStartRequest,
   graphTransactRequest,
   profileTransactRequest,
   projectInitRequest,
@@ -17,9 +19,34 @@ describe("desktop patcher operation requests", () => {
         project_id: "schuss-project-000123",
         base_record_set: {
           reference: DESKTOP_RECORD_SET,
-          portable_locator: "contracts/record-sets/ui-desktop-patcher-authoring-v1.json",
+          portable_locator: "contracts/record-sets/ui-desktop-build-device-v1.json",
         },
         primary_graph_reference: STARTER_GRAPH,
+      },
+    });
+  });
+
+  it("uses explicit v12 session and volatile upload intents", () => {
+    const build = buildSessionStartRequest({
+      build_request_id: "schuss-build-request-000005",
+      revision: 1,
+      content_hash: `sha256:${"a".repeat(64)}`,
+    });
+    expect(build).toMatchObject({
+      schema_version: "schuss-operation-request-v12",
+      operation: "build.session.start",
+      payload: { execution_intent: true },
+    });
+    expect(deviceUploadStartRequest("device-session-000001", "build-session-000001", "b".repeat(64), true)).toEqual({
+      schema_version: "schuss-operation-request-v12",
+      canonical_profile: "schuss-canonical-json-v1",
+      operation: "device.upload.start",
+      payload: {
+        device_session_id: "device-session-000001",
+        build_session_id: "build-session-000001",
+        artifact_sha256: "b".repeat(64),
+        upload_intent: "explicit-volatile-ram",
+        start_patch: true,
       },
     });
   });

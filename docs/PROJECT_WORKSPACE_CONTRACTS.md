@@ -54,6 +54,7 @@ project/revisions/schuss-project-NNNNNN-rRRRRRR.json
 records/dsp-graphs/schuss-graph-NNNNNN-rRRRRRR.json
 records/instruments/schuss-instrument-NNNNNN-rRRRRRR.json
 records/build-requests/schuss-build-request-NNNNNN-rRRRRRR.json
+records/object-definitions/schuss-project-object-NNNNNN-rRRRRRR.json
 assets/...                         # only exact manifest-owned assets
 ```
 
@@ -113,6 +114,21 @@ transition and atomic head boundary while permitting any ordered set of
 project-owned graph, instrument, and build-request immutable records before
 the new project manifest. Recovery selects the plan schema explicitly and
 never infers it from the mutation count.
+
+The sonic-authoring successor retains write-plan v1 and additively introduces
+project manifest v1 plus `object-definition` ownership. One object definition
+contains its project-local family facts, exact component contract, exact
+implementation binding, and either an inspectable transparent compound graph
+or bounded native kernel. Those nested domain values are validated against
+their own exact schemas and enter the same base-plus-project component/graph
+closure; they are not a client-owned catalog or compiler database.
+
+Project-v0 revisions remain immutable and readable inside a history whose
+accepted successor is project-v1. Object acceptance appends one immutable
+object member and, when placement is requested, versions the selected
+project-owned graph, instrument, and build request before publishing the v1
+manifest. The atomic workspace-head replacement remains the sole acceptance
+boundary.
 
 ## Recovery
 

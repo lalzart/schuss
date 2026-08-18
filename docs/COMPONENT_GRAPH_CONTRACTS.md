@@ -119,6 +119,19 @@ references, and an acyclic expansion graph. Non-production fixtures prove the
 positive case plus missing, duplicate, incompatible, hidden, direct-recursive,
 and indirect-recursive failures. No opaque legacy subpatch is introduced.
 
+The sonic-authoring successor applies the same rules to project-local
+transparent compounds. Their generated v1 contract, v3 binding, and internal
+graph are embedded in one project-owned object definition, then unpacked into
+the ordinary component/graph validator for total-map, type, topology, and
+recursion checks. Project locality changes ownership, not compound semantics.
+
+`implementation-binding-v3` also admits the separate `native-kernel`
+realization. It names one exact bounded declarative kernel and maps every
+public facet to a unique portable native symbol. This proves only a structurally
+closed host representation. Its selection state remains `not-evaluated`, and
+no target eligibility, backend lowering, ARM, device, real-time, or listening
+claim follows.
+
 ## Task 011B additive contracts and bindings
 
 Task 011B preserves every v0 schema and record byte. `component-contract-v1`

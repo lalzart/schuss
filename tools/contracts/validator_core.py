@@ -344,6 +344,30 @@ def canonicalize_with_schema(
     schema = resolve_schema(schema, root_schema)
     if "oneOf" in schema:
         schema = matching_one_of(value, schema, root_schema)
+    if schema.get("x-schuss-domain-value") is True:
+        # Domain values embedded behind a separately validated semantic schema
+        # retain their already canonical array order while object keys remain
+        # canonicalized by canonical_json. This marker is never permission to
+        # skip the owning semantic validator.
+        if isinstance(value, dict):
+            return {
+                key: canonicalize_with_schema(
+                    item,
+                    {"x-schuss-domain-value": True},
+                    {"x-schuss-domain-value": True},
+                )
+                for key, item in value.items()
+            }
+        if isinstance(value, list):
+            return [
+                canonicalize_with_schema(
+                    item,
+                    {"x-schuss-domain-value": True},
+                    {"x-schuss-domain-value": True},
+                )
+                for item in value
+            ]
+        return value
     if isinstance(value, dict):
         properties = schema.get("properties", {})
         return {

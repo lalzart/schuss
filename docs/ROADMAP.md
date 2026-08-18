@@ -42,7 +42,8 @@ row does not authorize the next.
 | 28 | Twenty-item direct selectable palette; transparent compounds deferred | Complete; fifteen additions lower locally at levels 1-3, no build |
 | 29 | Complete-machine inspection layer and isolated Viewer | Complete; two exact source reviews, zero completed machines, structural level 1 |
 | 30 | Complete exact Mutable-derived catalog cohort and object CLI | Complete; 56 attributed implementations, 107 families, shared CLI v3 discovery, levels 1-2 |
-| Deferred UI | Consolidated desktop catalog and node patcher | Unnumbered; implemented locally after explicit authorization; authoring performance active; publication/build/device separately gated |
+| Unnumbered UI | Consolidated desktop authoring, build jobs, and Ksoloti volatile deployment | Implemented locally after explicit authorization; fake-transport acceptance only; real hardware, packaging, and publication separately gated |
+| Unnumbered AI | Sonic-first planning plus explicit project-local object and patch authoring over shared operations/MCP | Implemented locally after explicit authorization; bounded compounds/native kernels and atomic project acceptance only; no target lowering, model UX, build, device, HTTP, or publication authority |
 
 ## Completed Task 018 gates
 
@@ -100,7 +101,7 @@ compile/link level 5. Task 027 preserves all sixty functional families while
 adding exact Mutable-derived provenance at structural levels 1-2. Task 028
 adds fifteen independently selectable native operation identities to the five
 Task 025 promotions, reaching an exact twenty-item palette at local lowering
-level 3; transparent compounds remain deferred. The unnumbered UI lane was
+level 3; general transparent-compound target lowering remains deferred. The unnumbered UI lane was
 explicitly authorized after its architecture planning boundary; the desktop
 catalog and patcher are implemented locally. No numbered implementation lane
 is currently planned. Authoring performance and reliability are active locally
@@ -109,6 +110,15 @@ execution, and device communication remain separately gated. The original
 sessions/jobs/diagnostics outcome is deferred without a replacement number.
 The default ceiling remains two implementation lanes plus one read-only or
 design lane.
+
+The separately authorized unnumbered AI lane now includes the original local
+read-only MCP adapter and its sonic-first v13 successor. The default process
+offers seven read-only discovery/planning tools. One explicit absolute project
+argument adds bounded transparent-compound/native-kernel drafts, deterministic
+host evaluation, exact preview, atomic acceptance, and project-object
+inspection through shared operations. Native target lowering, subjective
+listening evidence, model-provider/desktop-chat work, build, device,
+remote-server, and publication remain separate gates.
 
 Tasks 029 and 030 were later activated by explicit user requests outside the
 ADR 0014 sequence. Task 029 adds only source-evidenced machine inspection.

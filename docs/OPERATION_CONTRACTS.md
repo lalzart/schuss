@@ -292,6 +292,76 @@ adds only `set-graph-display-name`; `graph.transact` remains proposal-only and
 `project.profile.transact` remains an explicit atomic workspace write. The
 desktop uses these same operations and defines no parallel persistence path.
 
+The next unnumbered desktop slice additively supplies request/result v12 and
+application-capability-description v5 in exact record set
+`schuss-record-set-000025@1`. `build.session.start` and
+`build.session.inspect` wrap the existing compiler front half and exact handler
+executor in bounded process-local jobs. `device.session.discover` and
+`device.session.inspect` expose explicit Ksoloti USB/CPU/firmware identity plus
+a separate compatibility result. `device.upload.start` and
+`device.upload.inspect` accept only one exact successful session artifact and
+one explicit volatile-RAM intent, retain artifact bytes and USB handles inside
+core, verify read-back before optional start, and expose no general USB or
+filesystem surface. Session handles are ephemeral and are not semantic stable
+IDs or governed evidence records.
+
+## Read-only MCP client adapter
+
+The first unnumbered AI slice adds no operation or schema version. The dedicated
+`bin/schuss-mcp` stdio process presents exactly six existing read-only
+operations as stable MCP tools: `application.describe`, `catalog.search`,
+`catalog.inspect`, `catalog.implementations.search`, `component.inspect`, and
+`graph.inspect`.
+
+For each tool, the adapter extracts the exact payload schema from that
+operation's selected request schema and advertises the exact operation-result
+schema as its output schema. A call constructs the corresponding canonical
+request envelope, invokes `dispatch_operation()` once, and returns the
+canonical result both as structured content and canonical JSON text. It does
+not reshape domain values or accept a generic operation name. Non-success
+operation results remain structured tool execution errors; malformed MCP and
+unknown-tool calls remain protocol errors.
+
+The primary wire revision is MCP `2026-07-28`, with required per-request
+metadata and no protocol session. The adapter also accepts the exact
+`2025-11-25` initialize/initialized stdio era. Its only resource,
+`schuss://application/capabilities`, is backed by the same
+`application.describe` request. Project, proposal, build, session, device,
+filesystem, process, network, and hardware operations are absent. The complete
+adapter boundary is in `docs/AI_MCP_BOUNDARY.md`.
+
+## Sonic-first project-local object authoring
+
+The successor AI slice additively supplies operation request/result v13 and
+application-capability-description v6 in exact record set
+`schuss-record-set-000026@1`. Its eight shared operations are
+`sonic.intent.plan`, `authoring.draft.create`, `authoring.draft.inspect`,
+`authoring.draft.evaluate`, `authoring.change.preview`,
+`authoring.change.accept`, `project.objects.list`, and
+`project.object.inspect`. The selected-context capability registry contains
+thirty-five operations when their exact schemas and services are available.
+
+Sonic planning treats validity as a hard gate and exposes existing-object,
+transparent-compound, and native-kernel lanes in parallel. It has no cost
+objective, and catalog matches carry `not-evaluated` sonic-fidelity, interest,
+and quality states. The presence of a catalog match never disables creation.
+
+Project authoring requires one explicit `ProjectService`. Drafts, evaluations,
+and previews are process-local; preview changes no governed byte. Native host
+evaluation uses a closed declarative kernel, writes only a content-addressed
+non-governed cache artifact, and makes no target or listening claim. Acceptance
+requires the exact project reference, unchanged preview fingerprint, and
+explicit write intent, then reuses the recoverable multi-record publisher and
+atomic workspace-head boundary. Project manifest v1 additively indexes
+project-owned object definitions while project-v0 history remains readable.
+
+The MCP adapter adds `sonic.intent.plan` to its no-project surface. Its seven
+project authoring tools appear only with an explicit absolute `--project`
+workspace; their schemas remain derived from v13 and their annotations reflect
+their actual effects. No generic operation, arbitrary code, build, device, or
+hardware authority is added.
+
 Task 012B remains retired. Any later build or device UI must consume shared
-session/job and device operations; it may not define a client-owned build,
+session/job and device operations. Firmware/SD/persistent-install successors
+must remain separately contracted; no client may define a parallel build,
 compiler, USB, or evidence path.

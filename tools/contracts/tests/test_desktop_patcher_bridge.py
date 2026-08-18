@@ -54,9 +54,16 @@ class DesktopPatcherBridgeTest(unittest.TestCase):
                 }
             },
         }
+        session_without_workspace = {
+            "schema_version": "schuss-operation-request-v12",
+            "canonical_profile": "schuss-canonical-json-v1",
+            "operation": "build.session.inspect",
+            "payload": {"build_session_id": "build-session-000001"},
+        }
         values = (
             envelope(forbidden),
             envelope(relative_workspace, "relative/path"),
+            envelope(session_without_workspace),
             envelope(describe),
             envelope(component),
         )
@@ -75,25 +82,28 @@ class DesktopPatcherBridgeTest(unittest.TestCase):
         self.assertEqual(0, completed.returncode, completed.stderr.decode("utf-8"))
         self.assertEqual(b"", completed.stderr)
         lines = completed.stdout.splitlines()
-        self.assertEqual(4, len(lines))
+        self.assertEqual(5, len(lines))
         results = [json.loads(line) for line in lines]
         for line, result in zip(lines, results):
             self.assertEqual(core.canonical_json(result).encode("utf-8"), line)
 
         self.assertEqual("BRIDGE_OPERATION_FORBIDDEN", results[0]["error"]["code"])
         self.assertEqual("BRIDGE_WORKSPACE_INVALID", results[1]["error"]["code"])
-        self.assertEqual("success", results[2]["status"])
+        self.assertEqual("BRIDGE_WORKSPACE_REQUIRED", results[2]["error"]["code"])
+        self.assertEqual("success", results[3]["status"])
         capabilities = {
-            item["operation"]: item for item in results[2]["value"]["operations"]
+            item["operation"]: item for item in results[3]["value"]["operations"]
         }
-        self.assertEqual(21, len(capabilities))
+        self.assertEqual(27, len(capabilities))
         self.assertEqual("workspace-write", capabilities["project.profile.transact"]["effect_class"])
         self.assertEqual(
             "requires-execution-service", capabilities["build.execute"]["availability"]
         )
+        self.assertEqual("available", capabilities["build.session.start"]["availability"])
+        self.assertEqual("device-volatile-write", capabilities["device.upload.start"]["effect_class"])
         self.assertEqual(
             "Band-limited Saw Oscillator",
-            results[3]["value"]["component_contract"]["display_name"],
+            results[4]["value"]["component_contract"]["display_name"],
         )
 
 

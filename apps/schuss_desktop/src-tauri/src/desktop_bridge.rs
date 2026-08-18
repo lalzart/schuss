@@ -205,6 +205,7 @@ fn operation_versions(operation: &str) -> Option<(&'static str, &'static str, bo
         "catalog.implementations.search" => Some(("schuss-operation-request-v10", "schuss-operation-result-v10", false)),
         "catalog.inspect" | "catalog.search" => Some(("schuss-operation-request-v2", "schuss-operation-result-v2", false)),
         "component.inspect" => Some(("schuss-operation-request-v11", "schuss-operation-result-v11", false)),
+        "build.session.start" | "build.session.inspect" | "device.session.discover" | "device.session.inspect" | "device.upload.start" | "device.upload.inspect" => Some(("schuss-operation-request-v12", "schuss-operation-result-v12", true)),
         "graph.inspect" => Some(("schuss-operation-request-v1", "schuss-operation-result-v1", false)),
         "graph.transact" | "project.profile.transact" => Some(("schuss-operation-request-v11", "schuss-operation-result-v11", true)),
         "project.history.inspect" | "project.profile.fork" | "project.revert" => Some(("schuss-operation-request-v8", "schuss-operation-result-v8", true)),
@@ -316,6 +317,11 @@ mod tests {
         assert!(validate_request(&request(
             "component.inspect",
             "schuss-operation-request-v11"
+        ))
+        .is_ok());
+        assert!(validate_request(&request(
+            "build.session.start",
+            "schuss-operation-request-v12"
         ))
         .is_ok());
         assert!(validate_request(&request("build.execute", "schuss-operation-request-v5")).is_err());

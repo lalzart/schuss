@@ -1,8 +1,10 @@
 # Schuss desktop
 
-Status: one consolidated local desktop application with exact catalog browsing
-and project-backed node patching. Build execution, device sessions, USB
-upload, flash, packaging, and hardware access are not implemented.
+Status: one consolidated local desktop application with exact catalog browsing,
+project-backed node patching, process-local build jobs, explicit Ksoloti Core
+discovery, and a read-back-verified volatile-RAM upload path. Device acceptance
+uses fakes; firmware flash, DFU, reset, SD writes, packaging, and automatic
+hardware access are not implemented.
 
 The app is a Tauri 2 shell around React, TypeScript, and React Flow. Schuss
 core remains the semantic authority: the renderer submits versioned operations
@@ -21,7 +23,7 @@ npm run dev
 ```
 
 The first core load validates exact record set
-`schuss-record-set-000024@1`; the persistent bridge reuses that exact validated
+`schuss-record-set-000025@1`; the persistent bridge reuses that exact validated
 base and a bounded process-local semantic augmentation cache. Each project load
 still rereads and validates all governed workspace bytes before any cache hit.
 Renderer-only verification uses the same Python adapter:
@@ -43,21 +45,28 @@ npm run dev:web
   one `project.profile.transact` operation.
 - **History** reads immutable ancestry and makes revert an explicit successor
   operation.
+- **Build** starts a core-owned background job over the accepted project and
+  surfaces structured progress, stage outcomes, diagnostics, and artifact facts.
+- **Device** performs discovery only after an explicit action, checks exact
+  board and firmware identity, and gates a confirmed volatile-RAM upload on one
+  successful target executable. Read-back verification precedes optional start.
 
 Catalogued-only implementations stay visible. Add resolves the exact family
 and requires exactly one component contract; it fails closed otherwise.
 
 ## Runtime boundary
 
-One Tauri command, `dispatch_desktop_operation`, carries a closed fourteen
+One Tauri command, `dispatch_desktop_operation`, carries a closed twenty
 operation allowlist covering catalog/object inspection, graph inspection and
-proposal, and explicit project creation/inspection/versioning/history/revert.
+proposal, project authoring/history, build sessions, device discovery, and
+verified volatile upload.
 Rust and Python independently enforce request/result versions, size limits,
 canonical metadata, and absolute workspace paths.
 
-The main window grants only `core:default`. No filesystem, shell, HTTP, build,
-device, or hardware plugin is installed or granted. React Flow `12.11.3` is a
-presentation dependency, not a semantic graph model.
+The main window grants only `core:default`. No filesystem, shell, HTTP, USB, or
+hardware plugin is installed or granted to the renderer. Build outputs and
+libusb handles remain private to the persistent core process. React Flow
+`12.11.3` is a presentation dependency, not a semantic graph model.
 
 ## Validation
 
@@ -73,12 +82,14 @@ From the repository root:
 ```bash
 python3 -m unittest \
   tools.contracts.tests.test_desktop_authoring_performance \
+  tools.contracts.tests.test_desktop_build_device_sessions \
   tools.contracts.tests.test_desktop_patcher_bridge \
   tools.contracts.tests.test_desktop_patcher_operations \
   tools.contracts.tests.test_desktop_ui_structure
 ```
 
-The patcher and performance contracts are
+The patcher, performance, and build/device contracts are
 `../../docs/tasks/ui-desktop-patcher-authoring.md` and
-`../../docs/tasks/ui-desktop-authoring-performance.md`; ownership and future
-build/device seams are in `../../docs/DESKTOP_UI_BOUNDARY.md`.
+`../../docs/tasks/ui-desktop-authoring-performance.md`, and
+`../../docs/tasks/ui-desktop-build-device-workflow.md`; ownership and the
+remaining gated seams are in `../../docs/DESKTOP_UI_BOUNDARY.md`.

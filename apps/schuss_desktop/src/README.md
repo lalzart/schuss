@@ -12,3 +12,9 @@ into React Flow and submits the ordered edit proposal through
 no catalog matcher, component interface, graph persistence format, compiler
 logic, or project filesystem access. Failed saves retain the draft; reload is
 explicit when it would discard unsaved work.
+
+Build/device presentation submits only the six v12 session operations. It
+polls opaque process-local handles and renders structured state; it never sees
+an output root, artifact bytes, USB handle, memory address, or arbitrary
+command. Discovery and volatile upload each require an explicit interaction,
+and upload adds a confirmation before the core-owned write begins.

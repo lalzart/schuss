@@ -49,9 +49,21 @@ contracts pending their normal archival step:
   product slice over shared read-only catalog operations.
 - `ui-desktop-patcher-authoring.md` is the explicitly authorized consolidated
   desktop patcher slice over shared catalog, graph, and project operations.
-- `ui-desktop-authoring-performance.md` is the active explicitly authorized
-  reliability slice for exact process-local base reuse, bounded semantic
-  caching, and recoverable authoring states.
+- `ui-desktop-authoring-performance.md` is the locally complete predecessor
+  for exact process-local base reuse, bounded semantic caching, and recoverable
+  authoring states.
+- `ui-desktop-build-device-workflow.md` is the explicitly authorized,
+  locally complete successor for core-owned build jobs, explicit Ksoloti
+  discovery, and a read-back-verified volatile-RAM upload path. Its device
+  tests use fakes and authorize no real hardware action.
+- `ai-mcp-read-only-foundation.md` is the explicitly authorized first AI-client
+  slice. It exposes six existing read-only operations over local MCP stdio and
+  adds no model-provider, mutation, project, build, device, or network authority.
+- `ai-sonic-authoring-foundation.md` is the explicitly authorized successor.
+  It adds sonic-first three-lane planning, bounded project-local transparent
+  compounds/native kernels, deterministic host evaluation, exact preview and
+  atomic acceptance, plus explicit project-scoped MCP tools. Target lowering,
+  build/device authority, and listening claims remain absent.
 
 Tasks 023-030 are complete; no numbered implementation task is active. ADR
 0015 retargeted the previously unstarted Task 027 assignment. Task 028's prior
@@ -59,8 +71,10 @@ transparent-compound outcome remains deferred; the original sessions/jobs/diagno
 is deferred without a replacement number. Tasks 019 and 020 remain deferred. UI
 architecture and implementation remain unnumbered. The desktop catalog and
 patcher are implemented locally after explicit authorization; authoring
-performance and reliability are the active local slice. User acceptance,
-publication, build execution, and device communication remain separate gates.
+performance/reliability and build/device slices are implemented locally. The
+sonic-first AI/MCP authoring successor is also implemented locally. User acceptance, Git
+publication, real connected-device execution,
+firmware/SD mutation, packaging, real-time, and audible claims remain separate.
 
 Unnumbered validation-hygiene task VH-001 is retained under `../validation/`.
 It audits five configured historical golden/hash gates and authorizes neither

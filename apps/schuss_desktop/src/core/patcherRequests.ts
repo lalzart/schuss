@@ -1,6 +1,7 @@
 import { emptyCatalogFilters } from "./requests";
 import type {
   ComponentReference,
+  BuildRequestReference,
   DesktopOperationRequest,
   ExactRecordSetReference,
   GraphEdit,
@@ -9,9 +10,9 @@ import type {
 } from "./types";
 
 export const DESKTOP_RECORD_SET: ExactRecordSetReference = {
-  record_set_id: "schuss-record-set-000024",
+  record_set_id: "schuss-record-set-000025",
   revision: 1,
-  content_hash: "sha256:2b30be20d72ba619da33664a6c4391d92199e3eead33818ecb27a56b29a24cbb",
+  content_hash: "sha256:dc360bb12c5d2272061431ce99f5e6476a41e7a3c92ae27db96c518abe7cfd39",
 };
 
 export const STARTER_GRAPH: GraphReference = {
@@ -92,12 +93,59 @@ export function projectInitRequest(projectId: string): DesktopOperationRequest {
     project_id: projectId,
     base_record_set: {
       reference: DESKTOP_RECORD_SET,
-      portable_locator: "contracts/record-sets/ui-desktop-patcher-authoring-v1.json",
+      portable_locator: "contracts/record-sets/ui-desktop-build-device-v1.json",
     },
     primary_graph_reference: STARTER_GRAPH,
     instrument_references: [STARTER_INSTRUMENT],
     build_request_references: [STARTER_BUILD_REQUEST],
     asset_references: [],
+  });
+}
+
+export function buildSessionStartRequest(reference: BuildRequestReference): DesktopOperationRequest {
+  return request("schuss-operation-request-v12", "build.session.start", {
+    build_request_reference: reference,
+    execution_intent: true,
+  });
+}
+
+export function buildSessionInspectRequest(sessionId: string): DesktopOperationRequest {
+  return request("schuss-operation-request-v12", "build.session.inspect", {
+    build_session_id: sessionId,
+  });
+}
+
+export function deviceDiscoverRequest(reference: BuildRequestReference): DesktopOperationRequest {
+  return request("schuss-operation-request-v12", "device.session.discover", {
+    build_request_reference: reference,
+    discovery_intent: true,
+  });
+}
+
+export function deviceSessionInspectRequest(sessionId: string): DesktopOperationRequest {
+  return request("schuss-operation-request-v12", "device.session.inspect", {
+    device_session_id: sessionId,
+  });
+}
+
+export function deviceUploadStartRequest(
+  deviceSessionId: string,
+  buildSessionId: string,
+  artifactSha256: string,
+  startPatch: boolean,
+): DesktopOperationRequest {
+  return request("schuss-operation-request-v12", "device.upload.start", {
+    device_session_id: deviceSessionId,
+    build_session_id: buildSessionId,
+    artifact_sha256: artifactSha256,
+    upload_intent: "explicit-volatile-ram",
+    start_patch: startPatch,
+  });
+}
+
+export function deviceUploadInspectRequest(sessionId: string): DesktopOperationRequest {
+  return request("schuss-operation-request-v12", "device.upload.inspect", {
+    upload_session_id: sessionId,
   });
 }
 

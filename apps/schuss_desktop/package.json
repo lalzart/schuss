@@ -28,8 +28,8 @@
   "schuss": {
     "applicationBoundary": "apps/schuss_desktop",
     "coreBoundaryContract": "contracts/ui-core-boundary-v1.json",
-    "recordSet": "schuss-record-set-000024@1",
-    "status": "project-backed-patcher",
+    "recordSet": "schuss-record-set-000025@1",
+    "status": "project-build-device-workflow",
     "targetStack": {
       "language": "TypeScript",
       "shell": "Tauri 2",

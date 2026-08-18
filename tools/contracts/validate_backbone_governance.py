@@ -43,6 +43,9 @@ UI_DESKTOP_INITIALIZATION = "docs/tasks/ui-desktop-initialization.md"
 UI_DESKTOP_CATALOG = "docs/tasks/ui-desktop-read-only-catalog.md"
 UI_DESKTOP_PATCHER = "docs/tasks/ui-desktop-patcher-authoring.md"
 UI_DESKTOP_PERFORMANCE = "docs/tasks/ui-desktop-authoring-performance.md"
+UI_DESKTOP_BUILD_DEVICE = "docs/tasks/ui-desktop-build-device-workflow.md"
+AI_MCP_READ_ONLY = "docs/tasks/ai-mcp-read-only-foundation.md"
+AI_SONIC_AUTHORING = "docs/tasks/ai-sonic-authoring-foundation.md"
 
 DOCUMENT_PATHS = (
     README,
@@ -76,6 +79,9 @@ DOCUMENT_PATHS = (
     UI_DESKTOP_CATALOG,
     UI_DESKTOP_PATCHER,
     UI_DESKTOP_PERFORMANCE,
+    UI_DESKTOP_BUILD_DEVICE,
+    AI_MCP_READ_ONLY,
+    AI_SONIC_AUTHORING,
 )
 
 ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 31))
@@ -97,6 +103,9 @@ EXPECTED_TASK_FILENAMES = {
     "ui-desktop-read-only-catalog.md",
     "ui-desktop-patcher-authoring.md",
     "ui-desktop-authoring-performance.md",
+    "ui-desktop-build-device-workflow.md",
+    "ai-mcp-read-only-foundation.md",
+    "ai-sonic-authoring-foundation.md",
 }
 LETTERED_ALIAS = re.compile(r"\bTasks?\s+(01[3-9]|02[01])[A-Z](?:-[A-Z])?\b", re.IGNORECASE)
 INFORMAL_ALIAS = re.compile(r"(?<![A-Za-z0-9])B6(?![A-Za-z0-9])", re.IGNORECASE)
@@ -665,6 +674,27 @@ def validate_documents(
                 "warm repeated inspection improves by at least 10x",
             ),
         ),
+        (
+            UI_DESKTOP_BUILD_DEVICE,
+            (
+                "accepted by explicit user authorization and active locally on 2026-08-18",
+                "Git publication and connected-hardware execution remain separate",
+            ),
+            (
+                "## Goal and why it exists",
+                "## In scope",
+                "## Out of scope",
+                "## Inputs and deliverables",
+                "## Acceptance tests",
+                "## Decisions this task may make",
+                "## Decisions this task must not make",
+                "process-local build session",
+                "volatile patch RAM",
+                "Real USB discovery or upload is not part of local acceptance",
+                "Firmware update, DFU, flash, reset, SD-card writes",
+                "renderer never receives an output root",
+            ),
+        ),
     ):
         status = _leading_status(documents.get(document, "")) or ""
         for fragment in status_fragments:
@@ -893,14 +923,13 @@ def validate_documents(
                     f"Task {int(label):03d} roadmap status must contain: {expected}",
                 )
             )
-    deferred_ui = roadmap_rows.get("Deferred UI", [])
+    deferred_ui = roadmap_rows.get("Unnumbered UI", [])
     if (
         len(deferred_ui) != 1
-        or "unnumbered" not in deferred_ui[0][2].lower()
         or "implemented locally" not in deferred_ui[0][2].lower()
         or "explicit authorization" not in deferred_ui[0][2].lower()
-        or "authoring performance active" not in deferred_ui[0][2].lower()
-        or "publication/build/device separately gated" not in deferred_ui[0][2].lower()
+        or "fake-transport acceptance only" not in deferred_ui[0][2].lower()
+        or "real hardware, packaging, and publication separately gated" not in deferred_ui[0][2].lower()
     ):
         diagnostics.append(
             _diagnostic(
@@ -1036,6 +1065,7 @@ def validate_documents(
         UI_DESKTOP_CATALOG: documents.get(UI_DESKTOP_CATALOG, ""),
         UI_DESKTOP_PATCHER: documents.get(UI_DESKTOP_PATCHER, ""),
         UI_DESKTOP_PERFORMANCE: documents.get(UI_DESKTOP_PERFORMANCE, ""),
+        UI_DESKTOP_BUILD_DEVICE: documents.get(UI_DESKTOP_BUILD_DEVICE, ""),
     }
     for document, scope in alias_scopes.items():
         matches = sorted(set(LETTERED_ALIAS.findall(scope)))
@@ -1070,7 +1100,7 @@ def validate_documents(
 
     diagnostics.sort(key=lambda item: (item["code"], item["document"], item["detail"]))
     return {
-        "active_product_task": "unnumbered-desktop-authoring-performance-local-implementation-awaiting-acceptance",
+        "active_product_task": "unnumbered-desktop-build-device-local-implementation-awaiting-acceptance",
         "active_evidence_task": "022-failed-diagnostic-promotion-stopped",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
         "authoritative_decisions": [
@@ -1106,7 +1136,7 @@ def validate_documents(
             "029": "complete-machine-inspection-level-1",
             "030": "complete-mutable-catalog-cohort-level-2-cli-v3",
         },
-        "ui_milestone_status": "unnumbered-desktop-authoring-performance-implemented-locally-publication-build-device-gated",
+        "ui_milestone_status": "unnumbered-desktop-build-device-implemented-locally-real-hardware-publication-gated",
     }
 
 

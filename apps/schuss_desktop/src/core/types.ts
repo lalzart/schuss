@@ -181,6 +181,12 @@ export type ProjectReference = {
   content_hash: string;
 };
 
+export type BuildRequestReference = {
+  build_request_id: string;
+  revision: number;
+  content_hash: string;
+};
+
 export type ComponentReference = {
   component_contract_id: string;
   revision: number;
@@ -261,7 +267,80 @@ export type ProjectManifest = {
   content_hash: string;
   primary_graph_reference: GraphReference;
   instrument_references: ExactReference[];
-  build_request_references: ExactReference[];
+  build_request_references: BuildRequestReference[];
+};
+
+export type BuildArtifact = {
+  artifact_kind: string;
+  media_type: string;
+  producer_stage: string;
+  byte_sha256: string;
+  byte_length: number;
+  portable_locator: string;
+};
+
+export type SessionDiagnostic = {
+  code: string;
+  severity: "error" | "warning" | "info";
+  stage: string;
+  subject: string;
+  message: string;
+};
+
+export type BuildSessionValue = {
+  session_id: string;
+  status: string;
+  phase: string;
+  build_request_reference: BuildRequestReference;
+  progress: Array<{ ordinal: number; event: string; subject: string }>;
+  stage_outcomes: Array<{ stage: string; status: string }>;
+  artifacts: BuildArtifact[];
+  evidence_levels: Array<{ level: number; status: string }>;
+  diagnostics: SessionDiagnostic[];
+};
+
+export type DeviceSessionValue = {
+  session_id: string;
+  status: string;
+  transport: string;
+  transport_location: string;
+  usb_identity: { vendor_id: string; product_id: string; usb_serial: string | null };
+  board_identity: {
+    product: string | null;
+    cpu_serial: string | null;
+    firmware: { version: string; crc: string; patch_entrypoint: string } | null;
+  };
+  identity_status: string;
+  compatibility: string;
+  diagnostics: SessionDiagnostic[];
+};
+
+export type DeviceDiscoveryValue = {
+  status: string;
+  sessions: DeviceSessionValue[];
+  device_count: number;
+  discovery_was_explicit: boolean;
+  background_monitoring: boolean;
+};
+
+export type UploadSessionValue = {
+  session_id: string;
+  status: string;
+  phase: string;
+  device_session_id: string;
+  build_session_id: string;
+  artifact: BuildArtifact;
+  device_binary: { byte_sha256: string; byte_length: number; load_address: string };
+  start_patch_requested: boolean;
+  progress: Array<{
+    ordinal: number;
+    event: string;
+    completed_bytes: number;
+    total_bytes: number;
+  }>;
+  verification: string;
+  outcome: Record<string, unknown> | null;
+  diagnostics: SessionDiagnostic[];
 };
 
 export type ProjectInspectValue = {

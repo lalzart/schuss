@@ -90,6 +90,22 @@ DESKTOP_PATCHER_SCHEMA_NAMES = {
     "operation_result_v11": "operation-result-v11.schema.json",
 }
 
+DESKTOP_SESSION_SCHEMA_NAMES = {
+    "application_capability_description_v5": "application-capability-description-v5.schema.json",
+    "operation_request_v12": "operation-request-v12.schema.json",
+    "operation_result_v12": "operation-result-v12.schema.json",
+}
+
+AI_SONIC_AUTHORING_SCHEMA_NAMES = {
+    "application_capability_description_v6": "application-capability-description-v6.schema.json",
+    "implementation_binding_v3": "implementation-binding-v3.schema.json",
+    "native_kernel": "native-kernel-v0.schema.json",
+    "operation_request_v13": "operation-request-v13.schema.json",
+    "operation_result_v13": "operation-result-v13.schema.json",
+    "project_object_definition": "project-object-definition-v0.schema.json",
+    "project_v1": "project-v1.schema.json",
+}
+
 TASK015_SCHEMA_NAMES = {
     "normalized_dsp_module": "normalized-dsp-module-v0.schema.json",
     "direct_frontend_result": "direct-frontend-result-v0.schema.json",
@@ -164,6 +180,7 @@ class OperationContext:
     catalog_projection: dict[str, Any] | None
     loaded_record_set: record_set_rules.LoadedRecordSet
     record_set_path: Path
+    additional_family_references: tuple[dict[str, Any], ...] = ()
 
     def with_records(
         self, **groups: Iterable[dict[str, Any]]
@@ -399,7 +416,23 @@ def load_repository_context(
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
-    if "application_capability_description_v4" in schemas:
+    for key, filename in DESKTOP_SESSION_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    for key, filename in AI_SONIC_AUTHORING_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    if "application_capability_description_v6" in schemas:
+        schemas["application_capability_description"] = schemas[
+            "application_capability_description_v6"
+        ]
+    elif "application_capability_description_v5" in schemas:
+        schemas["application_capability_description"] = schemas[
+            "application_capability_description_v5"
+        ]
+    elif "application_capability_description_v4" in schemas:
         schemas["application_capability_description"] = schemas[
             "application_capability_description_v4"
         ]
@@ -674,6 +707,8 @@ def canonical_result_bytes(
         "schuss-operation-result-v9": "operation_result_v9",
         "schuss-operation-result-v10": "operation_result_v10",
         "schuss-operation-result-v11": "operation_result_v11",
+        "schuss-operation-result-v12": "operation_result_v12",
+        "schuss-operation-result-v13": "operation_result_v13",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -711,6 +746,8 @@ def _dispatch_application_operation(
     *,
     project_workspace_available: bool = False,
     execution_service_available: bool = False,
+    session_services_available: bool = False,
+    authoring_service_available: bool = False,
 ) -> dict[str, Any]:
     operation = request.get("operation") if isinstance(request, dict) else None
     required_schemas = (
@@ -779,6 +816,8 @@ def _dispatch_application_operation(
             schemas=context.schemas,
             project_workspace_available=project_workspace_available,
             execution_service_available=execution_service_available,
+            session_services_available=session_services_available,
+            authoring_service_available=authoring_service_available,
         )
         value_schema = context.schemas["application_capability_description"]
         value_errors = core.schema_errors(value, value_schema, value_schema)
@@ -1881,6 +1920,9 @@ def _validate_transacted_graph(
             if item["implementation_id"] in bound_implementation_ids
             and item["implementation_id"] not in overlay_implementation_ids
         ]
+    additional_family_references.extend(
+        copy.deepcopy(context.additional_family_references)
+    )
     component_result = component.validate_component_graph_values(
         list(copy.deepcopy(context.records["families"])),
         list(copy.deepcopy(context.records["contracts"])),
@@ -1999,14 +2041,186 @@ def transact_graph_payload(
     return _graph_transact(payload, context)
 
 
+def _dispatch_desktop_session_operation(
+    request: dict[str, Any],
+    application_context: OperationContext,
+    project_service: Any,
+    build_session_service: Any | None,
+    device_session_service: Any | None,
+) -> dict[str, Any]:
+    """Dispatch the bounded process-local build and device session surface."""
+
+    loaded = project_service.load()
+    project_context = with_compiler_schemas(
+        loaded.context, project_service.repository_root
+    )
+    operation = request.get("operation") if isinstance(request, dict) else None
+    errors: list[str] = []
+    try:
+        core.assert_portable_json_value(request)
+    except ValueError as exc:
+        errors.append(str(exc))
+    schema = application_context.schemas.get("operation_request_v12")
+    if schema is None:
+        errors.append(
+            "$: operation schema 'schuss-operation-request-v12' is unavailable in the selected context"
+        )
+    elif isinstance(request, dict):
+        errors.extend(core.schema_errors(request, schema, schema))
+    else:
+        errors.append("$: operation request must be an object")
+    allowed = {
+        "build.session.start",
+        "build.session.inspect",
+        "device.session.discover",
+        "device.session.inspect",
+        "device.upload.start",
+        "device.upload.inspect",
+    }
+    if operation not in allowed:
+        errors.append("$.operation: operation is not in the desktop session surface")
+    if build_session_service is None or device_session_service is None:
+        errors.append("$: process-local build and device session services are required")
+    if errors:
+        result = _result(
+            operation if operation in allowed else "invalid-request",
+            "invalid",
+            None,
+            [
+                _diagnostic(
+                    "OPERATION_REQUEST_INVALID",
+                    operation if isinstance(operation, str) else "invalid-request",
+                    "$",
+                    error,
+                )
+                for error in sorted(set(errors))
+            ],
+            version=12,
+        )
+        canonical_result_bytes(result, application_context)
+        return result
+
+    assert build_session_service is not None
+    assert device_session_service is not None
+    payload = request["payload"]
+    project_reference = {
+        "project_id": loaded.manifest["project_id"],
+        "revision": loaded.manifest["revision"],
+        "content_hash": loaded.manifest["content_hash"],
+    }
+    try:
+        if operation == "build.session.start":
+            compilation_context = compiler.CompilationContext.from_values(
+                build_request_reference=payload["build_request_reference"],
+                closure_source={
+                    "kind": "project",
+                    "project_reference": copy.deepcopy(project_reference),
+                    "base_record_set_reference": copy.deepcopy(
+                        project_context.record_set_reference
+                    ),
+                },
+                records=project_context.records,
+                schemas=project_context.schemas,
+            )
+            value = build_session_service.start(
+                compilation_context,
+                build_request_reference=payload["build_request_reference"],
+                execution_intent=payload["execution_intent"],
+                project_reference=project_reference,
+            )
+        elif operation == "build.session.inspect":
+            value = build_session_service.inspect(payload["build_session_id"])
+        elif operation == "device.session.discover":
+            value = device_session_service.discover(
+                records=project_context.records,
+                build_request_reference=payload["build_request_reference"],
+                project_reference=project_reference,
+                discovery_intent=payload["discovery_intent"],
+            )
+        elif operation == "device.session.inspect":
+            value = device_session_service.inspect(payload["device_session_id"])
+        elif operation == "device.upload.start":
+            value = device_session_service.start_upload(
+                device_session_id=payload["device_session_id"],
+                build_session_id=payload["build_session_id"],
+                artifact_sha256=payload["artifact_sha256"],
+                upload_intent=payload["upload_intent"],
+                start_patch=payload["start_patch"],
+            )
+        else:
+            value = device_session_service.inspect_upload(
+                payload["upload_session_id"]
+            )
+    except Exception as exc:
+        code = str(getattr(exc, "code", "DESKTOP_SESSION_OPERATION_FAILED"))
+        status = (
+            "unavailable"
+            if code.startswith("DEVICE_USB_")
+            or code in {
+                "DEVICE_SESSION_ENDPOINT_CHANGED",
+                "DEVICE_SESSION_IDENTITY_CHANGED",
+            }
+            else "invalid"
+        )
+        result = _result(
+            str(operation),
+            status,
+            None,
+            [
+                _diagnostic(
+                    code,
+                    str(operation),
+                    "$.payload",
+                    str(exc),
+                )
+            ],
+            version=12,
+        )
+        canonical_result_bytes(result, application_context)
+        return result
+    result = _result(str(operation), "success", value, version=12)
+    canonical_result_bytes(result, application_context)
+    return result
+
+
 def dispatch_operation(
     request: dict[str, Any],
     context: OperationContext,
     *,
     project_service: Any | None = None,
     execution_service: execution.ExecutionService | None = None,
+    build_session_service: Any | None = None,
+    device_session_service: Any | None = None,
+    authoring_service: Any | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v13"
+    ):
+        from .ai_authoring import dispatch_authoring_operation
+
+        active_context = context
+        if authoring_service is not None:
+            active_context = authoring_service.project_service.load().context
+        return dispatch_authoring_operation(
+            request, active_context, authoring_service
+        )
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v12"
+    ):
+        if project_service is None:
+            raise ValueError("v12 desktop session operations require an explicit project service")
+        return _dispatch_desktop_session_operation(
+            request,
+            context,
+            project_service,
+            build_session_service,
+            device_session_service,
+        )
 
     if (
         isinstance(request, dict)
@@ -2062,16 +2276,31 @@ def dispatch_operation(
     ):
         if project_service is not None:
             loaded = project_service.load()
+            description_context = (
+                context
+                if "application_capability_description_v5" in context.schemas
+                else loaded.context
+            )
             return _dispatch_application_operation(
                 request,
-                loaded.context,
+                description_context,
                 project_workspace_available=True,
                 execution_service_available=execution_service is not None,
+                session_services_available=(
+                    build_session_service is not None
+                    and device_session_service is not None
+                ),
+                authoring_service_available=authoring_service is not None,
             )
         return _dispatch_application_operation(
             request,
             context,
             execution_service_available=execution_service is not None,
+            session_services_available=(
+                build_session_service is not None
+                and device_session_service is not None
+            ),
+            authoring_service_available=authoring_service is not None,
         )
 
     if (

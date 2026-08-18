@@ -259,6 +259,38 @@ only a request constructor and renderer. The 50 new Mutable-attributed entries
 remain catalogued-only and do not enter graphs or compiler selection without
 separate exact contracts and bindings.
 
+The first unnumbered AI slice implements `bin/schuss-mcp` as a separate local
+stdio adapter over this same boundary. Its fixed tools map one-to-one to six
+existing read-only operations: application description, both catalog search
+levels, family inspection, component inspection, and graph inspection. Tool
+input/output schemas derive from the selected canonical operation schemas, and
+tool results retain the canonical operation result unchanged. MCP contributes
+no semantic record, project store, graph mutation, compiler, model-provider,
+filesystem, network, or device path. See `docs/AI_MCP_BOUNDARY.md`.
+
+The sonic-authoring successor keeps that adapter boundary and adds shared v13
+operations rather than AI-owned semantics. An explicit project service owns
+accepted object definitions and project revisions; a process-local authoring
+service owns expiring drafts, host-audition cache entries, and preview handles.
+Transparent compounds preserve their inspectable internal DSP graphs. Native
+objects preserve an inspectable bounded declarative kernel, but remain opaque
+at their public component boundary and ineligible for target selection until a
+separate lowering contract exists. Both forms enter a project only through the
+same exact preview, recoverable publication, and atomic workspace-head
+acceptance path available to future CLI and desktop clients.
+
+```text
+sonic intent
+  -> exact catalog candidates (retrieval facts)
+  -> transparent compound draft (exact existing contracts)
+  -> native-kernel draft (bounded declarative program)
+       -> structural validation
+       -> optional deterministic host audition (non-governed cache)
+       -> exact object/patch preview
+       -> explicit atomic project acceptance
+       -> target lowering/build/device/listening remain separate gates
+```
+
 Task 011B consumes the projection's exact seven-role identity closure without
 putting catalog identity into the graph. Additive component and binding schema
 versions represent Q21 semitone offsets, receiver-owned rising-edge behavior,

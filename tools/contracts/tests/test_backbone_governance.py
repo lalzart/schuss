@@ -41,7 +41,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["authoritative_decisions"],
         )
         self.assertEqual(
-            "unnumbered-desktop-authoring-performance-local-implementation-awaiting-acceptance",
+            "unnumbered-desktop-build-device-local-implementation-awaiting-acceptance",
             summary["active_product_task"],
         )
         self.assertEqual(
@@ -110,7 +110,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["task_statuses"]["030"],
         )
         self.assertEqual(
-            "unnumbered-desktop-authoring-performance-implemented-locally-publication-build-device-gated",
+            "unnumbered-desktop-build-device-implemented-locally-real-hardware-publication-gated",
             summary["ui_milestone_status"],
         )
 

@@ -7,5 +7,6 @@ persistent Python child loads the exact base context and caches project
 services by explicit workspace.
 
 Only `core:default` is granted. There is no renderer filesystem, shell, HTTP,
-build, device, raw USB, or hardware permission. Bundling and release packaging
-remain disabled.
+build-process, device, raw USB, or hardware permission. The allowlisted session
+requests reach core-owned services inside the persistent Python process;
+bundling and release packaging remain disabled.

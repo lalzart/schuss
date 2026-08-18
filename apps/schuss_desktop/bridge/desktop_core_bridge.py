@@ -19,12 +19,14 @@ from packages.schuss_core.control_plane import (  # noqa: E402
     load_repository_context,
 )
 from packages.schuss_core.project_service import ProjectService  # noqa: E402
+from packages.schuss_core.build_sessions import BuildSessionService  # noqa: E402
+from packages.schuss_core.device_sessions import DeviceSessionService  # noqa: E402
 from tools.contracts import validator_core as core  # noqa: E402
 
 
 RECORD_SET_PATH = (
     REPOSITORY_ROOT
-    / "contracts/record-sets/ui-desktop-patcher-authoring-v1.json"
+    / "contracts/record-sets/ui-desktop-build-device-v1.json"
 )
 ALLOWED_OPERATIONS = {
     "application.describe": (
@@ -51,6 +53,36 @@ ALLOWED_OPERATIONS = {
         "schuss-operation-request-v11",
         "schuss-operation-result-v11",
         False,
+    ),
+    "build.session.start": (
+        "schuss-operation-request-v12",
+        "schuss-operation-result-v12",
+        True,
+    ),
+    "build.session.inspect": (
+        "schuss-operation-request-v12",
+        "schuss-operation-result-v12",
+        True,
+    ),
+    "device.session.discover": (
+        "schuss-operation-request-v12",
+        "schuss-operation-result-v12",
+        True,
+    ),
+    "device.session.inspect": (
+        "schuss-operation-request-v12",
+        "schuss-operation-result-v12",
+        True,
+    ),
+    "device.upload.start": (
+        "schuss-operation-request-v12",
+        "schuss-operation-result-v12",
+        True,
+    ),
+    "device.upload.inspect": (
+        "schuss-operation-request-v12",
+        "schuss-operation-result-v12",
+        True,
     ),
     "graph.inspect": (
         "schuss-operation-request-v1",
@@ -186,6 +218,8 @@ class DesktopCore:
             record_set_path=RECORD_SET_PATH,
         )
         self.services: dict[Path, ProjectService] = {}
+        self.build_sessions = BuildSessionService()
+        self.device_sessions = DeviceSessionService(self.build_sessions)
 
     def service(self, workspace: Path) -> ProjectService:
         normalized = workspace.resolve(strict=False)
@@ -205,6 +239,8 @@ class DesktopCore:
             request,
             self.context,
             project_service=service,
+            build_session_service=self.build_sessions,
+            device_session_service=self.device_sessions,
         )
 
 
@@ -229,7 +265,9 @@ def dispatch_line(line: bytes, desktop: DesktopCore) -> bytes:
             "core result schema does not match the allowlist",
         )
     context = (
-        desktop.service(workspace).context
+        desktop.context
+        if result.get("schema_version") == "schuss-operation-result-v12"
+        else desktop.service(workspace).context
         if workspace is not None
         else desktop.context
     )

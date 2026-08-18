@@ -28,9 +28,13 @@ from .control_plane import (
 )
 
 from .control_plane import aggregate, component, core, device, record_set_rules, target
+from .native_kernel import NativeKernelError, validate_program
 
 
 PROJECT_SCHEMA = "project-v0.schema.json"
+PROJECT_V1_SCHEMA = "project-v1.schema.json"
+PROJECT_OBJECT_SCHEMA = "project-object-definition-v0.schema.json"
+NATIVE_KERNEL_SCHEMA = "native-kernel-v0.schema.json"
 HEAD_SCHEMA = "workspace-head-v0.schema.json"
 WRITE_PLAN_SCHEMA = "project-write-plan-v0.schema.json"
 WRITE_PLAN_V1_SCHEMA = "project-write-plan-v1.schema.json"
@@ -45,6 +49,9 @@ DEFAULT_SEMANTIC_CACHE_SIZE = 8
 
 TASK012A_SCHEMA_NAMES = {
     "project": PROJECT_SCHEMA,
+    "project_v1": PROJECT_V1_SCHEMA,
+    "project_object_definition": PROJECT_OBJECT_SCHEMA,
+    "native_kernel": NATIVE_KERNEL_SCHEMA,
     "workspace_head": HEAD_SCHEMA,
     "project_write_plan": WRITE_PLAN_SCHEMA,
     "project_write_plan_v1": WRITE_PLAN_V1_SCHEMA,
@@ -73,6 +80,7 @@ OWNED_KIND_FIELDS = {
     "dsp-graph": ("graphs", "graph_id"),
     "instrument": ("instruments", "instrument_id"),
     "build-request": ("request", "build_request_id"),
+    "object-definition": ("project_objects", "object_definition_id"),
 }
 
 
@@ -113,6 +121,22 @@ class LoadedProject:
     recovery_status: str
     head_bytes: bytes
     manifest_bytes: bytes
+
+
+@dataclass(frozen=True)
+class ObjectChangeProposal:
+    """Exact non-authoritative bytes prepared for one explicit acceptance."""
+
+    expected_project_reference: dict[str, Any]
+    expected_head_bytes: bytes
+    object_definition: dict[str, Any]
+    graph: dict[str, Any] | None
+    instrument: dict[str, Any] | None
+    build_request: dict[str, Any] | None
+    manifest: dict[str, Any]
+    write_plan: dict[str, Any]
+    immutables: tuple[tuple[str, bytes], ...]
+    head_bytes: bytes
 
 
 def _sha256_bytes(data: bytes) -> str:
@@ -411,6 +435,7 @@ class ProjectService:
             ("records/dsp-graphs", "graph-records"),
             ("records/instruments", "instrument-records"),
             ("records/build-requests", "build-request-records"),
+            ("records/object-definitions", "object-definition-records"),
             ("assets", "assets"),
             (TMP_LOCATOR, "temporary-state"),
             (".schuss/recovery", "recovery-state"),
@@ -605,6 +630,9 @@ class ProjectService:
     def _build_request_locator(self, request_id: str, revision: int) -> str:
         return f"records/build-requests/{request_id}-r{revision:06d}.json"
 
+    def _object_definition_locator(self, object_id: str, revision: int) -> str:
+        return f"records/object-definitions/{object_id}-r{revision:06d}.json"
+
     def _read_schema_value(
         self, locator: str, schema: dict[str, Any]
     ) -> tuple[dict[str, Any], bytes]:
@@ -652,10 +680,45 @@ class ProjectService:
             )
         return value, data
 
+    def _read_project_manifest(
+        self, locator: str
+    ) -> tuple[dict[str, Any], bytes, dict[str, Any]]:
+        """Read one historical project revision using its explicit schema version."""
+
+        path = self._safe_workspace_path(locator)
+        if path.is_symlink() or not path.is_file():
+            raise ProjectError(
+                "PROJECT_GOVERNED_FILE_MISSING",
+                "project revision is missing or is not a regular file",
+                subject=locator,
+            )
+        try:
+            probe = core.load_json_bytes(
+                path.read_bytes(), locator, require_final_lf=True
+            )
+        except ValueError as exc:
+            raise ProjectError(
+                "PROJECT_GOVERNED_FILE_INVALID",
+                str(exc),
+                subject=locator,
+            ) from exc
+        version = probe.get("schema_version") if isinstance(probe, dict) else None
+        schema = {
+            "project-v0": self.context.schemas.get("project"),
+            "project-v1": self.context.schemas.get("project_v1"),
+        }.get(version)
+        if not isinstance(schema, dict):
+            raise ProjectError(
+                "PROJECT_SCHEMA_UNAVAILABLE",
+                f"project schema {version!r} is unavailable",
+                subject=locator,
+            )
+        value, data = self._read_schema_value(locator, schema)
+        return value, data, schema
+
     def _load_project_history(
         self, head: dict[str, Any]
     ) -> tuple[list[dict[str, Any]], list[bytes], set[str]]:
-        schema = self.context.schemas["project"]
         reference = head["accepted_project_reference"]
         expected_locator = self._project_manifest_locator(
             reference["project_id"], reference["revision"]
@@ -672,7 +735,7 @@ class ProjectService:
         expected_reference = copy.deepcopy(reference)
         for revision in range(reference["revision"], 0, -1):
             locator = self._project_manifest_locator(reference["project_id"], revision)
-            manifest, data = self._read_schema_value(locator, schema)
+            manifest, data, schema = self._read_project_manifest(locator)
             if manifest["content_hash"] != core.record_content_hash(manifest, schema):
                 raise ProjectError(
                     "PROJECT_CONTENT_HASH_MISMATCH",
@@ -873,6 +936,330 @@ class ProjectService:
                 self._cache_metrics["semantic_evictions"] += 1
         return context, validation
 
+    @staticmethod
+    def _exact_reference(record: dict[str, Any], id_field: str) -> dict[str, Any]:
+        return {
+            id_field: record[id_field],
+            "revision": record["revision"],
+            "content_hash": record["content_hash"],
+        }
+
+    def _project_object_closure(
+        self,
+        base_context: OperationContext,
+        project_records: dict[str, tuple[dict[str, Any], ...]],
+    ) -> tuple[
+        tuple[dict[str, Any], ...],
+        tuple[dict[str, Any], ...],
+        tuple[dict[str, Any], ...],
+        tuple[dict[str, Any], ...],
+    ]:
+        """Validate and unpack project-local object definitions for domain checks."""
+
+        contracts: list[dict[str, Any]] = []
+        bindings: list[dict[str, Any]] = []
+        graphs: list[dict[str, Any]] = []
+        family_references: list[dict[str, Any]] = []
+        object_schema = base_context.schemas.get("project_object_definition")
+        kernel_schema = base_context.schemas.get("native_kernel")
+        object_definitions = project_records.get("object-definition", ())
+        if object_definitions and not isinstance(object_schema, dict):
+            raise ProjectError(
+                "PROJECT_OWNED_SCHEMA_UNAVAILABLE",
+                "project-local object schema is unavailable from the immutable base",
+                subject="project-object-definition-v0",
+            )
+        assert object_schema is not None or not object_definitions
+
+        occupied_contracts = {
+            (item["component_contract_id"], item["revision"]): item["content_hash"]
+            for item in base_context.records["contracts"]
+        }
+        occupied_bindings = {
+            (item["implementation_id"], item["revision"]): item["content_hash"]
+            for item in base_context.records["bindings"]
+        }
+        occupied_graphs = {
+            (item["graph_id"], item["revision"]): item["content_hash"]
+            for item in (*base_context.records["graphs"], *project_records["dsp-graph"])
+        }
+        occupied_families = {
+            (item["family_id"], item["revision"]): item["content_hash"]
+            for item in base_context.records["families"]
+        }
+        if base_context.catalog_projection is not None:
+            for item in base_context.catalog_projection["families"]:
+                reference = item["family_reference"]
+                occupied_families.setdefault(
+                    (reference["family_id"], reference["revision"]),
+                    reference["content_hash"],
+                )
+        occupied_objects: dict[tuple[str, int], str] = {}
+        occupied_kernels: dict[tuple[str, int], str] = {}
+
+        def admit(
+            registry: dict[tuple[str, int], str],
+            key: tuple[str, int],
+            content_hash: str,
+            kind: str,
+        ) -> None:
+            prior = registry.get(key)
+            if prior is not None:
+                raise ProjectError(
+                    "PROJECT_OBJECT_IDENTITY_COLLISION",
+                    f"project-local {kind} identity collides with the accepted closure",
+                    subject=key[0],
+                )
+            registry[key] = content_hash
+
+        for definition in object_definitions:
+            assert object_schema is not None
+            admit(
+                occupied_objects,
+                (
+                    definition["object_definition_id"],
+                    definition["revision"],
+                ),
+                definition["content_hash"],
+                "object definition",
+            )
+            family = definition["family"]
+            family_schema = copy.deepcopy(object_schema["properties"]["family"])
+            family_schema["$defs"] = copy.deepcopy(object_schema.get("$defs", {}))
+            if family["content_hash"] != core.record_content_hash(family, family_schema):
+                raise ProjectError(
+                    "PROJECT_OBJECT_FAMILY_HASH_MISMATCH",
+                    "project-local family reference hash is stale",
+                    subject=family["family_id"],
+                )
+            family_key = (family["family_id"], family["revision"])
+            admit(occupied_families, family_key, family["content_hash"], "family")
+            family_reference = {
+                "family_id": family["family_id"],
+                "revision": family["revision"],
+                "content_hash": family["content_hash"],
+            }
+            family_references.append(family_reference)
+
+            contract = definition["component_contract"]
+            contract_schema = base_context.schemas["contract_versions"].get(
+                contract.get("schema_version")
+            )
+            if contract_schema is None:
+                raise ProjectError(
+                    "PROJECT_OBJECT_CONTRACT_SCHEMA_UNAVAILABLE",
+                    "project-local component contract schema is unavailable",
+                    subject=contract.get("schema_version", "unknown"),
+                )
+            contract_errors = core.schema_errors(
+                contract, contract_schema, contract_schema
+            )
+            if (
+                contract_errors
+                or contract
+                != core.canonicalize_with_schema(
+                    contract, contract_schema, contract_schema
+                )
+                or contract["content_hash"]
+                != core.record_content_hash(contract, contract_schema)
+                or contract["family_reference"] != family_reference
+            ):
+                raise ProjectError(
+                    "PROJECT_OBJECT_CONTRACT_INVALID",
+                    "; ".join(contract_errors)
+                    if contract_errors
+                    else "component contract hash or family reference is stale",
+                    subject=contract["component_contract_id"],
+                )
+            admit(
+                occupied_contracts,
+                (contract["component_contract_id"], contract["revision"]),
+                contract["content_hash"],
+                "component contract",
+            )
+
+            binding = definition["implementation_binding"]
+            binding_schema = base_context.schemas["binding_versions"].get(
+                binding.get("schema_version")
+            )
+            binding_errors = (
+                ["binding schema is unavailable"]
+                if binding_schema is None
+                else core.schema_errors(binding, binding_schema, binding_schema)
+            )
+            contract_reference = self._exact_reference(
+                contract, "component_contract_id"
+            )
+            if (
+                binding_schema is None
+                or binding_errors
+                or binding
+                != core.canonicalize_with_schema(
+                    binding, binding_schema, binding_schema
+                )
+                or binding["content_hash"]
+                != core.record_content_hash(binding, binding_schema)
+                or binding["contract_reference"] != contract_reference
+            ):
+                raise ProjectError(
+                    "PROJECT_OBJECT_BINDING_INVALID",
+                    "; ".join(binding_errors)
+                    if binding_errors
+                    else "implementation binding hash or contract reference is stale",
+                    subject=binding["implementation_id"],
+                )
+            admit(
+                occupied_bindings,
+                (binding["implementation_id"], binding["revision"]),
+                binding["content_hash"],
+                "implementation binding",
+            )
+
+            realization = definition["realization"]
+            if realization["form"] == "transparent-compound":
+                graph = realization["graph"]
+                graph_schema = base_context.schemas["graph"]
+                graph_errors = core.schema_errors(graph, graph_schema, graph_schema)
+                graph_reference = self._exact_reference(graph, "graph_id")
+                if (
+                    graph_errors
+                    or graph
+                    != core.canonicalize_with_schema(
+                        graph, graph_schema, graph_schema
+                    )
+                    or graph["content_hash"]
+                    != core.record_content_hash(graph, graph_schema)
+                    or binding["realization"]
+                    != {
+                        "form": "transparent-compound",
+                        "graph_reference": graph_reference,
+                    }
+                ):
+                    raise ProjectError(
+                        "PROJECT_OBJECT_GRAPH_INVALID",
+                        "; ".join(graph_errors)
+                        if graph_errors
+                        else "compound graph hash or binding reference is stale",
+                        subject=graph["graph_id"],
+                    )
+                admit(
+                    occupied_graphs,
+                    (graph["graph_id"], graph["revision"]),
+                    graph["content_hash"],
+                    "compound graph",
+                )
+                graphs.append(copy.deepcopy(graph))
+            else:
+                kernel = realization["kernel"]
+                if not isinstance(kernel_schema, dict):
+                    raise ProjectError(
+                        "PROJECT_OBJECT_KERNEL_SCHEMA_UNAVAILABLE",
+                        "native-kernel schema is unavailable",
+                        subject=kernel.get("native_kernel_id", "unknown"),
+                    )
+                kernel_errors = core.schema_errors(
+                    kernel, kernel_schema, kernel_schema
+                )
+                kernel_reference = self._exact_reference(
+                    kernel, "native_kernel_id"
+                )
+                if (
+                    kernel_errors
+                    or kernel
+                    != core.canonicalize_with_schema(
+                        kernel, kernel_schema, kernel_schema
+                    )
+                    or kernel["content_hash"]
+                    != core.record_content_hash(kernel, kernel_schema)
+                    or binding["realization"].get("form") != "native-kernel"
+                    or binding["realization"].get("kernel_reference")
+                    != kernel_reference
+                ):
+                    raise ProjectError(
+                        "PROJECT_OBJECT_KERNEL_INVALID",
+                        "; ".join(kernel_errors)
+                        if kernel_errors
+                        else "native kernel hash or binding reference is stale",
+                        subject=kernel["native_kernel_id"],
+                    )
+                parameter_interface: list[dict[str, Any]] = []
+                for index, parameter in enumerate(contract["parameters"]):
+                    domain = parameter["domain"]
+                    if domain.get("status") != "known":
+                        raise ProjectError(
+                            "PROJECT_OBJECT_KERNEL_INVALID",
+                            "native-kernel parameters require exact known domains",
+                            subject=kernel["native_kernel_id"],
+                            location=(
+                                "$.component_contract.parameters"
+                                f"[{index}].domain"
+                            ),
+                        )
+                    parameter_interface.append(
+                        {
+                            "key": parameter["semantic_key"],
+                            "minimum": domain["minimum"],
+                            "maximum": domain["maximum"],
+                            "default": parameter["default"],
+                        }
+                    )
+                try:
+                    validate_program(
+                        kernel,
+                        {
+                            "ports": [
+                                {
+                                    "key": port["semantic_key"],
+                                    "direction": port["direction"],
+                                }
+                                for port in contract["ports"]
+                            ],
+                            "parameters": parameter_interface,
+                        },
+                    )
+                except NativeKernelError as exc:
+                    raise ProjectError(
+                        "PROJECT_OBJECT_KERNEL_INVALID",
+                        str(exc),
+                        subject=kernel["native_kernel_id"],
+                        location=f"$.realization.kernel{exc.location.removeprefix('$')}",
+                    ) from exc
+                admit(
+                    occupied_kernels,
+                    (kernel["native_kernel_id"], kernel["revision"]),
+                    kernel["content_hash"],
+                    "native kernel",
+                )
+            host_evaluation = definition["evidence"]["host_evaluation"]
+            if definition["evidence"]["structural"] != "passed" or (
+                realization["form"] == "transparent-compound"
+                and host_evaluation["status"] != "not-applicable"
+            ) or (
+                realization["form"] == "native-kernel"
+                and (
+                    host_evaluation["status"] not in {"not-run", "passed"}
+                    or (
+                        host_evaluation["status"] == "passed"
+                        and host_evaluation["kernel_content_hash"]
+                        != realization["kernel"]["content_hash"]
+                    )
+                )
+            ):
+                raise ProjectError(
+                    "PROJECT_OBJECT_EVIDENCE_INVALID",
+                    "project-local object evidence disagrees with its realization",
+                    subject=definition["object_definition_id"],
+                )
+            contracts.append(copy.deepcopy(contract))
+            bindings.append(copy.deepcopy(binding))
+
+        return (
+            tuple(contracts),
+            tuple(bindings),
+            tuple(graphs),
+            tuple(family_references),
+        )
+
     def _augment_context_uncached(
         self,
         base_context: OperationContext,
@@ -894,8 +1281,17 @@ class ProjectService:
                 "device_instrument_status": base_context.device_summary["status"],
                 "target_backend_build_status": base_context.task007_summary["status"],
             }
+        object_contracts, object_bindings, object_graphs, object_families = (
+            self._project_object_closure(base_context, project_records)
+        )
         context = base_context.with_records(
-            graphs=(*base_context.records["graphs"], *project_records["dsp-graph"]),
+            contracts=(*base_context.records["contracts"], *object_contracts),
+            bindings=(*base_context.records["bindings"], *object_bindings),
+            graphs=(
+                *base_context.records["graphs"],
+                *project_records["dsp-graph"],
+                *object_graphs,
+            ),
             instruments=(
                 *base_context.records["instruments"],
                 *project_records["instrument"],
@@ -932,6 +1328,7 @@ class ProjectService:
                 if item["implementation_id"] in bound_ids
                 and item["implementation_id"] not in overlay_ids
             ]
+        additional_family_references.extend(copy.deepcopy(object_families))
         component_result = component.validate_component_graph_values(
             list(copy.deepcopy(context.records["families"])),
             list(copy.deepcopy(context.records["contracts"])),
@@ -1027,6 +1424,9 @@ class ProjectService:
             component_summary=copy.deepcopy(component_result.summary),
             task006_summary=copy.deepcopy(task006_summary),
             task007_summary=copy.deepcopy(target_result.summary),
+            additional_family_references=tuple(
+                copy.deepcopy(additional_family_references)
+            ),
         )
         validation = {
             "status": "valid",
@@ -1035,6 +1435,9 @@ class ProjectService:
             "graph_count": len(context.records["graphs"]),
             "instrument_count": len(context.records["instruments"]),
             "build_request_count": len(context.records["request"]),
+            "object_definition_count": len(
+                project_records.get("object-definition", ())
+            ),
             "component_graph_status": component_result.summary["status"],
             "device_instrument_status": device_summary["status"],
             "target_backend_build_status": target_result.summary["status"],
@@ -2135,6 +2538,326 @@ class ProjectService:
                 "graph_transaction_result": graph_result,
                 "validation": successor.validation,
                 "write_plan": plan,
+                "persistence_status": "written",
+                "acceptance_boundary": "workspace-head-replaced",
+            }
+        finally:
+            if locked:
+                try:
+                    self._release_lock()
+                except Exception:
+                    if completed:
+                        raise
+
+    def preview_object_change(
+        self,
+        object_definition: dict[str, Any],
+        graph_node: dict[str, Any] | None,
+    ) -> ObjectChangeProposal:
+        """Prepare exact project/object bytes without writing governed state."""
+
+        loaded = self.load()
+        object_schema = loaded.context.schemas.get("project_object_definition")
+        project_schema = loaded.context.schemas.get("project_v1")
+        if not isinstance(object_schema, dict) or not isinstance(project_schema, dict):
+            raise ProjectError(
+                "PROJECT_OBJECT_SCHEMA_UNAVAILABLE",
+                "the immutable project base does not include AI object authoring schemas",
+            )
+        object_bytes = _schema_value_bytes(object_definition, object_schema)
+        if (
+            object_definition
+            != core.canonicalize_with_schema(
+                object_definition, object_schema, object_schema
+            )
+            or object_definition["content_hash"]
+            != core.record_content_hash(object_definition, object_schema)
+        ):
+            raise ProjectError(
+                "PROJECT_OBJECT_CONTENT_HASH_MISMATCH",
+                "project-local object bytes are noncanonical or their semantic hash is stale",
+                subject=object_definition.get(
+                    "object_definition_id", "project-object-definition"
+                ),
+            )
+        object_locator = self._object_definition_locator(
+            object_definition["object_definition_id"],
+            object_definition["revision"],
+        )
+        object_member = self._owned_member(
+            "object-definition",
+            object_definition["object_definition_id"],
+            object_definition,
+            object_locator,
+            object_bytes,
+        )
+
+        base_context, base_loaded = self._load_base(
+            loaded.manifest["base_record_set"]
+        )
+        proposed_records = {
+            kind: tuple(values) for kind, values in loaded.project_records.items()
+        }
+        proposed_records["object-definition"] = (
+            *proposed_records["object-definition"],
+            copy.deepcopy(object_definition),
+        )
+        authoring_context, _ = self._augment_context(
+            base_context, proposed_records, base_loaded
+        )
+
+        successor_graph: dict[str, Any] | None = None
+        successor_instrument: dict[str, Any] | None = None
+        successor_request: dict[str, Any] | None = None
+        semantic_immutables: list[tuple[str, bytes]] = [
+            (object_locator, object_bytes)
+        ]
+        new_members = [object_member]
+        if graph_node is not None:
+            graph = self._exact_match(
+                authoring_context.records["graphs"],
+                loaded.manifest["primary_graph_reference"],
+                "graph_id",
+            )
+            if graph is None:
+                raise ProjectError(
+                    "PROJECT_PRIMARY_GRAPH_UNRESOLVED",
+                    "the accepted primary graph is unresolved for object insertion",
+                )
+            if (
+                len(loaded.manifest["instrument_references"]) != 1
+                or len(loaded.manifest["build_request_references"]) != 1
+            ):
+                raise ProjectError(
+                    "PROJECT_PROFILE_SELECTION_INVALID",
+                    "object insertion requires one selected instrument and build request",
+                )
+            instrument = self._exact_match(
+                authoring_context.records["instruments"],
+                loaded.manifest["instrument_references"][0],
+                "instrument_id",
+            )
+            request = self._exact_match(
+                authoring_context.records["request"],
+                loaded.manifest["build_request_references"][0],
+                "build_request_id",
+            )
+            if instrument is None or request is None:
+                raise ProjectError(
+                    "PROJECT_PROFILE_SELECTION_UNRESOLVED",
+                    "selected instrument or build request is unresolved",
+                )
+            selected_members = {
+                _member_revision_key(item) for item in loaded.manifest["owned_members"]
+            }
+            if not {
+                ("dsp-graph", graph["graph_id"], graph["revision"]),
+                ("instrument", instrument["instrument_id"], instrument["revision"]),
+                ("build-request", request["build_request_id"], request["revision"]),
+            } <= selected_members:
+                raise ProjectError(
+                    "PROJECT_PROFILE_SELECTION_NOT_OWNED",
+                    "object insertion can version only the selected project-owned profile",
+                    status="conflict",
+                )
+            graph_result = transact_graph_payload(
+                {
+                    "graph_reference": _graph_reference(graph),
+                    "base_content_hash": graph["content_hash"],
+                    "edits": [{"edit": "add-node", "node": copy.deepcopy(graph_node)}],
+                },
+                authoring_context,
+            )
+            if graph_result["status"] != "success":
+                raise ProjectTransactionRejected(graph_result)
+            successor_graph = graph_result["value"]["proposed_graph"]
+            graph_schema = authoring_context.schemas["graph"]
+            graph_bytes = _schema_value_bytes(successor_graph, graph_schema)
+            graph_locator = self._graph_locator(
+                successor_graph["graph_id"], successor_graph["revision"]
+            )
+
+            successor_instrument = copy.deepcopy(instrument)
+            successor_instrument["revision"] += 1
+            successor_instrument["content_hash"] = "sha256:" + "0" * 64
+            successor_instrument["graph_reference"] = {
+                "status": "resolved",
+                **_graph_reference(successor_graph),
+            }
+            instrument_schema = authoring_context.schemas["instrument"]
+            successor_instrument["content_hash"] = core.record_content_hash(
+                successor_instrument, instrument_schema
+            )
+            instrument_bytes = _schema_value_bytes(
+                successor_instrument, instrument_schema
+            )
+            instrument_locator = self._instrument_locator(
+                successor_instrument["instrument_id"],
+                successor_instrument["revision"],
+            )
+
+            successor_request = copy.deepcopy(request)
+            successor_request["revision"] += 1
+            successor_request["content_hash"] = "sha256:" + "0" * 64
+            successor_request["graph_reference"] = _graph_reference(successor_graph)
+            successor_request["instrument_reference"] = {
+                "status": "included",
+                **_instrument_reference(successor_instrument),
+            }
+            request_schema = authoring_context.schemas["request"]
+            successor_request["content_hash"] = core.record_content_hash(
+                successor_request, request_schema
+            )
+            request_bytes = _schema_value_bytes(successor_request, request_schema)
+            request_locator = self._build_request_locator(
+                successor_request["build_request_id"], successor_request["revision"]
+            )
+
+            new_members.extend(
+                [
+                    self._owned_successor_member(
+                        "dsp-graph",
+                        successor_graph["graph_id"],
+                        successor_graph,
+                        graph_locator,
+                        graph_bytes,
+                        graph,
+                    ),
+                    self._owned_successor_member(
+                        "instrument",
+                        successor_instrument["instrument_id"],
+                        successor_instrument,
+                        instrument_locator,
+                        instrument_bytes,
+                        instrument,
+                    ),
+                    self._owned_successor_member(
+                        "build-request",
+                        successor_request["build_request_id"],
+                        successor_request,
+                        request_locator,
+                        request_bytes,
+                        request,
+                    ),
+                ]
+            )
+            semantic_immutables.extend(
+                [
+                    (graph_locator, graph_bytes),
+                    (instrument_locator, instrument_bytes),
+                    (request_locator, request_bytes),
+                ]
+            )
+            proposed_records["dsp-graph"] = (
+                *proposed_records["dsp-graph"],
+                successor_graph,
+            )
+            proposed_records["instrument"] = (
+                *proposed_records["instrument"],
+                successor_instrument,
+            )
+            proposed_records["build-request"] = (
+                *proposed_records["build-request"],
+                successor_request,
+            )
+
+        manifest = copy.deepcopy(loaded.manifest)
+        manifest["schema_version"] = "project-v1"
+        manifest["revision"] += 1
+        manifest["parent_reference"] = {
+            "status": "included",
+            **_project_reference(loaded.manifest),
+        }
+        manifest["owned_members"].extend(new_members)
+        manifest["owned_members"].sort(key=core.canonical_json)
+        if successor_graph is not None:
+            assert successor_instrument is not None and successor_request is not None
+            manifest["primary_graph_reference"] = _graph_reference(successor_graph)
+            manifest["instrument_references"] = [
+                _instrument_reference(successor_instrument)
+            ]
+            manifest["build_request_references"] = [
+                _build_request_reference(successor_request)
+            ]
+        manifest["content_hash"] = "sha256:" + "0" * 64
+        manifest["content_hash"] = core.record_content_hash(manifest, project_schema)
+        manifest_bytes = _schema_value_bytes(manifest, project_schema)
+        manifest_locator = self._project_manifest_locator(
+            manifest["project_id"], manifest["revision"]
+        )
+        head = {
+            "schema_version": "workspace-head-v0",
+            "canonical_profile": "schuss-canonical-json-v1",
+            "accepted_project_reference": _project_reference(manifest),
+            "project_manifest_locator": manifest_locator,
+            "project_manifest_byte_sha256": _sha256_bytes(manifest_bytes),
+        }
+        head_bytes = _schema_value_bytes(
+            head, authoring_context.schemas["workspace_head"]
+        )
+
+        final_context, _ = self._augment_context(
+            base_context, proposed_records, base_loaded
+        )
+        self._validate_selected_references(manifest, final_context)
+        plan, immutables = self._build_multi_write_plan(
+            loaded,
+            semantic_immutables,
+            manifest,
+            manifest_locator,
+            manifest_bytes,
+            head_bytes,
+        )
+        return ObjectChangeProposal(
+            expected_project_reference=_project_reference(loaded.manifest),
+            expected_head_bytes=loaded.head_bytes,
+            object_definition=copy.deepcopy(object_definition),
+            graph=copy.deepcopy(successor_graph),
+            instrument=copy.deepcopy(successor_instrument),
+            build_request=copy.deepcopy(successor_request),
+            manifest=copy.deepcopy(manifest),
+            write_plan=copy.deepcopy(plan),
+            immutables=tuple((locator, bytes(data)) for locator, data in immutables),
+            head_bytes=bytes(head_bytes),
+        )
+
+    def accept_object_change(
+        self, proposal: ObjectChangeProposal
+    ) -> dict[str, Any]:
+        """Atomically accept one unchanged exact project-object proposal."""
+
+        locked = False
+        completed = False
+        try:
+            self._acquire_lock()
+            locked = True
+            loaded = self.load(recover=False)
+            if (
+                _project_reference(loaded.manifest)
+                != proposal.expected_project_reference
+                or loaded.head_bytes != proposal.expected_head_bytes
+            ):
+                raise ProjectError(
+                    "PROJECT_REVISION_STALE",
+                    "object preview expected a different accepted project revision",
+                    status="conflict",
+                )
+            successor = self._publish_multi_write_plan(
+                loaded,
+                proposal.write_plan,
+                list(proposal.immutables),
+                proposal.manifest,
+                proposal.head_bytes,
+            )
+            completed = True
+            return {
+                "project": successor.manifest,
+                "object_definition": copy.deepcopy(proposal.object_definition),
+                "graph": copy.deepcopy(proposal.graph),
+                "instrument": copy.deepcopy(proposal.instrument),
+                "build_request": copy.deepcopy(proposal.build_request),
+                "validation": successor.validation,
+                "write_plan": copy.deepcopy(proposal.write_plan),
                 "persistence_status": "written",
                 "acceptance_boundary": "workspace-head-replaced",
             }
