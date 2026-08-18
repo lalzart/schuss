@@ -67,8 +67,12 @@ for exact record set `schuss-record-set-000023@1`: all 56 exactly attributed
 Mutable-derived entries are catalogued as individual implementation objects
 across 107 function-first families. CLI v3 adds shared `catalog objects`
 discovery; all 50 additions remain catalogued-only and unresolved.
-UI architecture is eligible as a separate unnumbered planning lane but has not
-started; UI implementation remains separately gated.
+The explicitly authorized unnumbered desktop lane is locally complete through
+its authoring-performance slice. `apps/schuss_desktop/` is the sole maintained
+React/Tauri product UI: it combines object browsing with project-backed node
+patching over the shared operation layer. Build execution, USB/device
+communication, packaging, remote publication, real-time/resource evidence,
+and audible evidence remain separate gates.
 
 The reviewed Task 017 core remains structurally useful but not yet generally
 executable. Its two full-panel successors retain stable unsupported
@@ -107,6 +111,11 @@ and audible proof also remain `not-run` and require new authorization.
   completed source-evidenced inspection layer with zero completed machines.
 - [Task 030 contract](docs/tasks/030-complete-mutable-catalog-and-object-cli.md):
   completed exact Mutable-derived catalog cohort and implementation-object CLI.
+- [Desktop patcher contract](docs/tasks/ui-desktop-patcher-authoring.md):
+  consolidated object browsing and project-backed graph authoring in the one
+  maintained desktop product UI.
+- [Desktop performance contract](docs/tasks/ui-desktop-authoring-performance.md):
+  bounded exact-context reuse, semantic caching, and recoverable editor states.
 - [Decision log](docs/decisions/README.md): accepted and superseded choices.
 - [Development history](docs/HISTORY.md): concise completed-work index and Git
   retrieval instructions.
@@ -189,7 +198,7 @@ hardware.
 | `packages/schuss_core/` | Shared headless operations, project, compiler, and execution services |
 | `tools/` | Read-only validators plus explicitly gated generators/runners |
 | `legacy/ksoloti-bridge/` | Isolated Ksoloti Java compatibility backend |
-| `apps/` | Future clients of the shared headless model |
+| `apps/` | Desktop product client plus bounded evidence/reference clients of the shared headless model |
 
 No license has been selected for Schuss. Upstream licenses remain independent
 and must not be inferred from repository or catalog placement.

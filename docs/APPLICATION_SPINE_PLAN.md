@@ -9,8 +9,9 @@ evidence. Task 026 then accepted a separate reverb-free seven-node executable
 profile and completed the client-neutral authoring flow through local level 5.
 Task 027 completed its bounded Mutable-related catalog provenance review at
 levels 1-2. Task 028 completed its bounded twenty-item direct palette at levels
-1-3; transparent compounds remain deferred. The unnumbered UI-architecture milestone is eligible
-but not started.
+1-3; transparent compounds remain deferred. The explicitly authorized
+unnumbered UI lane is complete locally through the consolidated desktop
+patcher and its bounded authoring-performance slice.
 
 ## Goal
 
@@ -50,7 +51,9 @@ before offline catalog, compiler, CLI, or UI-architecture development.
   deliberately hides some implemented commands from the accepted root help and
   completion surfaces. `gills.inspect` has a shared operation but no equivalent
   ordinary product command.
-- No desktop application is implemented.
+- One maintained Tauri/React desktop application consumes the shared catalog,
+  graph, and project operations. It has no build-session, USB/device, or
+  hardware authority.
 
 ## Numbered application-spine tasks
 
@@ -194,32 +197,34 @@ real-time, and audible gates; neither changes the twenty-item palette.
 
 ### UI architecture
 
-UI architecture is explicitly authorized now. It may begin after the Task 023
-contract fixes the application capability boundary and may overlap Task 024.
-It owns:
+UI architecture is explicitly authorized now. That retained authorization
+statement opened the lane after Task 023; the accepted boundary now supports
+the locally implemented desktop patcher. It owns:
 
 - client shell and transport evaluation;
 - semantic state versus UI-only selection/layout/zoom state;
 - object drawer, transparent graph canvas, inspector, project, build,
   diagnostics, and evidence information architecture;
-- wireframes and fixture-driven interaction prototypes;
+- operation-backed interaction design and presentation state;
 - accessibility, recovery, packaging, and performance constraints; and
 - a bounded technical spike against canonical operation fixtures.
 
-It does not own catalog classification, graph edits, project persistence,
-compiler/build behavior, device evidence, or production UI implementation.
-It does not revive Task 012B.
+It does not own catalog classification, compiler/build behavior, device
+evidence, or semantic persistence outside the shared operations. It does not
+revive Task 012B.
 
 ### UI vertical slice
 
-UI implementation remains separately gated. When authorized after the
-completed Tasks 025-026, accepted UI architecture, and a future explicit
-session/job/diagnostics gate, the first vertical slice should browse by
-function, place and connect exact components, inspect parameters and
-transparent internals, save/reopen a project, and present build progress and
-structured diagnostics. It must match the CLI/shared-operation fixtures and
-initially performs no device upload. Task 027 catalog completion does not
-satisfy the deferred orchestration gate.
+The original plan stated: UI implementation remains separately gated. That
+gate was later opened only by explicit user authorization for the bounded
+desktop slices described below.
+
+The first explicitly authorized vertical slice is complete locally: browse by
+function, inspect exact contracts, create/open/save projects, place and connect
+exact components, and present immutable history/revert through the shared
+operations. Build progress, structured background jobs, packaging, and every
+USB/device action remain separately gated. Catalog completion does not satisfy
+those deferred orchestration and device gates.
 
 ## Subtask identifiers
 
@@ -249,9 +254,9 @@ Task 023
   |-- Task 024 -- Task 025 -- Task 026 -- Task 027 -- Task 028 (complete)
   |                     |                         |
   |                     `------------------------- semantic dependencies
-  `-- UI architecture
+  `-- UI architecture -- desktop patcher (complete locally)
 
-Tasks 025 + 026 + UI architecture + future session/job gate -> gated UI vertical slice
+Desktop patcher + future session/job gate -> gated build/diagnostic UI
 ```
 
 Useful parallel windows are intentionally bounded:
@@ -268,10 +273,9 @@ Useful parallel windows are intentionally bounded:
 4. ADR 0015 retargeted Task 027 to catalog provenance; it is now complete.
    Task 028's bounded twenty-item palette is now complete; transparent
    compound work remains deferred without a numbered lane.
-5. The UI vertical slice still requires Tasks 025-026, accepted UI architecture,
-   and a future explicit session/job/diagnostics gate. Task 027 catalog
-   completion does not satisfy that deferred orchestration dependency.
-   Fixture-only UI prototyping may occur earlier but cannot become production
+5. The desktop patcher is complete locally. Build/session/diagnostic UI still
+   requires a future explicit session/job contract, and device communication
+   requires its own bounded authorization. Neither may become client-owned
    semantics or persistence.
 
 The default concurrency ceiling is two implementation lanes plus one
@@ -299,13 +303,15 @@ separate output namespaces.
 ## Activation and approval rules
 
 - This plan did not itself start Task 023 or create any numbered task contract.
-- Tasks 023-030 are accepted complete. The eligible UI-architecture planning
-  lane remains unstarted; no numbered implementation task is active.
+- Tasks 023-030 are accepted complete. The unnumbered desktop patcher and
+  authoring-performance slices are complete locally; no numbered
+  implementation task is active.
 - The original Task 027 sessions/jobs/diagnostics outcome is deferred without
   a replacement task number under ADR 0015.
 - Each numbered task requires a complete contract before implementation.
 - Completion of one task does not automatically authorize the next.
-- UI architecture planning is authorized; UI implementation remains gated.
+- Later build/session/device UI remains gated beyond the accepted desktop
+  authoring boundary.
 - Tasks 019 and 020 remain deferred.
 - A new hardware diagnostic or connected-device action requires its own exact
   task boundary and explicit approval.
