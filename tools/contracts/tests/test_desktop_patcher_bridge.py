@@ -74,7 +74,7 @@ class DesktopPatcherBridgeTest(unittest.TestCase):
             "payload": {},
         }
         projects_without_root = {
-            "schema_version": "schuss-operation-request-v14",
+            "schema_version": "schuss-operation-request-v15",
             "canonical_profile": "schuss-canonical-json-v1",
             "operation": "workspace.projects.list",
             "payload": {},
@@ -126,7 +126,7 @@ class DesktopPatcherBridgeTest(unittest.TestCase):
                 "portable_locator": "contracts/record-sets/ui-desktop-build-device-v1.json",
             }
             workspace_create = {
-                "schema_version": "schuss-operation-request-v14",
+                "schema_version": "schuss-operation-request-v15",
                 "canonical_profile": "schuss-canonical-json-v1",
                 "operation": "workspace.project.create",
                 "payload": {"display_name": "Bridge patch"},
@@ -177,7 +177,7 @@ class DesktopPatcherBridgeTest(unittest.TestCase):
         capabilities = {
             item["operation"]: item for item in results[6]["value"]["operations"]
         }
-        self.assertEqual(37, len(capabilities))
+        self.assertEqual(43, len(capabilities))
         self.assertEqual(
             "requires-project-workspace",
             capabilities["authoring.draft.create"]["availability"],

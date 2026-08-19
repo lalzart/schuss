@@ -44,6 +44,7 @@ ID_FIELDS = (
     "panel_layout_id",
     "palette_lowering_proof_id",
     "selection_packet_id",
+    "third_party_source_lock_id",
     "prerequisite_environment_id",
     "procedure_id",
     "resource_report_id",

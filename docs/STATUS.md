@@ -425,10 +425,10 @@ draft/evaluate/preview/accept, catalog promotion, compiler, build execution,
 USB, upload, or hardware action is added by this slice.
 
 The explicitly authorized unnumbered desktop workspace-shell successor is
-active locally for exact schema-only record set `schuss-record-set-000027@1`,
-parented by `000026`. Additive v14 exposes only
+active locally for exact schema-only record set `schuss-record-set-000028@1`,
+parented by Task 031 record set `000027`. Additive v15 exposes only
 `workspace.projects.list` and `workspace.project.create`; application
-capability v7 describes thirty-seven shared operations. The core validates a
+capability v8 describes forty-three shared operations. The core validates a
 bounded set of direct project children, rejects symlinks, escaping paths,
 duplicate project IDs, and malformed projects, and owns collision-safe stable
 ID/path allocation plus atomic template-backed creation. The renderer stores
@@ -442,7 +442,7 @@ projection, All catalog retains the complete 133-item implementation view, and
 form/readiness/provenance/evidence detail expands in the drawer. One Add action
 performs exact contract resolution and then emits only the existing unsaved
 `add-node` edit. New Patch asks only for a name, reopens the last valid project,
-and creates one valid Untitled starter through v14 when a configured root is
+and creates one valid Untitled starter through v15 when a configured root is
 empty.
 
 The native shell now spawns its persistent Python core during application
@@ -466,6 +466,60 @@ generated-output freshness assertion. No desktop workspace-shell, project,
 bridge, governance, renderer, or current-record test failed. No build
 execution, USB, upload, hardware, package, Git publication, or audible action
 was performed by this successor.
+
+The explicitly authorized Task 031 parent and serialized Tasks 031A-031D are
+implemented locally for exact record set `schuss-record-set-000027@1`, content
+hash `sha256:6b54936e301b18374b13bb178bfe683cb525b0d8ae9ed89e20d62e682616bb18`,
+parented by the sonic-authoring set `000026`. The additive closure contains 455
+members and 34 Task 031 semantic records: the desktop host target/backend and
+request, two build environments, a pinned private JUCE source lock, seven
+revision-1 host binding candidates, seven revision-2 eligible successors,
+seven eligibility companions, and seven earlier structural claims. Operation
+v14 and capability v7 add exactly six client-neutral render/device/session
+operations to the prior thirty-five-operation registry. The pre-existing local
+workspace shell was advanced without behavior changes to v15/v8 and successor
+record set `000028`, content hash
+`sha256:f883bc214c859a758883768cef06d97b8de19b6f62c2908c0fa4758b5a2756a5`.
+
+`packages/schuss_rt/` is a JUCE-independent C++17 library with a closed package
+parser, fixed-Q27 implementations for the exact seven-node Task 026 profile,
+preallocated state/buffers/events, deterministic reset/scheduling, and an
+instrumented allocation-free processing path. The desktop-host frontend lowers
+the exact saved reference project to derived, non-authoritative package hash
+`sha256:a18ee43608514571768e636f8e8600d0cb38b4109b86f789451160233bc7fc70`.
+Four renderer block sizes reproduce the same 48,000-frame stereo WAV: 192,044
+bytes with SHA-256
+`ae2b8eff76d079b85c74f4d33d555699f8812cb0b72ea459014ee9a90e9ead7c`.
+The headless JUCE adapter uses only `juce_audio_basics`, `juce_audio_devices`,
+`juce_core`, and `juce_events`; it owns Core Audio/Core MIDI lifecycle while
+the portable runtime owns the complete graph. Python owns exact project
+snapshots and process-local render/audio session handles outside the callback.
+
+The one authorized bounded local Mac smoke opened `MacBook Pro Speakers` at
+48,000 Hz with a 128-frame block, processed 47,744 frames, observed maximum
+callback duration 5 microseconds and ratio `0.001875`, and reported zero xruns
+and queue overflows. It captured no audio. No physical MIDI input was available,
+so direct physical MIDI receipt remains unproved; the bounded native timestamp,
+sample-offset, ordering, and overflow path is covered only by deterministic
+tests. The retained observation is explicitly process-local and promotes
+neither general real-time/resource level 7 nor audible level 8. No Ksoloti
+build/device action, listening judgment, packaging, distribution, release
+license decision, Git commit, push, or publication occurred.
+
+Task 031 focused Python modules pass 12/12. The standalone portable runtime,
+native MIDI queue, warnings-as-errors JUCE engine, four offline block sizes,
+AddressSanitizer/UndefinedBehaviorSanitizer runs, generated freshness, governance,
+and two fresh-root/process reproductions pass; both roots produced package-file
+SHA-256 `d1a67a03c5d064ccdbc8f3d5441224c81afa6e212c800e0affc1a423c07154ae`,
+observation-file SHA-256
+`193af4d22c2c171f1a673c755314ade1f8b3c7ac614dd24d2e5feb42e0a2cb5a`,
+and the retained WAV hash above. The one final aggregate passes inventory 14/14
+and catalog 6/6. Contracts ran 446 tests in 1,326.096 seconds and retained
+exactly the same three audited historical failures: the Task 011A
+historical/Task 023 successor catalog golden, the Task 023 CLI-v2
+successor/historical golden, and Task 027 generated-output freshness assertion.
+No Task 031, desktop, project, compiler, Ksoloti-regression, or governance test
+failed, and no historical golden was rebaselined.
 
 Tasks 019 and 020 are deferred and not automatically activated by completion
 of Task 018 or Task 021.
@@ -491,6 +545,7 @@ of Task 018 or Task 021.
 | Complete Mutable-derived catalog cohort | All 56 exactly attributed Task 027 entries catalogued as individual implementations across 107 function-first families, with shared implementation search and CLI v3 object browsing | Levels 1-2 structural/provenance only; all 50 additions remain catalogued-only and levels 3-8 not-run |
 | Twenty-item direct palette | Five retained Task 025 promotions plus fifteen exact independent Task 028 selections and normalized operation-IR lowerings; seven Task 026 support bindings remain separate | Levels 1-3 passed; source generation, ARM, device, realtime/resource, and audible levels 4-8 not-run |
 | Gills machine layer | Exact Palimpsest and Tide Pit source reviews, source-evidenced inspection presentations, editable v0.6 panel plus semantic map, fail-closed completed-machine schema, shared read-only inspection operation, and isolated Viewer | Level 1 structural/source-identity/host inspection proof; completed machines zero; levels 2-8 not-run |
+| Desktop host runtime | Exact seven-node host target/backend/bindings, portable fixed-Q27 runtime, deterministic offline WAV, headless JUCE adapter, and process-local render/audio sessions | Host structural, compile, offline-execution, and one bounded local callback observation only; general level 7, physical MIDI receipt, audible level 8, Ksoloti equivalence, packaging, and release not promoted |
 | Desktop patcher | One consolidated Tauri shell, exact 133-implementation browsing, seven-node template creation, graph projection/proposal, atomic project save, and history/revert through shared operations | Host UI and project-persistence proof only; build, device, real-time/resource, audible, packaging, and publication not-run |
 | Desktop build/device workflow | Core-owned process-local build jobs, structured progress/diagnostics, explicit Ksoloti identity/compatibility sessions, and a fake-tested read-back-verified volatile-RAM upload path | Host implementation, local ARM build, and fake-transport proof; real connected-device action, governed level 6, real-time/resource, audible, packaging, and publication not-run |
 | AI/MCP authoring | Dual-era local stdio adapter with seven default read-only tools plus seven explicitly project-scoped sonic planning/object/patch tools; bounded transparent compounds/native kernels and atomic project acceptance | Host structural, deterministic host-audition, protocol, and project-persistence proof only; target lowering, model behavior, build, device, real-time/resource, audible, remote security, packaging, and publication not-run |
@@ -547,6 +602,11 @@ Task 021 established all of the following:
   surface failed; buttons, encoder, final device checks, Task 021 mapping, and
   both proposed level-6 claims remain `not-run`.
 - Real-time/resource and audible evidence levels 7-8 remain `not-run`.
+- Task 031 retains one one-second Core Audio callback observation with no xruns,
+  but it is not a sustained headroom result. No physical MIDI input was present,
+  so Core MIDI device receipt is not proved; no audio capture or listening
+  judgment exists. Host results do not imply Ksoloti equivalence, packaging,
+  redistribution, or release readiness.
 - The authenticated Task 009 local content store is ignored and must be
   validated separately when present; a clean checkout cannot claim that local
   evidence merely from tracked manifests.
@@ -590,7 +650,7 @@ Task 021 product-binary replacement, firmware flash, SD-card write, persistent
 installation, or reset. Any diagnostic successor or repeated hardware
 procedure requires a new bounded decision and explicit approval.
 
-Tasks 023-030 are accepted complete. Task 025's retained fail-closed result is
+Tasks 023-031 are accepted complete locally. Task 025's retained fail-closed result is
 bounded by `docs/tasks/025-direct-compiler-core-library-tranche.md` and
 `contracts/task025/reverb-allocation-boundary.md`; it does not authorize or
 claim lowering, ARM, device, real-time, audible, Git, or publication action.
@@ -600,8 +660,10 @@ its completed source-review and provenance contract and does not activate
 Task 028. Task 028 is bounded by its completed twenty-item direct-palette
 contract; its prior transparent-compound outcome is deferred. Task 029 is
 bounded to source-evidenced machine inspection and Task 030 to catalog
-provenance plus read-only object discovery. No numbered
-implementation lane is currently planned. The unnumbered desktop patcher is
+provenance plus read-only object discovery. Task 031 is bounded to its exact
+seven-node desktop-host package and process-local engine/session path; it does
+not activate broader runtime, UI, hardware, or release work. No numbered
+implementation lane is active. The unnumbered desktop patcher is
 implemented locally with its process-local build/device and project-object
 handoff successors and awaits user acceptance/publication. The unnumbered AI/MCP lane is implemented locally
 through explicit project-scoped object and patch authoring. Real

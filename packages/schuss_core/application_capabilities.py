@@ -14,6 +14,7 @@ APPLICATION_DESCRIPTION_VERSION_V4 = "schuss-application-capability-description-
 APPLICATION_DESCRIPTION_VERSION_V5 = "schuss-application-capability-description-v5"
 APPLICATION_DESCRIPTION_VERSION_V6 = "schuss-application-capability-description-v6"
 APPLICATION_DESCRIPTION_VERSION_V7 = "schuss-application-capability-description-v7"
+APPLICATION_DESCRIPTION_VERSION_V8 = "schuss-application-capability-description-v8"
 
 
 class CapabilityRegistryError(ValueError):
@@ -465,12 +466,74 @@ APPLICATION_CAPABILITY_ENTRIES_V6 = (
     *AI_SONIC_AUTHORING_CAPABILITY_ENTRIES,
 )
 
+HOST_RUNTIME_CAPABILITY_ENTRIES = (
+    _entry(
+        "host.render.start",
+        "build",
+        "Lower and render one exact accepted project through the portable host runtime.",
+        14,
+        ("exact-project-snapshot", "process-local-host-runtime-service"),
+        "host-artifact-write",
+        ("exact-package", "offline-render-intent"),
+    ),
+    _entry(
+        "host.render.inspect",
+        "build",
+        "Inspect one process-local offline host render.",
+        14,
+        ("process-local-host-runtime-service",),
+        "read-only",
+        ("exact-session",),
+    ),
+    _entry(
+        "audio.devices.inspect",
+        "device",
+        "Explicitly enumerate local CoreAudio and CoreMIDI devices.",
+        14,
+        ("process-local-audio-session-service",),
+        "audio-device-read",
+        ("audio-device-intent",),
+    ),
+    _entry(
+        "audio.session.start",
+        "device",
+        "Start one process-local host audio session for an exact accepted project.",
+        14,
+        ("exact-project-snapshot", "process-local-audio-session-service"),
+        "audio-device-control",
+        ("audio-device-intent", "exact-package"),
+    ),
+    _entry(
+        "audio.session.inspect",
+        "device",
+        "Inspect one process-local host audio session.",
+        14,
+        ("process-local-audio-session-service",),
+        "read-only",
+        ("exact-session",),
+    ),
+    _entry(
+        "audio.session.stop",
+        "device",
+        "Stop one process-local host audio session.",
+        14,
+        ("process-local-audio-session-service",),
+        "audio-device-control",
+        ("audio-device-intent", "exact-session"),
+    ),
+)
+
+APPLICATION_CAPABILITY_ENTRIES_V7 = (
+    *APPLICATION_CAPABILITY_ENTRIES_V6,
+    *HOST_RUNTIME_CAPABILITY_ENTRIES,
+)
+
 WORKSPACE_LIBRARY_CAPABILITY_ENTRIES = (
     _entry(
         "workspace.projects.list",
         "project",
         "List validated accepted projects directly below one explicit projects root.",
-        14,
+        15,
         ("explicit-projects-root",),
         "read-only",
         ("explicit-projects-root",),
@@ -479,15 +542,15 @@ WORKSPACE_LIBRARY_CAPABILITY_ENTRIES = (
         "workspace.project.create",
         "project",
         "Create one template-backed accepted project below one explicit projects root.",
-        14,
+        15,
         ("explicit-projects-root",),
         "workspace-write",
         ("create-only-child-workspace", "explicit-projects-root", "write-intent"),
     ),
 )
 
-APPLICATION_CAPABILITY_ENTRIES_V7 = (
-    *APPLICATION_CAPABILITY_ENTRIES_V6,
+APPLICATION_CAPABILITY_ENTRIES_V8 = (
+    *APPLICATION_CAPABILITY_ENTRIES_V7,
     *WORKSPACE_LIBRARY_CAPABILITY_ENTRIES,
 )
 
@@ -532,6 +595,9 @@ EXPECTED_OPERATIONS_V6 = tuple(
 EXPECTED_OPERATIONS_V7 = tuple(
     sorted(entry["operation"] for entry in APPLICATION_CAPABILITY_ENTRIES_V7)
 )
+EXPECTED_OPERATIONS_V8 = tuple(
+    sorted(entry["operation"] for entry in APPLICATION_CAPABILITY_ENTRIES_V8)
+)
 
 
 def _schema_key(version: str, kind: str) -> str:
@@ -548,10 +614,16 @@ def _availability(
     session_services_available: bool,
     authoring_service_available: bool,
     workspace_library_available: bool,
+    host_runtime_service_available: bool,
+    audio_session_service_available: bool,
 ) -> str:
     operation = entry["operation"]
     if operation.startswith("workspace.") and not workspace_library_available:
         return "requires-projects-root"
+    if operation.startswith("host.render.") and not host_runtime_service_available:
+        return "requires-host-runtime-service"
+    if operation.startswith("audio.") and not audio_session_service_available:
+        return "requires-audio-session-service"
     if operation.startswith("authoring.") or operation in {
         "project.objects.list",
         "project.object.inspect",
@@ -591,17 +663,23 @@ def build_application_description(
     session_services_available: bool = False,
     authoring_service_available: bool = False,
     workspace_library_available: bool = False,
+    host_runtime_service_available: bool = False,
+    audio_session_service_available: bool = False,
 ) -> dict[str, Any]:
     """Return the deterministic application description for one exact context."""
 
-    uses_v7 = "application_capability_description_v7" in schemas
+    uses_v8 = "application_capability_description_v8" in schemas
+    uses_v7 = uses_v8 or "application_capability_description_v7" in schemas
     uses_v6 = uses_v7 or "application_capability_description_v6" in schemas
     uses_v5 = uses_v6 or "application_capability_description_v5" in schemas
     uses_v4 = uses_v5 or "application_capability_description_v4" in schemas
     uses_v3 = uses_v4 or "application_capability_description_v3" in schemas
     uses_v2 = uses_v3 or "application_capability_description_v2" in schemas
     uses_v1 = uses_v2 or "application_capability_description_v1" in schemas
-    if uses_v7:
+    if uses_v8:
+        default_entries = APPLICATION_CAPABILITY_ENTRIES_V8
+        expected_operations = EXPECTED_OPERATIONS_V8
+    elif uses_v7:
         default_entries = APPLICATION_CAPABILITY_ENTRIES_V7
         expected_operations = EXPECTED_OPERATIONS_V7
     elif uses_v6:
@@ -656,11 +734,15 @@ def build_application_description(
             session_services_available=session_services_available,
             authoring_service_available=authoring_service_available,
             workspace_library_available=workspace_library_available,
+            host_runtime_service_available=host_runtime_service_available,
+            audio_session_service_available=audio_session_service_available,
         )
         described.append(entry)
     return {
         "schema_version": (
-            "application-capability-description-v7"
+            "application-capability-description-v8"
+            if uses_v8
+            else "application-capability-description-v7"
             if uses_v7
             else "application-capability-description-v6"
             if uses_v6
@@ -678,7 +760,9 @@ def build_application_description(
         ),
         "canonical_profile": "schuss-canonical-json-v1",
         "description_version": (
-            APPLICATION_DESCRIPTION_VERSION_V7
+            APPLICATION_DESCRIPTION_VERSION_V8
+            if uses_v8
+            else APPLICATION_DESCRIPTION_VERSION_V7
             if uses_v7
             else APPLICATION_DESCRIPTION_VERSION_V6
             if uses_v6

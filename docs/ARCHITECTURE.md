@@ -23,10 +23,17 @@ build result  -> request + selected bindings + artifacts
 evidence      -> build result / stage / artifact
 
 legacy backend -> .axp -> Ksoloti Java resolver/codegen -> ARM compiler
+desktop-host backend -> derived host package -> schuss_rt -> offline/JUCE host
 ```
 
 The initial backend passes through the Ksoloti Java resolver and existing ARM
 compiler. Later backends may lower the same semantic graph without that bridge.
+Task 031 adds the first such parallel backend for one exact seven-node profile.
+Its canonical derived package is prepared and executed by the portable C++17
+`schuss_rt` library. JUCE remains outside that library and supplies only the
+headless Core Audio/Core MIDI device adapter. Host compilation, offline bytes,
+and one process-local callback observation remain separate from Ksoloti,
+general real-time/resource, and audible evidence.
 
 Exact ownership and permitted references are normative in
 `docs/SCHEMA_STRATEGY.md`. Compiler stages and derived artifacts are normative

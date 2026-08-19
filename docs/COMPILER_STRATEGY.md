@@ -280,6 +280,29 @@ Using the same graph does not guarantee every backend has a binding for every
 contract. A missing direct binding is an explicit backend-resolution failure,
 not permission to rewrite the graph or fall back silently to Java.
 
+## Implemented desktop-host backend
+
+Task 031 adds a parallel, bounded host backend without changing the retained
+Ksoloti paths:
+
+```text
+the exact saved Task 026 project revision
+    -> shared project, graph, contract, target, and backend validation
+    -> exact desktop-host implementation-binding resolution
+    -> deterministic fixed-Q27 schedule, state, buffer, and event planning
+    -> canonical content-addressed host-runtime package
+    -> portable schuss_rt preparation and execution
+    -> deterministic offline WAV or a headless JUCE device session
+```
+
+The host package is derived and non-authoritative. It contains exact semantic
+references, binding revisions, ABI identities, memory bounds, topology, and
+portable source-plan identity, but no host path, process identity, JUCE class,
+or presentation state. `schuss_rt` owns package validation and graph execution;
+the JUCE adapter owns only native audio/MIDI device lifecycle and callback
+transport. An unavailable or ambiguous host binding fails before package
+publication, and no host outcome silently promotes Ksoloti compatibility.
+
 ## Diagnostics and traceability
 
 Every diagnostic is a structured record with stable code, severity, stage,

@@ -30,15 +30,15 @@ describe("desktop patcher operation requests", () => {
     });
   });
 
-  it("uses v14 for core-owned workspace browsing and creation", () => {
+  it("uses v15 for core-owned workspace browsing and creation", () => {
     expect(workspaceProjectsListRequest()).toEqual({
-      schema_version: "schuss-operation-request-v14",
+      schema_version: "schuss-operation-request-v15",
       canonical_profile: "schuss-canonical-json-v1",
       operation: "workspace.projects.list",
       payload: {},
     });
     expect(workspaceProjectCreateRequest("New patch")).toEqual({
-      schema_version: "schuss-operation-request-v14",
+      schema_version: "schuss-operation-request-v15",
       canonical_profile: "schuss-canonical-json-v1",
       operation: "workspace.project.create",
       payload: { display_name: "New patch" },

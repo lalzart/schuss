@@ -151,6 +151,7 @@ class CompilationContext:
                 "contract_versions",
                 "binding_versions",
                 "direct_operation_spec_versions",
+                "target_versions",
             }:
                 for version, schema in sorted(value.items()):
                     schema_values.append((f"{key}:{version}", core.canonical_json(schema)))
@@ -184,6 +185,10 @@ class CompilationContext:
                 result.setdefault("binding_versions", {})[key.split(":", 1)[1]] = json.loads(value)
             elif key.startswith("direct_operation_spec_versions:"):
                 result.setdefault("direct_operation_spec_versions", {})[
+                    key.split(":", 1)[1]
+                ] = json.loads(value)
+            elif key.startswith("target_versions:"):
+                result.setdefault("target_versions", {})[
                     key.split(":", 1)[1]
                 ] = json.loads(value)
             else:
@@ -295,6 +300,10 @@ def _schema_for(group: str, record: Mapping[str, Any], schemas: Mapping[str, Any
         return schemas.get("binding_versions", {}).get(record.get("schema_version"))
     if group == "direct_operation_specs":
         return schemas.get("direct_operation_spec_versions", {}).get(
+            record.get("schema_version")
+        )
+    if group == "target":
+        return schemas.get("target_versions", {}).get(
             record.get("schema_version")
         )
     key = SCHEMA_KEYS.get(group)
@@ -496,12 +505,16 @@ def _stage1(
             )
     selected_runtime = None
     instrument_included = request.get("instrument_reference", {}).get("status") == "included"
-    instrument_closure_only = (
-        backend is not None
-        and backend.get("bridge_boundary", {}).get("kind")
-        == "direct-runtime-abi-instrument-closure-only"
+    runtime_boundary_kind = (
+        backend.get("bridge_boundary", {}).get("kind")
+        if backend is not None
+        else None
     )
-    if records["runtime_realizations"] and instrument_included and not instrument_closure_only:
+    runtime_realization_not_required = runtime_boundary_kind in {
+        "direct-runtime-abi-instrument-closure-only",
+        "portable-host-runtime",
+    }
+    if records["runtime_realizations"] and instrument_included and not runtime_realization_not_required:
         matches = [
             value
             for value in records["runtime_realizations"]

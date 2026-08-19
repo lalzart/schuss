@@ -1,10 +1,10 @@
 # Task 031: Portable desktop host runtime and JUCE audio/MIDI engine
 
-Status: accepted by explicit user authorization on 2026-08-19 as a parent
-implementation contract. The boundaries and sequence for Tasks 031A-031D are
-accepted; no child is automatically active, and this planning acceptance
-performs no implementation, native build, audio/MIDI device access, or
-publication action.
+Status: accepted by explicit user authorization and complete locally on
+2026-08-19. The parent and all four serialized children completed in the fixed
+order `031A -> 031B -> 031C -> 031D`. The one bounded local Mac audio/MIDI
+smoke was performed; no Ksoloti hardware action, listening claim, packaging,
+distribution, staging, commit, push, or publication was performed.
 
 ## Goal and why it exists
 
@@ -208,6 +208,42 @@ and listening into one success state.
 The four children are serialized. A child starts only after explicit user
 activation and after every predecessor acceptance required below. Child
 completion never activates the next child and never completes Task 031.
+
+### 2026-08-19 activation and identity allocation
+
+The user's explicit request to run Tasks 031A-031D activates the complete
+serialized parent. The parent integrator starts 031A now and advances to each
+later child only after its predecessor's focused acceptance contribution
+passes. The previously local desktop workspace-shell successor collided with
+031A's already reserved operation v14, capability v7, and record-set 000027
+identities. Parent integration preserves that feature by moving it forward to
+operation v15, capability v8, and record set 000028; no renderer behavior or
+semantic ownership changes as part of that prerequisite repair.
+
+031A exclusively allocates the following additional identities:
+
+- build environments `schuss-build-environment-000003@1` and
+  `schuss-build-environment-000004@1`;
+- host build request `schuss-build-request-000006@1`;
+- host native implementation bindings `schuss-implementation-000162@1-2`
+  through `schuss-implementation-000168@1-2`, ordered as saw, PWM, soft clip,
+  exponential smoother, crossfade, VCA, and stereo output; revision 1 is the
+  structural candidate cited by the level-2 claim and revision 2 is the exact
+  eligible successor, preserving the strict earlier-evidence rule;
+- eligibility companions `schuss-binding-eligibility-000048@1` through
+  `schuss-binding-eligibility-000054@1` in that same order;
+- structural compatibility claims `schuss-evidence-claim-000075@1` through
+  `schuss-evidence-claim-000081@1` in that same order; and
+- private JUCE source lock `schuss-third-party-source-lock-000001@1`.
+
+The already reserved target `schuss-compute-target-000002@1`, backend
+`schuss-backend-000003@1`, and record set `schuss-record-set-000027@1` remain
+unchanged. Tasks 031B-031D allocate no semantic stable IDs. Their package,
+render, process, device, and session handles are derived or process-local.
+
+Operation v14 is frozen to six client-neutral operations:
+`host.render.start`, `host.render.inspect`, `audio.devices.inspect`,
+`audio.session.start`, `audio.session.inspect`, and `audio.session.stop`.
 
 ### Task 031A: Host-runtime contracts and exact execution boundary
 
@@ -456,13 +492,20 @@ with only affected focused and adjacent tests before one final rerun, following
 
 ## Activation and completion state
 
-This parent contract is accepted and committed as planning authority. Tasks
-031A-031D remain inactive until individually authorized. Parent acceptance
-allocates the architecture and child boundaries only; it adds no host schema,
-record, binding, C++ runtime, JUCE source, executable, WAV, session, device
-observation, or evidence result.
+The user's explicit 2026-08-19 request activated the complete serialized
+parent. All four child contributions and the exact end-to-end headless path are
+complete locally. Record set `schuss-record-set-000027@1`, the portable
+`schuss_rt` runtime, deterministic offline package/WAV, headless JUCE engine,
+process-local services, and retained bounded observations are the parent result.
 
-Task 031 completes only after all four children pass their declared acceptance
-contributions, the parent integration proves the exact end-to-end headless path,
-and the completion report states every remaining UI, AI, Ksoloti, real-time,
-audible, packaging, distribution, and release gate without implication.
+The local Mac observation does not promote general real-time/resource level 7
+or audible level 8. No physical MIDI input was available, so physical Core MIDI
+receipt remains unproved. UI and AI presentation, Ksoloti equivalence or device
+work, packaging, distribution, release licensing, staging, commit, push, and
+publication remain outside this completion and require separate authority.
+
+The final aggregate completed after the implementation freeze: inventory and
+catalog suites pass, and the 446-test contract suite retains only the three
+previously audited historical catalog/CLI/freshness failures. No Task 031 or
+adjacent current-record regression failed, and no historical golden was
+rebaselined to obtain this completion.

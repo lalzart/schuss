@@ -31,12 +31,12 @@ class BackboneGovernanceTest(unittest.TestCase):
     def test_live_repository_is_valid(self):
         summary = governance.validate_documents(self.documents, self.task_filenames)
         self.assertEqual("valid", summary["status"])
-        self.assertEqual("backbone-governance-summary-v20", summary["schema_version"])
+        self.assertEqual("backbone-governance-summary-v21", summary["schema_version"])
         self.assertEqual([], summary["diagnostics"])
         self.assertEqual(
             [
                 "ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014",
-                "ADR 0015",
+                "ADR 0015", "ADR 0016",
             ],
             summary["authoritative_decisions"],
         )
@@ -49,19 +49,19 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["active_evidence_task"],
         )
         self.assertEqual(
-            "task030-complete-catalog-level-2-no-support-promotion",
+            "task031-complete-host-observation-no-level7-or-audible-promotion",
             summary["promotion_gate"],
         )
         self.assertEqual(
             [
                 "013", "014", "015", "016", "017", "018", "019", "020",
                 "021", "022", "023", "024", "025", "026", "027", "028",
-                "029", "030",
+                "029", "030", "031",
             ],
             summary["active_task_sequence"],
         )
         self.assertEqual(
-            "none-task030-complete",
+            "none-task031-complete",
             summary["next_planned_task"],
         )
         self.assertEqual(
@@ -108,6 +108,10 @@ class BackboneGovernanceTest(unittest.TestCase):
         self.assertEqual(
             "complete-mutable-catalog-cohort-level-2-cli-v3",
             summary["task_statuses"]["030"],
+        )
+        self.assertEqual(
+            "complete-desktop-host-bounded-observation-no-level7-or-audible-promotion",
+            summary["task_statuses"]["031"],
         )
         self.assertEqual(
             "unnumbered-desktop-workspace-shell-implemented-locally-target-hardware-publication-gated",

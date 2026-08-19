@@ -11,7 +11,7 @@ import type {
 } from "./types";
 
 export const DESKTOP_RECORD_SET: ExactRecordSetReference = {
-  record_set_id: "schuss-record-set-000027",
+  record_set_id: "schuss-record-set-000028",
   revision: 1,
   content_hash: "sha256:90bd454c4bf3c66f216496d461acf54d05b816927da8056907bf6fde51032bf9",
 };
@@ -48,11 +48,11 @@ function request(
 }
 
 export function workspaceProjectsListRequest(): DesktopOperationRequest {
-  return request("schuss-operation-request-v14", "workspace.projects.list", {});
+  return request("schuss-operation-request-v15", "workspace.projects.list", {});
 }
 
 export function workspaceProjectCreateRequest(displayName: string): DesktopOperationRequest {
-  return request("schuss-operation-request-v14", "workspace.project.create", {
+  return request("schuss-operation-request-v15", "workspace.project.create", {
     display_name: displayName,
   });
 }

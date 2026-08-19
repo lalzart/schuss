@@ -26,7 +26,7 @@ React/TypeScript presentation
 The product application is `apps/schuss_desktop/`. Browser-mode development
 uses a localhost Vite proxy to the same Python adapter; production has no
 renderer fallback. Both paths select exact record set
-`schuss-record-set-000027@1` for new-project creation. Additive v14 supplies
+`schuss-record-set-000028@1` for new-project creation. Additive v15 supplies
 `workspace.projects.list` and `workspace.project.create`; the renderer passes
 one explicit absolute projects root and never scans it. The desktop also
 retains only the v13 `project.objects.list` and `project.object.inspect` reads;

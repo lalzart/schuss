@@ -367,12 +367,36 @@ authoring mutation operation. A selected local object's exact component
 contract enters the ordinary unsaved graph edit draft through v11 `add-node`;
 no second object store or graph edit language is introduced.
 
+## Desktop host runtime and audio sessions
+
+Task 031 additively supplies operation request/result v14 and application
+capability description v7 in exact record set `schuss-record-set-000027@1`.
+Its six client-neutral operations extend the thirty-five-operation v6 registry:
+
+- `host.render.start` lowers one exact saved project revision and starts one
+  bounded deterministic offline render;
+- `host.render.inspect` reads the retained process-local render result;
+- `audio.devices.inspect` performs native device enumeration only with an
+  explicit inspection intent;
+- `audio.session.start` snapshots one exact project revision, validates the
+  engine/package/runtime handshake, prepares off-thread, and then starts;
+- `audio.session.inspect` reads structured state and bounded callback, xrun,
+  and MIDI-queue telemetry; and
+- `audio.session.stop` explicitly stops the named process-local session.
+
+Render and audio handles are non-durable. Unknown or stale handles, another
+service instance, engine restarts, protocol mismatch, preparation failure, or
+stop failure cannot report an active success and cannot mutate the project.
+JUCE and physical devices remain behind the native engine; React, Tauri,
+Python, CLI, AI, and MCP clients receive the same operation/result shapes and
+do not enter the performance callback.
+
 ## Projects-root workspace shell
 
 The desktop workspace-shell successor additively supplies operation
-request/result v14 and application-capability-description v7 in exact record
-set `schuss-record-set-000027@1`. It adds two shared operations to the
-thirty-five-operation v6 registry:
+request/result v15 and application-capability-description v8 in exact record
+set `schuss-record-set-000028@1`. It adds two shared operations to the
+forty-one-operation v7 registry:
 
 - `workspace.projects.list` is read-only and requires one explicit absolute
   projects root. The core examines a bounded set of direct child directories,

@@ -46,6 +46,29 @@ The two capability keys are exactly those required by the mixed Crossfader
 seams: `audio-stream-fixed-q27` and `control-stream-fixed-q27`. This is a
 bounded vocabulary, not a universal processor or backend ontology.
 
+## Additive desktop-host closure
+
+Task 031 adds `compute-target-v1` only to express the portable desktop runtime
+ABI and bounded variable-block policy needed by the host path; accepted v0
+Ksoloti target bytes remain unchanged. Exact record set
+`schuss-record-set-000027@1` adds desktop target
+`schuss-compute-target-000002@1`, backend `schuss-backend-000003@1`, build
+request `schuss-build-request-000006@1`, and seven eligible native binding
+successors `schuss-implementation-000162@2` through `000168@2`.
+
+Each revision-2 binding cites a separate level-2 structural claim over its
+revision-1 candidate, preserving the requirement that compatibility evidence
+predate the eligible binding revision. The private JUCE input is locked to
+commit `91ad83ae34a81e0833b1a2b0866f54846370ae53` and archive SHA-256
+`04f8d5055382582c757be9da069ea98338005f98248facd9c2804435ac853e70`;
+the lock names only the four headless modules actually linked. This source lock
+does not decide redistribution or release licensing.
+
+The target/backend resolver publishes a canonical derived host package only
+when the exact seven-node Task 026 closure resolves once. Host execution is a
+parallel result and never rewrites, falls back to, or promotes the retained
+Ksoloti target/backend closure.
+
 ## Ksoloti facts and unresolved boundaries
 
 Pinned source evidence at patcher commit

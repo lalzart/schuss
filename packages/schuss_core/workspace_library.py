@@ -21,8 +21,8 @@ from .project_service import ProjectError, ProjectService
 
 
 MAX_PROJECTS = 128
-REQUEST_SCHEMA_KEY = "operation_request_v14"
-RESULT_SCHEMA_KEY = "operation_result_v14"
+REQUEST_SCHEMA_KEY = "operation_request_v15"
+RESULT_SCHEMA_KEY = "operation_result_v15"
 PROJECT_ID_RE = re.compile(r"^schuss-project-[0-9]{6}$")
 
 
@@ -60,7 +60,7 @@ def _result(
     diagnostics: list[dict[str, str]] | None = None,
 ) -> dict[str, Any]:
     return {
-        "schema_version": "schuss-operation-result-v14",
+        "schema_version": "schuss-operation-result-v15",
         "canonical_profile": "schuss-canonical-json-v1",
         "operation": operation,
         "status": status,
@@ -357,7 +357,7 @@ def dispatch_workspace_operation(
     context: OperationContext,
     service: WorkspaceLibraryService | None,
 ) -> dict[str, Any]:
-    """Validate and dispatch one v14 projects-root operation."""
+    """Validate and dispatch one v15 projects-root operation."""
 
     operation = request.get("operation") if isinstance(request, dict) else None
     schema = context.schemas.get(REQUEST_SCHEMA_KEY)

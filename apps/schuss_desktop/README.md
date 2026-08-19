@@ -28,7 +28,7 @@ npm run dev
 ```
 
 The first core load validates exact additive record set
-`schuss-record-set-000027@1`; new desktop projects pin that additive
+`schuss-record-set-000028@1`; new desktop projects pin that additive
 workspace-shell base while the allowlist retains the two project-object reads
 and adds only the shared workspace list/create operations. The persistent
 bridge reuses the validated context and a bounded process-local semantic

@@ -19,8 +19,9 @@ compiler, device, and evidence claims independent. Completed detail belongs in
 
 The ordinary task numbers established by ADR 0010 remain stable. ADR 0014 adds
 the application-spine sequence after the retained Task 022 result. ADR 0015
-retargets only the previously unstarted Task 027 assignment. Completion of one
-row does not authorize the next.
+retargets only the previously unstarted Task 027 assignment. ADR 0016 adds the
+portable desktop-host runtime as Task 031. Completion of one row does not
+authorize the next.
 
 | Phase | Outcome | Status |
 | --- | --- | --- |
@@ -42,6 +43,7 @@ row does not authorize the next.
 | 28 | Twenty-item direct selectable palette; transparent compounds deferred | Complete; fifteen additions lower locally at levels 1-3, no build |
 | 29 | Complete-machine inspection layer and isolated Viewer | Complete; two exact source reviews, zero completed machines, structural level 1 |
 | 30 | Complete exact Mutable-derived catalog cohort and object CLI | Complete; 56 attributed implementations, 107 families, shared CLI v3 discovery, levels 1-2 |
+| 31 | Portable desktop host runtime and headless JUCE audio/MIDI engine | Complete locally; exact seven-node offline render and one bounded Mac callback observation, with no general level-7 or audible promotion |
 | Unnumbered UI | Consolidated desktop authoring, build jobs, and Ksoloti volatile deployment | Implemented locally after explicit authorization; fake-transport acceptance only; real hardware, packaging, and publication separately gated |
 | Unnumbered AI | Sonic-first planning plus explicit project-local object and patch authoring over shared operations/MCP | Implemented locally after explicit authorization; bounded compounds/native kernels and atomic project acceptance only; no target lowering, model UX, build, device, HTTP, or publication authority |
 
@@ -103,8 +105,8 @@ adds fifteen independently selectable native operation identities to the five
 Task 025 promotions, reaching an exact twenty-item palette at local lowering
 level 3; general transparent-compound target lowering remains deferred. The unnumbered UI lane was
 explicitly authorized after its architecture planning boundary; the desktop
-catalog and patcher are implemented locally. No numbered implementation lane
-is currently planned. Authoring performance and reliability are active locally
+catalog and patcher are implemented locally. Task 031 is the completed bounded
+desktop-host successor selected by ADR 0016. Authoring performance and reliability are active locally
 inside that same explicitly authorized unnumbered lane. Publication, build
 execution, and device communication remain separately gated. The original
 sessions/jobs/diagnostics outcome is deferred without a replacement number.
@@ -124,7 +126,8 @@ Tasks 029 and 030 were later activated by explicit user requests outside the
 ADR 0014 sequence. Task 029 adds only source-evidenced machine inspection.
 Task 030 catalogues all 56 exactly attributed Task 027 entries and exposes
 individual implementation search without adding compiler or device support.
-Both are complete; no numbered implementation lane is active.
+Both are complete. Task 031 was later authorized in full and is complete
+locally; no numbered implementation lane is active.
 
 A parent may declare children such as `023A`, `023B`, and `023C`. Those are
 exact parent-owned work packages, not aliases or independent roadmap entries;

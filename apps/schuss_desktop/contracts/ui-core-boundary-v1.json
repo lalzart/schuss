@@ -234,14 +234,14 @@
     {
       "effect_class": "workspace-write",
       "operation": "workspace.project.create",
-      "request_schema_version": "schuss-operation-request-v14",
-      "result_schema_version": "schuss-operation-result-v14"
+      "request_schema_version": "schuss-operation-request-v15",
+      "result_schema_version": "schuss-operation-result-v15"
     },
     {
       "effect_class": "read-only",
       "operation": "workspace.projects.list",
-      "request_schema_version": "schuss-operation-request-v14",
-      "result_schema_version": "schuss-operation-result-v14"
+      "request_schema_version": "schuss-operation-request-v15",
+      "result_schema_version": "schuss-operation-result-v15"
     }
   ],
   "schema_version": "schuss-desktop-core-boundary-v1",

@@ -142,13 +142,13 @@ ALLOWED_OPERATIONS = {
         True,
     ),
     "workspace.project.create": (
-        "schuss-operation-request-v14",
-        "schuss-operation-result-v14",
+        "schuss-operation-request-v15",
+        "schuss-operation-result-v15",
         True,
     ),
     "workspace.projects.list": (
-        "schuss-operation-request-v14",
-        "schuss-operation-result-v14",
+        "schuss-operation-request-v15",
+        "schuss-operation-result-v15",
         True,
     ),
 }
@@ -257,7 +257,7 @@ class DesktopCore:
         return service
 
     def dispatch(self, request: dict[str, Any], workspace: Path | None) -> dict[str, Any]:
-        is_workspace_operation = request.get("schema_version") == "schuss-operation-request-v14"
+        is_workspace_operation = request.get("schema_version") == "schuss-operation-request-v15"
         service = (
             self.service(workspace)
             if workspace is not None and not is_workspace_operation
@@ -319,7 +319,7 @@ def dispatch_line(line: bytes, desktop: DesktopCore) -> bytes:
         desktop.context
         if result.get("schema_version") in {
             "schuss-operation-result-v12",
-            "schuss-operation-result-v14",
+            "schuss-operation-result-v15",
         }
         else desktop.service(workspace).context
         if workspace is not None

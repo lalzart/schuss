@@ -106,10 +106,21 @@ AI_SONIC_AUTHORING_SCHEMA_NAMES = {
     "project_v1": "project-v1.schema.json",
 }
 
-DESKTOP_WORKSPACE_SCHEMA_NAMES = {
+TASK031_SCHEMA_NAMES = {
     "application_capability_description_v7": "application-capability-description-v7.schema.json",
+    "compute_target_v1": "compute-target-v1.schema.json",
+    "host_engine_protocol": "host-engine-protocol-v0.schema.json",
+    "host_runtime_observation": "host-runtime-observation-v0.schema.json",
+    "host_runtime_package": "host-runtime-package-v0.schema.json",
     "operation_request_v14": "operation-request-v14.schema.json",
     "operation_result_v14": "operation-result-v14.schema.json",
+    "third_party_source_lock": "third-party-source-lock-v0.schema.json",
+}
+
+DESKTOP_WORKSPACE_SCHEMA_NAMES = {
+    "application_capability_description_v8": "application-capability-description-v8.schema.json",
+    "operation_request_v15": "operation-request-v15.schema.json",
+    "operation_result_v15": "operation-result-v15.schema.json",
 }
 
 TASK015_SCHEMA_NAMES = {
@@ -338,6 +349,12 @@ def load_repository_context(
         if version in selected.schemas
     }
     schemas["binding_versions"] = binding_versions
+    target_versions = {
+        version: selected.schemas[version]
+        for version in ("compute-target-v0", "compute-target-v1")
+        if version in selected.schemas
+    }
+    schemas["target_versions"] = target_versions
     direct_operation_spec_versions = {
         version: selected.schemas[version]
         for version in ("direct-operation-spec-v0", "direct-operation-spec-v1", "direct-operation-spec-v2", "direct-operation-spec-v3")
@@ -430,11 +447,19 @@ def load_repository_context(
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
+    for key, filename in TASK031_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
     for key, filename in DESKTOP_WORKSPACE_SCHEMA_NAMES.items():
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
-    if "application_capability_description_v7" in schemas:
+    if "application_capability_description_v8" in schemas:
+        schemas["application_capability_description"] = schemas[
+            "application_capability_description_v8"
+        ]
+    elif "application_capability_description_v7" in schemas:
         schemas["application_capability_description"] = schemas[
             "application_capability_description_v7"
         ]
@@ -555,7 +580,10 @@ def load_repository_context(
     )
     task007_result = target.validate_target_backend_build_values(
         {kind: list(records[kind]) for kind in target.SCHEMA_SPECS},
-        {kind: schemas[kind] for kind in target.SCHEMA_SPECS},
+        {
+            **{kind: schemas[kind] for kind in target.SCHEMA_SPECS},
+            "target_versions": schemas["target_versions"],
+        },
         {
             "families": list(records["families"]),
             "contracts": list(records["contracts"]),
@@ -724,6 +752,7 @@ def canonical_result_bytes(
         "schuss-operation-result-v12": "operation_result_v12",
         "schuss-operation-result-v13": "operation_result_v13",
         "schuss-operation-result-v14": "operation_result_v14",
+        "schuss-operation-result-v15": "operation_result_v15",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -764,6 +793,8 @@ def _dispatch_application_operation(
     session_services_available: bool = False,
     authoring_service_available: bool = False,
     workspace_library_available: bool = False,
+    host_runtime_service_available: bool = False,
+    audio_session_service_available: bool = False,
 ) -> dict[str, Any]:
     operation = request.get("operation") if isinstance(request, dict) else None
     required_schemas = (
@@ -835,6 +866,8 @@ def _dispatch_application_operation(
             session_services_available=session_services_available,
             authoring_service_available=authoring_service_available,
             workspace_library_available=workspace_library_available,
+            host_runtime_service_available=host_runtime_service_available,
+            audio_session_service_available=audio_session_service_available,
         )
         value_schema = context.schemas["application_capability_description"]
         value_errors = core.schema_errors(value, value_schema, value_schema)
@@ -2210,16 +2243,31 @@ def dispatch_operation(
     device_session_service: Any | None = None,
     authoring_service: Any | None = None,
     workspace_service: Any | None = None,
+    host_render_service: Any | None = None,
+    audio_session_service: Any | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
 
     if (
         isinstance(request, dict)
-        and request.get("schema_version") == "schuss-operation-request-v14"
+        and request.get("schema_version") == "schuss-operation-request-v15"
     ):
         from .workspace_library import dispatch_workspace_operation
 
         return dispatch_workspace_operation(request, context, workspace_service)
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v14"
+    ):
+        from .audio_sessions import dispatch_host_operation
+
+        return dispatch_host_operation(
+            request,
+            context,
+            host_render_service,
+            audio_session_service,
+        )
 
     if (
         isinstance(request, dict)
@@ -2318,6 +2366,8 @@ def dispatch_operation(
                 ),
                 authoring_service_available=authoring_service is not None,
                 workspace_library_available=workspace_service is not None,
+                host_runtime_service_available=host_render_service is not None,
+                audio_session_service_available=audio_session_service is not None,
             )
         return _dispatch_application_operation(
             request,
@@ -2329,6 +2379,8 @@ def dispatch_operation(
             ),
             authoring_service_available=authoring_service is not None,
             workspace_library_available=workspace_service is not None,
+            host_runtime_service_available=host_render_service is not None,
+            audio_session_service_available=audio_session_service is not None,
         )
 
     if (

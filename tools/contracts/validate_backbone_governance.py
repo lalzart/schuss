@@ -28,6 +28,7 @@ ADR_0012 = "docs/decisions/0012-require-executable-gills-promotion.md"
 ADR_0013 = "docs/decisions/0013-version-gills-runtime-correction-and-level6-evidence.md"
 ADR_0014 = "docs/decisions/0014-sequence-application-spine-and-authorize-ui-architecture.md"
 ADR_0015 = "docs/decisions/0015-retarget-task-027-to-mutable-catalog-provenance.md"
+ADR_0016 = "docs/decisions/0016-adopt-portable-desktop-host-runtime.md"
 TASK_012B = "docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md"
 TASK_018 = "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md"
 TASK_021 = "docs/tasks/021-gills-dma-safe-oled-and-connected-device-evidence.md"
@@ -39,6 +40,7 @@ TASK_026 = "docs/tasks/026-complete-authoring-operations-and-cli-workflow.md"
 TASK_027 = "docs/tasks/027-mutable-instruments-catalog-provenance.md"
 TASK_028 = "docs/tasks/028-twenty-item-direct-palette.md"
 TASK_030 = "docs/tasks/030-complete-mutable-catalog-and-object-cli.md"
+TASK_031 = "docs/DESKTOP_HOST_RUNTIME_IMPLEMENTATION_CONTRACT.md"
 UI_DESKTOP_INITIALIZATION = "docs/tasks/ui-desktop-initialization.md"
 UI_DESKTOP_CATALOG = "docs/tasks/ui-desktop-read-only-catalog.md"
 UI_DESKTOP_PATCHER = "docs/tasks/ui-desktop-patcher-authoring.md"
@@ -66,6 +68,7 @@ DOCUMENT_PATHS = (
     ADR_0013,
     ADR_0014,
     ADR_0015,
+    ADR_0016,
     TASK_012B,
     TASK_018,
     TASK_021,
@@ -77,6 +80,7 @@ DOCUMENT_PATHS = (
     TASK_027,
     TASK_028,
     TASK_030,
+    TASK_031,
     UI_DESKTOP_INITIALIZATION,
     UI_DESKTOP_CATALOG,
     UI_DESKTOP_PATCHER,
@@ -88,7 +92,7 @@ DOCUMENT_PATHS = (
     AI_SONIC_AUTHORING,
 )
 
-ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 31))
+ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 32))
 PLANNED_SEQUENCE: tuple[str, ...] = ()
 EXPECTED_TASK_FILENAMES = {
     "README.md",
@@ -208,6 +212,7 @@ def validate_documents(
         ADR_0013: "accepted",
         ADR_0014: "accepted",
         ADR_0015: "accepted",
+        ADR_0016: "accepted",
     }
     for path, expected in expected_adr_statuses.items():
         if _metadata(documents.get(path, ""), "Status") != expected:
@@ -236,6 +241,7 @@ def validate_documents(
         "`0013-version-gills-runtime-correction-and-level6-evidence.md` - accepted; current Task 021 corrective and level-6 authority",
         "`0014-sequence-application-spine-and-authorize-ui-architecture.md` - accepted; application-spine and UI-architecture authority, amended by ADR 0015 for Task 027 only",
         "`0015-retarget-task-027-to-mutable-catalog-provenance.md` - accepted; current Task 027 retarget and Mutable-provenance authority",
+        "`0016-adopt-portable-desktop-host-runtime.md` - accepted; current portable desktop host-runtime and JUCE adapter authority",
     )
     _require_phrases(
         diagnostics,
@@ -612,6 +618,43 @@ def validate_documents(
         ),
     )
 
+    task31_status = _leading_status(documents.get(TASK_031, "")) or ""
+    for fragment in (
+        "accepted by explicit user authorization and complete locally on 2026-08-19",
+        "all four serialized children completed in the fixed order",
+        "one bounded local mac audio/midi smoke was performed",
+    ):
+        if fragment not in task31_status.lower():
+            diagnostics.append(
+                _diagnostic(
+                    "TASK_031_CONTRACT_INVALID",
+                    TASK_031,
+                    f"Task 031 contract status must contain: {fragment}",
+                )
+            )
+    _require_phrases(
+        diagnostics,
+        code="TASK_031_CONTRACT_INVALID",
+        document=TASK_031,
+        scope=documents.get(TASK_031, ""),
+        phrases=(
+            "## Goal and why it exists",
+            "## In scope",
+            "## Out of scope",
+            "## Inputs and deliverables",
+            "## Acceptance tests",
+            "## Decisions Task 031 may make",
+            "## Decisions Task 031 must not make",
+            "031A -> 031B -> 031C -> 031D",
+            "schuss-record-set-000027@1",
+            "packages/schuss_rt/",
+            "host-runtime package v0",
+            "physical Core MIDI receipt remains unproved",
+            "general real-time/resource level 7",
+            "staging, commit, push",
+        ),
+    )
+
     for document, status_fragments, required in (
         (
             UI_DESKTOP_INITIALIZATION,
@@ -803,6 +846,13 @@ def validate_documents(
         "bring the catalog to 107 families and 133 implementations",
         "`catalog.implementations.search`",
         "No numbered implementation task is automatically active after Task 030 completion",
+        "The explicitly authorized Task 031 parent and serialized Tasks 031A-031D are implemented locally",
+        "`schuss-record-set-000027@1`",
+        "`packages/schuss_rt/` is a JUCE-independent C++17 library",
+        "derived, non-authoritative package hash",
+        "The one authorized bounded local Mac smoke opened `MacBook Pro Speakers`",
+        "No physical MIDI input was available",
+        "promotes neither general real-time/resource level 7 nor audible level 8",
         "The unnumbered desktop patcher implementation is locally complete",
         "The active unnumbered desktop authoring-performance slice",
         "warm repeated inspection falls from about 18.7 seconds to about 0.012 seconds",
@@ -913,7 +963,7 @@ def validate_documents(
             )
 
     roadmap_rows = _roadmap_rows(documents.get(ROADMAP, ""))
-    for number in range(13, 31):
+    for number in range(13, 32):
         label = str(number)
         if len(roadmap_rows.get(label, [])) != 1:
             diagnostics.append(
@@ -942,6 +992,7 @@ def validate_documents(
         "28": "complete; fifteen additions lower locally at levels 1-3, no build",
         "29": "complete; two exact source reviews, zero completed machines, structural level 1",
         "30": "complete; 56 attributed implementations, 107 families, shared cli v3 discovery, levels 1-2",
+        "31": "complete locally; exact seven-node offline render and one bounded mac callback observation",
     }
     for label, expected in expected_roadmap_status.items():
         rows = roadmap_rows.get(label, [])
@@ -980,10 +1031,12 @@ def validate_documents(
             "Tasks 019 and 020 remain deferred.",
             "Tasks 023-028 are accepted complete.",
             "Tasks 029 and 030 were later activated by explicit user requests",
+            "ADR 0016 adds the portable desktop-host runtime as Task 031",
+            "Task 031 is the completed bounded desktop-host successor selected by ADR 0016",
             "Task 026 consumes the independently accepted reverb-free seven-node executable profile",
             "desktop catalog and patcher are implemented locally",
             "Authoring performance and reliability are active locally",
-            "No numbered implementation lane is currently planned",
+            "no numbered implementation lane is active",
             "sessions/jobs/diagnostics outcome is deferred without a replacement number",
             "two implementation lanes plus one",
         ),
@@ -1029,6 +1082,21 @@ def validate_documents(
             "preserve the sixty reviewed catalog families",
             "additive provenance tag",
             "Ambient working-tree changes are excluded",
+        ),
+    )
+    _require_phrases(
+        diagnostics,
+        code="ADR_0016_HOST_RUNTIME_DRIFT",
+        document=ADR_0016,
+        scope=_section(documents.get(ADR_0016, ""), "## Decision"),
+        phrases=(
+            "portable native desktop execution path under Task 031",
+            "A JUCE-independent C++ library named `schuss_rt`",
+            "A separate headless `schuss-audio-engine` process",
+            "Physical MIDI will enter that native process directly",
+            "The Ksoloti backend remains a sibling export target",
+            "Task 031 is divided into four parent-owned, serialized children",
+            "does not automatically activate any child",
         ),
     )
 
@@ -1079,6 +1147,7 @@ def validate_documents(
         ADR_0013: documents.get(ADR_0013, ""),
         ADR_0014: documents.get(ADR_0014, ""),
         ADR_0015: documents.get(ADR_0015, ""),
+        ADR_0016: documents.get(ADR_0016, ""),
         APPLICATION_SPINE_PLAN: documents.get(APPLICATION_SPINE_PLAN, ""),
         TASK_012B: documents.get(TASK_012B, ""),
         TASK_018: documents.get(TASK_018, ""),
@@ -1091,6 +1160,7 @@ def validate_documents(
         TASK_027: documents.get(TASK_027, ""),
         TASK_028: documents.get(TASK_028, ""),
         TASK_030: documents.get(TASK_030, ""),
+        TASK_031: documents.get(TASK_031, ""),
         UI_DESKTOP_INITIALIZATION: documents.get(UI_DESKTOP_INITIALIZATION, ""),
         UI_DESKTOP_CATALOG: documents.get(UI_DESKTOP_CATALOG, ""),
         UI_DESKTOP_PATCHER: documents.get(UI_DESKTOP_PATCHER, ""),
@@ -1134,16 +1204,17 @@ def validate_documents(
         "active_evidence_task": "022-failed-diagnostic-promotion-stopped",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
         "authoritative_decisions": [
-            "ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014", "ADR 0015"
+            "ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014", "ADR 0015",
+            "ADR 0016",
         ],
         "checked_documents": len([path for path in DOCUMENT_PATHS if path in documents]),
         "current_status_source": STATUS,
         "diagnostics": diagnostics,
         "historical_context_policy": "completed-task-contracts-indexed-in-history-and-git",
-        "next_planned_task": "none-task030-complete",
+        "next_planned_task": "none-task031-complete",
         "planned_task_sequence": list(PLANNED_SEQUENCE),
-        "promotion_gate": "task030-complete-catalog-level-2-no-support-promotion",
-        "schema_version": "backbone-governance-summary-v20",
+        "promotion_gate": "task031-complete-host-observation-no-level7-or-audible-promotion",
+        "schema_version": "backbone-governance-summary-v21",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -1165,6 +1236,7 @@ def validate_documents(
             "028": "complete-twenty-item-direct-palette-level-3",
             "029": "complete-machine-inspection-level-1",
             "030": "complete-mutable-catalog-cohort-level-2-cli-v3",
+            "031": "complete-desktop-host-bounded-observation-no-level7-or-audible-promotion",
         },
         "ui_milestone_status": "unnumbered-desktop-workspace-shell-implemented-locally-target-hardware-publication-gated",
     }

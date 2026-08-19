@@ -172,7 +172,7 @@ def validate_structure(root: Path) -> dict[str, Any]:
             _diagnostic(diagnostics, "DESKTOP_SEMANTIC_RECORD_OWNERSHIP_INVALID", APP_ROOT / relative, "renderer may not own semantic records")
 
     package = _load(root, PACKAGE, diagnostics)
-    if not isinstance(package, dict) or package.get("dependencies") != EXPECTED_DEPENDENCIES or package.get("schuss", {}).get("recordSet") != "schuss-record-set-000027@1" or package.get("schuss", {}).get("status") != "workspace-patcher-shell":
+    if not isinstance(package, dict) or package.get("dependencies") != EXPECTED_DEPENDENCIES or package.get("schuss", {}).get("recordSet") != "schuss-record-set-000028@1" or package.get("schuss", {}).get("status") != "workspace-patcher-shell":
         _diagnostic(diagnostics, "DESKTOP_PACKAGE_INVALID", PACKAGE, "desktop dependency or boundary metadata drifted")
     lock = _load(root, PACKAGE_LOCK, diagnostics)
     if not isinstance(lock, dict) or lock.get("packages", {}).get("", {}).get("dependencies") != EXPECTED_DEPENDENCIES:

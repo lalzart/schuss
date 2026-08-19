@@ -224,7 +224,7 @@ fn operation_versions(operation: &str) -> Option<(&'static str, &'static str, bo
         "project.history.inspect" | "project.profile.fork" | "project.revert" => Some(("schuss-operation-request-v8", "schuss-operation-result-v8", true)),
         "project.init" | "project.inspect" | "project.validate" => Some(("schuss-operation-request-v3", "schuss-operation-result-v3", true)),
         "project.object.inspect" | "project.objects.list" => Some(("schuss-operation-request-v13", "schuss-operation-result-v13", true)),
-        "workspace.project.create" | "workspace.projects.list" => Some(("schuss-operation-request-v14", "schuss-operation-result-v14", true)),
+        "workspace.project.create" | "workspace.projects.list" => Some(("schuss-operation-request-v15", "schuss-operation-result-v15", true)),
         _ => None,
     }
 }
@@ -346,7 +346,7 @@ mod tests {
         .is_ok());
         assert!(validate_request(&request(
             "workspace.projects.list",
-            "schuss-operation-request-v14"
+            "schuss-operation-request-v15"
         ))
         .is_ok());
         assert!(validate_request(&request(

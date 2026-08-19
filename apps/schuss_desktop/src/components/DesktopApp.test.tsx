@@ -105,7 +105,7 @@ describe("DesktopApp workspace shell", () => {
     await waitFor(() => expect(screen.getByText(next.workspace)).toBeVisible());
     expect(dispatchMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        schema_version: "schuss-operation-request-v14",
+        schema_version: "schuss-operation-request-v15",
         operation: "workspace.project.create",
         payload: { display_name: "New texture" },
       }),

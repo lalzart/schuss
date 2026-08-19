@@ -67,6 +67,15 @@ for exact record set `schuss-record-set-000023@1`: all 56 exactly attributed
 Mutable-derived entries are catalogued as individual implementation objects
 across 107 function-first families. CLI v3 adds shared `catalog objects`
 discovery; all 50 additions remain catalogued-only and unresolved.
+Task 031 is complete locally under
+[ADR 0016](docs/decisions/0016-adopt-portable-desktop-host-runtime.md) for
+exact record set `schuss-record-set-000027@1`. The exact Task 026 seven-node
+profile now lowers to a canonical derived host package, executes through the
+JUCE-independent C++17 `schuss_rt` runtime, and produces a byte-reproducible
+offline WAV. A separate headless JUCE adapter and process-local core services
+provide explicit device inspection and audio-session lifecycle. One bounded
+Mac callback observation passed with no xruns; it is not general real-time or
+audible evidence, and no physical MIDI input was available.
 The explicitly authorized unnumbered desktop lane is locally implemented
 through its build/device workflow. `apps/schuss_desktop/` is the sole maintained
 React/Tauri product UI: it combines object browsing and project-backed node
@@ -80,9 +89,9 @@ bounded transparent-compound/native-kernel drafts, deterministic host
 audition, exact preview/accept, and project-object inspection through the same
 canonical operations. It contains no model provider, target lowering, build,
 device, arbitrary filesystem, or network authority.
-No real hardware action was performed for that implementation. Firmware/SD
-mutation, packaging, remote publication, governed connected-device evidence,
-real-time/resource evidence, and audible evidence remain separate gates.
+No Ksoloti hardware action was performed for these implementations. Firmware/SD
+mutation, packaging, remote publication, sustained real-time/resource evidence,
+and audible evidence remain separate gates.
 
 The reviewed Task 017 core remains structurally useful but not yet generally
 executable. Its two full-panel successors retain stable unsupported
@@ -121,6 +130,9 @@ and audible proof also remain `not-run` and require new authorization.
   completed source-evidenced inspection layer with zero completed machines.
 - [Task 030 contract](docs/tasks/030-complete-mutable-catalog-and-object-cli.md):
   completed exact Mutable-derived catalog cohort and implementation-object CLI.
+- [Task 031 host-runtime contract](docs/DESKTOP_HOST_RUNTIME_IMPLEMENTATION_CONTRACT.md):
+  completed portable runtime, deterministic offline renderer, headless JUCE
+  adapter, and process-local audio-session boundary.
 - [Desktop patcher contract](docs/tasks/ui-desktop-patcher-authoring.md):
   consolidated object browsing and project-backed graph authoring in the one
   maintained desktop product UI.
@@ -214,6 +226,8 @@ python3 -m unittest discover -s tools/contracts/tests
 python3 -m unittest tools.contracts.tests.test_mcp_read_only_server
 python3 -m unittest tools.contracts.tests.test_ai_sonic_authoring
 python3 tools/contracts/generate_ai_sonic_authoring_records.py --check
+python3 tools/contracts/generate_task031_records.py --check
+python3 tools/contracts/generate_task031_fixtures.py --check
 python3 tools/contracts/validate_backbone_governance.py
 python3 tools/contracts/validate_task018_contract.py
 python3 tools/contracts/validate_task021_contract.py

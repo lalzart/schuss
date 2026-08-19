@@ -108,23 +108,48 @@ def _records(contract_root: Path) -> dict[str, list[dict[str, Any]]]:
 
 def _validate_structural(
     records: dict[str, list[dict[str, Any]]],
-    schemas: dict[str, dict[str, Any]],
+    schemas: dict[str, Any],
     diagnostics: list[base.Diagnostic],
 ) -> dict[str, list[dict[str, Any]]]:
     valid: dict[str, list[dict[str, Any]]] = {}
     for kind, values in records.items():
         schema_name, schema_version, id_field, _ = SCHEMA_SPECS[kind]
-        candidates = core.validate_structural_records(
-            values,
-            schemas[kind],
-            schema_name,
-            schema_version,
-            id_field,
-            diagnostics,
-        )
+        if kind == "target" and "target_versions" in schemas:
+            candidates = []
+            for version in sorted({value.get("schema_version") for value in values if isinstance(value.get("schema_version"), str)}):
+                version_schema = schemas["target_versions"].get(version)
+                version_values = [value for value in values if value.get("schema_version") == version]
+                if version_schema is None:
+                    for record in version_values:
+                        _diagnostic(diagnostics, "SCHEMA_VERSION_UNSUPPORTED", _subject(record), "$.schema_version", f"unsupported target schema {version!r}")
+                    continue
+                candidates.extend(
+                    core.validate_structural_records(
+                        version_values,
+                        version_schema,
+                        version_schema["$id"],
+                        version,
+                        id_field,
+                        diagnostics,
+                    )
+                )
+        else:
+            candidates = core.validate_structural_records(
+                values,
+                schemas[kind],
+                schema_name,
+                schema_version,
+                id_field,
+                diagnostics,
+            )
         valid[kind] = []
         for record in candidates:
-            maximum_errors = _schema_maximum_errors(record, schemas[kind], schemas[kind])
+            record_schema = (
+                schemas["target_versions"][record["schema_version"]]
+                if kind == "target" and "target_versions" in schemas
+                else schemas[kind]
+            )
+            maximum_errors = _schema_maximum_errors(record, record_schema, record_schema)
             for error in maximum_errors:
                 _diagnostic(diagnostics, "SCHEMA_STRUCTURE_INVALID", _subject(record), "$", error)
             if not maximum_errors:
@@ -203,7 +228,10 @@ def _verify_source_evidence(
         evidence = unique[encoded]
         subject = f"source:{evidence['source_id']}@{evidence['commit']}:{evidence['path']}"
         lock = locked.get(evidence["source_id"])
-        if lock is None or lock["commit"] != evidence["commit"]:
+        is_repository_self_evidence = evidence["source_id"] == "schuss"
+        if not is_repository_self_evidence and (
+            lock is None or lock["commit"] != evidence["commit"]
+        ):
             _diagnostic(
                 diagnostics,
                 "SOURCE_EVIDENCE_LOCK_MISMATCH",
@@ -1195,10 +1223,12 @@ def validate_target_backend_build_values(
     _global_identity_collisions([*upstream.values(), *valid.values(), semantic_records], diagnostics)
 
     source_lock = base.load_json(repository_root / "catalog/sources.lock.json")
+    local_sources = _local_sources(repository_root)
+    local_sources["schuss"] = repository_root
     source_reference_count, locally_verified_count = _verify_source_evidence(
         (record for values in valid.values() for record in values),
         source_lock,
-        _local_sources(repository_root),
+        local_sources,
         diagnostics,
     )
 

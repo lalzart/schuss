@@ -18,7 +18,7 @@ from packages.schuss_core.workspace_library import WorkspaceLibraryError, Worksp
 
 def request(operation: str, payload: dict) -> dict:
     return {
-        "schema_version": "schuss-operation-request-v14",
+        "schema_version": "schuss-operation-request-v15",
         "canonical_profile": "schuss-canonical-json-v1",
         "operation": operation,
         "payload": payload,
@@ -170,7 +170,7 @@ class DesktopWorkspaceShellTest(unittest.TestCase):
                 result["diagnostics"][0]["code"],
             )
 
-    def test_application_description_adds_exact_v14_capabilities(self):
+    def test_application_description_adds_exact_v15_capabilities(self):
         with tempfile.TemporaryDirectory() as temporary:
             result = dispatch_operation(
                 {
@@ -182,11 +182,11 @@ class DesktopWorkspaceShellTest(unittest.TestCase):
                 self.context,
                 workspace_service=self.service(Path(temporary) / "projects"),
             )
-            self.assertEqual("schuss-application-capability-description-v7", result["value"]["description_version"])
+            self.assertEqual("schuss-application-capability-description-v8", result["value"]["description_version"])
             capabilities = {
                 item["operation"]: item for item in result["value"]["operations"]
             }
-            self.assertEqual(37, len(capabilities))
+            self.assertEqual(43, len(capabilities))
             self.assertEqual("available", capabilities["workspace.projects.list"]["availability"])
             self.assertEqual("workspace-write", capabilities["workspace.project.create"]["effect_class"])
 

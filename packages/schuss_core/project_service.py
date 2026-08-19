@@ -1364,7 +1364,10 @@ class ProjectService:
         )
         target_result = target.validate_target_backend_build_values(
             {kind: list(copy.deepcopy(context.records[kind])) for kind in target.SCHEMA_SPECS},
-            {kind: context.schemas[kind] for kind in target.SCHEMA_SPECS},
+            {
+                **{kind: context.schemas[kind] for kind in target.SCHEMA_SPECS},
+                "target_versions": context.schemas["target_versions"],
+            },
             {
                 "families": list(copy.deepcopy(context.records["families"])),
                 "contracts": list(copy.deepcopy(context.records["contracts"])),

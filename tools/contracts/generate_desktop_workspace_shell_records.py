@@ -21,12 +21,12 @@ from tools.contracts import record_set_rules  # noqa: E402
 from tools.contracts import validator_core as core  # noqa: E402
 
 
-PARENT = ROOT / "contracts/record-sets/ai-sonic-authoring-v1.json"
+PARENT = ROOT / "contracts/record-sets/task031-desktop-host-runtime-v1.json"
 OUTPUT = ROOT / "contracts/record-sets/ui-desktop-workspace-shell-v1.json"
 SCHEMA_NAMES = (
-    "application-capability-description-v7",
-    "operation-request-v14",
-    "operation-result-v14",
+    "application-capability-description-v8",
+    "operation-request-v15",
+    "operation-result-v15",
 )
 
 
@@ -46,12 +46,12 @@ def _closed(required: list[str], properties: dict[str, Any]) -> dict[str, Any]:
 def _request_schema() -> dict[str, Any]:
     shell = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "operation-request-v14.schema.json",
-        "title": "Schuss projects-root workspace operation request v14",
+        "$id": "operation-request-v15.schema.json",
+        "title": "Schuss projects-root workspace operation request v15",
         "oneOf": [],
     }
     common = {
-        "schema_version": {"const": "schuss-operation-request-v14"},
+        "schema_version": {"const": "schuss-operation-request-v15"},
         "canonical_profile": {"const": "schuss-canonical-json-v1"},
     }
     shell["oneOf"] = [
@@ -79,11 +79,11 @@ def _request_schema() -> dict[str, Any]:
 
 
 def _result_schema() -> dict[str, Any]:
-    source = core.load_json(ROOT / "schemas/operation-result-v13.schema.json")
-    source["$id"] = "operation-result-v14.schema.json"
-    source["title"] = "Schuss projects-root workspace operation result v14"
+    source = core.load_json(ROOT / "schemas/operation-result-v14.schema.json")
+    source["$id"] = "operation-result-v15.schema.json"
+    source["title"] = "Schuss projects-root workspace operation result v15"
     source["properties"]["schema_version"] = {
-        "const": "schuss-operation-result-v14"
+        "const": "schuss-operation-result-v15"
     }
     source["properties"]["operation"]["enum"] = [
         "workspace.project.create",
@@ -95,15 +95,15 @@ def _result_schema() -> dict[str, Any]:
 
 def _application_schema() -> dict[str, Any]:
     source = core.load_json(
-        ROOT / "schemas/application-capability-description-v6.schema.json"
+        ROOT / "schemas/application-capability-description-v7.schema.json"
     )
-    source["$id"] = "application-capability-description-v7.schema.json"
-    source["title"] = "Schuss application capability description v7"
+    source["$id"] = "application-capability-description-v8.schema.json"
+    source["title"] = "Schuss application capability description v8"
     source["properties"]["schema_version"] = {
-        "const": "application-capability-description-v7"
+        "const": "application-capability-description-v8"
     }
     source["properties"]["description_version"] = {
-        "const": "schuss-application-capability-description-v7"
+        "const": "schuss-application-capability-description-v8"
     }
     operations = source["$defs"]["operationCapability"]["properties"]
     operations["operation"]["enum"] = sorted(
@@ -111,10 +111,10 @@ def _application_schema() -> dict[str, Any]:
         | {"workspace.projects.list", "workspace.project.create"}
     )
     operations["request_schema_version"]["pattern"] = (
-        r"^schuss-operation-request-v(?:[1-9]|1[0-4])$"
+        r"^schuss-operation-request-v(?:[1-9]|1[0-5])$"
     )
     operations["result_schema_version"]["pattern"] = (
-        r"^schuss-operation-result-v(?:[1-9]|1[0-4])$"
+        r"^schuss-operation-result-v(?:[1-9]|1[0-5])$"
     )
     operations["availability"]["enum"] = sorted(
         set(operations["availability"]["enum"]) | {"requires-projects-root"}
@@ -127,16 +127,16 @@ def _application_schema() -> dict[str, Any]:
     source["$defs"]["gateSet"]["items"]["enum"] = sorted(
         set(gate_enum) | {"create-only-child-workspace", "explicit-projects-root"}
     )
-    source["properties"]["operations"]["minItems"] = 37
-    source["properties"]["operations"]["maxItems"] = 37
+    source["properties"]["operations"]["minItems"] = 43
+    source["properties"]["operations"]["maxItems"] = 43
     return source
 
 
 def generated() -> tuple[dict[str, bytes], bytes, dict[str, Any]]:
     schemas = {
-        "application-capability-description-v7": _application_schema(),
-        "operation-request-v14": _request_schema(),
-        "operation-result-v14": _result_schema(),
+        "application-capability-description-v8": _application_schema(),
+        "operation-request-v15": _request_schema(),
+        "operation-result-v15": _result_schema(),
     }
     files = {
         f"schemas/{name}.schema.json": _canonical_bytes(schema)
@@ -160,7 +160,7 @@ def generated() -> tuple[dict[str, bytes], bytes, dict[str, Any]]:
     manifest = {
         "schema_version": "record-set-v0",
         "canonical_profile": "schuss-canonical-json-v1",
-        "record_set_id": "schuss-record-set-000027",
+        "record_set_id": "schuss-record-set-000028",
         "revision": 1,
         "content_hash": "sha256:" + "0" * 64,
         "purpose": "prospective-task",
