@@ -69,6 +69,22 @@ when the exact seven-node Task 026 closure resolves once. Host execution is a
 parallel result and never rewrites, falls back to, or promotes the retained
 Ksoloti target/backend closure.
 
+Task 032 adds no target, backend, binding, eligibility, or evidence-claim
+identity. Exact record set `schuss-record-set-000029@1` reuses host target
+`schuss-compute-target-000002@1`, backend `schuss-backend-000003@1`, and the
+seven revision-2 eligible native bindings. Its one new global request,
+`schuss-build-request-000007@1`, is only a template source for exact
+project-owned requests. Runtime lowering must consume the explicitly selected
+project member and may not execute that template by ambient discovery.
+
+Package/runtime/protocol v1 make the execution shape variable but keep the
+target profile fixed: Q27, 48,000 Hz, at most 512 frames per block, one stereo
+output, no audio input, and finite node/connection/buffer/state/parameter/event
+ceilings. A graph outside the seven exact eligible bindings or any incompatible
+port, cycle, extra output, or limit fails before package publication or
+activation. This does not broaden Task 028/030 host eligibility or change any
+Ksoloti result.
+
 ## Ksoloti facts and unresolved boundaries
 
 Pinned source evidence at patcher commit

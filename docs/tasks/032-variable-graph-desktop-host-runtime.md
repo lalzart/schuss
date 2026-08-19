@@ -1,10 +1,9 @@
 # Task 032: Bounded variable-graph desktop host runtime and safe patch replacement
 
-Status: proposed implementation contract created at the user's explicit request
-on 2026-08-19; not activated and not started. Creating this contract authorizes
-only the contract and current-routing updates. It does not authorize runtime,
-schema, record, operation, UI, audio-device, hardware, staging, commit, push, or
-publication work.
+Status: explicitly activated by the user and completed locally on 2026-08-19.
+All three serialized phases completed in order. No physical audio/MIDI or
+Ksoloti device action, staging, commit, push, tagging, or publication was
+performed. Final aggregate validation completed on 2026-08-20.
 
 ## Goal and why it exists
 
@@ -64,9 +63,10 @@ Task 032 exists.
 
 ## Activation and allocation gate
 
-This proposal is not an active implementation task. A later explicit request
-to run Task 032 activates the complete task in the ordered phases below. Before
-writing any schema, record, generated artifact, or runtime code, that run must:
+This task became active when the user explicitly requested implementation on
+2026-08-19. That request activates the complete task in the ordered phases
+below. Before writing any schema, record, generated artifact, or runtime code,
+the activation run must:
 
 1. verify the live branch, worktree, exact parent record set, Task 031 fixture
    bytes, and absence of conflicting staged or user-owned changes;
@@ -81,6 +81,38 @@ No semantic stable ID is reserved merely by creating this proposed contract.
 The conceptual successor names `host-runtime-package-v1`, `schuss-rt-abi-v1`,
 and `schuss-audio-engine-protocol-v1` are owned by Task 032 if and when it is
 explicitly activated.
+
+### 2026-08-19 activation and exact allocation
+
+The activation audit found clean `main` and `origin/main` at contract commit
+`7eb8f927be87517eb56ae408b388993379e3d699`, with Task 031 implementation
+baseline `932f310`, no staged or user-owned changes, fresh Task 031 generators,
+and the frozen Task 031 package, observation, record-set, and WAV bytes intact.
+
+Task 032 exclusively allocates:
+
+- successor record set `schuss-record-set-000029@1`, parented exactly to
+  `schuss-record-set-000028@1`;
+- host build-request template `schuss-build-request-000007@1`, used only as a
+  source for exact project-owned host requests and never as ambient runtime
+  selection;
+- schemas `host-runtime-package-v1`, `host-runtime-observation-v1`,
+  `host-engine-protocol-v1`, `schuss-operation-request-v16`,
+  `schuss-operation-result-v16`, and
+  `schuss-application-capability-description-v9`; and
+- retained fixture projects `schuss-project-000032`, `000033`, and `000034`
+  for the smaller, seven-node reference, and larger graph respectively. Their
+  deterministic owned graph/instrument/request IDs are `068746`/`237474`/`139035`,
+  `508458`/`289694`/`413229`, and `667107`/`191798`/`808211` under the existing
+  `schuss-graph`, `schuss-instrument`, and `schuss-build-request` prefixes.
+
+Task 032 allocates no new compute target, backend, component contract,
+implementation binding, eligibility, or evidence-claim stable ID. It reuses
+the exact Task 031 target/backend and seven revision-2 eligible host bindings.
+Any incompatible graph fails rather than allocating or inferring another
+implementation. The accepted client-neutral operation addition is exactly
+`audio.session.replace`; the six Task 031 host operations remain byte-frozen in
+their v14 contract and are carried forward through the additive v16 surface.
 
 ## In scope
 
@@ -298,8 +330,8 @@ until the correction is frozen, followed by at most one final aggregate rerun.
 
 ## Acceptance tests
 
-1. The task remains `proposed` and implementation-inactive until an explicit
-   user request to run Task 032; contract creation alone changes no runtime or
+1. The task remained implementation-inactive until the explicit 2026-08-19
+   request to run Task 032; contract creation alone changed no runtime or
    semantic record.
 2. Activation verifies and freezes the exact parent, successor allocations,
    and write ownership before any generator or implementation change.
@@ -393,12 +425,34 @@ until the correction is frozen, followed by at most one final aggregate rerun.
 - Staging, commit, push, tagging, or publication without a separate explicit
   user request after the complete implementation diff is reviewed.
 
-## Proposed completion boundary
+## Completion boundary and retained result
 
-Task 032 will be complete only when many exact graph shapes made from the
-existing seven host-supported node types can lower and execute through one
-bounded registry-based v1 runtime, and one valid successor graph can safely
-replace another without work or destruction in the audio callback. Completion
-will not mean that every catalog object runs, that replacement sounds seamless,
-that Ksoloti is equivalent, or that real-time, audible, packaging, and release
-evidence has been earned.
+Task 032 is complete for exact record set `schuss-record-set-000029@1`, content
+hash `sha256:8d6d8e5b0c3a90862f1e7c9ddab9c054a7b5908f268db9fa356c131bdc37c55c`.
+The smaller, seven-node reference, and larger repeated-factory projects all
+lower and execute through the same bounded registry-based v1 runtime. The
+larger package is
+`sha256:63463753a23753c0a03b362be3f9b953493f95dad6f588b514eaf6dbd7f5419c`;
+two isolated copied roots reproduced its retained WAV SHA-256
+`586199d4773cb84941752eb6265b525f442e4840a3cbb85346446b677f25b363`.
+
+The replacement slot prepares one complete successor off the callback,
+exchanges it at one audio-block boundary using lock-free atomics, starts it
+with reset state, and reclaims the retired runtime off the callback. Focused
+fake-engine tests, a 64-swap concurrent native stress test, warnings-as-errors
+builds, AddressSanitizer/UndefinedBehaviorSanitizer, and ThreadSanitizer pass.
+The retained Task 031 package, observation, and WAV bytes remain exact.
+
+After the reviewed implementation freeze, inventory passed 14 tests, catalog
+passed 6 tests, and the native aggregate passed 3 tests. The contracts
+aggregate completed 458 tests with only the three pre-existing unrelated
+retained-golden failures in Task 011A/023 catalog output, Task 023 CLI-v2
+output, and Task 027 generated catalog freshness. Every Task 032 test passed;
+no historical golden was changed. The exact acceptance matrix and command
+results are retained in
+`evidence/task032-completion-v1/validation-summary.json`.
+
+Completion does not mean that every catalog object runs, that replacement is
+click-free or sounds seamless, that Ksoloti is equivalent, or that physical
+device, general real-time/resource level 7, audible level 8, packaging, or
+release evidence has been earned.

@@ -391,6 +391,27 @@ JUCE and physical devices remain behind the native engine; React, Tauri,
 Python, CLI, AI, and MCP clients receive the same operation/result shapes and
 do not enter the performance callback.
 
+Task 032 additively supplies operation request/result v16 and application
+capability description v9 in exact record set `schuss-record-set-000029@1`.
+The six Task 031 operation meanings remain available through v16 with an
+explicit project-owned host build-request reference. One new shared operation
+is added:
+
+- `audio.session.replace` names the process-local session, expected engine
+  generation, expected active package hash, exact successor project revision,
+  exact successor host build request, and reset-state replacement intent.
+
+Core snapshots and lowers the successor away from the callback. The native
+engine may retain only one pending successor, prepares all storage before
+activation, exchanges the complete runtime at a block boundary, and reclaims
+the retired runtime off the callback. Success reports the old/new package and
+project identities, incremented generation, block-boundary fact, reset-state
+policy, and non-mutation fact. Stale identity, concurrent preparation,
+unsupported graph, malformed package, preparation failure, or rejected
+activation returns a stable diagnostic without rewriting either project or
+reporting a partial successor. These are process-local lifecycle facts, not a
+click-free, audible, or general real-time claim.
+
 ## Projects-root workspace shell
 
 The desktop workspace-shell successor additively supplies operation

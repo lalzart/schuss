@@ -303,6 +303,23 @@ the JUCE adapter owns only native audio/MIDI device lifecycle and callback
 transport. An unavailable or ambiguous host binding fails before package
 publication, and no host outcome silently promotes Ksoloti compatibility.
 
+Task 032 keeps that target/backend pair and the exact revision-2 binding
+eligibilities, but makes host lowering project-profile-independent. One exact
+project-owned graph, instrument, and explicitly selected host build request
+enter the existing `plan_build` front half. The successor lowerer accepts only
+the seven registered host contracts, validates every typed connection and
+driver, rejects cycles and disconnected outputs, and derives the schedule,
+buffer reuse, aligned state, parameter storage, and output buffers from the
+validated graph. It publishes `host-runtime-package-v1`; it does not discover
+an ambient request, use the global template as execution authority, or widen
+selection to Task 028/030 objects, compounds, or native kernels.
+
+The v1 package retains explicit ceilings of 64 nodes, 192 connections, 128
+buffers, 65,536 state bytes, 256 parameters, 1,024 queued events, and 64
+scheduled nodes at fixed Q27, 48 kHz, and blocks no larger than 512 frames.
+Exceeding or contradicting any bound fails during lowering or native
+preparation, before an active runtime can change.
+
 ## Diagnostics and traceability
 
 Every diagnostic is a structured record with stable code, severity, stage,

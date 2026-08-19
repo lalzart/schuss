@@ -35,6 +35,17 @@ headless Core Audio/Core MIDI device adapter. Host compilation, offline bytes,
 and one process-local callback observation remain separate from Ksoloti,
 general real-time/resource, and audible evidence.
 
+Task 032 additively replaces the v0 whole-profile assumption with a bounded v1
+registry path. The authoritative project still owns the exact graph; lowering
+derives a deterministic lexical topological schedule, explicit input drivers,
+buffer lifetimes, aligned state, and finite resource ceilings for any accepted
+acyclic arrangement of the same seven host factories. A complete prepared
+successor may be exchanged at an audio-block boundary with reset state. The
+callback performs only lock-free pointer/identity atomics; lowering,
+allocation, parsing, destruction, filesystem work, and process communication
+remain off the callback. Package v0 and the Task 031 bytes remain independent
+historical authority.
+
 Exact ownership and permitted references are normative in
 `docs/SCHEMA_STRATEGY.md`. Compiler stages and derived artifacts are normative
 in `docs/COMPILER_STRATEGY.md`.

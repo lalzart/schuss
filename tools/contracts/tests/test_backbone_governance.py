@@ -31,7 +31,7 @@ class BackboneGovernanceTest(unittest.TestCase):
     def test_live_repository_is_valid(self):
         summary = governance.validate_documents(self.documents, self.task_filenames)
         self.assertEqual("valid", summary["status"])
-        self.assertEqual("backbone-governance-summary-v22", summary["schema_version"])
+        self.assertEqual("backbone-governance-summary-v23", summary["schema_version"])
         self.assertEqual([], summary["diagnostics"])
         self.assertEqual(
             [
@@ -49,23 +49,23 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["active_evidence_task"],
         )
         self.assertEqual(
-            "task032-explicit-activation-required",
+            "next-numbered-task-requires-explicit-contract-and-activation",
             summary["promotion_gate"],
         )
         self.assertEqual(
             [
                 "013", "014", "015", "016", "017", "018", "019", "020",
                 "021", "022", "023", "024", "025", "026", "027", "028",
-                "029", "030", "031",
+                "029", "030", "031", "032",
             ],
             summary["active_task_sequence"],
         )
         self.assertEqual(
-            "032-variable-graph-host-runtime-proposed-not-started",
+            "none-selected",
             summary["next_planned_task"],
         )
         self.assertEqual(
-            ["032"],
+            [],
             summary["planned_task_sequence"],
         )
         self.assertEqual("complete-mapped-local-level-5", summary["task_statuses"]["018"])
@@ -114,7 +114,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["task_statuses"]["031"],
         )
         self.assertEqual(
-            "proposed-variable-graph-host-runtime-not-started",
+            "complete-variable-graph-host-runtime-reset-state-replacement-no-level7-or-audible-promotion",
             summary["task_statuses"]["032"],
         )
         self.assertEqual(
@@ -124,7 +124,7 @@ class BackboneGovernanceTest(unittest.TestCase):
 
     def test_negative_governance_fixtures_fail_closed(self):
         self.assertEqual(
-            "backbone-governance-negative-fixtures-v7", self.fixtures["schema_version"]
+            "backbone-governance-negative-fixtures-v8", self.fixtures["schema_version"]
         )
         for fixture in self.fixtures["cases"]:
             with self.subTest(case=fixture["name"]):

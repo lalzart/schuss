@@ -76,6 +76,7 @@ class SubprocessEngineTransport:
         executable: Path,
         protocol_schema: Mapping[str, Any],
         *,
+        protocol_abi: str = HOST_ENGINE_PROTOCOL_ABI,
         response_timeout_seconds: float = 5.0,
     ) -> None:
         executable = Path(executable)
@@ -87,7 +88,10 @@ class SubprocessEngineTransport:
             )
         if response_timeout_seconds <= 0:
             raise ValueError("response timeout must be positive")
+        if not isinstance(protocol_abi, str) or not protocol_abi:
+            raise ValueError("protocol ABI must be a non-empty string")
         self._protocol_schema = copy.deepcopy(dict(protocol_schema))
+        self._protocol_abi = protocol_abi
         self._timeout = response_timeout_seconds
         try:
             self._process = subprocess.Popen(
@@ -136,14 +140,18 @@ class SubprocessEngineTransport:
         return line
 
     @staticmethod
-    def _validate_response(response: Any, message_id: str) -> dict[str, Any]:
+    def _validate_response(
+        response: Any,
+        message_id: str,
+        protocol_abi: str,
+    ) -> dict[str, Any]:
         if not isinstance(response, dict) or set(response) != {
             "diagnostics", "message_id", "protocol_abi", "status", "value"
         }:
             raise EngineProtocolError("ENGINE_RESPONSE_INVALID", "the native audio engine returned an invalid response shape")
         if response["message_id"] != message_id:
             raise EngineProtocolError("ENGINE_RESPONSE_ID_MISMATCH", "the native audio engine response did not match the request")
-        if response["protocol_abi"] != HOST_ENGINE_PROTOCOL_ABI:
+        if response["protocol_abi"] != protocol_abi:
             raise EngineProtocolError("ENGINE_RESPONSE_ABI_MISMATCH", "the native audio engine response ABI is unsupported")
         if response["status"] not in {"success", "failed"} or not isinstance(response["diagnostics"], list):
             raise EngineProtocolError("ENGINE_RESPONSE_INVALID", "the native audio engine returned an invalid status")
@@ -188,7 +196,11 @@ class SubprocessEngineTransport:
                     "the native audio engine connection failed",
                     status="unavailable",
                 ) from error
-            return self._validate_response(response, message_id)
+            return self._validate_response(
+                response,
+                message_id,
+                self._protocol_abi,
+            )
 
     def close(self) -> None:
         with self._lock:

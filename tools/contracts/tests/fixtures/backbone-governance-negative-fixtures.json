@@ -1,5 +1,5 @@
 {
-  "schema_version": "backbone-governance-negative-fixtures-v7",
+  "schema_version": "backbone-governance-negative-fixtures-v8",
   "cases": [
     {
       "name": "ui-resurrection",
@@ -86,10 +86,10 @@
       "expected_code": "TASK_023_CONTRACT_INVALID"
     },
     {
-      "name": "task032-unauthorized-activation",
+      "name": "task032-activation-record-removal",
       "path": "docs/tasks/032-variable-graph-desktop-host-runtime.md",
-      "old": "Status: proposed implementation contract created at the user's explicit request\non 2026-08-19; not activated and not started.",
-      "new": "Status: active implementation without explicit activation.",
+      "old": "Status: explicitly activated by the user and completed locally on 2026-08-19.\nAll three serialized phases completed in order.",
+      "new": "Status: completed locally without an explicit activation record.",
       "expected_code": "TASK_032_CONTRACT_INVALID"
     }
   ]

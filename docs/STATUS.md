@@ -523,13 +523,54 @@ failed, and no historical golden was rebaselined.
 
 The completed Task 031 implementation was subsequently committed locally as
 `932f310`; that commit has not been pushed.
-Task 032 now has a proposed implementation contract at
-`docs/tasks/032-variable-graph-desktop-host-runtime.md`. It is limited to
-bounded acyclic graph shapes made from the existing seven Task 031 host node
-types and safe reset-state patch replacement.
-Task 032 is not activated or started.
-Creating its contract authorizes no runtime, schema, record, operation, UI,
-device, hardware, Git, or publication work.
+
+Task 032 was explicitly activated and is complete locally for exact record set
+`schuss-record-set-000029@1`, content hash
+`sha256:8d6d8e5b0c3a90862f1e7c9ddab9c054a7b5908f268db9fa356c131bdc37c55c`,
+parented by the workspace-shell set `000028`. It adds six schemas and one host
+request template, but no target, backend, contract, binding, eligibility, or
+evidence-claim identity. Operation v16 carries the six Task 031 host operations
+forward with explicit project-owned request selection and adds only
+`audio.session.replace`; capability v9 describes forty-four shared operations.
+
+The additive v1 `schuss_rt` path resolves every instance through one of the
+seven exact Task 031 factories. It accepts bounded acyclic arrangements and
+repeated factory instances, derives lexical-ID topological scheduling and
+deterministic buffer/state plans, and retains fixed Q27, 48,000 Hz, at most 512
+frames per block, and one stereo output. The retained smaller, reference, and
+larger projects contain 3, 7, and 8 nodes. Their package hashes are
+`sha256:0cb4fb817a89e0697fc8c85f118a4438313740d5935ff1ab5e0d090bc4ac8ea5`,
+`sha256:a8ce039db0d1b1edaecd9f664a759c3ab275dc75c1bbe72b74bc9e1f397b4f42`,
+and
+`sha256:63463753a23753c0a03b362be3f9b953493f95dad6f588b514eaf6dbd7f5419c`.
+Their retained WAV SHA-256 values are respectively
+`99388ceb670412a46c6932619ab97e14e80558989adaa83ba01880884b25ef7c`,
+`ae2b8eff76d079b85c74f4d33d555699f8812cb0b72ea459014ee9a90e9ead7c`,
+and `586199d4773cb84941752eb6265b525f442e4840a3cbb85346446b677f25b363`.
+The seven-node WAV remains byte-identical to Task 031.
+
+One prepared successor may replace the active v1 runtime. Preparation,
+allocation, parsing, reset, and retired-runtime destruction stay off the audio
+callback; one lock-free atomic exchange occurs at an audio-block boundary.
+Fake-engine service tests cover stale identities, concurrent replacement,
+activation failure, exact telemetry, and project-byte preservation. Native
+warnings-as-errors builds, allocation guards, a 64-swap concurrent stress run,
+AddressSanitizer/UndefinedBehaviorSanitizer, ThreadSanitizer, every declared
+offline block size, and two isolated copied-root/process reproductions pass.
+The two copied roots reproduce the larger package, observation, and WAV bytes
+recorded in `evidence/task032-completion-v1/`. No physical audio/MIDI device,
+Ksoloti build/device, listening, packaging, staging, commit, push, tagging, or
+publication action occurred, and no general level-7 or audible level-8 claim
+was promoted.
+
+Final aggregate validation ran once after the reviewed implementation freeze.
+Inventory passed 14 tests and catalog passed 6 tests. The contracts aggregate
+completed 458 tests with the same three unrelated retained-golden failures in
+Task 011A/023 catalog output, Task 023 CLI-v2 output, and Task 027 generated
+catalog freshness; every Task 032 test passed and no golden was rebaselined.
+The final native aggregate passed all 3 tests. Exact commands, durations,
+failure names, sanitizer outcomes, and the acceptance matrix are retained in
+`evidence/task032-completion-v1/validation-summary.json`.
 
 Tasks 019 and 020 are deferred and not automatically activated by completion
 of Task 018 or Task 021.
@@ -555,7 +596,7 @@ of Task 018 or Task 021.
 | Complete Mutable-derived catalog cohort | All 56 exactly attributed Task 027 entries catalogued as individual implementations across 107 function-first families, with shared implementation search and CLI v3 object browsing | Levels 1-2 structural/provenance only; all 50 additions remain catalogued-only and levels 3-8 not-run |
 | Twenty-item direct palette | Five retained Task 025 promotions plus fifteen exact independent Task 028 selections and normalized operation-IR lowerings; seven Task 026 support bindings remain separate | Levels 1-3 passed; source generation, ARM, device, realtime/resource, and audible levels 4-8 not-run |
 | Gills machine layer | Exact Palimpsest and Tide Pit source reviews, source-evidenced inspection presentations, editable v0.6 panel plus semantic map, fail-closed completed-machine schema, shared read-only inspection operation, and isolated Viewer | Level 1 structural/source-identity/host inspection proof; completed machines zero; levels 2-8 not-run |
-| Desktop host runtime | Exact seven-node host target/backend/bindings, portable fixed-Q27 runtime, deterministic offline WAV, headless JUCE adapter, and process-local render/audio sessions | Host structural, compile, offline-execution, and one bounded local callback observation only; general level 7, physical MIDI receipt, audible level 8, Ksoloti equivalence, packaging, and release not promoted |
+| Desktop host runtime | Exact seven-factory host target/backend/bindings, bounded variable acyclic graphs, portable fixed-Q27 runtime, deterministic offline WAVs, headless JUCE adapter, process-local render/audio sessions, and reset-state block-boundary replacement | Host structural, compile, deterministic offline-execution, replacement stress/sanitizer, and the retained Task 031 bounded callback observation only; general level 7, physical MIDI receipt, audible level 8, Ksoloti equivalence, packaging, and release not promoted |
 | Desktop patcher | One consolidated Tauri shell, exact 133-implementation browsing, seven-node template creation, graph projection/proposal, atomic project save, and history/revert through shared operations | Host UI and project-persistence proof only; build, device, real-time/resource, audible, packaging, and publication not-run |
 | Desktop build/device workflow | Core-owned process-local build jobs, structured progress/diagnostics, explicit Ksoloti identity/compatibility sessions, and a fake-tested read-back-verified volatile-RAM upload path | Host implementation, local ARM build, and fake-transport proof; real connected-device action, governed level 6, real-time/resource, audible, packaging, and publication not-run |
 | AI/MCP authoring | Dual-era local stdio adapter with seven default read-only tools plus seven explicitly project-scoped sonic planning/object/patch tools; bounded transparent compounds/native kernels and atomic project acceptance | Host structural, deterministic host-audition, protocol, and project-persistence proof only; target lowering, model behavior, build, device, real-time/resource, audible, remote security, packaging, and publication not-run |
@@ -613,10 +654,11 @@ Task 021 established all of the following:
   both proposed level-6 claims remain `not-run`.
 - Real-time/resource and audible evidence levels 7-8 remain `not-run`.
 - Task 031 retains one one-second Core Audio callback observation with no xruns,
-  but it is not a sustained headroom result. No physical MIDI input was present,
-  so Core MIDI device receipt is not proved; no audio capture or listening
-  judgment exists. Host results do not imply Ksoloti equivalence, packaging,
-  redistribution, or release readiness.
+  but it is not a sustained headroom result. Task 032 adds deterministic
+  offline variable-graph and replacement stress evidence only; it performed no
+  physical audio/MIDI smoke. No physical MIDI receipt, audio capture, or
+  listening judgment exists. Host results do not imply click-free replacement,
+  Ksoloti equivalence, packaging, redistribution, or release readiness.
 - The authenticated Task 009 local content store is ignored and must be
   validated separately when present; a clean checkout cannot claim that local
   evidence merely from tracked manifests.
@@ -660,7 +702,7 @@ Task 021 product-binary replacement, firmware flash, SD-card write, persistent
 installation, or reset. Any diagnostic successor or repeated hardware
 procedure requires a new bounded decision and explicit approval.
 
-Tasks 023-031 are accepted complete locally. Task 025's retained fail-closed result is
+Tasks 023-032 are accepted complete locally. Task 025's retained fail-closed result is
 bounded by `docs/tasks/025-direct-compiler-core-library-tranche.md` and
 `contracts/task025/reverb-allocation-boundary.md`; it does not authorize or
 claim lowering, ARM, device, real-time, audible, Git, or publication action.
@@ -670,10 +712,11 @@ its completed source-review and provenance contract and does not activate
 Task 028. Task 028 is bounded by its completed twenty-item direct-palette
 contract; its prior transparent-compound outcome is deferred. Task 029 is
 bounded to source-evidenced machine inspection and Task 030 to catalog
-provenance plus read-only object discovery. Task 031 is bounded to its exact
-seven-node desktop-host package and process-local engine/session path; it does
-not activate broader runtime, UI, hardware, or release work. Task 032 is the
-next proposed numbered contract but remains not activated and not started. No
+provenance plus read-only object discovery. Task 031 retains its exact
+seven-node v0 package and process-local engine/session authority. Task 032 is
+bounded to variable acyclic arrangements of those same seven factories and
+reset-state process-local replacement; it does not activate a broader palette,
+UI, hardware, or release lane. No next numbered task is selected and no
 numbered implementation lane is active. The unnumbered desktop patcher is
 implemented locally with its process-local build/device and project-object
 handoff successors and awaits user acceptance/publication. The unnumbered AI/MCP lane is implemented locally

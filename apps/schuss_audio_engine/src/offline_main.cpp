@@ -1,4 +1,5 @@
 #include "schuss_rt/runtime.hpp"
+#include "schuss_rt/runtime_v1.hpp"
 
 #include "schuss_rt/sha256.hpp"
 
@@ -198,6 +199,62 @@ std::string observation_without_hash(
         + escaped(target_triple()) + "\"}}";
 }
 
+std::string graph_execution(
+    const schuss::rt::v1::PreparedPackage& package
+) {
+    std::map<std::string, std::size_t> counts;
+    for (const auto& node : package.nodes) ++counts[node.factory_id];
+    std::vector<std::string> encoded_instances;
+    for (const auto& item : counts) {
+        encoded_instances.push_back(
+            "{\"count\":" + std::to_string(item.second)
+            + ",\"factory_id\":\"" + escaped(item.first) + "\"}"
+        );
+    }
+    std::sort(encoded_instances.begin(), encoded_instances.end());
+    std::string instances;
+    for (const auto& value : encoded_instances) {
+        if (!instances.empty()) instances.push_back(',');
+        instances += value;
+    }
+    return "{\"buffer_count\":" + std::to_string(package.buffer_count)
+        + ",\"connection_count\":" + std::to_string(package.connection_count)
+        + ",\"factory_instance_counts\":[" + instances + "]"
+        + ",\"node_count\":" + std::to_string(package.nodes.size())
+        + ",\"schedule_length\":" + std::to_string(package.schedule.size())
+        + ",\"state_bytes\":" + std::to_string(package.state_bytes) + "}";
+}
+
+std::string observation_v1_without_hash(
+    const Options& option,
+    const schuss::rt::Metrics& metrics,
+    const std::string& graph_facts,
+    std::size_t wav_size,
+    const std::string& wav_hash
+) {
+    return "{\"canonical_profile\":\"schuss-canonical-json-v1\","
+        "\"configuration\":{\"block_frames\":" + std::to_string(option.block_frames)
+        + ",\"output_channels\":2,\"render_frames\":" + std::to_string(option.frames)
+        + ",\"sample_rate_hz\":48000},"
+        "\"device\":{\"status\":\"not-opened\"},"
+        "\"diagnostics\":[],"
+        "\"evidence_boundary\":{\"audible_level_8_promoted\":false,\"host_execution_only\":true,"
+        "\"ksoloti_equivalence_claimed\":false,\"real_time_level_7_promoted\":false,\"release_readiness_claimed\":false},"
+        "\"graph_execution\":" + graph_facts + ","
+        "\"metrics\":{\"callback_cpu_ratio_max\":\"0.000000\",\"callback_duration_us_max\":0,"
+        "\"midi_events_delivered\":" + std::to_string(metrics.events_delivered)
+        + ",\"processed_frames\":" + std::to_string(metrics.processed_frames)
+        + ",\"queue_overflows\":" + std::to_string(metrics.queue_overflows) + ",\"xruns\":0},"
+        "\"observation_kind\":\"offline-render\","
+        "\"output\":{\"byte_length\":" + std::to_string(wav_size) + ",\"byte_sha256\":\"" + wav_hash
+        + "\",\"media_type\":\"audio/wav\"},"
+        "\"package_content_hash\":\"" + option.package_hash + "\","
+        "\"schema_version\":\"host-runtime-observation-v1\",\"status\":\"success\","
+        "\"toolchain\":{\"compiler_id\":\"" + escaped(compiler_id()) + "\",\"compiler_version\":\""
+        + escaped(compiler_version()) + "\",\"runtime_abi\":\"schuss-rt-abi-v1\",\"target_triple\":\""
+        + escaped(target_triple()) + "\"}}";
+}
+
 std::string with_content_hash(const std::string& without_hash) {
     const std::string marker = "\"device\"";
     const auto position = without_hash.find(marker);
@@ -207,38 +264,76 @@ std::string with_content_hash(const std::string& without_hash) {
         + without_hash.substr(position);
 }
 
+template <typename RuntimeType>
+std::vector<std::int32_t> render_samples(
+    RuntimeType& runtime, const Options& option
+) {
+    std::vector<std::int32_t> samples(static_cast<std::size_t>(option.frames) * 2U);
+    std::vector<std::int32_t> left(option.block_frames), right(option.block_frames);
+    std::uint32_t cursor = 0;
+    while (cursor < option.frames) {
+        const auto count = std::min(option.block_frames, option.frames - cursor);
+        const auto processed = runtime.process(left.data(), right.data(), count);
+        if (!processed) throw std::runtime_error(processed.diagnostic);
+        for (std::uint32_t frame = 0; frame < count; ++frame) {
+            samples[static_cast<std::size_t>(cursor + frame) * 2U] = left[frame];
+            samples[static_cast<std::size_t>(cursor + frame) * 2U + 1U] = right[frame];
+        }
+        cursor += count;
+    }
+    return samples;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
     try {
         const Options option = options(argc, argv);
         const std::string package_json = read_text(option.package_path);
-        schuss::rt::PreparedPackage package;
-        const auto parsed = schuss::rt::parse_package(package_json, option.package_hash, package);
-        if (!parsed) throw std::runtime_error(parsed.diagnostic);
-        schuss::rt::Runtime runtime;
-        const auto prepared = runtime.prepare(package);
-        if (!prepared) throw std::runtime_error(prepared.diagnostic);
-
-        std::vector<std::int32_t> samples(static_cast<std::size_t>(option.frames) * 2U);
-        std::vector<std::int32_t> left(option.block_frames), right(option.block_frames);
-        std::uint32_t cursor = 0;
-        while (cursor < option.frames) {
-            const auto count = std::min(option.block_frames, option.frames - cursor);
-            const auto processed = runtime.process(left.data(), right.data(), count);
-            if (!processed) throw std::runtime_error(processed.diagnostic);
-            for (std::uint32_t frame = 0; frame < count; ++frame) {
-                samples[static_cast<std::size_t>(cursor + frame) * 2U] = left[frame];
-                samples[static_cast<std::size_t>(cursor + frame) * 2U + 1U] = right[frame];
-            }
-            cursor += count;
+        std::vector<std::int32_t> samples;
+        schuss::rt::Metrics metrics;
+        std::string graph_facts;
+        const bool variable = package_json.find(
+            "\"schema_version\":\"host-runtime-package-v1\""
+        ) != std::string::npos;
+        if (variable) {
+            schuss::rt::v1::PreparedPackage package;
+            const auto parsed = schuss::rt::v1::parse_package(
+                package_json, option.package_hash, package
+            );
+            if (!parsed) throw std::runtime_error(parsed.diagnostic);
+            schuss::rt::v1::Runtime runtime;
+            const auto prepared = runtime.prepare(package);
+            if (!prepared) throw std::runtime_error(prepared.diagnostic);
+            samples = render_samples(runtime, option);
+            metrics = runtime.metrics();
+            graph_facts = graph_execution(package);
+        } else {
+            schuss::rt::PreparedPackage package;
+            const auto parsed = schuss::rt::parse_package(
+                package_json, option.package_hash, package
+            );
+            if (!parsed) throw std::runtime_error(parsed.diagnostic);
+            schuss::rt::Runtime runtime;
+            const auto prepared = runtime.prepare(package);
+            if (!prepared) throw std::runtime_error(prepared.diagnostic);
+            samples = render_samples(runtime, option);
+            metrics = runtime.metrics();
         }
         const auto wav = wav_bytes(samples, option.frames);
         const std::string wav_hash = schuss::rt::sha256_hex(wav);
         write_bytes(option.output_path, wav);
-        const std::string observation = with_content_hash(
-            observation_without_hash(option, runtime.metrics(), wav.size(), wav_hash)
-        ) + "\n";
+        std::string observation_body;
+        if (variable) {
+            observation_body = observation_v1_without_hash(
+                option, metrics, graph_facts, wav.size(), wav_hash
+            );
+        } else {
+            observation_body = observation_without_hash(
+                option, metrics, wav.size(), wav_hash
+            );
+        }
+        const std::string observation = with_content_hash(observation_body) + "\n";
         write_text(option.observation_path, observation);
         std::cout << "HOST_RENDER_SUCCESS " << wav_hash << " " << option.frames << '\n';
         return 0;

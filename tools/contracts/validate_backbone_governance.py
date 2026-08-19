@@ -94,8 +94,8 @@ DOCUMENT_PATHS = (
     AI_SONIC_AUTHORING,
 )
 
-ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 32))
-PLANNED_SEQUENCE: tuple[str, ...] = ("032",)
+ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 33))
+PLANNED_SEQUENCE: tuple[str, ...] = ()
 EXPECTED_TASK_FILENAMES = {
     "README.md",
     "012b-object-drawer-and-transparent-graph-canvas.md",
@@ -660,9 +660,9 @@ def validate_documents(
 
     task32_status = _leading_status(documents.get(TASK_032, "")) or ""
     for fragment in (
-        "proposed implementation contract created at the user's explicit request",
-        "not activated and not started",
-        "creating this contract authorizes only the contract and current-routing updates",
+        "explicitly activated by the user and completed locally on 2026-08-19",
+        "all three serialized phases completed in order",
+        "no physical audio/midi or ksoloti device action",
     ):
         if fragment not in task32_status.lower():
             diagnostics.append(
@@ -690,7 +690,8 @@ def validate_documents(
             "schuss-rt-abi-v1",
             "schuss-audio-engine-protocol-v1",
             "seven already accepted Task 031 host node types",
-            "No semantic stable ID is reserved",
+            "schuss-record-set-000029@1",
+            "64-swap concurrent native stress test",
             "state migration",
             "staging, commit, push",
         ),
@@ -894,9 +895,12 @@ def validate_documents(
         "The one authorized bounded local Mac smoke opened `MacBook Pro Speakers`",
         "No physical MIDI input was available",
         "promotes neither general real-time/resource level 7 nor audible level 8",
-        "Task 032 now has a proposed implementation contract",
-        "Task 032 is not activated or started",
-        "Creating its contract authorizes no runtime",
+        "Task 032 was explicitly activated and is complete locally",
+        "`schuss-record-set-000029@1`",
+        "`audio.session.replace`",
+        "The retained smaller, reference, and larger projects contain 3, 7, and 8 nodes",
+        "64-swap concurrent stress run",
+        "No physical audio/MIDI device",
         "The unnumbered desktop patcher implementation is locally complete",
         "The active unnumbered desktop authoring-performance slice",
         "warm repeated inspection falls from about 18.7 seconds to about 0.012 seconds",
@@ -1037,7 +1041,7 @@ def validate_documents(
         "29": "complete; two exact source reviews, zero completed machines, structural level 1",
         "30": "complete; 56 attributed implementations, 107 families, shared cli v3 discovery, levels 1-2",
         "31": "complete locally; exact seven-node offline render and one bounded mac callback observation",
-        "32": "proposed contract; not activated or started; existing seven host node types only",
+        "32": "complete locally; bounded acyclic shapes over the existing seven host node types plus reset-state block-boundary replacement",
     }
     for label, expected in expected_roadmap_status.items():
         rows = roadmap_rows.get(label, [])
@@ -1078,7 +1082,7 @@ def validate_documents(
             "Tasks 029 and 030 were later activated by explicit user requests",
             "ADR 0016 adds the portable desktop-host runtime as Task 031",
             "Task 031 is the completed bounded desktop-host successor selected by ADR 0016",
-            "Task 032 is the next proposed numbered successor",
+            "Task 032 was explicitly authorized and is complete locally",
             "Task 026 consumes the independently accepted reverb-free seven-node executable profile",
             "desktop catalog and patcher are implemented locally",
             "Authoring performance and reliability are active locally",
@@ -1258,10 +1262,10 @@ def validate_documents(
         "current_status_source": STATUS,
         "diagnostics": diagnostics,
         "historical_context_policy": "completed-task-contracts-indexed-in-history-and-git",
-        "next_planned_task": "032-variable-graph-host-runtime-proposed-not-started",
+        "next_planned_task": "none-selected",
         "planned_task_sequence": list(PLANNED_SEQUENCE),
-        "promotion_gate": "task032-explicit-activation-required",
-        "schema_version": "backbone-governance-summary-v22",
+        "promotion_gate": "next-numbered-task-requires-explicit-contract-and-activation",
+        "schema_version": "backbone-governance-summary-v23",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -1284,7 +1288,7 @@ def validate_documents(
             "029": "complete-machine-inspection-level-1",
             "030": "complete-mutable-catalog-cohort-level-2-cli-v3",
             "031": "complete-desktop-host-bounded-observation-no-level7-or-audible-promotion",
-            "032": "proposed-variable-graph-host-runtime-not-started",
+            "032": "complete-variable-graph-host-runtime-reset-state-replacement-no-level7-or-audible-promotion",
         },
         "ui_milestone_status": "unnumbered-desktop-workspace-shell-implemented-locally-target-hardware-publication-gated",
     }

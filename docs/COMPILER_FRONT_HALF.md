@@ -132,6 +132,23 @@ Task 013 does not add an ergonomic `schuss build plan` or executable
 `schuss build` command. Task 014 now additively supplies those product commands
 without changing the Task 013 planning API or v4 bytes.
 
+## Variable desktop-host consumer
+
+Task 032 reuses `CompilationContext.from_values(...)` and `plan_build(...)`
+without adding another resolver. Its closure source is one exact accepted
+project revision, and its build request is the exact project-owned request
+explicitly named by the caller. The host lowerer consumes the successful
+resolution artifact, then independently validates the bounded v1 execution
+shape and derives a non-authoritative runtime package. The global Task 032
+request is a project-template source only; it is never an ambient or
+latest-request shortcut.
+
+This consumer does not change the front half's evidence meaning. A successful
+plan selects exact bindings and supplies deterministic source-plan identity;
+native package preparation and offline execution are separate host evidence,
+and neither promotes Ksoloti compatibility, physical-device execution,
+general real-time/resource behavior, or listening quality.
+
 ## Evidence boundary
 
 A successful plan reaches only structural evidence levels 1 and 2. Levels
