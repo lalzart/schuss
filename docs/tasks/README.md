@@ -54,6 +54,11 @@ contracts pending their normal archival step:
   shapes made only from the seven Task 031 node types and adds reset-state,
   block-boundary patch replacement. It adds no broader DSP palette, physical
   device, audible, packaging, or release claim.
+- `034-performance-control-graph-contracts.md` is the locally completed
+  structural performance-control contract. It adds a device-independent
+  instrument successor, reusable typed control graph, exact Gills and portable
+  MIDI CC configurations, and shared read-only inspection without executing a
+  control graph or opening a client/hardware surface.
 - `ui-desktop-initialization.md` is the completed unnumbered structural boundary
   that established core/UI ownership before any product renderer existed.
 - `ui-desktop-read-only-catalog.md` is the explicitly authorized first desktop
@@ -83,10 +88,12 @@ contracts pending their normal archival step:
   atomic acceptance, plus explicit project-scoped MCP tools. Target lowering,
   build/device authority, and listening claims remain absent.
 
-Tasks 023-032 are complete locally. ADR 0016 and the Task 031 parent contract
+Tasks 023-032 and Task 034 are complete locally; Task 033 was not allocated by
+this work. ADR 0016 and the Task 031 parent contract
 define the original bounded desktop-host route; Task 032 is its separately
-authorized variable-graph and safe-replacement successor. No next numbered
-task is selected. ADR 0015 retargeted the previously unstarted Task 027
+authorized variable-graph and safe-replacement successor. Task 034 is the
+separately authorized structural performance-control successor. No next
+numbered task is selected. ADR 0015 retargeted the previously unstarted Task 027
 assignment.
 Task 028's prior transparent-compound outcome remains deferred; the original
 sessions/jobs/diagnostics outcome is deferred without a replacement number.

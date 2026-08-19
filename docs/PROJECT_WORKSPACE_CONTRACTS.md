@@ -28,6 +28,10 @@ Each owned member records kind, stable ID, revision, semantic hash, schema
 version, normalized locator, byte hash, and exact parent. Task 012A first
 created only `dsp-graph-v0` successors. Task 026 additively creates and versions
 project-owned `dsp-graph-v0`, `instrument-v0`, and `build-request-v0` closures.
+Task 034's additive `instrument-v1` and performance-control records are not
+silently admitted to this v0 project closure. A later project-schema successor
+must version that migration explicitly; existing project/build/host behavior
+continues to consume `instrument-v0` only.
 The semantic-record bytes remain authoritative and are not changed merely to
 add filesystem policy. The project member index retains every exact revision
 parent, keeping the representation acyclic:

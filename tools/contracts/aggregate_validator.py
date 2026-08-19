@@ -43,9 +43,14 @@ def validate_device_instrument_record_set(
     repository_root: Path,
 ) -> dict[str, Any]:
     component_result = _component_record_set_validation(selected, repository_root)
+    instruments = [
+        record
+        for record in selected.records.get("instrument", ())
+        if record.get("schema_version") == device.INSTRUMENT_SCHEMA_VERSION
+    ]
     return device.validate_contract_values(
         list(selected.records.get("device-profile", ())),
-        list(selected.records.get("instrument", ())),
+        instruments,
         selected.schemas[device.DEVICE_SCHEMA_VERSION],
         selected.schemas[device.INSTRUMENT_SCHEMA_VERSION],
         component_result.graph_targets,
@@ -58,7 +63,11 @@ def validate_all_record_set(
 ) -> dict[str, Any]:
     component_result = _component_record_set_validation(selected, repository_root)
     devices = list(selected.records.get("device-profile", ()))
-    instruments = list(selected.records.get("instrument", ()))
+    instruments = [
+        record
+        for record in selected.records.get("instrument", ())
+        if record.get("schema_version") == device.INSTRUMENT_SCHEMA_VERSION
+    ]
     device_instrument = device.validate_contract_values(
         devices,
         instruments,
@@ -89,7 +98,11 @@ def validate_target_backend_build_record_set(
         "bindings": list(selected.records.get("implementation-binding", ())),
         "graphs": list(selected.records.get("dsp-graph", ())),
         "devices": list(selected.records.get("device-profile", ())),
-        "instruments": list(selected.records.get("instrument", ())),
+        "instruments": [
+            record
+            for record in selected.records.get("instrument", ())
+            if record.get("schema_version") == device.INSTRUMENT_SCHEMA_VERSION
+        ],
     }
     schemas = {
         kind: selected.schemas[specification[1]]

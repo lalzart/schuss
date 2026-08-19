@@ -23,9 +23,10 @@ implementation binding ----> component contract ----> catalog family
           |                         |
           +----> transparent graph  +---- DSP graph nodes
 
-instrument ----> device profile
-     |
-     +---------> DSP graph
+controller/device profile ----> performance configuration
+                                      |              |
+                                      v              v
+                           performance-control graph  instrument ----> DSP graph
 
 project ----> immutable base record set + exact project-owned record closure
    |
@@ -40,6 +41,31 @@ An arrow means the record on the left may reference the record on the right.
 No reverse ownership is implied. Reverse indexes and search views are derived,
 never embedded merely for convenience.
 
+`instrument-v0` is a retained historical exception: it owns one exact device
+profile and device mappings because it was the first bounded vertical slice.
+Task 034 does not mutate that schema. `instrument-v1` removes those fields,
+and `performance-configuration-v0` becomes the sole controller-binding owner.
+Old project, Gills, machine, compiler, target/build, and host-runtime consumers
+remain explicitly v0-only until a later migration task versions them.
+
+The Task 034 reference direction is fail-closed:
+
+```text
+device profile or portable MIDI selector
+  -> performance-configuration-v0
+  -> performance-control-graph-v0
+  -> instrument-v1 public facet
+  -> instrument-v1 graph mapping
+  -> dsp-graph-v0 public facet
+```
+
+No performance-control contract or graph may contain a device, instrument,
+DSP graph/node, backend, host factory, or client-framework identity. A MIDI
+source contains only portable protocol selectors, never an operating-system
+endpoint name or native handle. Task 034 validates structure and reference
+closure only; it defines no event timing, execution, polyphony, or audible
+behavior.
+
 ## Record families and owners
 
 | Record family | Normative owner | Owns | May reference | Must not own or redefine |
@@ -49,7 +75,10 @@ never embedded merely for convenience.
 | Implementation binding | Backend implementation registry | Concrete realization form, exact contract realization, dependencies/resources, capability constraints, evidence links, explicitly curated selection priority | One exact component-contract revision; backend/capability declarations; target constraints; source evidence; optionally a transparent graph | New or altered public facets; family classification; graph node identity |
 | DSP graph | Graph model | Graph identity/revision, node instances, exact contract refs, connections, facet values/bindings, hierarchy, exposed mappings, state/assets | Component contracts and content-addressed resources | Families, categories, legacy observations/paths, implementation bindings, device controls, target/backend choices |
 | Device profile | Device owner | Physical controls/gestures, indicators/displays, physical I/O, feedback, ranges/resolution, stable hardware slots | Shared physical-unit and gesture vocabularies | DSP graph, instrument behavior, compute target, backend |
-| Instrument | Instrument owner | Musical identity, public parameters/actions/displays/state, device mappings, graph mappings | One or more device-profile revisions and one authoritative graph revision | Embedded device design, copied graph structure, implementation binding, backend, target |
+| Performance-control contract | Performance semantics owner | One reusable typed control transformation interface, parameters, and state declaration | Versioned control vocabularies | Device slots, instrument/DSP identities, source code, backend, runtime factory |
+| Performance-control graph | Performance semantics owner | Public typed control inputs/outputs, exact control-contract nodes, parameter values, and connections | Exact performance-control contracts | Device slots, instrument/DSP identities, backend, JUCE/native runtime |
+| Instrument | Instrument owner | Musical identity, public parameters/actions/displays/event inputs/state, and graph mappings | One authoritative DSP graph revision and optional exact predecessor lineage | Device/controller identity, copied graph structure, implementation binding, backend, target |
+| Performance configuration | Performance configuration owner | Exact controller-source bindings to a control graph and exact graph-output mappings to instrument facets | Exact device profile or portable protocol selectors, one exact performance-control graph, one exact instrument | DSP node/port shortcuts, backend/runtime identity, physical endpoint handles, copied DSP structure |
 | Project/workspace | Project owner | Portable project identity/revision, immutable base record-set reference, exact project-owned member closure, selected graph/instrument/build references | Exact semantic records and content-addressed assets | Redefined graph/build semantics, ambient directory membership, absolute workspace identity, client-specific behavior |
 | Compute target | Target owner | Processor/ABI constraints, memory regions/budgets, runtime assumptions, firmware interface, asset limits, supported capabilities | Toolchain/firmware declarations and capability vocabulary | Panel design, instrument behavior, catalog classification |
 | Backend | Backend owner | Lowering identity/version, accepted inputs, emitted artifact kinds, supported capability vocabulary, deterministic stage contract | Shared capability vocabulary | Authoritative graphs, device profiles, catalog categories |

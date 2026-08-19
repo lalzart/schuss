@@ -1,0 +1,214 @@
+{
+  "acceptance_tests": [
+    {
+      "number": 1,
+      "status": "passed"
+    },
+    {
+      "number": 2,
+      "status": "passed"
+    },
+    {
+      "number": 3,
+      "status": "passed"
+    },
+    {
+      "number": 4,
+      "status": "passed"
+    },
+    {
+      "number": 5,
+      "status": "passed"
+    },
+    {
+      "number": 6,
+      "status": "passed"
+    },
+    {
+      "number": 7,
+      "status": "passed"
+    },
+    {
+      "number": 8,
+      "status": "passed"
+    },
+    {
+      "number": 9,
+      "status": "passed"
+    },
+    {
+      "number": 10,
+      "status": "passed-with-authenticated-local-source-mapping-probe"
+    },
+    {
+      "number": 11,
+      "status": "passed"
+    },
+    {
+      "number": 12,
+      "status": "passed"
+    }
+  ],
+  "actions_performed": {
+    "audible_or_listening": false,
+    "git_commit_or_push": false,
+    "hardware_or_physical_controller": false,
+    "local_source_mapping_changed": false,
+    "packaging_or_publication": false,
+    "separate_task033_files_touched": false,
+    "staging": false
+  },
+  "adjacent_regression": {
+    "command": "python3 -m unittest -v tools.contracts.tests.test_task023_application_capabilities tools.contracts.tests.test_task026_authoring_workflow tools.contracts.tests.test_task029_gills_machines tools.contracts.tests.test_task031_audio_sessions tools.contracts.tests.test_task031_desktop_host_runtime tools.contracts.tests.test_task032_variable_audio_sessions tools.contracts.tests.test_task032_variable_host_runtime tools.contracts.tests.test_desktop_ui_structure tools.contracts.tests.test_mcp_read_only_server",
+    "seconds": "483.973",
+    "status": "passed",
+    "tests": 63
+  },
+  "aggregate": [
+    {
+      "command": "python3 -m unittest discover -s tools/inventory/tests -v",
+      "errors": 0,
+      "failures": 0,
+      "seconds": "0.290",
+      "skipped": 0,
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "command": "python3 -m unittest discover -s tools/catalog/tests -v",
+      "errors": 0,
+      "failures": 0,
+      "seconds": "6.856",
+      "skipped": 0,
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "command": "python3 -m unittest discover -s tools/contracts/tests -v",
+      "errors": 1,
+      "failures": 7,
+      "seconds": "1491.865",
+      "skipped": 4,
+      "status": "completed-with-documented-environment-and-inherited-gates",
+      "tests": 476
+    }
+  ],
+  "aggregate_gates": [
+    {
+      "classification": "isolated-worktree-missing-ignored-local-source-mapping",
+      "test": "test_task008_control_plane.Task008ControlPlaneTest.test_all_legacy_validator_stdout_bytes_are_preserved"
+    },
+    {
+      "classification": "isolated-worktree-missing-ignored-local-source-mapping",
+      "test": "test_task009_prerequisite.Task009PrerequisiteTest.test_accepted_view_preserves_operation_result_hashes"
+    },
+    {
+      "classification": "isolated-worktree-missing-ignored-local-source-mapping",
+      "test": "test_task010_cli.Task010ProductCliTest.test_all_task005_through_task009_inputs_and_outputs_are_preserved"
+    },
+    {
+      "classification": "isolated-worktree-missing-ignored-local-source-mapping",
+      "test": "test_task010_cli.Task010ProductCliTest.test_human_outputs_match_golden_hashes_and_keep_exact_statuses"
+    },
+    {
+      "classification": "isolated-worktree-missing-ignored-local-source-mapping",
+      "test": "test_task011a_catalog.Task011ACatalogTest.test_successor_schemas_and_v1_bytes_are_preserved"
+    },
+    {
+      "classification": "isolated-worktree-missing-ignored-local-source-mapping",
+      "test": "test_task027_mutable_catalog.Task027MutableCatalogTest.test_generated_outputs_are_fresh_and_byte_deterministic"
+    },
+    {
+      "classification": "pre-existing-main-branch-historical-task023-golden-gate",
+      "test": "test_task011a_catalog.Task011ACatalogTest.test_task011a_historical_and_task023_successor_goldens"
+    },
+    {
+      "classification": "pre-existing-main-branch-historical-task023-golden-gate",
+      "test": "test_task023_cli_v2.Task023CliV2Test.test_cli_v2_successor_goldens_and_historical_fixture"
+    }
+  ],
+  "copied_root_reproduction": {
+    "command": "python3 tools/contracts/run_task034_reproduction.py",
+    "configuration_result_sha256": {
+      "schuss-performance-configuration-000001": "d172571d4122333d39a5c25bd2ed437686aff4509d33bce76aaaa180797d32f8",
+      "schuss-performance-configuration-000002": "fce65d6a5e123be9637bbf6504a1e35cc869239ba2b93e6d681a9911d3c95c72"
+    },
+    "performance_validation_sha256": "30557b9f55d17a2f5feff4efc8711488c70f9b7027292498f2cb634aef30012f",
+    "run_count": 2,
+    "status": "passed-byte-identical"
+  },
+  "evidence_levels": [
+    {
+      "level": "structural-schema-and-reference",
+      "status": "passed"
+    },
+    {
+      "level": "control-graph-execution",
+      "status": "not-run"
+    },
+    {
+      "level": "backend-lowering",
+      "status": "not-run"
+    },
+    {
+      "level": "native-build",
+      "status": "not-run"
+    },
+    {
+      "level": "physical-controller",
+      "status": "not-run"
+    },
+    {
+      "level": "real-time-resource",
+      "status": "not-run"
+    },
+    {
+      "level": "audible-listening",
+      "status": "not-run"
+    }
+  ],
+  "focused": [
+    {
+      "command": "python3 -m unittest -v tools.contracts.tests.test_task034_performance_control",
+      "seconds": "56.951",
+      "status": "passed",
+      "tests": 18
+    },
+    {
+      "command": "python3 tools/contracts/generate_task034_records.py --check",
+      "status": "passed-fresh"
+    },
+    {
+      "command": "python3 tools/contracts/validate_performance_control_contracts.py",
+      "status": "passed"
+    },
+    {
+      "command": "python3 -m unittest -v tools.contracts.tests.test_backbone_governance",
+      "seconds": "0.414",
+      "status": "passed",
+      "tests": 5
+    }
+  ],
+  "historical_compatibility_probe": {
+    "configured_input": "authenticated ignored local source mapping from the main checkout, consumed read-only without copying it into the Task 034 worktree",
+    "historical_context_exposes_empty_performance_groups": false,
+    "records_validate": {
+      "byte_length": 4324,
+      "byte_sha256": "cb0735df54a0baade54c8cc16807a94771c1e7cbbc93a6710291084fcb656543",
+      "status": "matches-frozen"
+    },
+    "target_backend_validator": {
+      "byte_length": 1964,
+      "byte_sha256": "7a898b3409e5ad7ef02eab1246f87756cc2af7cbd512d72f9a5eb43b1573a3a2",
+      "status": "matches-frozen"
+    },
+    "task030_generation_freshness": "passed-after-empty-group-compatibility-fix"
+  },
+  "record_set_reference": {
+    "content_hash": "sha256:199b3b2f8fe20ea6a2ce4751a9bd4d35a2e6522d69252ef916c7668ad5e93c54",
+    "record_set_id": "schuss-record-set-000030",
+    "revision": 1
+  },
+  "schema_version": "task034-validation-summary-v1",
+  "status": "passed-with-documented-environment-and-inherited-aggregate-gates"
+}

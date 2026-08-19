@@ -31,7 +31,7 @@ class BackboneGovernanceTest(unittest.TestCase):
     def test_live_repository_is_valid(self):
         summary = governance.validate_documents(self.documents, self.task_filenames)
         self.assertEqual("valid", summary["status"])
-        self.assertEqual("backbone-governance-summary-v23", summary["schema_version"])
+        self.assertEqual("backbone-governance-summary-v24", summary["schema_version"])
         self.assertEqual([], summary["diagnostics"])
         self.assertEqual(
             [
@@ -41,7 +41,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["authoritative_decisions"],
         )
         self.assertEqual(
-            "unnumbered-desktop-workspace-shell-local-implementation-active",
+            "task034-performance-control-implementation-complete-local",
             summary["active_product_task"],
         )
         self.assertEqual(
@@ -56,7 +56,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             [
                 "013", "014", "015", "016", "017", "018", "019", "020",
                 "021", "022", "023", "024", "025", "026", "027", "028",
-                "029", "030", "031", "032",
+                "029", "030", "031", "032", "034",
             ],
             summary["active_task_sequence"],
         )
@@ -116,6 +116,10 @@ class BackboneGovernanceTest(unittest.TestCase):
         self.assertEqual(
             "complete-variable-graph-host-runtime-reset-state-replacement-no-level7-or-audible-promotion",
             summary["task_statuses"]["032"],
+        )
+        self.assertEqual(
+            "complete-structural-performance-control-no-execution-or-device-promotion",
+            summary["task_statuses"]["034"],
         )
         self.assertEqual(
             "unnumbered-desktop-workspace-shell-implemented-locally-target-hardware-publication-gated",

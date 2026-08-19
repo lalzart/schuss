@@ -42,6 +42,7 @@ TASK_028 = "docs/tasks/028-twenty-item-direct-palette.md"
 TASK_030 = "docs/tasks/030-complete-mutable-catalog-and-object-cli.md"
 TASK_031 = "docs/DESKTOP_HOST_RUNTIME_IMPLEMENTATION_CONTRACT.md"
 TASK_032 = "docs/tasks/032-variable-graph-desktop-host-runtime.md"
+TASK_034 = "docs/tasks/034-performance-control-graph-contracts.md"
 UI_DESKTOP_INITIALIZATION = "docs/tasks/ui-desktop-initialization.md"
 UI_DESKTOP_CATALOG = "docs/tasks/ui-desktop-read-only-catalog.md"
 UI_DESKTOP_PATCHER = "docs/tasks/ui-desktop-patcher-authoring.md"
@@ -83,6 +84,7 @@ DOCUMENT_PATHS = (
     TASK_030,
     TASK_031,
     TASK_032,
+    TASK_034,
     UI_DESKTOP_INITIALIZATION,
     UI_DESKTOP_CATALOG,
     UI_DESKTOP_PATCHER,
@@ -94,7 +96,7 @@ DOCUMENT_PATHS = (
     AI_SONIC_AUTHORING,
 )
 
-ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 33))
+ACTIVE_SEQUENCE = (*tuple(f"{number:03d}" for number in range(13, 33)), "034")
 PLANNED_SEQUENCE: tuple[str, ...] = ()
 EXPECTED_TASK_FILENAMES = {
     "README.md",
@@ -110,6 +112,7 @@ EXPECTED_TASK_FILENAMES = {
     "028-twenty-item-direct-palette.md",
     "030-complete-mutable-catalog-and-object-cli.md",
     "032-variable-graph-desktop-host-runtime.md",
+    "034-performance-control-graph-contracts.md",
     "ui-desktop-initialization.md",
     "ui-desktop-read-only-catalog.md",
     "ui-desktop-patcher-authoring.md",
@@ -300,6 +303,44 @@ def validate_documents(
             "Task 017 must be complete before Task 018 may create",
             "Task 017 itself depends on Task 016",
             "Task 018 may not bypass either dependency",
+        ),
+    )
+
+    task34_status = _leading_status(documents.get(TASK_034, "")) or ""
+    for fragment in (
+        "explicitly activated by the user and implementation complete locally",
+        "on 2026-08-20",
+        "no physical audio/midi or ksoloti device action",
+    ):
+        if fragment not in task34_status.lower():
+            diagnostics.append(
+                _diagnostic(
+                    "TASK_034_CONTRACT_INVALID",
+                    TASK_034,
+                    f"Task 034 contract status must contain: {fragment}",
+                )
+            )
+    _require_phrases(
+        diagnostics,
+        code="TASK_034_CONTRACT_INVALID",
+        document=TASK_034,
+        scope=documents.get(TASK_034, ""),
+        phrases=(
+            "## Goal and why it exists",
+            "## In scope",
+            "## Out of scope",
+            "## Inputs and deliverables",
+            "## Validation cadence",
+            "## Acceptance tests",
+            "## Decisions this task may make",
+            "## Decisions this task must not make",
+            "instrument-v1",
+            "performance-control-graph-v0",
+            "performance-configuration-v0",
+            "schuss-record-set-000030@1",
+            "performance.inspect",
+            "The parallel task must consume these semantic interfaces",
+            "staging, commit, push",
         ),
     )
 
@@ -901,6 +942,11 @@ def validate_documents(
         "The retained smaller, reference, and larger projects contain 3, 7, and 8 nodes",
         "64-swap concurrent stress run",
         "No physical audio/MIDI device",
+        "Task 034 was explicitly activated and its implementation is complete locally",
+        "`schuss-record-set-000030@1`",
+        "`instrument-v1`",
+        "`performance.inspect`",
+        "Control-graph execution, native build, physical-controller, real-time/resource, and audible evidence remain `not-run`",
         "The unnumbered desktop patcher implementation is locally complete",
         "The active unnumbered desktop authoring-performance slice",
         "warm repeated inspection falls from about 18.7 seconds to about 0.012 seconds",
@@ -1011,7 +1057,8 @@ def validate_documents(
             )
 
     roadmap_rows = _roadmap_rows(documents.get(ROADMAP, ""))
-    for number in range(13, 33):
+    for task_number in ACTIVE_SEQUENCE:
+        number = int(task_number)
         label = str(number)
         if len(roadmap_rows.get(label, [])) != 1:
             diagnostics.append(
@@ -1042,6 +1089,7 @@ def validate_documents(
         "30": "complete; 56 attributed implementations, 107 families, shared cli v3 discovery, levels 1-2",
         "31": "complete locally; exact seven-node offline render and one bounded mac callback observation",
         "32": "complete locally; bounded acyclic shapes over the existing seven host node types plus reset-state block-boundary replacement",
+        "34": "complete locally; structural device-independent instrument, shared control graph, gills/midi configurations, and read-only inspection; no execution",
     }
     for label, expected in expected_roadmap_status.items():
         rows = roadmap_rows.get(label, [])
@@ -1083,6 +1131,7 @@ def validate_documents(
             "ADR 0016 adds the portable desktop-host runtime as Task 031",
             "Task 031 is the completed bounded desktop-host successor selected by ADR 0016",
             "Task 032 was explicitly authorized and is complete locally",
+            "Task 034 was explicitly authorized and its implementation is complete locally",
             "Task 026 consumes the independently accepted reverb-free seven-node executable profile",
             "desktop catalog and patcher are implemented locally",
             "Authoring performance and reliability are active locally",
@@ -1212,6 +1261,7 @@ def validate_documents(
         TASK_030: documents.get(TASK_030, ""),
         TASK_031: documents.get(TASK_031, ""),
         TASK_032: documents.get(TASK_032, ""),
+        TASK_034: documents.get(TASK_034, ""),
         UI_DESKTOP_INITIALIZATION: documents.get(UI_DESKTOP_INITIALIZATION, ""),
         UI_DESKTOP_CATALOG: documents.get(UI_DESKTOP_CATALOG, ""),
         UI_DESKTOP_PATCHER: documents.get(UI_DESKTOP_PATCHER, ""),
@@ -1251,7 +1301,7 @@ def validate_documents(
 
     diagnostics.sort(key=lambda item: (item["code"], item["document"], item["detail"]))
     return {
-        "active_product_task": "unnumbered-desktop-workspace-shell-local-implementation-active",
+        "active_product_task": "task034-performance-control-implementation-complete-local",
         "active_evidence_task": "022-failed-diagnostic-promotion-stopped",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
         "authoritative_decisions": [
@@ -1265,7 +1315,7 @@ def validate_documents(
         "next_planned_task": "none-selected",
         "planned_task_sequence": list(PLANNED_SEQUENCE),
         "promotion_gate": "next-numbered-task-requires-explicit-contract-and-activation",
-        "schema_version": "backbone-governance-summary-v23",
+        "schema_version": "backbone-governance-summary-v24",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -1289,6 +1339,7 @@ def validate_documents(
             "030": "complete-mutable-catalog-cohort-level-2-cli-v3",
             "031": "complete-desktop-host-bounded-observation-no-level7-or-audible-promotion",
             "032": "complete-variable-graph-host-runtime-reset-state-replacement-no-level7-or-audible-promotion",
+            "034": "complete-structural-performance-control-no-execution-or-device-promotion",
         },
         "ui_milestone_status": "unnumbered-desktop-workspace-shell-implemented-locally-target-hardware-publication-gated",
     }

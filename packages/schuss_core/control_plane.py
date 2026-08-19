@@ -24,6 +24,7 @@ import component_graph_rules as component
 import device_instrument_rules as device
 import gills_mapping_rules as gills
 import machine_rules as machine
+import performance_control_rules as performance
 import record_set_rules
 import target_backend_build_rules as target
 import validator_core as core
@@ -132,6 +133,16 @@ TASK032_SCHEMA_NAMES = {
     "operation_result_v16": "operation-result-v16.schema.json",
 }
 
+TASK034_SCHEMA_NAMES = {
+    "application_capability_description_v10": "application-capability-description-v10.schema.json",
+    "instrument_v1": "instrument-v1.schema.json",
+    "operation_request_v17": "operation-request-v17.schema.json",
+    "operation_result_v17": "operation-result-v17.schema.json",
+    "performance_configuration": "performance-configuration-v0.schema.json",
+    "performance_control_contract": "performance-control-contract-v0.schema.json",
+    "performance_control_graph": "performance-control-graph-v0.schema.json",
+}
+
 TASK015_SCHEMA_NAMES = {
     "normalized_dsp_module": "normalized-dsp-module-v0.schema.json",
     "direct_frontend_result": "direct-frontend-result-v0.schema.json",
@@ -166,6 +177,10 @@ DOMAIN_GROUPS = (
     "graphs",
     "devices",
     "instruments",
+    "performance_instruments",
+    "performance_control_contracts",
+    "performance_control_graphs",
+    "performance_configurations",
     "panel_evidence",
     "mapping_coverage",
     "runtime_realizations",
@@ -202,6 +217,7 @@ class OperationContext:
     task007_summary: dict[str, Any]
     task018_summary: dict[str, Any]
     machine_summary: dict[str, Any]
+    performance_summary: dict[str, Any]
     record_set_reference: dict[str, Any]
     catalog_projection: dict[str, Any] | None
     loaded_record_set: record_set_rules.LoadedRecordSet
@@ -293,6 +309,35 @@ def load_repository_context(
                     f"custom record enumerator changes explicit record-set membership for {child}"
                 )
 
+    selected_instruments = _stable_records(selected.records.get("instrument", ()))
+    unexpected_instrument_versions = sorted(
+        {
+            item.get("schema_version", "<missing>")
+            for item in selected_instruments
+        }
+        - {device.INSTRUMENT_SCHEMA_VERSION, "instrument-v1"}
+    )
+    if unexpected_instrument_versions:
+        raise ValueError(
+            "selected record set contains unsupported instrument schemas "
+            f"{unexpected_instrument_versions}"
+        )
+    performance_records = {
+        "performance_instruments": tuple(
+            item
+            for item in selected_instruments
+            if item["schema_version"] == "instrument-v1"
+        ),
+        "performance_control_contracts": _stable_records(
+            selected.records.get("performance-control-contract", ())
+        ),
+        "performance_control_graphs": _stable_records(
+            selected.records.get("performance-control-graph", ())
+        ),
+        "performance_configurations": _stable_records(
+            selected.records.get("performance-configuration", ())
+        ),
+    }
     records: dict[str, tuple[dict[str, Any], ...]] = {
         "catalog": catalog_records,
         "families": _stable_records(selected.records.get("catalog-family", ())),
@@ -300,7 +345,11 @@ def load_repository_context(
         "bindings": _stable_records(selected.records.get("implementation-binding", ())),
         "graphs": _stable_records(selected.records.get("dsp-graph", ())),
         "devices": _stable_records(selected.records.get("device-profile", ())),
-        "instruments": _stable_records(selected.records.get("instrument", ())),
+        "instruments": tuple(
+            item
+            for item in selected_instruments
+            if item["schema_version"] == device.INSTRUMENT_SCHEMA_VERSION
+        ),
         "panel_evidence": _stable_records(selected.records.get("gills-panel-evidence", ())),
         "mapping_coverage": _stable_records(selected.records.get("gills-mapping-coverage", ())),
         "runtime_realizations": _stable_records(selected.records.get("gills-runtime-realization", ())),
@@ -310,6 +359,8 @@ def load_repository_context(
         "machines": _stable_records(selected.records.get("machine", ())),
         "selection_packets": _stable_records(selected.records.get("core-selection-packet", ())),
     }
+    if any(performance_records.values()):
+        records.update(performance_records)
     if selected.records.get("catalog-source-review"):
         records["catalog_source_reviews"] = _stable_records(
             selected.records["catalog-source-review"]
@@ -468,7 +519,15 @@ def load_repository_context(
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
-    if "application_capability_description_v9" in schemas:
+    for key, filename in TASK034_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    if "application_capability_description_v10" in schemas:
+        schemas["application_capability_description"] = schemas[
+            "application_capability_description_v10"
+        ]
+    elif "application_capability_description_v9" in schemas:
         schemas["application_capability_description"] = schemas[
             "application_capability_description_v9"
         ]
@@ -676,6 +735,60 @@ def load_repository_context(
         },
         repository_root,
     )
+    performance_groups_present = any(performance_records.values())
+    if performance_groups_present:
+        missing_performance_schemas = sorted(
+            set(performance.SCHEMA_VERSIONS.values()) - set(selected.schemas)
+        )
+        if missing_performance_schemas:
+            raise ValueError(
+                "performance-control records require schemas "
+                f"{missing_performance_schemas}"
+            )
+        performance_summary = performance.validate_values(
+            {
+                "instruments_v0": list(records["instruments"]),
+                "instruments_v1": list(
+                    records.get("performance_instruments", ())
+                ),
+                "dsp_graphs": list(records["graphs"]),
+                "devices": list(records["devices"]),
+                "performance_control_contracts": list(
+                    records.get("performance_control_contracts", ())
+                ),
+                "performance_control_graphs": list(
+                    records.get("performance_control_graphs", ())
+                ),
+                "performance_configurations": list(
+                    records.get("performance_configurations", ())
+                ),
+            },
+            {
+                version: selected.schemas[version]
+                for version in performance.SCHEMA_VERSIONS.values()
+            },
+            component_result.graph_targets,
+        )
+        if performance_summary["status"] != "valid":
+            raise ValueError(
+                "performance-control closure is invalid: "
+                + core.canonical_json(performance_summary["diagnostics"])
+            )
+    else:
+        performance_summary = {
+            "schema_version": "performance-control-validation-summary-v0",
+            "status": "not-present",
+            "record_counts": {
+                "instrument_v1": 0,
+                "performance_control_contracts": 0,
+                "performance_control_graphs": 0,
+                "performance_configurations": 0,
+            },
+            "reference_resolution": {},
+            "boundary_assertions": {},
+            "evidence_levels": [],
+            "diagnostics": [],
+        }
     return OperationContext(
         records=records,
         schemas=schemas,
@@ -689,6 +802,7 @@ def load_repository_context(
         task007_summary=copy.deepcopy(task007_result.summary),
         task018_summary=copy.deepcopy(task018_summary),
         machine_summary=copy.deepcopy(machine_summary),
+        performance_summary=copy.deepcopy(performance_summary),
         record_set_reference=copy.deepcopy(selected.reference),
         catalog_projection=derived_catalog,
         loaded_record_set=selected,
@@ -771,6 +885,7 @@ def canonical_result_bytes(
         "schuss-operation-result-v14": "operation_result_v14",
         "schuss-operation-result-v15": "operation_result_v15",
         "schuss-operation-result-v16": "operation_result_v16",
+        "schuss-operation-result-v17": "operation_result_v17",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -2265,6 +2380,14 @@ def dispatch_operation(
     audio_session_service: Any | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v17"
+    ):
+        from .performance_control import dispatch_performance_operation
+
+        return dispatch_performance_operation(request, context)
 
     if (
         isinstance(request, dict)

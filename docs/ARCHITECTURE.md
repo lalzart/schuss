@@ -10,7 +10,9 @@ GUI / CLI / AI clients
           |
     graph operations
           v
-instrument -> device profile
+controller/device -> performance configuration -> performance-control graph
+                              |
+                              v
 instrument -> DSP graph -> component contract -> catalog family
                           ^
                           |
@@ -45,6 +47,29 @@ callback performs only lock-free pointer/identity atomics; lowering,
 allocation, parsing, destruction, filesystem work, and process communication
 remain off the callback. Package v0 and the Task 031 bytes remain independent
 historical authority.
+
+Task 034 adds the semantic performance layer above instruments. An
+`instrument-v1` owns musical facets, state, one exact authoritative DSP graph,
+and instrument-to-DSP mappings, but no device profile or physical-control
+mapping. A performance configuration binds either an exact device-profile
+slot or a portable protocol selector to a reusable typed performance-control
+graph, then binds the graph's public outputs to public instrument facets.
+
+```text
+Gills slot or portable MIDI selector
+        -> performance configuration
+        -> performance-control graph
+        -> instrument public facet
+        -> instrument graph mapping
+        -> DSP graph public facet
+```
+
+The performance-control graph cannot reference a device, instrument, DSP
+graph/node, backend, host factory, or JUCE identity. This keeps controller
+presentation reusable and prevents a physical adapter from becoming DSP
+authority. Historical `instrument-v0` records and their exact Gills/project
+consumers remain an isolated compatibility boundary; they are not
+reinterpreted as v1.
 
 Exact ownership and permitted references are normative in
 `docs/SCHEMA_STRATEGY.md`. Compiler stages and derived artifacts are normative

@@ -521,8 +521,8 @@ successor/historical golden, and Task 027 generated-output freshness assertion.
 No Task 031, desktop, project, compiler, Ksoloti-regression, or governance test
 failed, and no historical golden was rebaselined.
 
-The completed Task 031 implementation was subsequently committed locally as
-`932f310`; that commit has not been pushed.
+The completed Task 031 implementation is retained in commit `932f310`, now an
+ancestor of current local and remote `main`.
 
 Task 032 was explicitly activated and is complete locally for exact record set
 `schuss-record-set-000029@1`, content hash
@@ -571,6 +571,48 @@ catalog freshness; every Task 032 test passed and no golden was rebaselined.
 The final native aggregate passed all 3 tests. Exact commands, durations,
 failure names, sanitizer outcomes, and the acceptance matrix are retained in
 `evidence/task032-completion-v1/validation-summary.json`.
+
+Task 034 was explicitly activated and its implementation is complete locally
+for exact record set `schuss-record-set-000030@1`, content hash
+`sha256:199b3b2f8fe20ea6a2ce4751a9bd4d35a2e6522d69252ef916c7668ad5e93c54`,
+parented exactly to Task 032 set `000029`. It adds `instrument-v1`, two reusable
+performance-control contracts, one typed two-node performance-control graph,
+and two configurations that present the same exact instrument and control
+graph through either the exact Gills device profile or portable MIDI 1.0 CC
+selectors.
+
+The v1 instrument keeps the exact musical/DSP-owned fields of
+`schuss-instrument-000005@1` in successor revision 2 but contains no device
+profile or device mapping. Controller bindings live only in a performance
+configuration; the reusable control graph contains no device, instrument, DSP
+graph/node, backend, host-factory, or JUCE identity. Existing project, Gills,
+machine, compiler, build, and host-runtime paths remain explicitly
+`instrument-v0`-only.
+
+Operation v17 adds only read-only `performance.inspect`; capability v10 now
+describes forty-five shared operations. The CLI, desktop bridge, AI, and MCP
+allowlists remain closed. Focused Task 034 tests and 63 adjacent tests pass.
+Two copied roots reproduced performance-validation SHA-256
+`30557b9f55d17a2f5feff4efc8711488c70f9b7027292498f2cb634aef30012f`
+and inspection-result SHA-256 values
+`d172571d4122333d39a5c25bd2ed437686aff4509d33bce76aaaa180797d32f8`
+and `fce65d6a5e123be9637bbf6504a1e35cc869239ba2b93e6d681a9911d3c95c72`.
+The reviewed final aggregate passed all 14 inventory tests, all 6 catalog
+tests, and all 18 Task 034 tests within the 476-test contract aggregate. The
+contract aggregate completed with seven failures, one error, and four declared
+skips: five historical byte checks and the Task 027 generator lack the ignored
+`catalog/sources.local.yml` prerequisite in this isolated worktree, while the
+remaining Task 011A and Task 023 golden failures reproduce on unchanged
+`main`. A read-only probe using the authenticated main-checkout mapping made
+the frozen target-validator and `records.validate` hashes match exactly; the
+mapping was not copied or changed. Task 030 generation freshness also passes
+after preserving the exact historical record-group closure. Exact commands,
+durations, hashes, and classifications are retained in
+`evidence/task034-completion-v1/validation-summary.json`.
+
+Control-graph execution, native build, physical-controller,
+real-time/resource, and audible evidence remain `not-run`; no hardware, Task
+033-owned file, or Git publication action occurred.
 
 Tasks 019 and 020 are deferred and not automatically activated by completion
 of Task 018 or Task 021.
@@ -702,7 +744,8 @@ Task 021 product-binary replacement, firmware flash, SD-card write, persistent
 installation, or reset. Any diagnostic successor or repeated hardware
 procedure requires a new bounded decision and explicit approval.
 
-Tasks 023-032 are accepted complete locally. Task 025's retained fail-closed result is
+Tasks 023-032 and Task 034 are accepted complete locally; Task 033 was not
+allocated by this work. Task 025's retained fail-closed result is
 bounded by `docs/tasks/025-direct-compiler-core-library-tranche.md` and
 `contracts/task025/reverb-allocation-boundary.md`; it does not authorize or
 claim lowering, ARM, device, real-time, audible, Git, or publication action.
@@ -716,7 +759,9 @@ provenance plus read-only object discovery. Task 031 retains its exact
 seven-node v0 package and process-local engine/session authority. Task 032 is
 bounded to variable acyclic arrangements of those same seven factories and
 reset-state process-local replacement; it does not activate a broader palette,
-UI, hardware, or release lane. No next numbered task is selected and no
+UI, hardware, or release lane. Task 034 is bounded to structural
+performance-control semantics and read-only inspection; it executes no control
+graph and opens no client adapter. No next numbered task is selected and no
 numbered implementation lane is active. The unnumbered desktop patcher is
 implemented locally with its process-local build/device and project-object
 handoff successors and awaits user acceptance/publication. The unnumbered AI/MCP lane is implemented locally

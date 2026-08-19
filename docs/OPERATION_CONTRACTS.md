@@ -438,3 +438,22 @@ Task 012B remains retired. Any later build or device UI must consume shared
 session/job and device operations. Firmware/SD/persistent-install successors
 must remain separately contracted; no client may define a parallel build,
 compiler, USB, or evidence path.
+
+## Performance-control inspection
+
+Task 034 additively supplies operation request/result v17 and application
+capability description v10 in exact record set `schuss-record-set-000030@1`.
+It adds one read-only operation to the forty-four-operation v9 registry:
+
+- `performance.inspect` accepts one exact performance-configuration
+  ID/revision/hash tuple and returns the complete exact configuration,
+  controller device profiles where applicable, performance-control graph and
+  node contracts, device-independent instrument, authoritative DSP graph, and
+  structural boundary summary.
+
+The operation performs no protocol or hardware discovery and exposes no live
+MIDI, JUCE, project mutation, build, runtime, or filesystem authority. A stale
+or ambiguous reference fails with a stable diagnostic. The new operation is
+available only through the shared core dispatcher in Task 034; CLI, desktop,
+AI, and MCP allowlists remain closed until a later client task explicitly
+adopts the same operation.

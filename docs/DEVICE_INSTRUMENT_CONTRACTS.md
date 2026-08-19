@@ -225,3 +225,23 @@ and exact `blend` target boundary documented in
 their own boundaries additively; none changes this document into proof of a
 complete Gills panel, mapped runtime, connected device, or audible behavior.
 The live Gills boundary is maintained in `docs/STATUS.md`.
+
+## Device-independent instrument v1 and performance ownership
+
+Task 034 retains every `instrument-v0` byte and adds `instrument-v1` as a
+separate schema. A v1 instrument owns musical parameters, actions, displays,
+event inputs, state, one exact DSP graph reference, and instrument-to-graph
+mappings. It contains no `device_profile_reference`, device input mapping, or
+device feedback mapping.
+
+Controller ownership moves to `performance-configuration-v0`. A configuration
+references one exact v1 instrument and one exact performance-control graph,
+then binds either exact device-profile slots or portable MIDI selectors to the
+graph's public inputs. Its graph outputs target public instrument facets; they
+cannot target DSP nodes or ports directly.
+
+The retained pilot is `schuss-instrument-000005@2`, an exact musical/DSP-owned
+successor of revision 1. Both the Gills and MIDI configurations reference the
+same instrument and control graph. This is structural reference evidence only:
+no controller event is received, no control graph executes, and no project,
+backend, native runtime, hardware, real-time, or audible support is implied.

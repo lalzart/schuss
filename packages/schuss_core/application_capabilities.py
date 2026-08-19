@@ -16,6 +16,7 @@ APPLICATION_DESCRIPTION_VERSION_V6 = "schuss-application-capability-description-
 APPLICATION_DESCRIPTION_VERSION_V7 = "schuss-application-capability-description-v7"
 APPLICATION_DESCRIPTION_VERSION_V8 = "schuss-application-capability-description-v8"
 APPLICATION_DESCRIPTION_VERSION_V9 = "schuss-application-capability-description-v9"
+APPLICATION_DESCRIPTION_VERSION_V10 = "schuss-application-capability-description-v10"
 
 
 class CapabilityRegistryError(ValueError):
@@ -589,6 +590,23 @@ APPLICATION_CAPABILITY_ENTRIES_V9 = tuple(
     if entry["operation"] not in _HOST_RUNTIME_OPERATION_NAMES
 ) + VARIABLE_HOST_RUNTIME_CAPABILITY_ENTRIES
 
+PERFORMANCE_CONTROL_CAPABILITY_ENTRIES = (
+    _entry(
+        "performance.inspect",
+        "performance",
+        "Inspect one exact controller, performance graph, instrument, and DSP graph closure.",
+        17,
+        ("exact-record-set",),
+        "read-only",
+        ("exact-record-set", "exact-reference"),
+    ),
+)
+
+APPLICATION_CAPABILITY_ENTRIES_V10 = (
+    *APPLICATION_CAPABILITY_ENTRIES_V9,
+    *PERFORMANCE_CONTROL_CAPABILITY_ENTRIES,
+)
+
 
 EXPECTED_OPERATIONS = tuple(sorted(entry["operation"] for entry in CAPABILITY_ENTRIES))
 EXPECTED_OPERATIONS_V1 = tuple(
@@ -635,6 +653,9 @@ EXPECTED_OPERATIONS_V8 = tuple(
 )
 EXPECTED_OPERATIONS_V9 = tuple(
     sorted(entry["operation"] for entry in APPLICATION_CAPABILITY_ENTRIES_V9)
+)
+EXPECTED_OPERATIONS_V10 = tuple(
+    sorted(entry["operation"] for entry in APPLICATION_CAPABILITY_ENTRIES_V10)
 )
 
 
@@ -706,7 +727,8 @@ def build_application_description(
 ) -> dict[str, Any]:
     """Return the deterministic application description for one exact context."""
 
-    uses_v9 = "application_capability_description_v9" in schemas
+    uses_v10 = "application_capability_description_v10" in schemas
+    uses_v9 = uses_v10 or "application_capability_description_v9" in schemas
     uses_v8 = uses_v9 or "application_capability_description_v8" in schemas
     uses_v7 = uses_v8 or "application_capability_description_v7" in schemas
     uses_v6 = uses_v7 or "application_capability_description_v6" in schemas
@@ -715,7 +737,10 @@ def build_application_description(
     uses_v3 = uses_v4 or "application_capability_description_v3" in schemas
     uses_v2 = uses_v3 or "application_capability_description_v2" in schemas
     uses_v1 = uses_v2 or "application_capability_description_v1" in schemas
-    if uses_v9:
+    if uses_v10:
+        default_entries = APPLICATION_CAPABILITY_ENTRIES_V10
+        expected_operations = EXPECTED_OPERATIONS_V10
+    elif uses_v9:
         default_entries = APPLICATION_CAPABILITY_ENTRIES_V9
         expected_operations = EXPECTED_OPERATIONS_V9
     elif uses_v8:
@@ -782,7 +807,9 @@ def build_application_description(
         described.append(entry)
     return {
         "schema_version": (
-            "application-capability-description-v9"
+            "application-capability-description-v10"
+            if uses_v10
+            else "application-capability-description-v9"
             if uses_v9
             else "application-capability-description-v8"
             if uses_v8
@@ -804,7 +831,9 @@ def build_application_description(
         ),
         "canonical_profile": "schuss-canonical-json-v1",
         "description_version": (
-            APPLICATION_DESCRIPTION_VERSION_V9
+            APPLICATION_DESCRIPTION_VERSION_V10
+            if uses_v10
+            else APPLICATION_DESCRIPTION_VERSION_V9
             if uses_v9
             else APPLICATION_DESCRIPTION_VERSION_V8
             if uses_v8
