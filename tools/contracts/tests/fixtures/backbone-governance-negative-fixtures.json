@@ -1,5 +1,5 @@
 {
-  "schema_version": "backbone-governance-negative-fixtures-v6",
+  "schema_version": "backbone-governance-negative-fixtures-v7",
   "cases": [
     {
       "name": "ui-resurrection",
@@ -84,6 +84,13 @@
       "old": "Status: accepted by the user and completed on 2026-08-16.",
       "new": "Status: implementation is active without contract acceptance.",
       "expected_code": "TASK_023_CONTRACT_INVALID"
+    },
+    {
+      "name": "task032-unauthorized-activation",
+      "path": "docs/tasks/032-variable-graph-desktop-host-runtime.md",
+      "old": "Status: proposed implementation contract created at the user's explicit request\non 2026-08-19; not activated and not started.",
+      "new": "Status: active implementation without explicit activation.",
+      "expected_code": "TASK_032_CONTRACT_INVALID"
     }
   ]
 }

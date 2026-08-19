@@ -49,6 +49,11 @@ contracts pending their normal archival step:
   rendering, and a headless JUCE audio/MIDI session service. The retained Mac
   smoke is process-local evidence only; UI, AI, packaging, distribution,
   Ksoloti hardware, general real-time promotion, and listening remain separate.
+- `032-variable-graph-desktop-host-runtime.md` is the proposed, not-yet-active
+  Task 032 successor contract. It generalizes the host path to bounded acyclic
+  graph shapes made only from the seven Task 031 node types and adds reset-state,
+  block-boundary patch replacement. Contract creation authorizes no
+  implementation.
 - `ui-desktop-initialization.md` is the completed unnumbered structural boundary
   that established core/UI ownership before any product renderer existed.
 - `ui-desktop-read-only-catalog.md` is the explicitly authorized first desktop
@@ -79,8 +84,9 @@ contracts pending their normal archival step:
   build/device authority, and listening claims remain absent.
 
 Tasks 023-031 are complete locally. ADR 0016 and the Task 031 parent contract
-define the completed bounded desktop-host route. ADR 0015 retargeted the
-previously unstarted Task 027 assignment.
+define the completed bounded desktop-host route. Task 032 is the next proposed
+numbered successor, but it is not activated or started. ADR 0015 retargeted
+the previously unstarted Task 027 assignment.
 Task 028's prior transparent-compound outcome remains deferred; the original
 sessions/jobs/diagnostics outcome is deferred without a replacement number.
 Tasks 019 and 020 remain deferred. UI architecture and implementation remain

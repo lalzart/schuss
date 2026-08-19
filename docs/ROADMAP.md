@@ -20,8 +20,9 @@ compiler, device, and evidence claims independent. Completed detail belongs in
 The ordinary task numbers established by ADR 0010 remain stable. ADR 0014 adds
 the application-spine sequence after the retained Task 022 result. ADR 0015
 retargets only the previously unstarted Task 027 assignment. ADR 0016 adds the
-portable desktop-host runtime as Task 031. Completion of one row does not
-authorize the next.
+portable desktop-host runtime as Task 031. Task 032 is a proposed successor to
+remove Task 031's whole-profile restriction without widening its DSP palette.
+Completion of one row does not authorize the next.
 
 | Phase | Outcome | Status |
 | --- | --- | --- |
@@ -44,6 +45,7 @@ authorize the next.
 | 29 | Complete-machine inspection layer and isolated Viewer | Complete; two exact source reviews, zero completed machines, structural level 1 |
 | 30 | Complete exact Mutable-derived catalog cohort and object CLI | Complete; 56 attributed implementations, 107 families, shared CLI v3 discovery, levels 1-2 |
 | 31 | Portable desktop host runtime and headless JUCE audio/MIDI engine | Complete locally; exact seven-node offline render and one bounded Mac callback observation, with no general level-7 or audible promotion |
+| 32 | Bounded variable-graph desktop host runtime and safe patch replacement | Proposed contract; not activated or started; existing seven host node types only |
 | Unnumbered UI | Consolidated desktop authoring, build jobs, and Ksoloti volatile deployment | Implemented locally after explicit authorization; fake-transport acceptance only; real hardware, packaging, and publication separately gated |
 | Unnumbered AI | Sonic-first planning plus explicit project-local object and patch authoring over shared operations/MCP | Implemented locally after explicit authorization; bounded compounds/native kernels and atomic project acceptance only; no target lowering, model UX, build, device, HTTP, or publication authority |
 
@@ -113,6 +115,12 @@ sessions/jobs/diagnostics outcome is deferred without a replacement number.
 The default ceiling remains two implementation lanes plus one read-only or
 design lane.
 
+Task 032 is the next proposed numbered successor. Its contract permits only a
+future explicitly authorized implementation of bounded acyclic graph shapes
+from the existing seven Task 031 host node types plus safe reset-state patch
+replacement. It does not activate implementation, widen the DSP palette, or
+promote real-time, audible, hardware, packaging, or release evidence.
+
 The separately authorized unnumbered AI lane now includes the original local
 read-only MCP adapter and its sonic-first v13 successor. The default process
 offers seven read-only discovery/planning tools. One explicit absolute project
@@ -127,7 +135,8 @@ ADR 0014 sequence. Task 029 adds only source-evidenced machine inspection.
 Task 030 catalogues all 56 exactly attributed Task 027 entries and exposes
 individual implementation search without adding compiler or device support.
 Both are complete. Task 031 was later authorized in full and is complete
-locally; no numbered implementation lane is active.
+locally. Task 032 exists only as a proposed contract; no numbered
+implementation lane is active.
 
 A parent may declare children such as `023A`, `023B`, and `023C`. Those are
 exact parent-owned work packages, not aliases or independent roadmap entries;

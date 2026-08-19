@@ -31,7 +31,7 @@ class BackboneGovernanceTest(unittest.TestCase):
     def test_live_repository_is_valid(self):
         summary = governance.validate_documents(self.documents, self.task_filenames)
         self.assertEqual("valid", summary["status"])
-        self.assertEqual("backbone-governance-summary-v21", summary["schema_version"])
+        self.assertEqual("backbone-governance-summary-v22", summary["schema_version"])
         self.assertEqual([], summary["diagnostics"])
         self.assertEqual(
             [
@@ -49,7 +49,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["active_evidence_task"],
         )
         self.assertEqual(
-            "task031-complete-host-observation-no-level7-or-audible-promotion",
+            "task032-explicit-activation-required",
             summary["promotion_gate"],
         )
         self.assertEqual(
@@ -61,11 +61,11 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["active_task_sequence"],
         )
         self.assertEqual(
-            "none-task031-complete",
+            "032-variable-graph-host-runtime-proposed-not-started",
             summary["next_planned_task"],
         )
         self.assertEqual(
-            [],
+            ["032"],
             summary["planned_task_sequence"],
         )
         self.assertEqual("complete-mapped-local-level-5", summary["task_statuses"]["018"])
@@ -114,12 +114,18 @@ class BackboneGovernanceTest(unittest.TestCase):
             summary["task_statuses"]["031"],
         )
         self.assertEqual(
+            "proposed-variable-graph-host-runtime-not-started",
+            summary["task_statuses"]["032"],
+        )
+        self.assertEqual(
             "unnumbered-desktop-workspace-shell-implemented-locally-target-hardware-publication-gated",
             summary["ui_milestone_status"],
         )
 
     def test_negative_governance_fixtures_fail_closed(self):
-        self.assertEqual("backbone-governance-negative-fixtures-v6", self.fixtures["schema_version"])
+        self.assertEqual(
+            "backbone-governance-negative-fixtures-v7", self.fixtures["schema_version"]
+        )
         for fixture in self.fixtures["cases"]:
             with self.subTest(case=fixture["name"]):
                 documents = copy.deepcopy(self.documents)

@@ -41,6 +41,7 @@ TASK_027 = "docs/tasks/027-mutable-instruments-catalog-provenance.md"
 TASK_028 = "docs/tasks/028-twenty-item-direct-palette.md"
 TASK_030 = "docs/tasks/030-complete-mutable-catalog-and-object-cli.md"
 TASK_031 = "docs/DESKTOP_HOST_RUNTIME_IMPLEMENTATION_CONTRACT.md"
+TASK_032 = "docs/tasks/032-variable-graph-desktop-host-runtime.md"
 UI_DESKTOP_INITIALIZATION = "docs/tasks/ui-desktop-initialization.md"
 UI_DESKTOP_CATALOG = "docs/tasks/ui-desktop-read-only-catalog.md"
 UI_DESKTOP_PATCHER = "docs/tasks/ui-desktop-patcher-authoring.md"
@@ -81,6 +82,7 @@ DOCUMENT_PATHS = (
     TASK_028,
     TASK_030,
     TASK_031,
+    TASK_032,
     UI_DESKTOP_INITIALIZATION,
     UI_DESKTOP_CATALOG,
     UI_DESKTOP_PATCHER,
@@ -93,7 +95,7 @@ DOCUMENT_PATHS = (
 )
 
 ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 32))
-PLANNED_SEQUENCE: tuple[str, ...] = ()
+PLANNED_SEQUENCE: tuple[str, ...] = ("032",)
 EXPECTED_TASK_FILENAMES = {
     "README.md",
     "012b-object-drawer-and-transparent-graph-canvas.md",
@@ -107,6 +109,7 @@ EXPECTED_TASK_FILENAMES = {
     "027-mutable-instruments-catalog-provenance.md",
     "028-twenty-item-direct-palette.md",
     "030-complete-mutable-catalog-and-object-cli.md",
+    "032-variable-graph-desktop-host-runtime.md",
     "ui-desktop-initialization.md",
     "ui-desktop-read-only-catalog.md",
     "ui-desktop-patcher-authoring.md",
@@ -655,6 +658,44 @@ def validate_documents(
         ),
     )
 
+    task32_status = _leading_status(documents.get(TASK_032, "")) or ""
+    for fragment in (
+        "proposed implementation contract created at the user's explicit request",
+        "not activated and not started",
+        "creating this contract authorizes only the contract and current-routing updates",
+    ):
+        if fragment not in task32_status.lower():
+            diagnostics.append(
+                _diagnostic(
+                    "TASK_032_CONTRACT_INVALID",
+                    TASK_032,
+                    f"Task 032 contract status must contain: {fragment}",
+                )
+            )
+    _require_phrases(
+        diagnostics,
+        code="TASK_032_CONTRACT_INVALID",
+        document=TASK_032,
+        scope=documents.get(TASK_032, ""),
+        phrases=(
+            "## Goal and why it exists",
+            "## In scope",
+            "## Out of scope",
+            "## Inputs and deliverables",
+            "## Validation cadence",
+            "## Acceptance tests",
+            "## Decisions Task 032 may make",
+            "## Decisions Task 032 must not make",
+            "host-runtime-package-v1",
+            "schuss-rt-abi-v1",
+            "schuss-audio-engine-protocol-v1",
+            "seven already accepted Task 031 host node types",
+            "No semantic stable ID is reserved",
+            "state migration",
+            "staging, commit, push",
+        ),
+    )
+
     for document, status_fragments, required in (
         (
             UI_DESKTOP_INITIALIZATION,
@@ -853,6 +894,9 @@ def validate_documents(
         "The one authorized bounded local Mac smoke opened `MacBook Pro Speakers`",
         "No physical MIDI input was available",
         "promotes neither general real-time/resource level 7 nor audible level 8",
+        "Task 032 now has a proposed implementation contract",
+        "Task 032 is not activated or started",
+        "Creating its contract authorizes no runtime",
         "The unnumbered desktop patcher implementation is locally complete",
         "The active unnumbered desktop authoring-performance slice",
         "warm repeated inspection falls from about 18.7 seconds to about 0.012 seconds",
@@ -963,7 +1007,7 @@ def validate_documents(
             )
 
     roadmap_rows = _roadmap_rows(documents.get(ROADMAP, ""))
-    for number in range(13, 32):
+    for number in range(13, 33):
         label = str(number)
         if len(roadmap_rows.get(label, [])) != 1:
             diagnostics.append(
@@ -993,6 +1037,7 @@ def validate_documents(
         "29": "complete; two exact source reviews, zero completed machines, structural level 1",
         "30": "complete; 56 attributed implementations, 107 families, shared cli v3 discovery, levels 1-2",
         "31": "complete locally; exact seven-node offline render and one bounded mac callback observation",
+        "32": "proposed contract; not activated or started; existing seven host node types only",
     }
     for label, expected in expected_roadmap_status.items():
         rows = roadmap_rows.get(label, [])
@@ -1033,6 +1078,7 @@ def validate_documents(
             "Tasks 029 and 030 were later activated by explicit user requests",
             "ADR 0016 adds the portable desktop-host runtime as Task 031",
             "Task 031 is the completed bounded desktop-host successor selected by ADR 0016",
+            "Task 032 is the next proposed numbered successor",
             "Task 026 consumes the independently accepted reverb-free seven-node executable profile",
             "desktop catalog and patcher are implemented locally",
             "Authoring performance and reliability are active locally",
@@ -1161,6 +1207,7 @@ def validate_documents(
         TASK_028: documents.get(TASK_028, ""),
         TASK_030: documents.get(TASK_030, ""),
         TASK_031: documents.get(TASK_031, ""),
+        TASK_032: documents.get(TASK_032, ""),
         UI_DESKTOP_INITIALIZATION: documents.get(UI_DESKTOP_INITIALIZATION, ""),
         UI_DESKTOP_CATALOG: documents.get(UI_DESKTOP_CATALOG, ""),
         UI_DESKTOP_PATCHER: documents.get(UI_DESKTOP_PATCHER, ""),
@@ -1211,10 +1258,10 @@ def validate_documents(
         "current_status_source": STATUS,
         "diagnostics": diagnostics,
         "historical_context_policy": "completed-task-contracts-indexed-in-history-and-git",
-        "next_planned_task": "none-task031-complete",
+        "next_planned_task": "032-variable-graph-host-runtime-proposed-not-started",
         "planned_task_sequence": list(PLANNED_SEQUENCE),
-        "promotion_gate": "task031-complete-host-observation-no-level7-or-audible-promotion",
-        "schema_version": "backbone-governance-summary-v21",
+        "promotion_gate": "task032-explicit-activation-required",
+        "schema_version": "backbone-governance-summary-v22",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -1237,6 +1284,7 @@ def validate_documents(
             "029": "complete-machine-inspection-level-1",
             "030": "complete-mutable-catalog-cohort-level-2-cli-v3",
             "031": "complete-desktop-host-bounded-observation-no-level7-or-audible-promotion",
+            "032": "proposed-variable-graph-host-runtime-not-started",
         },
         "ui_milestone_status": "unnumbered-desktop-workspace-shell-implemented-locally-target-hardware-publication-gated",
     }

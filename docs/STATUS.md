@@ -521,6 +521,16 @@ successor/historical golden, and Task 027 generated-output freshness assertion.
 No Task 031, desktop, project, compiler, Ksoloti-regression, or governance test
 failed, and no historical golden was rebaselined.
 
+The completed Task 031 implementation was subsequently committed locally as
+`932f310`; that commit has not been pushed.
+Task 032 now has a proposed implementation contract at
+`docs/tasks/032-variable-graph-desktop-host-runtime.md`. It is limited to
+bounded acyclic graph shapes made from the existing seven Task 031 host node
+types and safe reset-state patch replacement.
+Task 032 is not activated or started.
+Creating its contract authorizes no runtime, schema, record, operation, UI,
+device, hardware, Git, or publication work.
+
 Tasks 019 and 020 are deferred and not automatically activated by completion
 of Task 018 or Task 021.
 
@@ -662,8 +672,9 @@ contract; its prior transparent-compound outcome is deferred. Task 029 is
 bounded to source-evidenced machine inspection and Task 030 to catalog
 provenance plus read-only object discovery. Task 031 is bounded to its exact
 seven-node desktop-host package and process-local engine/session path; it does
-not activate broader runtime, UI, hardware, or release work. No numbered
-implementation lane is active. The unnumbered desktop patcher is
+not activate broader runtime, UI, hardware, or release work. Task 032 is the
+next proposed numbered contract but remains not activated and not started. No
+numbered implementation lane is active. The unnumbered desktop patcher is
 implemented locally with its process-local build/device and project-object
 handoff successors and awaits user acceptance/publication. The unnumbered AI/MCP lane is implemented locally
 through explicit project-scoped object and patch authoring. Real

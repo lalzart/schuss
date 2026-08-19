@@ -76,6 +76,10 @@ offline WAV. A separate headless JUCE adapter and process-local core services
 provide explicit device inspection and audio-session lifecycle. One bounded
 Mac callback observation passed with no xruns; it is not general real-time or
 audible evidence, and no physical MIDI input was available.
+Task 032 now has a proposed, not-yet-active contract for bounded variable graph
+shapes made only from those seven host node types and safe reset-state patch
+replacement. Creating that contract does not authorize implementation or widen
+the host DSP palette.
 The explicitly authorized unnumbered desktop lane is locally implemented
 through its build/device workflow. `apps/schuss_desktop/` is the sole maintained
 React/Tauri product UI: it combines object browsing and project-backed node
@@ -133,6 +137,9 @@ and audible proof also remain `not-run` and require new authorization.
 - [Task 031 host-runtime contract](docs/DESKTOP_HOST_RUNTIME_IMPLEMENTATION_CONTRACT.md):
   completed portable runtime, deterministic offline renderer, headless JUCE
   adapter, and process-local audio-session boundary.
+- [Task 032 variable-graph host contract](docs/tasks/032-variable-graph-desktop-host-runtime.md):
+  proposed, not-yet-active successor for bounded graph shapes and safe
+  reset-state patch replacement using only the seven existing host node types.
 - [Desktop patcher contract](docs/tasks/ui-desktop-patcher-authoring.md):
   consolidated object browsing and project-backed graph authoring in the one
   maintained desktop product UI.
