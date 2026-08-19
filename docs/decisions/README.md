@@ -18,3 +18,4 @@ details remain in task files unless they change a durable boundary.
 - `0013-version-gills-runtime-correction-and-level6-evidence.md` - accepted; current Task 021 corrective and level-6 authority
 - `0014-sequence-application-spine-and-authorize-ui-architecture.md` - accepted; application-spine and UI-architecture authority, amended by ADR 0015 for Task 027 only
 - `0015-retarget-task-027-to-mutable-catalog-provenance.md` - accepted; current Task 027 retarget and Mutable-provenance authority
+- `0016-adopt-portable-desktop-host-runtime.md` - accepted; current portable desktop host-runtime and JUCE adapter authority

@@ -43,6 +43,12 @@ contracts pending their normal archival step:
 - `030-complete-mutable-catalog-and-object-cli.md` is the completed exact
   Mutable catalog cohort and CLI v3 contract. It catalogues all 56 attributed
   Task 027 entries and leaves the 16 unattributed extended entries inventory-only.
+- `../DESKTOP_HOST_RUNTIME_IMPLEMENTATION_CONTRACT.md` is the accepted Task 031
+  parent contract. It fixes the serialized 031A-031D path from host contracts
+  through a portable C++ runtime, deterministic offline rendering, and a
+  headless JUCE audio/MIDI session service. No child is automatically active,
+  and UI, AI, packaging, distribution, hardware, and listening work remain
+  separate.
 - `ui-desktop-initialization.md` is the completed unnumbered structural boundary
   that established core/UI ownership before any product renderer existed.
 - `ui-desktop-read-only-catalog.md` is the explicitly authorized first desktop
@@ -65,16 +71,18 @@ contracts pending their normal archival step:
   atomic acceptance, plus explicit project-scoped MCP tools. Target lowering,
   build/device authority, and listening claims remain absent.
 
-Tasks 023-030 are complete; no numbered implementation task is active. ADR
-0015 retargeted the previously unstarted Task 027 assignment. Task 028's prior
-transparent-compound outcome remains deferred; the original sessions/jobs/diagnostics outcome
-is deferred without a replacement number. Tasks 019 and 020 remain deferred. UI
-architecture and implementation remain unnumbered. The desktop catalog and
-patcher are implemented locally after explicit authorization; authoring
-performance/reliability and build/device slices are implemented locally. The
-sonic-first AI/MCP authoring successor is also implemented locally. User acceptance, Git
-publication, real connected-device execution,
-firmware/SD mutation, packaging, real-time, and audible claims remain separate.
+Tasks 023-030 are complete. ADR 0016 and the accepted Task 031 parent contract
+now define the next numbered core-runtime route, but no 031 child implementation
+is active. ADR 0015 retargeted the previously unstarted Task 027 assignment.
+Task 028's prior transparent-compound outcome remains deferred; the original
+sessions/jobs/diagnostics outcome is deferred without a replacement number.
+Tasks 019 and 020 remain deferred. UI architecture and implementation remain
+unnumbered. The desktop catalog and patcher are implemented locally after
+explicit authorization; authoring performance/reliability and build/device
+slices are implemented locally. The sonic-first AI/MCP authoring successor is
+also implemented locally. User acceptance, real connected-device execution,
+firmware/SD mutation, packaging, distribution, real-time promotion, and audible
+claims remain separate.
 
 Unnumbered validation-hygiene task VH-001 is retained under `../validation/`.
 It audits five configured historical golden/hash gates and authorizes neither
