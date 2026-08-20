@@ -1,11 +1,11 @@
 # Cinderwheel (working name): advanced Tide Pit generative resonator
 
-> Status: proposed
+> Status: bounded source/host/JUCE prototype validated; real-time, device, and listening evidence deferred
 > Proposal revision: 0.2
 > Original idea: Something kind of like a Behringer Spice synth, but using Mutable Instruments modules, maybe Braids or Plaits, with resonance that creates a generative sound; mapped to a Novation Launch Control 3 MIDI controller; able to move from tribal-y to noisy and grungy.
 > Revision input: Treat this as a more advanced Tide Pit, not a separate non-granular instrument. The controller is the regular Novation Launch Control 3 with 16 encoders, not the Launch Control XL 3.
 > Implementation target: Tide Pit successor expressed as a Schuss instrument proposal; regular Novation Launch Control 3 performance surface; compute target and backend unresolved
-> Decision gate: proposal review is required before DSP implementation.
+> Decision gate: revision 0.2 was approved for the isolated 2026-08-20 implementation trial; the next gate is comparator/listening and exact Tide Pit lineage, not production integration.
 
 ## 1. Product thesis
 
@@ -458,12 +458,13 @@ If the mechanism passes but DUST or the exciter palette does not, retain REED/RN
 | The idea has a coherent instrument identity | Architecture, performance arc, and failure model all support one thesis | Research/design | **PASS for proposal** | This document |
 | Reference anatomy is evidence-bounded | Published behaviors cited; proprietary implementation not inferred | Source/reference | **PASS for proposal** | Sections 3–5 |
 | The live Tide Pit baseline is understood | README, object interface, and included DSP headers inspected read-only; preserved and changed behaviors listed | Source/reference | **PASS for proposal** | Sections 1, 3, and 9 |
-| The controller has a complete stable map | 16 encoders and eight buttons assigned in one proposed Custom Mode | Documentation/design | **PASS for proposal** | Section 9 |
+| The controller has a complete stable map | 16 encoders and eight buttons assigned; prototype raw MIDI and gesture semantics validated | Documentation plus simulated host input | **PASS for prototype** | Section 9 and `../prototypes/cinderwheel/fixtures/launch-control-3-test-map-v0.json` |
 | Cultural translation is situated and bounded | Practitioner/scholarly context, structural test, and non-borrowing list present | Cultural research | **PASS for proposal** | Section 6 |
 | Rotor transfer is universally novel | Exhaustive prior-art search | Novelty | **NOT CLAIMED / NOT RUN** | Focused search only |
 | Rotor transfer creates useful secondary rhythm | Blind comparison and author acceptance | Listening | **NOT RUN** | Planned renders and notes |
-| Scheduler is bounded and repeatable | Automated state/event tests | Structural host-independent | **NOT RUN** | Planned prototype tests |
-| DSP is block invariant and numerically safe | 64/128/512 render comparison and safety assertions | Host-independent DSP | **NOT RUN** | Planned prototype tests |
+| Scheduler is bounded and repeatable | Automated state/event tests | Structural host-independent | **PASS for prototype** | `../prototypes/cinderwheel/tests/core_tests.cpp` and `../prototypes/cinderwheel/RESULTS.md` |
+| DSP is block invariant and numerically safe | 64/128/512 render comparison, fresh-process repeat, and safety assertions | Host-independent DSP / host signal | **PASS for determinism and safety; acoustic Undertow pitch tolerance remains open** | `../prototypes/cinderwheel/tests/validate_render_matrix.py` and `../prototypes/cinderwheel/RESULTS.md` |
+| Thin JUCE host boundary builds and preserves Core input | Exact pinned source build and direct-versus-adapted offline parity | JUCE/native build | **PASS; standalone app not launched** | `../prototypes/cinderwheel/tests/juce_midi_adapter_tests.cpp` and `../prototypes/cinderwheel/RESULTS.md` |
 | Current Schuss runtime supports the Tide Pit successor | Accepted graph/provider/compiler/runtime evidence | Schuss host | **NOT CLAIMED / NOT RUN** | Separate future task |
 | Mutable-derived source can be distributed | Exact-file/commit/license/combined-work review | License | **NOT RUN** | Separate source audit |
 | Desktop real-time deadline is met | Fresh callback timing under defined load | Real-time | **NOT RUN** | Future host record |
@@ -473,17 +474,26 @@ If the mechanism passes but DUST or the exciter palette does not, retain REED/RN
 
 ## 13. Implementation plan
 
-Implementation remains blocked on approval of proposal revision 0.2.
+Revision 0.2 received approval for the isolated trial in the user's 2026-08-20
+request. The plan below was executed only under
+`research/prototypes/cinderwheel/`; no shared Schuss graph, provider, runtime,
+catalog, compiler, or governance record changed.
 
-### Files expected to change after approval
+### Files changed by the bounded trial
 
-- `research/prototypes/cinderwheel/README.md` — experiment contract and commands.
-- `research/prototypes/cinderwheel/include/cinderwheel/core.hpp` — finite state and event API.
-- `research/prototypes/cinderwheel/src/core.cpp` — source-neutral four-stage stimulus, Undertow, Wake resonator/scheduler, and safety path.
-- `research/prototypes/cinderwheel/src/render.cpp` — deterministic gesture/render harness.
-- `research/prototypes/cinderwheel/tests/core_tests.cpp` — bounds, reset, block invariance, MIDI mapping, and negative tests.
-- `research/prototypes/cinderwheel/fixtures/` — stable text gestures and expected event ledgers.
-- This proposal's Section 16 — exact revision, artifacts, commands, results, deviations, and proof gaps.
+- `research/prototypes/cinderwheel/CMakeLists.txt` — JUCE-free Core/tests plus
+  explicit pinned-JUCE renderer, adapter tests, and standalone targets.
+- `research/prototypes/cinderwheel/include/cinderwheel/` and `src/` — portable
+  Core/control map, fixed-capacity JUCE MIDI adapter, deterministic renderer,
+  and standalone application.
+- `research/prototypes/cinderwheel/tests/` — Core, controller fixture,
+  host-adapter parity, and repeated render-matrix checks.
+- `research/prototypes/cinderwheel/fixtures/launch-control-3-test-map-v0.json`
+  — prototype-only regular Launch Control 3 surface and semantic contract.
+- `research/prototypes/cinderwheel/README.md`, `RESULTS.md`, and
+  `TRIAL_GAPS.md` — task contract, exact evidence, and workflow gap register.
+- This proposal's status, evidence matrix, decision gate, and Section 16 —
+  evidence-accurate result backfill.
 
 The initial implementation must not edit Task 033/034 records, shared Schuss schemas, the current audio engine, catalog entries, provider wrappers, or compiler code.
 
@@ -552,37 +562,102 @@ Each requires a named environment and separate evidence record. Hardware mutatio
 
 Approve the source-neutral experiment first. It isolates the two actual invention risks—whether an exposed Undertow deepens Tide Pit and whether the Wake scheduler creates useful counterpoint—from live-project mutation, Mutable source selection, host architecture, and embedded capacity. Keep the corrected 16+8 Launch mapping as the performance contract, but simulate its CC stream until the timing and sound mechanism survive the offline test.
 
-### Approval requested
+### Approval disposition
 
-Approval of **Cinderwheel / advanced Tide Pit proposal revision 0.2** would authorize only:
+The user's 2026-08-20 request approved **Cinderwheel / advanced Tide Pit
+proposal revision 0.2** for only:
 
 - the isolated files listed in Section 13;
 - an original C++17 offline-capable implementation of a four-stage Tide Pit-shaped stimulus, Undertow follower, four Wake resonators, energy/rotor scheduler, safety path, and exact simulated regular Launch Control 3 CC map;
-- focused deterministic tests and five retained test renders; and
+- focused deterministic tests and six literal render conditions (the five
+  numbered H1 conditions plus the separately requested corroded condition); and
 - completion of Section 16 with structural and listening proof gaps kept separate.
 
 It would **not** authorize modifying the live Tide Pit, Task 033/034 edits, Mutable/VCV source copying, shared Schuss runtime integration, Novation Components/device writes, package installation, controller use, hardware access, firmware work, publication, staging, committing, or pushing.
 
 ## 16. Implementation record
 
-Not started; pending approval of proposal revision 0.2.
+The bounded source-to-JUCE trial is complete at source, host-structural,
+host-signal-safety, and JUCE-build levels. It is not complete at real-time,
+physical-device, target, or listening levels.
 
 ### Proposal revision implemented
 
-None.
+Revision 0.2 as it existed at approval:
+
+- Git blob: `c075035b9c844eedd29f7f172e557cc985ad6d48`
+- file SHA-256:
+  `d9b3a50cde3c25a4db6324bd8d20f1a65eaefcbd1ac8e9e7a42adc80713b5e84`
+- approval: user request dated 2026-08-20
+
+This section is a later result backfill; changing the proposal status and record
+does not change the frozen input bytes used for the implementation.
 
 ### Source and test artifacts
 
-None.
+All implementation and test artifacts are isolated under
+`research/prototypes/cinderwheel/`. The portable Core contains no JUCE types.
+The regular Launch Control 3 artifact is explicitly prototype-only and
+allocates no stable IDs. `RESULTS.md` records the artifact hashes and objective
+measurements; `TRIAL_GAPS.md` records the disposition of 27 specification and
+workflow gaps.
 
 ### Commands and results
 
-None.
+On 2026-08-20:
+
+- JUCE-free Release configure/build passed and CTest passed `2/2`.
+- Exact pinned-JUCE Release configure/build passed, including
+  `Cinderwheel.app`, and CTest passed `4/4`.
+- ASan/UBSan focused Core tests passed with leak detection disabled on the
+  unsupported macOS leak-sanitizer path.
+- The Schuss `current` validation profile passed `4/4` checks with zero failed
+  or incomplete checks.
+- The render matrix passed in four fresh processes: blocks 64, 128, and 512
+  plus a repeated 128-frame run. Twelve WAV/ledger artifacts were byte-identical
+  across block sizes and all 13 outputs repeated exactly. The block-128 manifest
+  SHA-256 is
+  `5141fe881bb3012fb654d9c52b62d59fcacbbbdad45141596452d7097ee466aa`.
+- Six 40-second observations remained finite and within ceiling/DC limits;
+  `Ember=0` emitted zero afterstrikes and high-Ember Bloom exercised the event
+  cap once.
+
+Exact commands, per-condition metrics, hashes, and claim boundaries are in
+`../prototypes/cinderwheel/RESULTS.md`.
 
 ### Deviations
 
-None.
+- The first slice uses an original source-neutral four-stage/body/grain
+  surrogate, not the live Tide Pit or Mutable-derived source.
+- The five numbered H1 conditions plus the separate corroded condition are
+  reported literally as six outputs.
+- Root and Undertow are latched at a stage transition without the initially
+  ambiguous glide; the prototype fixture freezes a zero-millisecond transition.
+- The 32-cycle render schedule is deterministic but compiled into `render.cpp`,
+  not supplied as an independently retained machine-readable gesture fixture.
+- Reset validation proves normalized musical-ledger equality after removing
+  absolute timeline position; it does not claim full-record equality for
+  `sample_index` or `ingress_sequence`.
+- JUCE is an optional adapter/build dependency. The exact fetch route is
+  authenticated; a supplied local tree is version-checked only. The GUI and WAV
+  renderer require `juce_gui_basics` and `juce_audio_formats`, which are beyond
+  the canonical headless module set and need later module/distribution review.
+- A standalone app bundle was built but never launched; no endpoint or device
+  was opened.
 
 ### Remaining proof gaps
 
-All implementation, host, target-build, real-time, physical-controller, device, license-integration, and audible claims remain open as recorded in Section 12.
+- An output-based Undertow pitch estimator and separately isolated exact-zero
+  Off experiment are still missing; current tests prove configured ratios and
+  coefficient state.
+- A fixed-round-robin comparator, randomized/loudness-matched author session,
+  exact Tide Pit source fingerprint/integration, and recognizable-lineage
+  judgment remain missing. H1 is therefore not musically accepted.
+- JUCE callback timing, lock freedom, queue behavior, worst/p99 load, and
+  underruns were not measured. Bulk state clears remain bounded but unprofiled.
+- Physical Launch Control 3 Components bytes/install, MIDI capture, takeover,
+  OLED/LED feedback, endpoint identity, disconnect/reconnect, and performance
+  use were not tested.
+- Standalone runtime lifecycle/channel-layout execution, serialized state,
+  plugins, release/distribution licensing, Schuss production graph/provider/
+  runtime integration, target lowering, hardware, and listening are deferred.
