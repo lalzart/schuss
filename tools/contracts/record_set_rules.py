@@ -36,12 +36,15 @@ ID_FIELDS = (
     "family_id",
     "graph_id",
     "implementation_id",
+    "implementation_availability_policy_id",
+    "implementation_provider_id",
     "instrument_id",
     "machine_id",
     "machine_presentation_id",
     "machine_source_review_id",
     "panel_evidence_packet_id",
     "panel_layout_id",
+    "object_collection_id",
     "palette_lowering_proof_id",
     "performance_configuration_id",
     "performance_control_contract_id",
@@ -52,6 +55,7 @@ ID_FIELDS = (
     "procedure_id",
     "resource_report_id",
     "runtime_realization_id",
+    "source_release_id",
 )
 
 
