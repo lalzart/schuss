@@ -1,6 +1,6 @@
 # Schuss status
 
-<!-- schuss-governance-routing: active=035@review-ready; next=033-phase-3@not-activated -->
+<!-- schuss-governance-routing: active=none; next=033-phase-3@not-activated -->
 
 The machine-readable current routing source is
 `docs/governance/current-state.json`. This file explains that state in plain
@@ -10,19 +10,15 @@ schemas, records, record sets, fixtures, and evidence packets.
 
 ## Current work
 
-Task 035 is the only active task and is review-ready. It is a maintenance task
-consolidating validation and governance; it allocates no product schema,
-record, stable ID, operation, DSP behavior, compiler behavior, runtime ABI, UI
-behavior, or evidence promotion.
-
-Its baseline is local commit
-`ccafc1d403513c822d9294b6c257906820ff88eb`. Work is occurring in the isolated
-`codex/task035-validation-consolidation` worktree. No Task 035 staging, commit,
-push, publication, package installation, hardware action, or audio/MIDI device
-action is implied by this status.
+There is no active task. Task 035 completed locally at `88788c5` and was merged
+into local `main`; it remains unpushed. Task 033 Phase 3 is the next candidate,
+but it is not activated. No later work, publication, package installation,
+hardware action, or audio/MIDI device action is implied by this status.
 
 ## Recent completed milestones
 
+- Task 035 completed proportional validation and governance consolidation at
+  `88788c5`, with all 33 final release checks passing.
 - Task 034 completed the structural performance-control layer at `6010f29`.
   It separates controller bindings from instruments and DSP graphs but executes
   no controller graph and opens no physical MIDI/device path.

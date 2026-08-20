@@ -1,13 +1,6 @@
 {
   "schema_version": "schuss-governance-state-v1",
-  "active_task": {
-    "task_id": "035",
-    "phase": null,
-    "kind": "maintenance",
-    "status": "review-ready",
-    "contract": "docs/tasks/035-validation-and-governance-consolidation.md",
-    "baseline_commit": "ccafc1d403513c822d9294b6c257906820ff88eb"
-  },
+  "active_task": null,
   "next_candidate": {
     "task_id": "033",
     "phase": 3,
@@ -31,6 +24,12 @@
       "phase": 2,
       "status": "complete-local",
       "commit": "ccafc1d"
+    },
+    {
+      "task_id": "035",
+      "phase": null,
+      "status": "complete-local",
+      "commit": "88788c5"
     }
   ],
   "deferred_tasks": ["019", "020"],

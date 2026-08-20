@@ -96,10 +96,9 @@ source releases, object collections, provider availability, seven exact native
 catalog companions, and shared read-only inspection in record set
 `schuss-record-set-000031@1`. No JUCE runtime dependency follows from this work;
 Task 033 Phases 3 and 4 remain unstarted.
-Task 035 is the active review-ready maintenance task. It adopts proportional
-validation profiles under
-[ADR 0018](docs/decisions/0018-adopt-proportional-validation.md) and allocates
-no product semantics.
+Task 035 is complete locally at `88788c5`. It adopts proportional validation
+profiles under [ADR 0018](docs/decisions/0018-adopt-proportional-validation.md)
+and allocates no product semantics. No later task is active automatically.
 The explicitly authorized unnumbered desktop lane is locally implemented
 through its build/device workflow. `apps/schuss_desktop/` is the sole maintained
 React/Tauri product UI: it combines object browsing and project-backed node

@@ -34,6 +34,76 @@ class BackboneGovernanceTest(unittest.TestCase):
         cls.documents, cls.task_filenames = governance.load_repository_documents(ROOT)
         cls.fixtures = json.loads(FIXTURES.read_text(encoding="utf-8"))
 
+    @staticmethod
+    def _replace_section(text, heading, body):
+        marker = f"## {heading}"
+        prefix, remainder = text.split(marker, 1)
+        _section, separator, tail = remainder.partition("\n## ")
+        suffix = "" if not separator else "\n## " + tail
+        return prefix + marker + "\n\n" + body + "\n" + suffix
+
+    def _documents_with_active_fixture(self):
+        documents = copy.deepcopy(self.documents)
+        state = json.loads(documents[governance.STATE])
+        old_marker = governance.routing_marker(state)
+        contract = "docs/tasks/035-validation-and-governance-consolidation.md"
+        state["active_task"] = {
+            "task_id": "999",
+            "phase": None,
+            "kind": "maintenance",
+            "status": "in-progress",
+            "contract": contract,
+            "baseline_commit": "88788c5ed9b7acd5f1c19b675b2aa7afcdce0a81",
+        }
+        new_marker = governance.routing_marker(state)
+        documents[governance.STATE] = json.dumps(state, indent=2) + "\n"
+        for path in (governance.STATUS, governance.ROADMAP, governance.TASKS_INDEX):
+            documents[path] = documents[path].replace(old_marker, new_marker, 1)
+        documents[governance.STATUS] = self._replace_section(
+            documents[governance.STATUS],
+            "Current work",
+            "Task 999 is the only active task and is in progress.",
+        )
+        documents[governance.ROADMAP] = self._replace_section(
+            documents[governance.ROADMAP],
+            "Active maintenance",
+            "Task 999 is in progress.",
+        )
+        documents[governance.TASKS_INDEX] = self._replace_section(
+            documents[governance.TASKS_INDEX],
+            "Active",
+            "- Task 999, `035-validation-and-governance-consolidation.md`, is in progress.",
+        )
+        documents[contract] = """# Synthetic active maintenance contract
+
+Status: explicitly authorized and implementation in progress.
+
+## Goal and why it exists
+
+Exercise generic active-state validation.
+
+## In scope
+
+Test-only governance state.
+
+## Out of scope
+
+Production changes.
+
+## Inputs and deliverables
+
+One synthetic document mapping.
+
+## Acceptance tests
+
+The generic validator accepts the coherent mapping.
+
+## Decisions
+
+No product decision.
+"""
+        return documents, state
+
     def test_live_repository_is_valid(self):
         summary = governance.validate_documents(self.documents, self.task_filenames)
         self.assertEqual("valid", summary["status"], summary["diagnostics"])
@@ -73,21 +143,20 @@ class BackboneGovernanceTest(unittest.TestCase):
                 )
 
     def test_active_state_and_contract_shape_fail_closed_without_fixed_task_literals(self):
-        state = json.loads(self.documents[governance.STATE])
+        documents, state = self._documents_with_active_fixture()
         active = state["active_task"]
         self.assertIsNotNone(active)
 
         invalid_state = copy.deepcopy(state)
         invalid_state["active_task"]["status"] = "complete-local"
-        documents = copy.deepcopy(self.documents)
-        documents[governance.STATE] = json.dumps(invalid_state, indent=2) + "\n"
-        summary = governance.validate_documents(documents, self.task_filenames)
+        invalid_documents = copy.deepcopy(documents)
+        invalid_documents[governance.STATE] = json.dumps(invalid_state, indent=2) + "\n"
+        summary = governance.validate_documents(invalid_documents, self.task_filenames)
         self.assertIn(
             "ACTIVE_TASK_INVALID",
             {item["code"] for item in summary["diagnostics"]},
         )
 
-        documents = copy.deepcopy(self.documents)
         contract = active["contract"]
         self.assertEqual(1, documents[contract].count("## Acceptance tests"))
         documents[contract] = documents[contract].replace(
@@ -100,11 +169,11 @@ class BackboneGovernanceTest(unittest.TestCase):
         )
 
     def test_active_phase_and_cross_field_work_units_are_structural(self):
-        state = json.loads(self.documents[governance.STATE])
+        documents, state = self._documents_with_active_fixture()
         phased = copy.deepcopy(state)
         phased["active_task"]["phase"] = 3
         diagnostics = []
-        governance._validate_state(phased, self.documents, diagnostics)
+        governance._validate_state(phased, documents, diagnostics)
         self.assertNotIn("ACTIVE_TASK_INVALID", {item["code"] for item in diagnostics})
 
         active = state["active_task"]
@@ -131,10 +200,10 @@ class BackboneGovernanceTest(unittest.TestCase):
         mutations.append(deferred_active)
         for mutated in mutations:
             with self.subTest(mutated=mutated):
-                documents = copy.deepcopy(self.documents)
-                documents[governance.STATE] = json.dumps(mutated, indent=2) + "\n"
+                mutated_documents = copy.deepcopy(documents)
+                mutated_documents[governance.STATE] = json.dumps(mutated, indent=2) + "\n"
                 summary = governance.validate_documents(
-                    documents, self.task_filenames
+                    mutated_documents, self.task_filenames
                 )
                 self.assertIn(
                     "WORK_UNIT_STATE_INVALID",
@@ -151,8 +220,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             suffix = "" if not separator else "\n## " + tail
             return prefix + marker + section + suffix
 
-        documents = copy.deepcopy(self.documents)
-        state = json.loads(documents[governance.STATE])
+        documents, state = self._documents_with_active_fixture()
         old_marker = governance.routing_marker(state)
         live_status = state["active_task"]["status"]
         alternate_status = (
@@ -201,31 +269,22 @@ class BackboneGovernanceTest(unittest.TestCase):
         )
 
     def test_no_active_task_transition_requires_clean_active_sections(self):
-        def replace_section(text, heading, body):
-            marker = f"## {heading}"
-            prefix, remainder = text.split(marker, 1)
-            section, separator, tail = remainder.partition("\n## ")
-            del section
-            suffix = "" if not separator else "\n## " + tail
-            return prefix + marker + "\n\n" + body + "\n" + suffix
-
-        documents = copy.deepcopy(self.documents)
-        state = json.loads(documents[governance.STATE])
+        documents, state = self._documents_with_active_fixture()
         old_marker = governance.routing_marker(state)
         state["active_task"] = None
         new_marker = governance.routing_marker(state)
         documents[governance.STATE] = json.dumps(state, indent=2) + "\n"
         for path in (governance.STATUS, governance.ROADMAP, governance.TASKS_INDEX):
             documents[path] = documents[path].replace(old_marker, new_marker, 1)
-        documents[governance.STATUS] = replace_section(
+        documents[governance.STATUS] = self._replace_section(
             documents[governance.STATUS], "Current work", "There is no active task."
         )
-        documents[governance.ROADMAP] = replace_section(
+        documents[governance.ROADMAP] = self._replace_section(
             documents[governance.ROADMAP],
             "Active maintenance",
             "There is no active task.",
         )
-        documents[governance.TASKS_INDEX] = replace_section(
+        documents[governance.TASKS_INDEX] = self._replace_section(
             documents[governance.TASKS_INDEX], "Active", "There is no active task."
         )
         summary = governance.validate_documents(documents, self.task_filenames)

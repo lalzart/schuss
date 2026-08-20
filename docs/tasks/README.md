@@ -1,6 +1,6 @@
 # Task contracts
 
-<!-- schuss-governance-routing: active=035@review-ready; next=033-phase-3@not-activated -->
+<!-- schuss-governance-routing: active=none; next=033-phase-3@not-activated -->
 
 Current scheduling authority is `../governance/current-state.json`. Task files
 define frozen boundaries; their presence in this directory does not make them
@@ -9,9 +9,9 @@ from Git.
 
 ## Active
 
-- Task 035, `035-validation-and-governance-consolidation.md`, is explicitly
-  authorized and review-ready. It owns validation/governance maintenance only
-  and creates no semantic record-set successor.
+There is no active task. Task 035 completed locally at `88788c5`; it owns
+validation/governance maintenance only and created no semantic record-set
+successor.
 
 ## Next candidate, not activated
 
@@ -21,6 +21,8 @@ from Git.
 
 ## Recent retained contracts
 
+- Task 035 is complete and owns proportional validation profiles, one-pass
+  record-set validation, and structured current-work governance.
 - Task 034 is complete and owns the controller-independent performance graph
   contracts and exact Gills/MIDI configurations.
 - Task 033 owns the source-neutral collection/provider architecture. Phase 1

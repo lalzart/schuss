@@ -1,23 +1,17 @@
 # Schuss roadmap
 
-<!-- schuss-governance-routing: active=035@review-ready; next=033-phase-3@not-activated -->
+<!-- schuss-governance-routing: active=none; next=033-phase-3@not-activated -->
 
 Current routing is defined by `docs/governance/current-state.json`; this roadmap
 describes sequencing rather than silently activating work.
 
 ## Active maintenance
 
-Task 035 is review-ready and consolidates validation and governance under ADR
-0018. It makes cumulative record-set loading one-pass, separates routine checks
-from native and copied-root reproduction, restores a useful green ordinary
-gate, and moves current task/phase state into a small structured source.
-
-Its focused loader/runner negatives, exact adjacent service regression, and
-one deduplicated frozen release run are complete. The release passed all 33
-unique checks; the routine current portion took 17.842 seconds. Task 035
-changes no configured-source semantic input, so the absent authenticated local
-mapping remains an explicit not-applicable prerequisite rather than a release
-failure or a fabricated pass.
+There is no active task. Task 035 completed locally at `88788c5` under ADR
+0018. Cumulative record-set loading is one-pass, routine checks are separated
+from native and copied-root reproduction, and current task/phase state now has
+a small structured source. Its frozen release passed all 33 unique checks; the
+routine current portion took 17.842 seconds.
 
 ## Next candidate
 
@@ -50,7 +44,7 @@ These are candidates, not promises or active tasks.
 
 ## Completed backbone
 
-Tasks 001-034, with the documented deferrals and failed evidence boundaries,
+Tasks 001-035, with the documented deferrals and failed evidence boundaries,
 are indexed in `HISTORY.md`. The important durable choices remain in ADRs:
 
 - ADRs 0005-0007 separate family, contract, binding, build, and evidence;

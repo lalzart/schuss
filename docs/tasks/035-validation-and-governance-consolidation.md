@@ -1,7 +1,7 @@
 # Task 035: Proportional validation and governance consolidation
 
-Status: explicitly authorized by the user on 2026-08-20 and review-ready in the
-isolated `codex/task035-validation-consolidation` worktree.
+Status: completed locally at commit `88788c5` after explicit user authorization
+on 2026-08-20.
 This maintenance task creates no semantic record-set successor and authorizes
 no staging, commit, push, publication, package installation, network source
 fetch, native hardware access, upload, flash, or audible claim.
