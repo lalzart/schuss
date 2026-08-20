@@ -210,10 +210,8 @@ def validate() -> None:
     normalized_task = " ".join(task.split())
     normalized_adr = " ".join(adr.split())
     for phrase in (
-        "Phase 1 is implemented",
-        "integrated into local `main` at commit `6010f29`",
-        "Phase 2 has not started",
-        "Task 033 has not yet reserved a stable ID",
+        "Phase 1 is retained at commit `5dccfd2`",
+        "committed as `6010f29` and fast-forwarded into local `main`",
         "accepted ADR 0017",
         "a canonical 56-entry Mutable audit",
         "a canonical 39-header JUCE audit",

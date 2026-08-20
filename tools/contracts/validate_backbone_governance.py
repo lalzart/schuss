@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate current Schuss routing and repository-history policy read-only."""
+"""Validate structured current routing without turning prose into a database."""
 
 from __future__ import annotations
 
@@ -7,138 +7,86 @@ import json
 from pathlib import Path
 import re
 import sys
-from typing import Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 
 ROOT = Path(__file__).resolve().parents[2]
 
-README = "README.md"
-PROJECT_CONTEXT = "docs/PROJECT_CONTEXT.md"
+STATE = "docs/governance/current-state.json"
 STATUS = "docs/STATUS.md"
 ROADMAP = "docs/ROADMAP.md"
-APPLICATION_SPINE_PLAN = "docs/APPLICATION_SPINE_PLAN.md"
 HISTORY = "docs/HISTORY.md"
 TASKS_INDEX = "docs/tasks/README.md"
 DECISIONS_INDEX = "docs/decisions/README.md"
-ADR_0008 = "docs/decisions/0008-defer-ui-until-the-headless-backbone-is-ready.md"
-ADR_0009 = "docs/decisions/0009-resume-task-012b-after-durable-project-authoring.md"
-ADR_0010 = "docs/decisions/0010-restore-backend-first-sequence-and-retire-task-012b.md"
-ADR_0011 = "docs/decisions/0011-preserve-legacy-equivalent-direct-semantics.md"
-ADR_0012 = "docs/decisions/0012-require-executable-gills-promotion.md"
-ADR_0013 = "docs/decisions/0013-version-gills-runtime-correction-and-level6-evidence.md"
-ADR_0014 = "docs/decisions/0014-sequence-application-spine-and-authorize-ui-architecture.md"
-ADR_0015 = "docs/decisions/0015-retarget-task-027-to-mutable-catalog-provenance.md"
-ADR_0016 = "docs/decisions/0016-adopt-portable-desktop-host-runtime.md"
-ADR_0017 = "docs/decisions/0017-separate-object-collections-from-implementation-providers.md"
+AGENTS = "AGENTS.md"
+VALIDATION_MANIFEST = "tools/validation/manifest-v1.json"
 TASK_012B = "docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md"
-TASK_018 = "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md"
-TASK_021 = "docs/tasks/021-gills-dma-safe-oled-and-connected-device-evidence.md"
-TASK_022 = "docs/tasks/022-connected-gills-control-panel-evidence.md"
-TASK_023 = "docs/tasks/023-cli-v2-and-application-surface-consolidation.md"
-TASK_024 = "docs/tasks/024-complete-catalog-coverage-and-deterministic-curation.md"
-TASK_025 = "docs/tasks/025-direct-compiler-core-library-tranche.md"
-TASK_026 = "docs/tasks/026-complete-authoring-operations-and-cli-workflow.md"
-TASK_027 = "docs/tasks/027-mutable-instruments-catalog-provenance.md"
-TASK_028 = "docs/tasks/028-twenty-item-direct-palette.md"
-TASK_030 = "docs/tasks/030-complete-mutable-catalog-and-object-cli.md"
-TASK_031 = "docs/DESKTOP_HOST_RUNTIME_IMPLEMENTATION_CONTRACT.md"
-TASK_032 = "docs/tasks/032-variable-graph-desktop-host-runtime.md"
-TASK_033 = "docs/tasks/033-object-collections-and-native-provider-architecture.md"
-TASK_034 = "docs/tasks/034-performance-control-graph-contracts.md"
-UI_DESKTOP_INITIALIZATION = "docs/tasks/ui-desktop-initialization.md"
-UI_DESKTOP_CATALOG = "docs/tasks/ui-desktop-read-only-catalog.md"
-UI_DESKTOP_PATCHER = "docs/tasks/ui-desktop-patcher-authoring.md"
-UI_DESKTOP_PERFORMANCE = "docs/tasks/ui-desktop-authoring-performance.md"
-UI_DESKTOP_BUILD_DEVICE = "docs/tasks/ui-desktop-build-device-workflow.md"
-UI_DESKTOP_PROJECT_OBJECT_HANDOFF = "docs/tasks/ui-desktop-project-object-handoff.md"
-UI_DESKTOP_WORKSPACE_SHELL = "docs/tasks/ui-desktop-workspace-shell.md"
-AI_MCP_READ_ONLY = "docs/tasks/ai-mcp-read-only-foundation.md"
-AI_SONIC_AUTHORING = "docs/tasks/ai-sonic-authoring-foundation.md"
 
-DOCUMENT_PATHS = (
-    README,
-    PROJECT_CONTEXT,
+REQUIRED_DOCUMENT_PATHS = (
+    AGENTS,
+    STATE,
     STATUS,
     ROADMAP,
-    APPLICATION_SPINE_PLAN,
     HISTORY,
     TASKS_INDEX,
     DECISIONS_INDEX,
-    ADR_0008,
-    ADR_0009,
-    ADR_0010,
-    ADR_0011,
-    ADR_0012,
-    ADR_0013,
-    ADR_0014,
-    ADR_0015,
-    ADR_0016,
-    ADR_0017,
+    VALIDATION_MANIFEST,
     TASK_012B,
-    TASK_018,
-    TASK_021,
-    TASK_022,
-    TASK_023,
-    TASK_024,
-    TASK_025,
-    TASK_026,
-    TASK_027,
-    TASK_028,
-    TASK_030,
-    TASK_031,
-    TASK_032,
-    TASK_033,
-    TASK_034,
-    UI_DESKTOP_INITIALIZATION,
-    UI_DESKTOP_CATALOG,
-    UI_DESKTOP_PATCHER,
-    UI_DESKTOP_PERFORMANCE,
-    UI_DESKTOP_BUILD_DEVICE,
-    UI_DESKTOP_PROJECT_OBJECT_HANDOFF,
-    UI_DESKTOP_WORKSPACE_SHELL,
-    AI_MCP_READ_ONLY,
-    AI_SONIC_AUTHORING,
 )
+DOCUMENT_PATHS = REQUIRED_DOCUMENT_PATHS
 
-ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 35))
-PLANNED_SEQUENCE: tuple[str, ...] = ()
-EXPECTED_TASK_FILENAMES = {
-    "README.md",
-    "012b-object-drawer-and-transparent-graph-canvas.md",
-    "018-full-gills-implementation-and-parameter-control-mapping.md",
-    "021-gills-dma-safe-oled-and-connected-device-evidence.md",
-    "022-connected-gills-control-panel-evidence.md",
-    "023-cli-v2-and-application-surface-consolidation.md",
-    "024-complete-catalog-coverage-and-deterministic-curation.md",
-    "025-direct-compiler-core-library-tranche.md",
-    "026-complete-authoring-operations-and-cli-workflow.md",
-    "027-mutable-instruments-catalog-provenance.md",
-    "028-twenty-item-direct-palette.md",
-    "030-complete-mutable-catalog-and-object-cli.md",
-    "032-variable-graph-desktop-host-runtime.md",
-    "033-object-collections-and-native-provider-architecture.md",
-    "034-performance-control-graph-contracts.md",
-    "ui-desktop-initialization.md",
-    "ui-desktop-read-only-catalog.md",
-    "ui-desktop-patcher-authoring.md",
-    "ui-desktop-authoring-performance.md",
-    "ui-desktop-build-device-workflow.md",
-    "ui-desktop-project-object-handoff.md",
-    "ui-desktop-workspace-shell.md",
-    "ai-mcp-read-only-foundation.md",
-    "ai-sonic-authoring-foundation.md",
+STATE_KEYS = {
+    "schema_version",
+    "active_task",
+    "next_candidate",
+    "recent_completed_milestones",
+    "deferred_tasks",
+    "authoritative_decisions",
+    "validation_profiles",
+    "evidence_boundary",
 }
-LETTERED_ALIAS = re.compile(r"\bTasks?\s+(01[3-9]|02[01])[A-Z](?:-[A-Z])?\b", re.IGNORECASE)
-INFORMAL_ALIAS = re.compile(r"(?<![A-Za-z0-9])B6(?![A-Za-z0-9])", re.IGNORECASE)
-TASK_012B_RESURRECTION = re.compile(
-    r"\bTask 012B (?:is|becomes|remains) (?:an? )?"
-    r"(?:active|deferred|planned|runnable|immediate)",
-    re.IGNORECASE,
-)
+ACTIVE_KEYS = {
+    "task_id",
+    "phase",
+    "kind",
+    "status",
+    "contract",
+    "baseline_commit",
+}
+NEXT_KEYS = {"task_id", "phase", "status"}
+MILESTONE_KEYS = {"task_id", "phase", "status", "commit"}
+EVIDENCE_KEYS = {
+    "hardware_action_performed",
+    "firmware_or_sd_mutation_performed",
+    "real_time_level_7_promoted",
+    "audible_level_8_promoted",
+    "publication_performed",
+}
+TASK_ID = re.compile(r"^[0-9]{3}$")
+DECISION_ID = re.compile(r"^[0-9]{4}$")
+COMMIT = re.compile(r"^[0-9a-f]{7,40}$")
+KIND = re.compile(r"^[a-z][a-z0-9-]*$")
+LETTERED_ALIAS = re.compile(r"\bTasks?\s+(01[3-9]|02[01])[A-Z](?:-[A-Z])?\b", re.I)
+INFORMAL_ALIAS = re.compile(r"(?<![A-Za-z0-9])B6(?![A-Za-z0-9])", re.I)
+ALIASED_FILENAME = re.compile(r"^(01[3-9]|02[01])[a-z](?:-|\.)", re.I)
+DECISION_PATH = re.compile(r"^docs/decisions/([0-9]{4})-[^/]+\.md$")
 
 
-def _normalized(text: str) -> str:
-    return " ".join(text.split())
+class _DuplicateMember(ValueError):
+    pass
+
+
+def _object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    value: dict[str, Any] = {}
+    for key, item in pairs:
+        if key in value:
+            raise _DuplicateMember(key)
+        value[key] = item
+    return value
+
+
+def _diagnostic(code: str, document: str, detail: str) -> dict[str, str]:
+    return {"code": code, "detail": detail, "document": document}
 
 
 def _metadata(text: str, field: str) -> str | None:
@@ -146,1290 +94,587 @@ def _metadata(text: str, field: str) -> str | None:
     return match.group(1).strip() if match else None
 
 
-def _leading_status(text: str, prefix: str = "Status:") -> str | None:
+def _leading_status(text: str) -> str:
     lines = text.splitlines()
-    for index, line in enumerate(lines[:12]):
-        if not line.startswith(prefix):
+    for index, line in enumerate(lines[:14]):
+        if not line.startswith("Status:"):
             continue
-        values = [line[len(prefix) :].strip()]
+        values = [line.removeprefix("Status:").strip()]
         for continuation in lines[index + 1 :]:
             if not continuation.strip():
                 break
             values.append(continuation.strip())
-        return _normalized(" ".join(values))
-    return None
+        return " ".join(" ".join(values).split())
+    return ""
 
 
-def _section(text: str, heading: str) -> str:
-    start = text.find(heading)
-    if start < 0:
-        return ""
-    body_start = start + len(heading)
-    following = re.search(r"^##\s+", text[body_start:], re.MULTILINE)
-    end = body_start + following.start() if following else len(text)
-    return text[body_start:end]
-
-
-def _diagnostic(code: str, document: str, detail: str) -> dict[str, str]:
-    return {"code": code, "detail": detail, "document": document}
-
-
-def _roadmap_rows(text: str) -> dict[str, list[list[str]]]:
-    rows: dict[str, list[list[str]]] = {}
-    for line in text.splitlines():
-        if not line.startswith("|"):
-            continue
-        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
-        if len(cells) != 3 or cells[0] in {"Phase", "---"}:
-            continue
-        rows.setdefault(cells[0], []).append(cells)
-    return rows
-
-
-def _require_phrases(
-    diagnostics: list[dict[str, str]],
-    *,
-    code: str,
-    document: str,
-    scope: str,
-    phrases: Sequence[str],
+def _require_headings(
+    diagnostics: list[dict[str, str]], document: str, text: str
 ) -> None:
-    normalized = _normalized(scope)
-    for phrase in phrases:
-        if phrase not in normalized:
-            diagnostics.append(
-                _diagnostic(code, document, f"missing governance assertion: {phrase}")
+    headings = (
+        "## Goal and why it exists",
+        "## In scope",
+        "## Out of scope",
+        "## Inputs and deliverables",
+        "## Acceptance tests",
+        "## Decisions",
+    )
+    missing = [heading for heading in headings if heading not in text]
+    if missing:
+        diagnostics.append(
+            _diagnostic(
+                "TASK_CONTRACT_INCOMPLETE",
+                document,
+                "missing heading families: " + ", ".join(missing),
             )
+        )
+
+
+def _parse_json(
+    documents: Mapping[str, str],
+    path: str,
+    code: str,
+    diagnostics: list[dict[str, str]],
+) -> Any | None:
+    try:
+        return json.loads(documents.get(path, ""), object_pairs_hook=_object)
+    except (_DuplicateMember, json.JSONDecodeError, ValueError) as exc:
+        diagnostics.append(_diagnostic(code, path, str(exc)))
+        return None
+
+
+def _parse_state(
+    documents: Mapping[str, str], diagnostics: list[dict[str, str]]
+) -> dict[str, Any] | None:
+    value = _parse_json(documents, STATE, "GOVERNANCE_STATE_INVALID", diagnostics)
+    if not isinstance(value, dict) or set(value) != STATE_KEYS:
+        actual = sorted(value) if isinstance(value, dict) else type(value).__name__
+        diagnostics.append(
+            _diagnostic(
+                "GOVERNANCE_STATE_INVALID",
+                STATE,
+                f"top-level keys must be exact; actual={actual}",
+            )
+        )
+        return None
+    if value.get("schema_version") != "schuss-governance-state-v1":
+        diagnostics.append(
+            _diagnostic("GOVERNANCE_STATE_INVALID", STATE, "unsupported schema_version")
+        )
+    return value
+
+
+def _portable_contract(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    path = Path(value)
+    return (
+        not path.is_absolute()
+        and ".." not in path.parts
+        and path.parts[:2] == ("docs", "tasks")
+        and path.suffix == ".md"
+    )
+
+
+def _task_label(value: Mapping[str, Any] | None) -> str:
+    if value is None:
+        return "none"
+    if not isinstance(value, Mapping):
+        return "invalid"
+    task_id = value.get("task_id")
+    status = value.get("status")
+    if not isinstance(task_id, str) or not isinstance(status, str):
+        return "invalid"
+    phase = value.get("phase")
+    suffix = f"-phase-{phase}" if phase is not None else ""
+    return f"{task_id}{suffix}@{status}"
+
+
+def routing_marker(state: Mapping[str, Any]) -> str:
+    raw_active = state.get("active_task")
+    active = (
+        raw_active
+        if isinstance(raw_active, dict)
+        and isinstance(raw_active.get("task_id"), str)
+        and raw_active.get("status") in {"in-progress", "review-ready"}
+        and _valid_phase(raw_active.get("phase"))
+        else None
+    )
+    return (
+        "<!-- schuss-governance-routing: "
+        f"active={_task_label(active)}; "
+        f"next={_task_label(state.get('next_candidate'))} -->"
+    )
+
+
+def _prose_task_label(value: Mapping[str, Any]) -> str:
+    phase = value.get("phase")
+    return f"Task {value['task_id']}" + (
+        f" Phase {phase}" if phase is not None else ""
+    )
+
+
+def _valid_phase(value: Any) -> bool:
+    return value is None or (
+        isinstance(value, int) and not isinstance(value, bool) and value > 0
+    )
+
+
+def _markdown_section(text: str, heading: str) -> str:
+    marker = f"## {heading}"
+    if marker not in text:
+        return ""
+    return text.split(marker, 1)[1].split("\n## ", 1)[0]
+
+
+def _validate_state(
+    state: dict[str, Any], documents: Mapping[str, str], diagnostics: list[dict[str, str]]
+) -> None:
+    active = state.get("active_task")
+    if active is not None:
+        valid = (
+            isinstance(active, dict)
+            and set(active) == ACTIVE_KEYS
+            and isinstance(active.get("task_id"), str)
+            and TASK_ID.fullmatch(active["task_id"])
+            and _valid_phase(active.get("phase"))
+            and isinstance(active.get("kind"), str)
+            and KIND.fullmatch(active["kind"])
+            and active.get("status") in {"in-progress", "review-ready"}
+            and _portable_contract(active.get("contract"))
+            and isinstance(active.get("baseline_commit"), str)
+            and COMMIT.fullmatch(active["baseline_commit"])
+        )
+        if not valid:
+            diagnostics.append(
+                _diagnostic("ACTIVE_TASK_INVALID", STATE, "active task structure is invalid")
+            )
+        else:
+            contract = active["contract"]
+            text = documents.get(contract, "")
+            if not text:
+                diagnostics.append(
+                    _diagnostic("ACTIVE_TASK_CONTRACT_MISSING", contract, "active contract is absent")
+                )
+            else:
+                status = _leading_status(text).lower()
+                expected_phrase = (
+                    "in progress" if active["status"] == "in-progress" else "review-ready"
+                )
+                if "explicitly authorized" not in status or expected_phrase not in status:
+                    diagnostics.append(
+                        _diagnostic(
+                            "ACTIVE_TASK_CONTRACT_INVALID",
+                            contract,
+                            "leading status does not match structured active state",
+                        )
+                    )
+                _require_headings(diagnostics, contract, text)
+
+    next_candidate = state.get("next_candidate")
+    if next_candidate is not None:
+        valid = (
+            isinstance(next_candidate, dict)
+            and set(next_candidate) == NEXT_KEYS
+            and isinstance(next_candidate.get("task_id"), str)
+            and TASK_ID.fullmatch(next_candidate["task_id"])
+            and _valid_phase(next_candidate.get("phase"))
+            and next_candidate.get("status") == "not-activated"
+        )
+        if not valid:
+            diagnostics.append(
+                _diagnostic("NEXT_TASK_INVALID", STATE, "next candidate structure is invalid")
+            )
+
+    milestones = state.get("recent_completed_milestones")
+    milestone_keys: set[tuple[Any, ...]] = set()
+    milestone_work_units: set[tuple[str, int | None]] = set()
+    if not isinstance(milestones, list):
+        diagnostics.append(_diagnostic("MILESTONE_STATE_INVALID", STATE, "must be a list"))
+    else:
+        for item in milestones:
+            valid = (
+                isinstance(item, dict)
+                and set(item) == MILESTONE_KEYS
+                and isinstance(item.get("task_id"), str)
+                and TASK_ID.fullmatch(item["task_id"])
+                and _valid_phase(item.get("phase"))
+                and item.get("status") in {"complete-local", "complete-published"}
+                and isinstance(item.get("commit"), str)
+                and COMMIT.fullmatch(item["commit"])
+            )
+            if not valid:
+                diagnostics.append(
+                    _diagnostic("MILESTONE_STATE_INVALID", STATE, "milestone structure is invalid")
+                )
+                continue
+            key = (item["task_id"], item["phase"], item["status"], item["commit"])
+            work_unit = (item["task_id"], item["phase"])
+            if key in milestone_keys or work_unit in milestone_work_units:
+                diagnostics.append(
+                    _diagnostic(
+                        "MILESTONE_STATE_INVALID",
+                        STATE,
+                        "duplicate milestone work unit",
+                    )
+                )
+            milestone_keys.add(key)
+            milestone_work_units.add(work_unit)
+
+    deferred = state.get("deferred_tasks")
+    if (
+        not isinstance(deferred, list)
+        or not all(isinstance(item, str) and TASK_ID.fullmatch(item) for item in deferred)
+        or len(deferred) != len(set(deferred))
+    ):
+        diagnostics.append(
+            _diagnostic("DEFERRED_TASK_STATE_INVALID", STATE, "deferred task IDs are invalid")
+        )
+
+    active_work = (
+        (active.get("task_id"), active.get("phase"))
+        if isinstance(active, dict)
+        and isinstance(active.get("task_id"), str)
+        and _valid_phase(active.get("phase"))
+        else None
+    )
+    next_work = (
+        (next_candidate.get("task_id"), next_candidate.get("phase"))
+        if isinstance(next_candidate, dict)
+        and isinstance(next_candidate.get("task_id"), str)
+        and _valid_phase(next_candidate.get("phase"))
+        else None
+    )
+    if active_work is not None and active_work == next_work:
+        diagnostics.append(
+            _diagnostic(
+                "WORK_UNIT_STATE_INVALID",
+                STATE,
+                "one task/phase cannot be both active and next",
+            )
+        )
+    for label, work in (("active", active_work), ("next", next_work)):
+        if work is not None and work in milestone_work_units:
+            diagnostics.append(
+                _diagnostic(
+                    "WORK_UNIT_STATE_INVALID",
+                    STATE,
+                    f"{label} task/phase is already a completed milestone",
+                )
+            )
+        if (
+            work is not None
+            and isinstance(deferred, list)
+            and work[0] in deferred
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "WORK_UNIT_STATE_INVALID",
+                    STATE,
+                    f"{label} task is also deferred",
+                )
+            )
+
+    decisions = state.get("authoritative_decisions")
+    if (
+        not isinstance(decisions, list)
+        or not all(isinstance(item, str) and DECISION_ID.fullmatch(item) for item in decisions)
+        or decisions != sorted(set(decisions))
+    ):
+        diagnostics.append(
+            _diagnostic("DECISION_STATE_INVALID", STATE, "decision IDs are invalid")
+        )
+        decisions = []
+    decision_paths: dict[str, list[str]] = {}
+    for path in documents:
+        match = DECISION_PATH.fullmatch(path)
+        if match:
+            decision_paths.setdefault(match.group(1), []).append(path)
+    for identifier in decisions:
+        paths = decision_paths.get(identifier, [])
+        if len(paths) != 1:
+            diagnostics.append(
+                _diagnostic(
+                    "AUTHORITATIVE_DECISION_INVALID",
+                    STATE,
+                    f"decision {identifier} must resolve exactly once",
+                )
+            )
+            continue
+        path = paths[0]
+        if _metadata(documents[path], "Status") != "accepted":
+            diagnostics.append(
+                _diagnostic(
+                    "AUTHORITATIVE_DECISION_INVALID", path, "authoritative decision is not accepted"
+                )
+            )
+        if f"`{Path(path).name}`" not in documents.get(DECISIONS_INDEX, ""):
+            diagnostics.append(
+                _diagnostic("DECISIONS_INDEX_INVALID", DECISIONS_INDEX, f"missing {identifier}")
+            )
+
+    manifest = _parse_json(
+        documents, VALIDATION_MANIFEST, "VALIDATION_MANIFEST_INVALID", diagnostics
+    )
+    manifest_profiles = list(manifest.get("profiles", {})) if isinstance(manifest, dict) else []
+    if state.get("validation_profiles") != manifest_profiles:
+        diagnostics.append(
+            _diagnostic(
+                "VALIDATION_PROFILE_STATE_INVALID",
+                STATE,
+                "profiles differ from the validation manifest",
+            )
+        )
+
+    evidence = state.get("evidence_boundary")
+    if (
+        not isinstance(evidence, dict)
+        or set(evidence) != EVIDENCE_KEYS
+        or not all(isinstance(value, bool) for value in evidence.values())
+    ):
+        diagnostics.append(
+            _diagnostic("EVIDENCE_BOUNDARY_INVALID", STATE, "evidence boundary is invalid")
+        )
+    elif isinstance(active, dict) and active.get("kind") == "maintenance" and any(evidence.values()):
+        diagnostics.append(
+            _diagnostic(
+                "EVIDENCE_BOUNDARY_INVALID",
+                STATE,
+                "maintenance work cannot promote hardware, real-time, audible, or publication evidence",
+            )
+        )
+
+
+def _validate_indexes(
+    state: dict[str, Any], documents: Mapping[str, str], diagnostics: list[dict[str, str]]
+) -> None:
+    marker = routing_marker(state)
+    for path in (STATUS, ROADMAP, TASKS_INDEX):
+        if marker not in documents.get(path, ""):
+            diagnostics.append(
+                _diagnostic("GOVERNANCE_INDEX_INVALID", path, "routing marker differs")
+            )
+    raw_active = state.get("active_task")
+    active = (
+        raw_active
+        if isinstance(raw_active, dict)
+        and isinstance(raw_active.get("task_id"), str)
+        and raw_active.get("status") in {"in-progress", "review-ready"}
+        and _valid_phase(raw_active.get("phase"))
+        else None
+    )
+    active_label = _prose_task_label(active) if active is not None else None
+    status_text = documents.get(STATUS, "")
+    declarations = re.findall(
+        r"Task\s+([0-9]{3})(?:\s+Phase\s+([1-9][0-9]*))?\s+"
+        r"is the only active task",
+        status_text,
+    )
+    expected = [] if active_label is None else [
+        (active["task_id"], "" if active.get("phase") is None else str(active["phase"]))
+    ]
+    if declarations != expected or (
+        active_label is None and "There is no active task." not in status_text
+    ):
+        diagnostics.append(
+            _diagnostic("GOVERNANCE_INDEX_INVALID", STATUS, "active-task prose differs")
+        )
+    active_sections = {
+        STATUS: _markdown_section(status_text, "Current work"),
+        ROADMAP: _markdown_section(documents.get(ROADMAP, ""), "Active maintenance"),
+        TASKS_INDEX: _markdown_section(documents.get(TASKS_INDEX, ""), "Active"),
+    }
+    if active_label is not None:
+        status_phrase = (
+            "in progress" if active["status"] == "in-progress" else "review-ready"
+        )
+        for path, section in active_sections.items():
+            if active_label not in section or status_phrase not in section.lower():
+                diagnostics.append(
+                    _diagnostic(
+                        "GOVERNANCE_INDEX_INVALID",
+                        path,
+                        "active task or status differs",
+                    )
+                )
+        if f"- {active_label}," not in active_sections[TASKS_INDEX]:
+            diagnostics.append(
+                _diagnostic(
+                    "GOVERNANCE_INDEX_INVALID",
+                    TASKS_INDEX,
+                    "active task index entry differs",
+                )
+            )
+    else:
+        for path, section in active_sections.items():
+            if "no active task" not in section.lower():
+                diagnostics.append(
+                    _diagnostic(
+                        "GOVERNANCE_INDEX_INVALID",
+                        path,
+                        "no-active-task prose is missing",
+                    )
+                )
+
+    next_candidate = state.get("next_candidate")
+    if (
+        isinstance(next_candidate, dict)
+        and isinstance(next_candidate.get("task_id"), str)
+        and _valid_phase(next_candidate.get("phase"))
+    ):
+        phase = next_candidate.get("phase")
+        label = f"Task {next_candidate['task_id']}" + (
+            f" Phase {phase}" if phase is not None else ""
+        )
+        for path in (STATUS, ROADMAP, TASKS_INDEX):
+            if label not in documents.get(path, ""):
+                diagnostics.append(
+                    _diagnostic("GOVERNANCE_INDEX_INVALID", path, f"missing {label}")
+                )
+
+    for path in (STATUS, HISTORY, TASKS_INDEX):
+        if "VH-001" not in documents.get(path, ""):
+            diagnostics.append(
+                _diagnostic("GOVERNANCE_INDEX_INVALID", path, "missing VH-001")
+            )
+    if STATE not in status_text:
+        diagnostics.append(
+            _diagnostic("GOVERNANCE_INDEX_INVALID", STATUS, "missing structured source link")
+        )
+
+
+def _derived_task_statuses(state: Mapping[str, Any]) -> dict[str, str]:
+    values: dict[str, list[str]] = {}
+    for item in state.get("recent_completed_milestones", []):
+        if (
+            not isinstance(item, Mapping)
+            or not isinstance(item.get("task_id"), str)
+            or not _valid_phase(item.get("phase"))
+        ):
+            continue
+        suffix = "complete" if item["phase"] is None else f"phase{item['phase']}-complete"
+        values.setdefault(item["task_id"], []).append(suffix)
+    active = state.get("active_task")
+    if (
+        isinstance(active, Mapping)
+        and isinstance(active.get("task_id"), str)
+        and isinstance(active.get("status"), str)
+        and _valid_phase(active.get("phase"))
+    ):
+        suffix = (
+            active["status"]
+            if active.get("phase") is None
+            else f"phase{active['phase']}-{active['status']}"
+        )
+        values.setdefault(active["task_id"], []).append(suffix)
+    next_candidate = state.get("next_candidate")
+    if (
+        isinstance(next_candidate, Mapping)
+        and isinstance(next_candidate.get("task_id"), str)
+        and isinstance(next_candidate.get("status"), str)
+        and _valid_phase(next_candidate.get("phase"))
+    ):
+        phase = next_candidate.get("phase")
+        suffix = next_candidate["status"] if phase is None else f"phase{phase}-{next_candidate['status']}"
+        values.setdefault(next_candidate["task_id"], []).append(suffix)
+    return {identifier: "+".join(statuses) for identifier, statuses in sorted(values.items())}
 
 
 def validate_documents(
     documents: Mapping[str, str], task_filenames: Sequence[str]
 ) -> dict[str, object]:
-    """Return a deterministic validation summary for supplied document bytes."""
-
     diagnostics: list[dict[str, str]] = []
-    for path in DOCUMENT_PATHS:
+    for path in REQUIRED_DOCUMENT_PATHS:
         if path not in documents:
             diagnostics.append(
                 _diagnostic("GOVERNANCE_DOCUMENT_MISSING", path, "required document is absent")
             )
 
-    expected_adr_statuses = {
-        ADR_0008: "accepted; reaffirmed by ADR 0010",
-        ADR_0009: "superseded by ADR 0010",
-        ADR_0010: "accepted",
-        ADR_0011: "accepted",
-        ADR_0012: "accepted",
-        ADR_0013: "accepted",
-        ADR_0014: "accepted",
-        ADR_0015: "accepted",
-        ADR_0016: "accepted",
-        ADR_0017: "accepted",
-    }
-    for path, expected in expected_adr_statuses.items():
-        if _metadata(documents.get(path, ""), "Status") != expected:
-            code = f"ADR_{Path(path).name[:4]}_NOT_ACCEPTED"
-            if path == ADR_0009:
-                code = "ADR_0009_NOT_HISTORICAL"
-            elif path == ADR_0008:
-                code = "ADR_0008_REAFFIRMATION_INVALID"
-            diagnostics.append(_diagnostic(code, path, f"Status must be: {expected}"))
+    state = _parse_state(documents, diagnostics)
+    if state is not None:
+        _validate_state(state, documents, diagnostics)
+        _validate_indexes(state, documents, diagnostics)
 
-    if _metadata(documents.get(ADR_0010, ""), "Supersedes") != "ADR 0009":
-        diagnostics.append(
-            _diagnostic(
-                "ADR_0010_SUPERSESSION_INVALID",
-                ADR_0010,
-                "ADR 0010 must supersede ADR 0009",
-            )
-        )
-
-    index_rules = (
-        "`0008-defer-ui-until-the-headless-backbone-is-ready.md` - accepted; reaffirmed by ADR 0010",
-        "`0009-resume-task-012b-after-durable-project-authoring.md` - superseded by ADR 0010; historical only",
-        "`0010-restore-backend-first-sequence-and-retire-task-012b.md` - accepted; current task-routing authority",
-        "`0011-preserve-legacy-equivalent-direct-semantics.md` - accepted; current direct-semantics authority",
-        "`0012-require-executable-gills-promotion.md` - accepted; current Task 018 promotion authority",
-        "`0013-version-gills-runtime-correction-and-level6-evidence.md` - accepted; current Task 021 corrective and level-6 authority",
-        "`0014-sequence-application-spine-and-authorize-ui-architecture.md` - accepted; application-spine and UI-architecture authority, amended by ADR 0015 for Task 027 only",
-        "`0015-retarget-task-027-to-mutable-catalog-provenance.md` - accepted; current Task 027 retarget and Mutable-provenance authority",
-        "`0016-adopt-portable-desktop-host-runtime.md` - accepted; current portable desktop host-runtime and JUCE adapter authority",
-        "`0017-separate-object-collections-from-implementation-providers.md` - accepted; current source-collection and implementation-provider boundary authority",
-    )
-    _require_phrases(
-        diagnostics,
-        code="DECISIONS_INDEX_AUTHORITY_DRIFT",
-        document=DECISIONS_INDEX,
-        scope=documents.get(DECISIONS_INDEX, ""),
-        phrases=index_rules,
-    )
-
-    task12_status = _leading_status(documents.get(TASK_012B, ""))
-    task12 = _normalized(documents.get(TASK_012B, ""))
-    task12_required = (
-        "No UI implementation was accepted under this task.",
-        "If asked to run Task 012B, stop and report that the identifier is retired.",
-        "Do not reinterpret it as UI, compiler, backend, or any other implementation work.",
-    )
+    retired = " ".join(documents.get(TASK_012B, "").split()).lower()
     if (
-        task12_status != "retired by ADR 0010; do not implement."
-        or TASK_012B_RESURRECTION.search(task12)
-        or any(phrase not in task12 for phrase in task12_required)
+        "status: retired by adr 0010; do not implement." not in retired
+        or "no ui implementation was accepted" not in retired
     ):
         diagnostics.append(
             _diagnostic(
-                "TASK_012B_UI_RESURRECTED",
-                TASK_012B,
-                "Task 012B must remain a non-runnable retirement notice",
+                "TASK_012B_RETIREMENT_INVALID", TASK_012B, "Task 012B retirement guard changed"
             )
         )
 
-    task18_status = _leading_status(documents.get(TASK_018, "")) or ""
-    for fragment in (
-        "completed on 2026-08-16",
-        "Tasks 016 and 017 remain exact dependencies",
-        "deterministic local evidence level 5",
-        "ADR 0012",
-    ):
-        if fragment not in task18_status:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_018_STATUS_DRIFT",
-                    TASK_018,
-                    f"live task status must contain: {fragment}",
-                )
-            )
-
-    task18_dependencies = _section(documents.get(TASK_018, ""), "## Dependencies")
-    _require_phrases(
-        diagnostics,
-        code="TASK_018_DEPENDENCY_INVALID",
-        document=TASK_018,
-        scope=task18_dependencies,
-        phrases=(
-            "Task 017 must be complete before Task 018 may create",
-            "Task 017 itself depends on Task 016",
-            "Task 018 may not bypass either dependency",
-        ),
-    )
-
-    task33_status = _leading_status(documents.get(TASK_033, "")) or ""
-    for fragment in (
-        "explicitly activated by the user on 2026-08-20",
-        "phase 1 is implemented",
-        "integrated into local `main` at commit `6010f29`",
-        "serialization gate is therefore open",
-        "phase 2 has not started",
-        "has not yet reserved a stable id",
-    ):
-        if fragment not in task33_status.lower():
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_033_CONTRACT_INVALID",
-                    TASK_033,
-                    f"Task 033 contract status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_033_CONTRACT_INVALID",
-        document=TASK_033,
-        scope=documents.get(TASK_033, ""),
-        phrases=(
-            "## Goal and why it exists",
-            "## In scope after explicit activation",
-            "## Out of scope",
-            "## Inputs and deliverables",
-            "## Serialized implementation phases",
-            "## Validation cadence",
-            "## Acceptance tests",
-            "## Decisions Task 033 may make after activation",
-            "## Decisions Task 033 must not make",
-            "schuss-record-set-000030@1",
-            "accepted ADR 0017",
-            "56-entry Mutable audit",
-            "39-header JUCE audit",
-            "Phase 2 must freeze exact successor allocations",
-        ),
-    )
-
-    task34_status = _leading_status(documents.get(TASK_034, "")) or ""
-    for fragment in (
-        "explicitly activated by the user and implementation complete locally",
-        "on 2026-08-20",
-        "no physical audio/midi or ksoloti device action",
-    ):
-        if fragment not in task34_status.lower():
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_034_CONTRACT_INVALID",
-                    TASK_034,
-                    f"Task 034 contract status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_034_CONTRACT_INVALID",
-        document=TASK_034,
-        scope=documents.get(TASK_034, ""),
-        phrases=(
-            "## Goal and why it exists",
-            "## In scope",
-            "## Out of scope",
-            "## Inputs and deliverables",
-            "## Validation cadence",
-            "## Acceptance tests",
-            "## Decisions this task may make",
-            "## Decisions this task must not make",
-            "instrument-v1",
-            "performance-control-graph-v0",
-            "performance-configuration-v0",
-            "schuss-record-set-000030@1",
-            "performance.inspect",
-            "The parallel task must consume these semantic interfaces",
-            "staging, commit, push",
-        ),
-    )
-
-    task18 = documents.get(TASK_018, "")
-    _require_phrases(
-        diagnostics,
-        code="TASK_018_EXECUTABLE_GATE_INVALID",
-        document=TASK_018,
-        scope=task18,
-        phrases=(
-            "At least one exact mapped Gills reference",
-            "evidence level 5",
-            "A graph-only build",
-            "does not satisfy this executable promotion gate",
-        ),
-    )
-
-    task21_status = _leading_status(documents.get(TASK_021, "")) or ""
-    for fragment in (
-        "completed on 2026-08-16",
-        "deterministic local evidence level 5",
-        "separately retained connected-device evidence level 6",
-        "ADR 0013",
-    ):
-        if fragment not in task21_status:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_021_STATUS_DRIFT",
-                    TASK_021,
-                    f"live task status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_021_CORRECTIVE_BOUNDARY_INVALID",
-        document=TASK_021,
-        scope=documents.get(TASK_021, ""),
-        phrases=(
-            "Preserve every Task 018 record",
-            "dedicated two-byte `.sram2` buffer",
-            "mechanical instrument/coverage successors",
-            "No implicit fallback",
-            "Levels 7 and 8 remain `not-run`",
-            "firmware flash, SD-card write",
-        ),
-    )
-
-    task22_status = _leading_status(documents.get(TASK_022, "")) or ""
-    for fragment in (
-        "Phase A completed on 2026-08-16",
-        "deterministic local evidence level 5",
-        "Phase B stopped after exactly one approved diagnostic volatile-RAM upload",
-        "POT_EVENT_FOCUS_UNSTABLE",
-        "Approval gate 2 is closed",
-    ):
-        if fragment not in task22_status:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_022_STATUS_DRIFT",
-                    TASK_022,
-                    f"live task status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_022_APPROVAL_BOUNDARY_INVALID",
-        document=TASK_022,
-        scope=documents.get(TASK_022, ""),
-        phrases=(
-            "No device command is permitted in Phase A.",
-            "Approval gate 1: diagnostic volatile-RAM upload",
-            "Approval gate 2: immutable Task 021 product-binary upload",
-            "exactly one approved diagnostic volatile-RAM upload",
-            "POT_EVENT_FOCUS_UNSTABLE",
-            "Approval gate 2 is closed",
-            "A partial panel sweep is not complete level-6 panel evidence.",
-            "Levels 7 and 8 remain `not-run`",
-        ),
-    )
-
-    task23_status = _leading_status(documents.get(TASK_023, "")) or ""
-    for fragment in (
-        "accepted by the user and completed on 2026-08-16",
-        "passed all sixteen acceptance tests",
-        "ADR 0014",
-    ):
-        if fragment not in task23_status:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_023_CONTRACT_INVALID",
-                    TASK_023,
-                    f"Task 023 contract status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_023_CONTRACT_INVALID",
-        document=TASK_023,
-        scope=documents.get(TASK_023, ""),
-        phrases=(
-            "application.describe",
-            "application-capability-description-v0",
-            "operation-request-v7",
-            "operation-result-v7",
-            "schuss-record-set-000015@1",
-            "schuss-record-set-000014@1",
-            "Task 011A golden fixture remains byte-identical",
-            "Task 023A",
-            "Task 023B",
-            "Task 023C",
-            "Tasks 023A and 023B may proceed as two implementation lanes",
-            "Task 023C waits for both",
-            "passed all sixteen acceptance tests",
-            "Task 024 still requires its own complete accepted contract",
-            "UI-architecture milestone is now eligible to begin as a separate planning lane",
-            "Staging, commit, push",
-        ),
-    )
-
-    task24_status = _leading_status(documents.get(TASK_024, "")) or ""
-    for fragment in (
-        "accepted by the user and completed under the resumed overnight Tasks 024-026 goal",
-        "passed all fifteen revised acceptance tests",
-    ):
-        if fragment not in task24_status:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_024_CONTRACT_INVALID",
-                    TASK_024,
-                    f"Task 024 contract status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_024_CONTRACT_INVALID",
-        document=TASK_024,
-        scope=documents.get(TASK_024, ""),
-        phrases=(
-            "primary candidate reference for Schuss catalog curation",
-            "immutable provenance, lineage, and gap evidence",
-            "668 `.axo` files, 835 normal definitions, 666 canonical base references, and 19 `.axs` compounds",
-            "Twenty reviewed family records",
-            "schuss-record-set-000016@1",
-            "schuss-record-set-000015@1",
-            "schuss-current-ksoloti-corpus-000001@1",
-            "schuss-core-selection-000002@1",
-            "exactly the eight contract references",
-            "not the presumed product-review backlog",
-            "Levels 3-8 remain `not-run`",
-            "passed all fifteen revised acceptance tests",
-            "Staging, commit, push, release",
-        ),
-    )
-
-    task25_status = _leading_status(documents.get(TASK_025, "")) or ""
-    for fragment in (
-        "accepted revised contract and completed under the resumed overnight goal on 2026-08-17",
-        "All fifteen revised acceptance tests passed",
-    ):
-        if fragment not in task25_status:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_025_CONTRACT_INVALID",
-                    TASK_025,
-                    f"Task 025 contract status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_025_CONTRACT_INVALID",
-        document=TASK_025,
-        scope=documents.get(TASK_025, ""),
-        phrases=(
-            "schuss-core-selection-000002@1",
-            "schuss-record-set-000016@1",
-            "schuss-record-set-000017@1",
-            "schuss-implementation-000090",
-            "schuss-implementation-000095",
-            "Two fresh roots",
-            "Levels 3-8 remain `not-run`",
-            "staging, commit, push",
-        ),
-    )
-
-    task26_status = _leading_status(documents.get(TASK_026, "")) or ""
-    for fragment in (
-        "accepted and complete",
-        "Child 026A established the reverb-free level-5 executable profile",
-        "Child 026B completed the authoring operations",
-    ):
-        if fragment not in task26_status:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_026_CONTRACT_INVALID",
-                    TASK_026,
-                    f"Task 026 contract status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_026_CONTRACT_INVALID",
-        document=TASK_026,
-        scope=documents.get(TASK_026, ""),
-        phrases=(
-            "## Goal and why it exists",
-            "## In scope",
-            "## Out of scope",
-            "## Inputs and deliverables",
-            "## Acceptance tests",
-            "## Decisions Task 026 may make",
-            "## Decisions Task 026 must not make",
-            "identity-independent semantic profile",
-            "schuss-record-set-000019@1",
-            "no blank or invalid graph revision is ever persisted",
-            "levels 6-8 remain `not-run`",
-            "staging, commit, push",
-        ),
-    )
-
-    task27_status = _leading_status(documents.get(TASK_027, "")) or ""
-    for fragment in (
-        "accepted and complete on 2026-08-17",
-        "All fifteen acceptance tests passed",
-        "catalog structural/provenance boundary",
-    ):
-        if fragment not in task27_status:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_027_CONTRACT_INVALID",
-                    TASK_027,
-                    f"Task 027 contract status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_027_CONTRACT_INVALID",
-        document=TASK_027,
-        scope=documents.get(TASK_027, ""),
-        phrases=(
-            "## Goal and why it exists",
-            "## In scope",
-            "## Out of scope",
-            "## Inputs and deliverables",
-            "## Acceptance tests",
-            "## Decisions Task 027 may make",
-            "## Decisions Task 027 must not make",
-            "schuss-record-set-000020@1",
-            "schuss-implementation-000096@1",
-            "mutable-instruments-derived",
-            "sixty reviewed catalog families",
-            "levels 3-8 are `not-run`",
-            "staging, commit, push",
-        ),
-    )
-
-    task28_status = _leading_status(documents.get(TASK_028, "")) or ""
-    for fragment in (
-        "accepted and complete on 2026-08-17",
-        "All fifteen acceptance tests pass",
-        "exact local selection and normalized backend-lowering boundary",
-    ):
-        if fragment not in task28_status:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_028_CONTRACT_INVALID",
-                    TASK_028,
-                    f"Task 028 contract status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_028_CONTRACT_INVALID",
-        document=TASK_028,
-        scope=documents.get(TASK_028, ""),
-        phrases=(
-            "## Goal and why it exists", "## In scope", "## Out of scope",
-            "## Inputs and deliverables", "## Acceptance tests",
-            "## Decisions Task 028 may make", "## Decisions Task 028 must not make",
-            "schuss-record-set-000021@1", "exactly twenty", "fifteen safe promotions",
-            "levels 1-3 as `passed`", "levels 4-8 remain `not-run`",
-            "Rings reverb", "000094", "staging, commit, or push",
-        ),
-    )
-
-    task30_status = _leading_status(documents.get(TASK_030, "")) or ""
-    for fragment in (
-        "accepted and complete on 2026-08-17",
-        "All fifteen Task 030 acceptance criteria are satisfied",
-        "structural/catalog provenance levels 1-2",
-        "remains non-green only for three pre-existing historical checks",
-    ):
-        if fragment not in task30_status:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_030_CONTRACT_INVALID",
-                    TASK_030,
-                    f"Task 030 contract status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_030_CONTRACT_INVALID",
-        document=TASK_030,
-        scope=documents.get(TASK_030, ""),
-        phrases=(
-            "## Goal and why it exists",
-            "## In scope",
-            "## Out of scope",
-            "## Inputs and deliverables",
-            "## Validation cadence and acceptance tests",
-            "## Decisions Task 030 may make",
-            "## Decisions Task 030 must not make",
-            "schuss-record-set-000023@1",
-            "50 new catalog implementation records",
-            "catalog.implementations.search",
-            "schuss catalog objects",
-            "levels 1-2 only",
-            "staging, commit, push",
-        ),
-    )
-
-    task31_status = _leading_status(documents.get(TASK_031, "")) or ""
-    for fragment in (
-        "accepted by explicit user authorization and complete locally on 2026-08-19",
-        "all four serialized children completed in the fixed order",
-        "one bounded local mac audio/midi smoke was performed",
-    ):
-        if fragment not in task31_status.lower():
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_031_CONTRACT_INVALID",
-                    TASK_031,
-                    f"Task 031 contract status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_031_CONTRACT_INVALID",
-        document=TASK_031,
-        scope=documents.get(TASK_031, ""),
-        phrases=(
-            "## Goal and why it exists",
-            "## In scope",
-            "## Out of scope",
-            "## Inputs and deliverables",
-            "## Acceptance tests",
-            "## Decisions Task 031 may make",
-            "## Decisions Task 031 must not make",
-            "031A -> 031B -> 031C -> 031D",
-            "schuss-record-set-000027@1",
-            "packages/schuss_rt/",
-            "host-runtime package v0",
-            "physical Core MIDI receipt remains unproved",
-            "general real-time/resource level 7",
-            "staging, commit, push",
-        ),
-    )
-
-    task32_status = _leading_status(documents.get(TASK_032, "")) or ""
-    for fragment in (
-        "explicitly activated by the user and completed locally on 2026-08-19",
-        "all three serialized phases completed in order",
-        "no physical audio/midi or ksoloti device action",
-    ):
-        if fragment not in task32_status.lower():
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_032_CONTRACT_INVALID",
-                    TASK_032,
-                    f"Task 032 contract status must contain: {fragment}",
-                )
-            )
-    _require_phrases(
-        diagnostics,
-        code="TASK_032_CONTRACT_INVALID",
-        document=TASK_032,
-        scope=documents.get(TASK_032, ""),
-        phrases=(
-            "## Goal and why it exists",
-            "## In scope",
-            "## Out of scope",
-            "## Inputs and deliverables",
-            "## Validation cadence",
-            "## Acceptance tests",
-            "## Decisions Task 032 may make",
-            "## Decisions Task 032 must not make",
-            "host-runtime-package-v1",
-            "schuss-rt-abi-v1",
-            "schuss-audio-engine-protocol-v1",
-            "seven already accepted Task 031 host node types",
-            "schuss-record-set-000029@1",
-            "64-swap concurrent native stress test",
-            "state migration",
-            "staging, commit, push",
-        ),
-    )
-
-    for document, status_fragments, required in (
-        (
-            UI_DESKTOP_INITIALIZATION,
-            ("accepted and complete on 2026-08-17", "structural level only"),
-            (
-                "## Goal and why it exists",
-                "## In scope",
-                "## Out of scope",
-                "## Inputs and deliverables",
-                "## Acceptance tests",
-                "## Decisions this task may make",
-                "## Decisions this task must not make",
-                "unnumbered child boundary",
-                "Task 012B remains retired",
-            ),
-        ),
-        (
-            UI_DESKTOP_CATALOG,
-            ("accepted by explicit user authorization", "complete locally"),
-            (
-                "## Goal and why it exists",
-                "## In scope",
-                "## Out of scope",
-                "## Inputs and deliverables",
-                "## Acceptance tests",
-                "## Decisions this task may make",
-                "## Decisions this task must not make",
-                "first product implementation inside the unnumbered UI lane",
-                "does not revive Task 012B",
-            ),
-        ),
-        (
-            UI_DESKTOP_PATCHER,
-            ("implemented locally from explicit user authorization",),
-            (
-                "## Goal and why it exists",
-                "## In scope",
-                "## Out of scope",
-                "## Inputs and deliverables",
-                "## Acceptance tests",
-                "## Decisions this task may make",
-                "## Decisions this task must not make",
-                "second product implementation inside the unnumbered desktop UI",
-                "schuss-record-set-000024@1",
-                "build execution, USB, device upload",
-            ),
-        ),
-        (
-            UI_DESKTOP_PERFORMANCE,
-            (
-                "accepted by explicit user authorization and active locally on 2026-08-18",
-                "Git publication remains separate",
-            ),
-            (
-                "## Goal and why it exists",
-                "## In scope",
-                "## Out of scope",
-                "## Inputs and deliverables",
-                "## Acceptance tests",
-                "## Decisions this task may make",
-                "## Decisions this task must not make",
-                "same immutable 421-record base closure",
-                "bounded in-memory cache",
-                "Continue reading, parsing, hashing, schema-validating",
-                "Build planning/execution, compiler changes, artifacts, USB discovery",
-                "warm repeated inspection improves by at least 10x",
-            ),
-        ),
-        (
-            UI_DESKTOP_BUILD_DEVICE,
-            (
-                "accepted by explicit user authorization and active locally on 2026-08-18",
-                "Git publication and connected-hardware execution remain separate",
-            ),
-            (
-                "## Goal and why it exists",
-                "## In scope",
-                "## Out of scope",
-                "## Inputs and deliverables",
-                "## Acceptance tests",
-                "## Decisions this task may make",
-                "## Decisions this task must not make",
-                "process-local build session",
-                "volatile patch RAM",
-                "Real USB discovery or upload is not part of local acceptance",
-                "Firmware update, DFU, flash, reset, SD-card writes",
-                "renderer never receives an output root",
-            ),
-        ),
-        (
-            UI_DESKTOP_WORKSPACE_SHELL,
-            (
-                "accepted by explicit user authorization and active locally on 2026-08-18",
-                "Git publication, packaging, target lowering, and connected-hardware execution remain separate",
-            ),
-            (
-                "## Goal and why it exists",
-                "## In scope",
-                "## Out of scope",
-                "## Inputs and deliverables",
-                "## Acceptance tests",
-                "## Decisions this task may make",
-                "## Decisions this task must not make",
-                "workspace.projects.list",
-                "workspace.project.create",
-                "always-present patcher shell",
-                "direct renderer directory scanning",
-                "No operation in this task performs automatic hardware access",
-            ),
-        ),
-    ):
-        status = _leading_status(documents.get(document, "")) or ""
-        for fragment in status_fragments:
-            if fragment not in status:
-                diagnostics.append(
-                    _diagnostic(
-                        "UI_TASK_CONTRACT_INVALID",
-                        document,
-                        f"UI task status must contain: {fragment}",
-                    )
-                )
-        _require_phrases(
-            diagnostics,
-            code="UI_TASK_CONTRACT_INVALID",
-            document=document,
-            scope=documents.get(document, ""),
-            phrases=required,
-        )
-
-    status_rules = (
-        "This document is the single authority for Schuss's current development state.",
-        "Task 018 is complete for exact record set `schuss-record-set-000012@1`.",
-        "No product task is automatically active after this completion.",
-        "reaches evidence level 5 through the exact mapped handler",
-        "levels 6-8 remain `not-run`",
-        "Tasks 019 and 020 are deferred and not automatically activated",
-        "Task 021 is complete for exact record set `schuss-record-set-000013@1`.",
-        "dedicated DMA-visible command buffer",
-        "volatile-RAM connected-device observation at level 6",
-        "Real-time/resource and audible evidence levels 7-8 remain `not-run`",
-        "Task 022 Phase A is complete for exact artifact successor record set `schuss-record-set-000014@1`.",
-        "Exactly one approved diagnostic volatile-RAM upload was performed",
-        "The retained result is `POT_EVENT_FOCUS_UNSTABLE`",
-        "promotion stopped before a complete sweep and level 6 was not earned",
-        "Approval gate 2 is closed",
-        "ADR 0014 accepts the application-spine sequence",
-        "Task 023 was explicitly accepted and completed on 2026-08-16",
-        "`schuss-record-set-000015@1`",
-        "`application.describe` operation inventories fourteen accepted public operations",
-        "The read-only Task 023 smoke passes in two copied fresh roots",
-        "backend execution, project writes, and hardware access were `not-run`",
-        "Task 024 is accepted complete for exact record set",
-        "`schuss-record-set-000016@1`",
-        "four configured source libraries",
-        "668 `.axo` files, 835 normal definitions, 666 canonical base references",
-        "all 3,602 frozen resolved observations one factual disposition",
-        "not readiness, quality, or a product backlog",
-        "eleven retain, seven revise, and two reconsider",
-        "29 Task 024 implementation records",
-        "`schuss-core-selection-000002@1`",
-        "Task 024 reproduced levels 1-2 only",
-        "Task 025 is accepted complete for exact record set",
-        "`schuss-record-set-000017@1`",
-        "allocates 32,768 bytes while its exact",
-        "engine clears 65,536 bytes",
-        "complete-graph level 2 fails",
-        "Two fresh roots reproduced identical record-set",
-        "Task 026 is accepted complete for exact schema successor record set",
-        "`schuss-record-set-000019@1`",
-        "identity-independent seven-node, reverb-free semantic profile",
-        "The Task 026 application-capability successor describes eighteen operations",
-        "historical fourteen-operation Task 023 description remains byte-exact",
-        "Two fresh workspaces reproduced byte-identical history, plan, generated source, and ELF",
-        "Reverb is still explicitly unsupported",
-        "Task 027 is accepted complete for exact record set `schuss-record-set-000020@1`",
-        "does not change any of the sixty reviewed families or thirteen functional categories",
-        "The review retains seventy-two exact source entries",
-        "Six catalogued implementations across five ordinary families carry the tag",
-        "The other sixteen extended objects remain inventory-only",
-        "Task 028 is accepted complete for exact record set `schuss-record-set-000021@1`",
-        "exactly fifteen independently selectable native bindings",
-        "counted total of twenty",
-        "passes levels 1-3 only",
-        "twenty source implementations back counted promotions and sixty-three remain outside this bounded palette",
-        "physical resonator 000096 remains catalogued-only",
-        "Task 030 is accepted complete for exact prospective successor record set",
-        "`schuss-record-set-000023@1`",
-        "remaining fifty candidates become",
-        "bring the catalog to 107 families and 133 implementations",
-        "`catalog.implementations.search`",
-        "No numbered implementation task is automatically active after Task 030 completion",
-        "The explicitly authorized Task 031 parent and serialized Tasks 031A-031D are implemented locally",
-        "`schuss-record-set-000027@1`",
-        "`packages/schuss_rt/` is a JUCE-independent C++17 library",
-        "derived, non-authoritative package hash",
-        "The one authorized bounded local Mac smoke opened `MacBook Pro Speakers`",
-        "No physical MIDI input was available",
-        "promotes neither general real-time/resource level 7 nor audible level 8",
-        "Task 032 was explicitly activated and is complete locally",
-        "`schuss-record-set-000029@1`",
-        "`audio.session.replace`",
-        "The retained smaller, reference, and larger projects contain 3, 7, and 8 nodes",
-        "64-swap concurrent stress run",
-        "No physical audio/MIDI device",
-        "Task 034 was explicitly activated and its implementation is complete locally",
-        "`schuss-record-set-000030@1`",
-        "`instrument-v1`",
-        "`performance.inspect`",
-        "Control-graph execution, native build, physical-controller, real-time/resource, and audible evidence remain `not-run`",
-        "Task 033 Phase 1 is complete",
-        "ADR 0017",
-        "56-entry Mutable audit",
-        "39-header JUCE audit",
-        "Phase 2 remains unstarted",
-        "The unnumbered desktop patcher implementation is locally complete",
-        "The active unnumbered desktop authoring-performance slice",
-        "warm repeated inspection falls from about 18.7 seconds to about 0.012 seconds",
-        "Every project load still rereads and validates governed workspace bytes",
-        "Failed or conflicted saves retain the draft",
-        "Contracts ran 402 tests in 960.044 seconds",
-        "ADR 0014 established that UI implementation remains separately gated",
-        "began only after explicit user authorization",
-        "The explicitly authorized unnumbered desktop project-object handoff",
-        "`project.objects.list` and `project.object.inspect`",
-        "never discards its draft without confirmation",
-    )
-    _require_phrases(
-        diagnostics,
-        code="CURRENT_STATUS_DRIFT",
-        document=STATUS,
-        scope=documents.get(STATUS, ""),
-        phrases=status_rules,
-    )
-
-    _require_phrases(
-        diagnostics,
-        code="APPLICATION_SPINE_PLAN_INVALID",
-        document=APPLICATION_SPINE_PLAN,
-        scope=documents.get(APPLICATION_SPINE_PLAN, ""),
-        phrases=(
-            "Status: accepted planning authority under ADR 0014 and amended by ADR 0015 for Task 027 only.",
-            "Task 023: CLI v2 and application-surface consolidation",
-            "Task 024: Current-Ksoloti-first catalog structure and deterministic lineage",
-            "Task 025: Direct-compiler core-library tranche",
-            "Task 026: Complete authoring operations and CLI workflow",
-            "Task 027: Mutable-related catalog provenance and extended-source review",
-            "Task 028: Twenty-item direct selectable palette",
-            "UI architecture is explicitly authorized now.",
-            "UI implementation remains separately gated.",
-            "`023A`, `023B`, and `023C`",
-            "The default concurrency ceiling is two implementation lanes plus one read-only/design lane.",
-            "operation and schema version allocation",
-            "stable semantic IDs, record-set revisions, and manifest publication",
-            "This plan did not itself start Task 023 or create any numbered task contract",
-            "Tasks 023-030 are accepted complete",
-            "Task 028's bounded twenty-item palette is now complete",
-            "Later explicit Tasks 029-030",
-            "no numbered implementation task is active",
-            "sessions/jobs/diagnostics outcome is deferred without a replacement task number",
-            "Task 026B then completed exact project-owned creation/versioning",
-            "Tasks 019 and 020 remain deferred.",
-        ),
-    )
-
-    history_rules = (
-        "Completed task contracts are not live scheduling authority",
-        "Git retains their exact bytes",
-        "no later product task is automatically active.",
-    )
-    _require_phrases(
-        diagnostics,
-        code="HISTORY_POLICY_DRIFT",
-        document=HISTORY,
-        scope=documents.get(HISTORY, ""),
-        phrases=history_rules,
-    )
-
-    current_ui_scope = _normalized(documents.get(STATUS, "")).lower()
-    if any(
-        phrase not in current_ui_scope
-        for phrase in (
-            "object drawer",
-            "transparent graph canvas",
-            "unnumbered",
-            "explicit user authorization",
-            "task 012b remains retired",
-            "apps/schuss_desktop/",
-        )
-    ):
+    scope_paths = [STATE, STATUS, ROADMAP, TASKS_INDEX]
+    if state and isinstance(state.get("active_task"), dict):
+        contract = state["active_task"].get("contract")
+        if isinstance(contract, str):
+            scope_paths.append(contract)
+    current_scopes = "\n".join(documents.get(path, "") for path in scope_paths)
+    if LETTERED_ALIAS.search(current_scopes) or INFORMAL_ALIAS.search(current_scopes):
         diagnostics.append(
             _diagnostic(
-                "UI_MILESTONE_ROUTING_INVALID",
-                STATUS,
-                "current UI implementation must remain unnumbered, explicitly authorized, and distinct from Task 012B",
+                "CURRENT_TASK_ALIAS_INVALID", "current governance", "retired task alias is present"
             )
         )
-
-    historical_ui_scopes = {
-        TASK_012B: documents.get(TASK_012B, ""),
-        ADR_0010: _section(documents.get(ADR_0010, ""), "## Decision"),
-    }
-    for document, scope in historical_ui_scopes.items():
-        normalized = _normalized(scope).lower()
-        if any(
-            phrase not in normalized
-            for phrase in ("object drawer", "transparent graph canvas", "unnumbered", "explicit")
-        ) or "authoriz" not in normalized:
-            diagnostics.append(
-                _diagnostic(
-                    "UI_MILESTONE_ROUTING_INVALID",
-                    document,
-                    "UI must remain unnumbered and require explicit authorization",
-                )
-            )
-        if TASK_012B_RESURRECTION.search(_normalized(scope)):
-            diagnostics.append(
-                _diagnostic(
-                    "TASK_012B_UI_RESURRECTED",
-                    document,
-                    "current routing resurrects Task 012B implementation semantics",
-                )
-            )
-
-    roadmap_rows = _roadmap_rows(documents.get(ROADMAP, ""))
-    for task_number in ACTIVE_SEQUENCE:
-        number = int(task_number)
-        label = str(number)
-        if len(roadmap_rows.get(label, [])) != 1:
-            diagnostics.append(
-                _diagnostic(
-                    "BACKBONE_SEQUENCE_INVALID",
-                    ROADMAP,
-                    f"roadmap must contain exactly one ordinary Task {number:03d} row",
-                )
-            )
-    expected_roadmap_status = {
-        "13": "complete",
-        "14": "complete",
-        "15": "complete",
-        "16": "complete",
-        "17": "complete",
-        "18": "complete; mapped local level 5",
-        "19": "deferred; not scheduled",
-        "20": "deferred; not scheduled",
-        "21": "complete; corrected level 6",
-        "22": "stopped; failed before level 6",
-        "23": "complete; shared capability surface and cli v2",
-        "24": "complete; 685 current first-party candidates, frozen lineage coverage, and 60-family level-2 catalog",
-        "25": "complete fail-closed partial tranche",
-        "26": "complete; project-owned create/edit/history/revert and two-root reverb-free authored elf reach local level 5",
-        "27": "complete; 72 exact source entries, 60 families preserved, one catalogued-only implementation, levels 1-2",
-        "28": "complete; fifteen additions lower locally at levels 1-3, no build",
-        "29": "complete; two exact source reviews, zero completed machines, structural level 1",
-        "30": "complete; 56 attributed implementations, 107 families, shared cli v3 discovery, levels 1-2",
-        "31": "complete locally; exact seven-node offline render and one bounded mac callback observation",
-        "32": "complete locally; bounded acyclic shapes over the existing seven host node types plus reset-state block-boundary replacement",
-        "33": "phase 1 complete; exact mutable/juce audits and adr 0017 accepted; phases 2-4 unstarted",
-        "34": "complete locally; structural device-independent instrument, shared control graph, gills/midi configurations, and read-only inspection; no execution",
-    }
-    for label, expected in expected_roadmap_status.items():
-        rows = roadmap_rows.get(label, [])
-        if len(rows) == 1 and expected not in rows[0][2].lower():
-            diagnostics.append(
-                _diagnostic(
-                    "BACKBONE_SEQUENCE_STATUS_DRIFT",
-                    ROADMAP,
-                    f"Task {int(label):03d} roadmap status must contain: {expected}",
-                )
-            )
-    deferred_ui = roadmap_rows.get("Unnumbered UI", [])
+    aliased_files = sorted(name for name in task_filenames if ALIASED_FILENAME.search(name))
+    if aliased_files:
+        diagnostics.append(
+            _diagnostic("TASK_FILENAME_INVALID", "docs/tasks", f"retired aliases: {aliased_files}")
+        )
     if (
-        len(deferred_ui) != 1
-        or "implemented locally" not in deferred_ui[0][2].lower()
-        or "explicit authorization" not in deferred_ui[0][2].lower()
-        or "fake-transport acceptance only" not in deferred_ui[0][2].lower()
-        or "real hardware, packaging, and publication separately gated" not in deferred_ui[0][2].lower()
+        state
+        and isinstance(state.get("active_task"), dict)
+        and isinstance(state["active_task"].get("contract"), str)
     ):
-        diagnostics.append(
-            _diagnostic(
-                "UI_MILESTONE_NUMBERED",
-                ROADMAP,
-                "roadmap must contain one unnumbered explicitly authorized local UI implementation row with later gates",
-            )
-        )
-
-    _require_phrases(
-        diagnostics,
-        code="ROADMAP_PROMOTION_GATE_DRIFT",
-        document=ROADMAP,
-        scope=documents.get(ROADMAP, ""),
-        phrases=(
-            "Executable promotion",
-            "reach evidence level 5",
-            "Tasks 019 and 020 remain deferred.",
-            "Tasks 023-028 are accepted complete.",
-            "Tasks 029 and 030 were later activated by explicit user requests",
-            "ADR 0016 adds the portable desktop-host runtime as Task 031",
-            "Task 031 is the completed bounded desktop-host successor selected by ADR 0016",
-            "Task 032 was explicitly authorized and is complete locally",
-            "Task 033 Phase 1 is complete",
-            "Task 034 was explicitly authorized and its implementation is complete locally",
-            "Task 026 consumes the independently accepted reverb-free seven-node executable profile",
-            "desktop catalog and patcher are implemented locally",
-            "Authoring performance and reliability are active locally",
-            "no numbered implementation lane is active",
-            "sessions/jobs/diagnostics outcome is deferred without a replacement number",
-            "two implementation lanes plus one",
-        ),
-    )
-    _require_phrases(
-        diagnostics,
-        code="ADR_0013_CORRECTIVE_GATE_DRIFT",
-        document=ADR_0013,
-        scope=_section(documents.get(ADR_0013, ""), "## Decision"),
-        phrases=(
-            "Task 021 is a separately authorized corrective successor",
-            "preserves every Task 018 v1 byte",
-            "dedicated two-byte command buffer in `.sram2`",
-            "separate exact evidence claim",
-            "does not activate Task 019, Task 020, or UI work",
-        ),
-    )
-    _require_phrases(
-        diagnostics,
-        code="ADR_0014_APPLICATION_SPINE_DRIFT",
-        document=ADR_0014,
-        scope=_section(documents.get(ADR_0014, ""), "## Decision"),
-        phrases=(
-            "Task 023: CLI v2 and application-surface consolidation",
-            "Task 028: second catalog/compiler tranche and transparent compounds",
-            "Task 023 is the next planned task",
-            "UI architecture is explicitly authorized as an unnumbered planning milestone",
-            "UI implementation remains separately gated",
-            "does not revive retired Task 012B",
-            "`023A`, `023B`, and `023C`",
-            "two implementation lanes plus one read-only or design lane",
-            "Tasks 019 and 020 remain deferred",
-        ),
-    )
-    _require_phrases(
-        diagnostics,
-        code="ADR_0015_TASK027_RETARGET_DRIFT",
-        document=ADR_0015,
-        scope=_section(documents.get(ADR_0015, ""), "## Decision"),
-        phrases=(
-            "Task 027 is retargeted to Mutable-related catalog provenance",
-            "sessions, jobs, and diagnostics outcome is deferred",
-            "preserve the sixty reviewed catalog families",
-            "additive provenance tag",
-            "Ambient working-tree changes are excluded",
-        ),
-    )
-    _require_phrases(
-        diagnostics,
-        code="ADR_0016_HOST_RUNTIME_DRIFT",
-        document=ADR_0016,
-        scope=_section(documents.get(ADR_0016, ""), "## Decision"),
-        phrases=(
-            "portable native desktop execution path under Task 031",
-            "A JUCE-independent C++ library named `schuss_rt`",
-            "A separate headless `schuss-audio-engine` process",
-            "Physical MIDI will enter that native process directly",
-            "The Ksoloti backend remains a sibling export target",
-            "Task 031 is divided into four parent-owned, serialized children",
-            "does not automatically activate any child",
-        ),
-    )
-    _require_phrases(
-        diagnostics,
-        code="ADR_0017_PROVIDER_BOUNDARY_DRIFT",
-        document=ADR_0017,
-        scope=_section(documents.get(ADR_0017, ""), "## Decision"),
-        phrases=(
-            "source releases, object collections, catalog implementations, component contracts, implementation providers, and runtime factory descriptors as separate owned layers",
-            "Collection names and source/library paths are browse and provenance facets",
-            "Provider selection occurs only after graph validation and target/backend selection",
-            "machine-local collection profile",
-            "Task 033 does not add or link `juce_dsp`",
-        ),
-    )
-
-    adr10_decision = _normalized(_section(documents.get(ADR_0010, ""), "## Decision"))
-    for number in range(13, 21):
-        if f"Task {number:03d}:" not in adr10_decision:
+        active_name = Path(state["active_task"]["contract"]).name
+        if active_name not in task_filenames:
             diagnostics.append(
-                _diagnostic(
-                    "ADR_0010_SEQUENCE_INCOMPLETE",
-                    ADR_0010,
-                    f"ADR 0010 decision must route Task {number:03d}",
-                )
+                _diagnostic("ACTIVE_TASK_CONTRACT_MISSING", "docs/tasks", active_name)
             )
-
-    _require_phrases(
-        diagnostics,
-        code="ADR_0011_SEMANTICS_DRIFT",
-        document=ADR_0011,
-        scope=_section(documents.get(ADR_0011, ""), "## Decision"),
-        phrases=(
-            "legacy-equivalent semantics",
-            "may not silently substitute Schuss-native behavior",
-            "may never fall back invisibly",
-            "levels 6-8 are independent and remain `not-run`",
-        ),
-    )
-    _require_phrases(
-        diagnostics,
-        code="ADR_0012_PROMOTION_GATE_DRIFT",
-        document=ADR_0012,
-        scope=_section(documents.get(ADR_0012, ""), "## Decision"),
-        phrases=(
-            "at least one exact mapped Gills reference instrument must reach evidence level 5",
-            "do not satisfy this executable promotion gate",
-            "does not automatically activate Task 019, Task 020, or UI work",
-        ),
-    )
-
-    alias_scopes = {
-        README: documents.get(README, ""),
-        PROJECT_CONTEXT: documents.get(PROJECT_CONTEXT, ""),
-        STATUS: documents.get(STATUS, ""),
-        ROADMAP: documents.get(ROADMAP, ""),
-        DECISIONS_INDEX: documents.get(DECISIONS_INDEX, ""),
-        ADR_0010: _section(documents.get(ADR_0010, ""), "## Decision"),
-        ADR_0011: documents.get(ADR_0011, ""),
-        ADR_0012: documents.get(ADR_0012, ""),
-        ADR_0013: documents.get(ADR_0013, ""),
-        ADR_0014: documents.get(ADR_0014, ""),
-        ADR_0015: documents.get(ADR_0015, ""),
-        ADR_0016: documents.get(ADR_0016, ""),
-        ADR_0017: documents.get(ADR_0017, ""),
-        APPLICATION_SPINE_PLAN: documents.get(APPLICATION_SPINE_PLAN, ""),
-        TASK_012B: documents.get(TASK_012B, ""),
-        TASK_018: documents.get(TASK_018, ""),
-        TASK_021: documents.get(TASK_021, ""),
-        TASK_022: documents.get(TASK_022, ""),
-        TASK_023: documents.get(TASK_023, ""),
-        TASK_024: documents.get(TASK_024, ""),
-        TASK_025: documents.get(TASK_025, ""),
-        TASK_026: documents.get(TASK_026, ""),
-        TASK_027: documents.get(TASK_027, ""),
-        TASK_028: documents.get(TASK_028, ""),
-        TASK_030: documents.get(TASK_030, ""),
-        TASK_031: documents.get(TASK_031, ""),
-        TASK_032: documents.get(TASK_032, ""),
-        TASK_033: documents.get(TASK_033, ""),
-        TASK_034: documents.get(TASK_034, ""),
-        UI_DESKTOP_INITIALIZATION: documents.get(UI_DESKTOP_INITIALIZATION, ""),
-        UI_DESKTOP_CATALOG: documents.get(UI_DESKTOP_CATALOG, ""),
-        UI_DESKTOP_PATCHER: documents.get(UI_DESKTOP_PATCHER, ""),
-        UI_DESKTOP_PERFORMANCE: documents.get(UI_DESKTOP_PERFORMANCE, ""),
-        UI_DESKTOP_BUILD_DEVICE: documents.get(UI_DESKTOP_BUILD_DEVICE, ""),
-    }
-    for document, scope in alias_scopes.items():
-        matches = sorted(set(LETTERED_ALIAS.findall(scope)))
-        if matches:
-            diagnostics.append(
-                _diagnostic(
-                    "LETTERED_TASK_ALIAS_PRESENT",
-                    document,
-                    "current routing contains a lettered alias for Task " + ", ".join(matches),
-                )
-            )
-        if INFORMAL_ALIAS.search(scope):
-            diagnostics.append(
-                _diagnostic(
-                    "INFORMAL_TASK_ALIAS_PRESENT",
-                    document,
-                    "current routing contains informal alias B6",
-                )
-            )
-
-    actual_task_filenames = set(task_filenames)
-    if actual_task_filenames != EXPECTED_TASK_FILENAMES:
-        missing = sorted(EXPECTED_TASK_FILENAMES - actual_task_filenames)
-        unexpected = sorted(actual_task_filenames - EXPECTED_TASK_FILENAMES)
-        diagnostics.append(
-            _diagnostic(
-                "TASK_ARCHIVE_POLICY_VIOLATION",
-                "docs/tasks",
-                f"missing={missing}; unexpected={unexpected}",
-            )
-        )
 
     diagnostics.sort(key=lambda item: (item["code"], item["document"], item["detail"]))
+    state_for_summary = state or {}
     return {
-        "active_product_task": "task033-phase1-complete-phase2-not-started",
-        "active_evidence_task": "022-failed-diagnostic-promotion-stopped",
-        "active_task_sequence": list(ACTIVE_SEQUENCE),
-        "authoritative_decisions": [
-            "ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014", "ADR 0015",
-            "ADR 0016", "ADR 0017",
-        ],
-        "checked_documents": len([path for path in DOCUMENT_PATHS if path in documents]),
-        "current_status_source": STATUS,
-        "diagnostics": diagnostics,
-        "historical_context_policy": "completed-task-contracts-indexed-in-history-and-git",
-        "next_planned_task": "none-selected",
-        "planned_task_sequence": list(PLANNED_SEQUENCE),
-        "promotion_gate": "next-numbered-task-requires-explicit-contract-and-activation",
-        "schema_version": "backbone-governance-summary-v25",
+        "schema_version": "backbone-governance-summary-v27",
         "status": "valid" if not diagnostics else "invalid",
-        "task_statuses": {
-            "012B": "retired",
-            "013": "complete",
-            "014": "complete",
-            "015": "complete",
-            "016": "complete-legacy-equivalent-level-5",
-            "017": "complete-level-2",
-            "018": "complete-mapped-local-level-5",
-            "019": "deferred-not-scheduled",
-            "020": "deferred-not-scheduled",
-            "021": "complete-corrected-connected-level-6",
-            "022": "failed-connected-diagnostic-level-6-not-earned",
-            "023": "complete-application-surface-cli-v2",
-            "024": "complete-current-ksoloti-catalog-lineage-level-2",
-            "025": "complete-fail-closed-partial-level-2",
-            "026": "complete-reverb-free-authoring-level-5",
-            "027": "complete-mutable-catalog-provenance-level-2",
-            "028": "complete-twenty-item-direct-palette-level-3",
-            "029": "complete-machine-inspection-level-1",
-            "030": "complete-mutable-catalog-cohort-level-2-cli-v3",
-            "031": "complete-desktop-host-bounded-observation-no-level7-or-audible-promotion",
-            "032": "complete-variable-graph-host-runtime-reset-state-replacement-no-level7-or-audible-promotion",
-            "033": "phase1-complete-audits-and-adr-phase2-not-started",
-            "034": "complete-structural-performance-control-no-execution-or-device-promotion",
-        },
-        "ui_milestone_status": "unnumbered-desktop-workspace-shell-implemented-locally-target-hardware-publication-gated",
+        "current_status_source": STATE,
+        "active_task": state_for_summary.get("active_task"),
+        "next_candidate": state_for_summary.get("next_candidate"),
+        "recent_completed_milestones": state_for_summary.get(
+            "recent_completed_milestones", []
+        ),
+        "authoritative_decisions": state_for_summary.get("authoritative_decisions", []),
+        "validation_profiles": state_for_summary.get("validation_profiles", []),
+        "task_statuses": _derived_task_statuses(state_for_summary),
+        "historical_context_policy": "history-and-git-not-live-routing",
+        "promotion_gate": "explicit-contract-and-activation-required",
+        "checked_documents": sum(path in documents for path in REQUIRED_DOCUMENT_PATHS),
+        "diagnostics": diagnostics,
     }
 
 
 def load_repository_documents(root: Path) -> tuple[dict[str, str], list[str]]:
-    documents: dict[str, str] = {}
-    for path in DOCUMENT_PATHS:
-        candidate = root / path
+    paths = set(REQUIRED_DOCUMENT_PATHS)
+    for directory in (root / "docs/decisions", root / "docs/tasks"):
         try:
-            documents[path] = candidate.read_text(encoding="utf-8")
+            paths.update(
+                path.relative_to(root).as_posix()
+                for path in directory.glob("*.md")
+                if path.is_file()
+            )
+        except OSError:
+            pass
+    documents: dict[str, str] = {}
+    for path in sorted(paths):
+        try:
+            documents[path] = (root / path).read_text(encoding="utf-8")
         except (OSError, UnicodeError):
             continue
-    task_root = root / "docs/tasks"
-    try:
-        task_filenames = sorted(
-            path.name for path in task_root.iterdir() if path.is_file() and path.suffix == ".md"
-        )
-    except OSError:
-        task_filenames = []
+    task_filenames = sorted(
+        Path(path).name for path in documents if path.startswith("docs/tasks/")
+    )
     return documents, task_filenames
 
 
@@ -1439,15 +684,15 @@ def validate_repository(root: Path = ROOT) -> dict[str, object]:
 
 
 def summary_bytes(summary: Mapping[str, object]) -> bytes:
-    return json.dumps(summary, ensure_ascii=True, separators=(",", ":"), sort_keys=True).encode(
-        "utf-8"
-    ) + b"\n"
+    return json.dumps(
+        summary, ensure_ascii=True, separators=(",", ":"), sort_keys=True
+    ).encode("utf-8") + b"\n"
 
 
 def main() -> int:
     summary = validate_repository()
-    stream = sys.stdout.buffer if summary["status"] == "valid" else sys.stderr.buffer
-    stream.write(summary_bytes(summary))
+    stream = sys.stdout if summary["status"] == "valid" else sys.stderr
+    stream.buffer.write(summary_bytes(summary))
     return 0 if summary["status"] == "valid" else 1
 
 

@@ -1,0 +1,63 @@
+{
+  "schema_version": "schuss-governance-state-v1",
+  "active_task": {
+    "task_id": "035",
+    "phase": null,
+    "kind": "maintenance",
+    "status": "review-ready",
+    "contract": "docs/tasks/035-validation-and-governance-consolidation.md",
+    "baseline_commit": "ccafc1d403513c822d9294b6c257906820ff88eb"
+  },
+  "next_candidate": {
+    "task_id": "033",
+    "phase": 3,
+    "status": "not-activated"
+  },
+  "recent_completed_milestones": [
+    {
+      "task_id": "033",
+      "phase": 1,
+      "status": "complete-local",
+      "commit": "5dccfd2"
+    },
+    {
+      "task_id": "034",
+      "phase": null,
+      "status": "complete-local",
+      "commit": "6010f29"
+    },
+    {
+      "task_id": "033",
+      "phase": 2,
+      "status": "complete-local",
+      "commit": "ccafc1d"
+    }
+  ],
+  "deferred_tasks": ["019", "020"],
+  "authoritative_decisions": [
+    "0010",
+    "0011",
+    "0012",
+    "0013",
+    "0014",
+    "0015",
+    "0016",
+    "0017",
+    "0018"
+  ],
+  "validation_profiles": [
+    "current",
+    "compatibility",
+    "configured-sources",
+    "native",
+    "reproduction",
+    "release"
+  ],
+  "evidence_boundary": {
+    "hardware_action_performed": false,
+    "firmware_or_sd_mutation_performed": false,
+    "real_time_level_7_promoted": false,
+    "audible_level_8_promoted": false,
+    "publication_performed": false
+  }
+}

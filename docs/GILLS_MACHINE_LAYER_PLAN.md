@@ -670,7 +670,7 @@ focused commands are:
 - `python3 tools/contracts/validate_task029_sources.py` with explicit source,
   panel, and photo paths: eleven Gills source blobs, three panel source blobs,
   and the non-retained photo hash matched their pinned identities;
-- `python3 tools/contracts/run_task029_fresh_process.py`: both exact
+- `python3 tools/contracts/run_task029_fresh_process.py --reproduce`: both exact
   `machine.inspect` requests matched the retained canonical fixtures in four
   fresh CLI processes across two CWDs;
 - rendered local Chrome checks showed both Viewer fixtures with the four

@@ -6,6 +6,8 @@ import sys
 import unittest
 from pathlib import Path
 
+from tools.validation.profile import requires_profile
+
 
 ROOT = Path(__file__).resolve().parents[3]
 TOOLS = ROOT / "tools/contracts"
@@ -331,6 +333,7 @@ class ComponentGraphContractTest(unittest.TestCase):
                     self.assertEqual(record["content_hash"], BASE.record_content_hash(record, self.schemas[kind]))
         self.assertEqual(self.instrument_r2["content_hash"], BASE.record_content_hash(self.instrument_r2, self.instrument_schema))
 
+    @requires_profile("reproduction")
     def test_fresh_process_summary_and_all_production_canonical_bytes_are_deterministic(self):
         command = [sys.executable, str(TOOLS / "validate_component_graph_contracts.py"), str(CONTRACT_ROOT), "--schema-root", str(SCHEMA_ROOT)]
         self.assertEqual(subprocess.check_output(command), subprocess.check_output(command))

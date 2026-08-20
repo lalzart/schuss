@@ -7,6 +7,8 @@ import sys
 import unittest
 from pathlib import Path
 
+from tools.validation.profile import requires_profile
+
 
 ROOT = Path(__file__).resolve().parents[3]
 TOOLS = ROOT / "tools/contracts"
@@ -112,6 +114,7 @@ class TargetBackendBuildContractTest(unittest.TestCase):
         self.assertIn("COMPATIBILITY_EVIDENCE_MISSING", reasons)
         self.assertEqual("not-run", result.summary["evidence_levels"][2]["status"])
 
+    @requires_profile("reproduction")
     def test_fresh_process_summary_and_canonical_emission_are_identical(self):
         command = [sys.executable, str(TOOLS / "validate_target_backend_build_contracts.py")]
         first = subprocess.run(command, cwd=ROOT, check=True, stdout=subprocess.PIPE).stdout

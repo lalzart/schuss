@@ -5,6 +5,7 @@ ROOT=Path(__file__).resolve().parents[3]; sys.path[:0]=[str(ROOT),str(ROOT/'tool
 from packages.schuss_core.control_plane import load_repository_context,dispatch_operation
 from packages.schuss_core.direct_frontend import evaluate_linear_mix_q27,lower_minimal_direct,Q27_SCALE
 import validator_core as core
+from tools.validation.profile import requires_profile
 RECORD=ROOT/'contracts/record-sets/task015-minimal-direct-frontend-v1.json'
 class Task015DirectFrontendTest(unittest.TestCase):
  @classmethod
@@ -24,12 +25,14 @@ class Task015DirectFrontendTest(unittest.TestCase):
   second=lower_minimal_direct(copy.deepcopy(self.plan),copy.deepcopy(self.graph),copy.deepcopy(self.contract))
   self.assertEqual(core.canonical_json(self.result),core.canonical_json(second))
   text=self.result['generated_cpp']['text']; self.assertNotIn('/Users/',text); self.assertNotIn('.axp',text); self.assertNotIn('java',text.lower()); self.assertNotIn('ksoloti',text.lower())
+ @requires_profile('native')
  def test_cpp_syntax(self):
   p=subprocess.run(['clang++','-x','c++','-std=c++17','-fsyntax-only','-'],input=self.result['generated_cpp']['text'].encode(),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
   self.assertEqual(0,p.returncode,p.stderr.decode())
  def test_reference_vectors(self):
   self.assertEqual(10,evaluate_linear_mix_q27(10,20,0)); self.assertEqual(20,evaluate_linear_mix_q27(10,20,Q27_SCALE)); self.assertEqual(15,evaluate_linear_mix_q27(10,20,Q27_SCALE//2))
   self.assertEqual(-(1<<31),evaluate_linear_mix_q27(-(1<<31),-(1<<31),Q27_SCALE//2)); self.assertEqual((1<<31)-1,evaluate_linear_mix_q27((1<<31)-1,(1<<31)-1,Q27_SCALE//2))
+ @requires_profile('native')
  def test_compiled_vectors_match_reference(self):
   rng=random.Random(15001); vectors=[(-(1<<31),(1<<31)-1,c) for c in (-1,0,1,Q27_SCALE//2,Q27_SCALE,Q27_SCALE+1)]+[(rng.randint(-(1<<31),(1<<31)-1),rng.randint(-(1<<31),(1<<31)-1),rng.randint(-100,Q27_SCALE+100)) for _ in range(32)]
   rows=',\n'.join('{'+f'{a},{b},{c}'+'}' for a,b,c in vectors)

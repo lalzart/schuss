@@ -41,9 +41,9 @@ def _reference(record, id_field):
 class Task033Phase2CollectionProviderTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.selected = record_set_rules.load_record_set(ROOT, RECORD_SET)
-        cls.parent = record_set_rules.load_record_set(ROOT, PARENT_RECORD_SET)
         cls.context = load_repository_context(ROOT, record_set_path=RECORD_SET)
+        cls.selected = cls.context.loaded_record_set
+        cls.parent = record_set_rules.load_record_set(ROOT, PARENT_RECORD_SET)
         cls.projection = cls.context.catalog_projection
         cls.implementations = {
             implementation["implementation_id"]: implementation

@@ -19,11 +19,33 @@ from packages.schuss_core.build_execution import ExecutionService, handler_refer
 from packages.schuss_core.control_plane import dispatch_operation, load_repository_context  # noqa: E402
 from packages.schuss_core.gills_direct_backend import registration  # noqa: E402
 
+import historical_reproduction  # noqa: E402
+import retained_evidence  # noqa: E402
 import validator_core as core  # noqa: E402
 
 
 RECORD_SET = ROOT / "contracts/record-sets/task016-complete-gills-direct-v1.json"
 EVIDENCE_ROOT = ROOT / "evidence/task016-completion-v1"
+HISTORICAL_COMMIT = "b28c7b6bdc98a2e06e1a19180bc84ad01fab4ac7"
+
+
+def check_retained() -> dict[str, Any]:
+    return retained_evidence.check_summary(
+        EVIDENCE_ROOT,
+        repository_root=ROOT,
+        anchor_commit=HISTORICAL_COMMIT,
+        schema_version="task016-validation-summary-v1",
+    )
+
+
+def reproduce_historical() -> dict[str, Any]:
+    return historical_reproduction.reproduce_summary(
+        repository_root=ROOT,
+        completion_commit=HISTORICAL_COMMIT,
+        runner_path=Path("tools/contracts/run_task016.py"),
+        retained_summary=check_retained(),
+        report_schema_version="task016-historical-reproduction-v1",
+    )
 
 
 def _execute(context: Any, request_reference: dict[str, Any], prefix: str) -> tuple[dict[str, Any], dict[str, bytes]]:
@@ -107,32 +129,16 @@ def generated() -> tuple[dict[str, bytes], dict[str, Any]]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--check", action="store_true")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true")
+    mode.add_argument("--reproduce", action="store_true")
     args = parser.parse_args()
     try:
-        files, summary = generated()
-        stale = [
-            relative for relative, payload in files.items()
-            if not (EVIDENCE_ROOT / relative).is_file()
-            or (EVIDENCE_ROOT / relative).read_bytes() != payload
-        ]
-        if args.check and stale:
-            raise ValueError("retained evidence is stale: " + ", ".join(sorted(stale)))
-        if not args.check:
-            expected_artifacts = {
-                (EVIDENCE_ROOT / relative).resolve()
-                for relative in files
-                if relative.startswith("artifacts/sha256/")
-            }
-            artifact_root = EVIDENCE_ROOT / "artifacts/sha256"
-            if artifact_root.is_dir():
-                for obsolete in artifact_root.iterdir():
-                    if obsolete.is_file() and obsolete.resolve() not in expected_artifacts:
-                        obsolete.unlink()
-            for relative, payload in files.items():
-                path = EVIDENCE_ROOT / relative
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_bytes(payload)
+        if args.check:
+            summary = check_retained()
+            print(json.dumps(summary, sort_keys=True))
+            return 0
+        summary = reproduce_historical()
     except (OSError, ValueError) as exc:
         print("Task 016 execution failed: " + str(exc), file=sys.stderr)
         return 1

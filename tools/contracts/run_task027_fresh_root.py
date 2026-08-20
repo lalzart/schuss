@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""Run the frozen Task 027 generator in two copied roots and retain hashes."""
+"""Reproduce frozen Task 027 output from its original Git commit."""
 
 from __future__ import annotations
 
 import argparse
-import hashlib
+import io
 import json
 import os
 import shutil
 import subprocess
 import sys
+import tarfile
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -32,13 +33,52 @@ ARTIFACTS = (
     "schemas/catalog-projection-v4.schema.json",
     "schemas/catalog-source-review-v0.schema.json",
 )
+HISTORICAL_COMMIT = "90704b234e2a418d64a71e0a34c2b9ca98d48420"
+SOURCE_CONFIGURATION = Path("catalog/sources.local.yml")
 
 
 def _hashes(root: Path) -> dict[str, str]:
     return {path: core.sha256_file(root / path) for path in ARTIFACTS}
 
 
-def reproduce() -> dict[str, Any]:
+def _materialize_historical_root(
+    destination: Path, source_configuration: Path
+) -> None:
+    """Extract the accepted Task 027 tree and add only its ignored source map."""
+    source_configuration = (
+        source_configuration
+        if source_configuration.is_absolute()
+        else ROOT / source_configuration
+    ).resolve()
+    if not source_configuration.is_file():
+        raise ValueError("Task 027 requires ignored catalog/sources.local.yml")
+    completed = subprocess.run(
+        ["git", "-C", str(ROOT), "archive", "--format=tar", HISTORICAL_COMMIT],
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if completed.returncode != 0:
+        diagnostic = completed.stderr.decode("utf-8", errors="replace").strip()
+        raise ValueError(
+            f"Task 027 historical commit {HISTORICAL_COMMIT} is unavailable: "
+            f"{diagnostic}"
+        )
+    destination.mkdir(parents=True)
+    with tarfile.open(fileobj=io.BytesIO(completed.stdout), mode="r:") as archive:
+        for member in archive.getmembers():
+            path = Path(member.name)
+            if path.is_absolute() or ".." in path.parts or member.issym() or member.islnk():
+                raise ValueError("Task 027 historical archive contains an unsafe path")
+        archive.extractall(destination)
+    target_configuration = destination / SOURCE_CONFIGURATION
+    target_configuration.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source_configuration, target_configuration)
+
+
+def reproduce(
+    source_configuration: Path = SOURCE_CONFIGURATION,
+) -> dict[str, Any]:
     variants = (
         {"PYTHONHASHSEED": "1", "LC_ALL": "C", "TZ": "UTC"},
         {"PYTHONHASHSEED": "777", "LC_ALL": "C", "TZ": "Asia/Tokyo"},
@@ -48,7 +88,7 @@ def reproduce() -> dict[str, Any]:
         base = Path(temporary)
         for index, variant in enumerate(variants, start=1):
             copy_root = base / f"root-{index}"
-            shutil.copytree(ROOT, copy_root, symlinks=True)
+            _materialize_historical_root(copy_root, source_configuration)
             environment = os.environ.copy()
             environment.update(variant)
             completed = subprocess.run(
@@ -142,17 +182,31 @@ def check_retained() -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--check", action="store_true")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true")
+    mode.add_argument("--reproduce", action="store_true")
+    parser.add_argument(
+        "--source-configuration",
+        type=Path,
+        help=(
+            "existing ignored sources.local.yml to read during reproduction; "
+            "defaults to this worktree"
+        ),
+    )
     args = parser.parse_args()
+    if args.check and args.source_configuration is not None:
+        parser.error("--source-configuration is valid only with --reproduce")
     try:
         path = ROOT / "evidence/task027-completion-v1/fresh-root-reproduction.json"
         if args.check:
             result = check_retained()
         else:
-            result = reproduce()
+            result = reproduce(
+                args.source_configuration or SOURCE_CONFIGURATION
+            )
             payload = core.canonical_json(result).encode("utf-8") + b"\n"
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(payload)
+            if not path.is_file() or path.read_bytes() != payload:
+                raise ValueError("Task 027 reproduction differs from retained evidence")
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print("Task 027 fresh-root reproduction failed: " + str(exc), file=sys.stderr)
         return 1

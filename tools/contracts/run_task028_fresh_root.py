@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
-"""Run the frozen Task 028 generator in two copied roots and retain hashes."""
+"""Check or historically reproduce the frozen Task 028 evidence."""
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
-import os
-import shutil
-import subprocess
 import sys
-import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +14,8 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools/contracts"))
 
 import validator_core as core  # noqa: E402
+import historical_reproduction  # noqa: E402
+import retained_evidence  # noqa: E402
 
 
 MANIFEST_PATH = "contracts/record-sets/task028-direct-palette-v1.json"
@@ -27,6 +24,8 @@ SUMMARY_ARTIFACTS = (
     "evidence/task028-completion-v1/remaining-gaps.json",
     "evidence/task028-completion-v1/validation-summary.json",
 )
+EVIDENCE_ROOT = ROOT / "evidence/task028-completion-v1"
+HISTORICAL_COMMIT = "5e57d29d729af8af36e90745bec9188256558680"
 
 
 def _artifacts(root: Path) -> tuple[str, ...]:
@@ -40,43 +39,13 @@ def _hashes(root: Path) -> dict[str, str]:
     return {path: core.sha256_file(root / path) for path in _artifacts(root)}
 
 
-def reproduce() -> dict[str, Any]:
-    variants = (
-        {"PYTHONHASHSEED": "1", "LC_ALL": "C", "TZ": "UTC"},
-        {"PYTHONHASHSEED": "777", "LC_ALL": "C", "TZ": "Asia/Tokyo"},
-    )
-    runs = []
-    with tempfile.TemporaryDirectory(prefix="schuss-task028-") as temporary:
-        base = Path(temporary)
-        for index, variant in enumerate(variants, start=1):
-            copy_root = base / f"root-{index}"
-            shutil.copytree(ROOT, copy_root, symlinks=True)
-            environment = os.environ.copy()
-            environment.update(variant)
-            completed = subprocess.run(
-                ["python3", "tools/contracts/generate_task028_records.py", "--check"],
-                cwd=copy_root, env=environment, check=False,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
-            )
-            if completed.returncode != 0:
-                raise ValueError(f"fresh-root Task 028 run {index} failed: {completed.stderr.strip()}")
-            summary = json.loads(completed.stdout)
-            runs.append({"variant": variant, "artifact_hashes": _hashes(copy_root), "record_set_reference": summary["record_set_reference"], "safe_selectable_total": summary["safe_selectable_total"]})
-    if runs[0]["artifact_hashes"] != runs[1]["artifact_hashes"]:
-        raise ValueError("Task 028 fresh-root artifact bytes differ")
-    if runs[0]["record_set_reference"] != runs[1]["record_set_reference"]:
-        raise ValueError("Task 028 fresh-root record-set references differ")
-    return {
-        "schema_version": "task028-fresh-root-reproduction-v1", "status": "passed", "run_count": 2,
-        "runs": runs, "safe_selectable_total": 20,
-        "source_artifact_generation_performed": False, "arm_compile_or_link_performed": False,
-        "java_or_legacy_axp_performed": False, "device_or_hardware_performed": False,
-        "realtime_or_audible_performed": False, "git_or_publication_performed": False,
-    }
-
-
 def check_retained() -> dict[str, Any]:
-    path = ROOT / "evidence/task028-completion-v1/fresh-root-reproduction.json"
+    retained_evidence.check_closure(
+        EVIDENCE_ROOT,
+        repository_root=ROOT,
+        anchor_commit=HISTORICAL_COMMIT,
+    )
+    path = EVIDENCE_ROOT / "fresh-root-reproduction.json"
     result = json.loads(path.read_text(encoding="utf-8"))
     if result.get("schema_version") != "task028-fresh-root-reproduction-v1" or result.get("status") != "passed" or result.get("run_count") != 2:
         raise ValueError("Task 028 retained fresh-root result is absent or stale")
@@ -98,18 +67,28 @@ def check_retained() -> dict[str, Any]:
     return result
 
 
+def reproduce_historical() -> dict[str, Any]:
+    return historical_reproduction.reproduce_summary(
+        repository_root=ROOT,
+        completion_commit=HISTORICAL_COMMIT,
+        runner_path=Path("tools/contracts/run_task028_fresh_root.py"),
+        retained_summary=check_retained(),
+        report_schema_version="task028-historical-reproduction-v1",
+        runner_arguments=(),
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--check", action="store_true")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true")
+    mode.add_argument("--reproduce", action="store_true")
     args = parser.parse_args()
     try:
-        path = ROOT / "evidence/task028-completion-v1/fresh-root-reproduction.json"
         if args.check:
             result = check_retained()
         else:
-            result = reproduce()
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(core.canonical_json(result).encode("utf-8") + b"\n")
+            result = reproduce_historical()
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print("Task 028 fresh-root reproduction failed: " + str(exc), file=sys.stderr)
         return 1

@@ -413,9 +413,14 @@ class Task030CompleteMutableCatalogTest(unittest.TestCase):
         )
         self.assertEqual(expected_golden, cli_golden.FIXTURE.read_bytes())
 
-    def test_final_aggregate_retains_only_named_preexisting_gates(self) -> None:
+    def test_historical_aggregate_report_is_immutable_not_a_current_gate(self) -> None:
+        report_path = ROOT / "evidence/task030-completion-v1/final-aggregate-result.json"
+        self.assertEqual(
+            "d07aecd148412d5445b70fbed3a5cd9ff0c51633c7e0a63a329f986c35f5bac7",
+            hashlib.sha256(report_path.read_bytes()).hexdigest(),
+        )
         result = core.load_json(
-            ROOT / "evidence/task030-completion-v1/final-aggregate-result.json"
+            report_path
         )
         self.assertEqual(
             "task030-valid-repository-aggregate-not-green", result["status"]

@@ -7,7 +7,6 @@ import argparse
 import hashlib
 import json
 import os
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -19,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools/contracts"))
 
 import validator_core as core  # noqa: E402
+from compiler_determinism_matrix import copy_current_tree  # noqa: E402
 
 
 EVIDENCE = ROOT / "evidence/task030-completion-v1/fresh-root-reproduction.json"
@@ -102,16 +102,8 @@ def reproduce() -> dict[str, Any]:
         base = Path(temporary)
         for index, variant in enumerate(variants, start=1):
             copy_root = base / f"root-{index}"
-            shutil.copytree(
-                ROOT,
-                copy_root,
-                symlinks=True,
-                ignore=shutil.ignore_patterns(
-                    ".git",
-                    "sources.local.yml",
-                    "__pycache__",
-                    ".pytest_cache",
-                ),
+            copy_current_tree(
+                ROOT, copy_root, include_task009_capsule=False
             )
             environment = os.environ.copy()
             environment.update(variant)
@@ -222,15 +214,16 @@ def check_retained() -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--check", action="store_true")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true")
+    mode.add_argument("--reproduce", action="store_true")
     args = parser.parse_args()
     try:
         result = check_retained() if args.check else reproduce()
-        if not args.check:
-            EVIDENCE.parent.mkdir(parents=True, exist_ok=True)
-            EVIDENCE.write_bytes(
-                core.canonical_json(result).encode("utf-8") + b"\n"
-            )
+        if args.reproduce:
+            payload = core.canonical_json(result).encode("utf-8") + b"\n"
+            if not EVIDENCE.is_file() or EVIDENCE.read_bytes() != payload:
+                raise ValueError("Task 030 reproduction differs from retained evidence")
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print("Task 030 fresh-root reproduction failed: " + str(exc), file=sys.stderr)
         return 1

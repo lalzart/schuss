@@ -241,94 +241,24 @@ class Task023CliV2Test(unittest.TestCase):
             self.assertIn("--handler", error)
             self.assertFalse(output_root.exists())
 
-    def test_cli_v2_successor_goldens_and_historical_fixture(self):
+    def test_cli_v2_and_task011a_historical_golden_identities_are_preserved(self):
         self.assertEqual(
             "f4530b7e13e1275df11fdb17a99abaf70758547db36d1025e666cb1aa8c94ed4",
             hashlib.sha256(HISTORICAL_GOLDEN.read_bytes()).hexdigest(),
         )
-        observed = {"help": {}, "completion": {}, "human": {}, "json": {}}
-        help_cases = {
-            "root": ["--help"],
-            "application": ["application", "--help"],
-            "application-describe": ["application", "describe", "--help"],
-            "catalog": ["catalog", "--help"],
-            "catalog-search": ["catalog", "search", "--help"],
-            "catalog-inspect": ["catalog", "inspect", "--help"],
-            "project": ["project", "--help"],
-            "graph": ["graph", "--help"],
-            "gills": ["gills", "--help"],
-            "gills-inspect": ["gills", "inspect", "--help"],
-            "build": ["build", "--help"],
-            "build-resolve": ["build", "resolve", "--help"],
-            "build-plan": ["build", "plan", "--help"],
-            "build-execute": ["build", "execute", "--help"],
-            "completion": ["completion", "--help"],
-            "op": ["op", "--help"],
-        }
-        for name, arguments in help_cases.items():
-            narrow = self.invoke(arguments)[1]
-            with mock.patch.dict("os.environ", {"COLUMNS": "240"}):
-                wide = self.invoke(arguments)[1]
-            self.assertEqual(narrow, wide)
-            self.assertLessEqual(max(map(len, narrow.splitlines())), 80)
-            observed["help"][name] = _digest(narrow)
-        for shell in ("bash", "zsh", "fish"):
-            observed["completion"][shell] = _digest(completion_script(shell))
-        command_cases = {
-            "application-describe": ["application", "describe"],
-            "catalog-search-crossfade": ["catalog", "search", "crossfade"],
-            "catalog-inspect-crossfader": [
-                "catalog",
-                "inspect",
-                "schuss-family-000018@1",
-            ],
-            "graph-inspect-gills": [
-                "graph",
-                "inspect",
-                "schuss-graph-000002@1",
-            ],
-            "build-plan-gills": [
-                "build",
-                "plan",
-                "schuss-build-request-000002@5",
-            ],
-            "gills-inspect": [
-                "gills",
-                "inspect",
-                "schuss-instrument-000002@3",
-            ],
-        }
-        for name, arguments in command_cases.items():
-            explicit = [*arguments, "--record-set", str(RECORD_SET)]
-            observed["human"][name] = _digest(self.invoke(explicit)[1])
-            observed["json"][name] = _digest(self.invoke([*explicit, "--json"])[1])
         retained = core.load_json(GOLDEN)
-        self.assertEqual(retained["human"], observed["human"])
-        self.assertEqual(retained["json"], observed["json"])
-        successor_help = {
-            "root",
-            "catalog",
-            "catalog-search",
-            "catalog-inspect",
-            "project",
-            "build-plan",
-            "build-execute",
-        }
         self.assertEqual(
-            {
-                key: value
-                for key, value in retained["help"].items()
-                if key not in successor_help
-            },
-            {
-                key: value
-                for key, value in observed["help"].items()
-                if key not in successor_help
-            },
+            "3a27c68ae935c42d5ac17606ed68da6e74b5e722d1c2a5a274398905a96c7d62",
+            hashlib.sha256(GOLDEN.read_bytes()).hexdigest(),
         )
-        for key in successor_help:
-            self.assertNotEqual(retained["help"][key], observed["help"][key])
-        self.assertNotEqual(retained["completion"], observed["completion"])
+        self.assertEqual(
+            {"help", "completion", "human", "json"}, set(retained)
+        )
+        for section in retained.values():
+            self.assertTrue(section)
+            for identity in section.values():
+                self.assertGreater(identity["byte_length"], 0)
+                self.assertRegex(identity["byte_sha256"], r"^[0-9a-f]{64}$")
 
     def test_completion_shell_syntax_is_valid_when_shell_is_available(self):
         for shell, command in (("bash", ["bash", "-n"]), ("zsh", ["zsh", "-n"])):

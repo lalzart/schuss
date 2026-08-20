@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -16,6 +17,7 @@ from packages.schuss_core.product_cli import catalog_inspect_request, catalog_se
 
 import generate_task027_records as generator  # noqa: E402
 import validator_core as core  # noqa: E402
+from tools.validation.profile import requires_profile  # noqa: E402
 
 
 RECORD_SET = ROOT / "contracts/record-sets/task027-mutable-catalog-v1.json"
@@ -157,16 +159,31 @@ class Task027MutableCatalogTest(unittest.TestCase):
                 record_set_reference=copy.deepcopy(self.context.record_set_reference), core=core,
             )
 
-    def test_generated_outputs_are_fresh_and_byte_deterministic(self) -> None:
-        first_files, first_manifest, first_summary, first_projection = generator.generated()
-        second_files, second_manifest, second_summary, second_projection = generator.generated()
-        self.assertEqual(first_files, second_files)
-        self.assertEqual(first_manifest, second_manifest)
-        self.assertEqual(first_summary, second_summary)
-        self.assertEqual(first_projection, second_projection)
-        expected = {**first_files, RECORD_SET.relative_to(ROOT).as_posix(): first_manifest}
-        self.assertTrue(all((ROOT / path).read_bytes() == payload for path, payload in expected.items()))
-        self.assertEqual(first_summary["projection_sha256"], hashlib.sha256(generator._canonical_bytes(first_projection)).hexdigest())
+    @requires_profile("configured-sources")
+    def test_configured_pinned_source_bytes_match_accepted_review(self) -> None:
+        sources = generator._local_sources()
+        for entry in self.review["entries"]:
+            checkout = sources.get(entry["source_id"])
+            self.assertIsNotNone(checkout, entry["source_id"])
+            for source_path in entry["source_paths"]:
+                completed = subprocess.run(
+                    [
+                        "git",
+                        "-C",
+                        str(checkout),
+                        "show",
+                        f"{entry['commit']}:{source_path['portable_path']}",
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    check=False,
+                )
+                self.assertEqual(0, completed.returncode, completed.stderr.decode())
+                self.assertEqual(
+                    source_path["byte_sha256"],
+                    hashlib.sha256(completed.stdout).hexdigest(),
+                    entry["entry_id"],
+                )
 
 
 if __name__ == "__main__":

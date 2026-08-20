@@ -21,6 +21,7 @@ from packages.schuss_core.host_runtime import HostRuntimeError, lower_host_packa
 from packages.schuss_core.project_service import ProjectService, with_project_schemas
 from tools.contracts import record_set_rules
 from tools.contracts import validator_core as core
+from tools.validation.profile import requires_profile
 
 
 RECORD_SET = ROOT / "contracts/record-sets/task031-desktop-host-runtime-v1.json"
@@ -38,7 +39,9 @@ class Task031DesktopHostRuntimeTest(unittest.TestCase):
             ROOT,
         )
         cls.project = ProjectService(
-            FIXTURES / "reference-project", repository_root=ROOT
+            FIXTURES / "reference-project",
+            repository_root=ROOT,
+            initial_context=cls.context,
         ).load()
         cls.project_reference = {
             "project_id": cls.project.manifest["project_id"],
@@ -224,6 +227,7 @@ class Task031DesktopHostRuntimeTest(unittest.TestCase):
         self.assertFalse(smoke["evidence_boundary"]["real_time_level_7_promoted"])
         self.assertFalse(smoke["evidence_boundary"]["audible_level_8_promoted"])
 
+    @requires_profile("native")
     def test_native_runtime_build_and_offline_render_match_retained_bytes(self):
         clang = subprocess.run(
             ["/usr/bin/xcrun", "--find", "clang++"], text=True, capture_output=True
@@ -277,7 +281,11 @@ class Task031DesktopHostRuntimeTest(unittest.TestCase):
                     )
 
             service = HostRenderService(
-                ProjectService(FIXTURES / "reference-project", repository_root=ROOT),
+                ProjectService(
+                    FIXTURES / "reference-project",
+                    repository_root=ROOT,
+                    initial_context=self.context,
+                ),
                 output,
             )
             session = service.start(

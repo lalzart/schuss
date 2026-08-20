@@ -5,9 +5,12 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import unittest
+
+from tools.validation.profile import requires_profile
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -18,7 +21,10 @@ if str(TOOLS) not in sys.path:
 import validate_backbone_governance as governance
 
 
-FIXTURES = ROOT / "tools/contracts/tests/fixtures/backbone-governance-negative-fixtures.json"
+FIXTURES = (
+    ROOT
+    / "tools/contracts/tests/fixtures/task035-backbone-governance-negative-fixtures.json"
+)
 VALIDATOR = ROOT / "tools/contracts/validate_backbone_governance.py"
 
 
@@ -30,150 +36,226 @@ class BackboneGovernanceTest(unittest.TestCase):
 
     def test_live_repository_is_valid(self):
         summary = governance.validate_documents(self.documents, self.task_filenames)
-        self.assertEqual("valid", summary["status"])
-        self.assertEqual("backbone-governance-summary-v25", summary["schema_version"])
+        self.assertEqual("valid", summary["status"], summary["diagnostics"])
+        self.assertEqual("backbone-governance-summary-v27", summary["schema_version"])
         self.assertEqual([], summary["diagnostics"])
+        self.assertEqual(governance.STATE, summary["current_status_source"])
+        state = json.loads(self.documents[governance.STATE])
+        self.assertEqual(state["active_task"], summary["active_task"])
+        self.assertEqual(state["next_candidate"], summary["next_candidate"])
         self.assertEqual(
-            [
-                "ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014",
-                "ADR 0015", "ADR 0016", "ADR 0017",
-            ],
-            summary["authoritative_decisions"],
+            state["authoritative_decisions"], summary["authoritative_decisions"]
         )
         self.assertEqual(
-            "task033-phase1-complete-phase2-not-started",
-            summary["active_product_task"],
-        )
-        self.assertEqual(
-            "022-failed-diagnostic-promotion-stopped",
-            summary["active_evidence_task"],
-        )
-        self.assertEqual(
-            "next-numbered-task-requires-explicit-contract-and-activation",
-            summary["promotion_gate"],
-        )
-        self.assertEqual(
-            [
-                "013", "014", "015", "016", "017", "018", "019", "020",
-                "021", "022", "023", "024", "025", "026", "027", "028",
-                "029", "030", "031", "032", "033", "034",
-            ],
-            summary["active_task_sequence"],
-        )
-        self.assertEqual(
-            "none-selected",
-            summary["next_planned_task"],
-        )
-        self.assertEqual(
-            [],
-            summary["planned_task_sequence"],
-        )
-        self.assertEqual("complete-mapped-local-level-5", summary["task_statuses"]["018"])
-        self.assertEqual(
-            "complete-corrected-connected-level-6",
-            summary["task_statuses"]["021"],
-        )
-        self.assertEqual(
-            "failed-connected-diagnostic-level-6-not-earned",
-            summary["task_statuses"]["022"],
-        )
-        self.assertEqual(
-            "complete-application-surface-cli-v2",
-            summary["task_statuses"]["023"],
-        )
-        self.assertEqual(
-            "complete-current-ksoloti-catalog-lineage-level-2",
-            summary["task_statuses"]["024"],
-        )
-        self.assertEqual(
-            "complete-fail-closed-partial-level-2",
-            summary["task_statuses"]["025"],
-        )
-        self.assertEqual(
-            "complete-reverb-free-authoring-level-5",
-            summary["task_statuses"]["026"],
-        )
-        self.assertEqual(
-            "complete-mutable-catalog-provenance-level-2",
-            summary["task_statuses"]["027"],
-        )
-        self.assertEqual(
-            "complete-twenty-item-direct-palette-level-3",
-            summary["task_statuses"]["028"],
-        )
-        self.assertEqual(
-            "complete-machine-inspection-level-1",
-            summary["task_statuses"]["029"],
-        )
-        self.assertEqual(
-            "complete-mutable-catalog-cohort-level-2-cli-v3",
-            summary["task_statuses"]["030"],
-        )
-        self.assertEqual(
-            "complete-desktop-host-bounded-observation-no-level7-or-audible-promotion",
-            summary["task_statuses"]["031"],
-        )
-        self.assertEqual(
-            "complete-variable-graph-host-runtime-reset-state-replacement-no-level7-or-audible-promotion",
-            summary["task_statuses"]["032"],
-        )
-        self.assertEqual(
-            "phase1-complete-audits-and-adr-phase2-not-started",
-            summary["task_statuses"]["033"],
-        )
-        self.assertEqual(
-            "complete-structural-performance-control-no-execution-or-device-promotion",
-            summary["task_statuses"]["034"],
-        )
-        self.assertEqual(
-            "unnumbered-desktop-workspace-shell-implemented-locally-target-hardware-publication-gated",
-            summary["ui_milestone_status"],
+            governance._derived_task_statuses(state), summary["task_statuses"]
         )
 
-    def test_negative_governance_fixtures_fail_closed(self):
+    def test_structured_negative_fixtures_fail_closed(self):
         self.assertEqual(
-            "backbone-governance-negative-fixtures-v8", self.fixtures["schema_version"]
+            "backbone-governance-negative-fixtures-v11",
+            self.fixtures["schema_version"],
         )
         for fixture in self.fixtures["cases"]:
             with self.subTest(case=fixture["name"]):
                 documents = copy.deepcopy(self.documents)
                 path = fixture["path"]
                 self.assertEqual(1, documents[path].count(fixture["old"]))
-                documents[path] = documents[path].replace(fixture["old"], fixture["new"], 1)
-                summary = governance.validate_documents(documents, self.task_filenames)
-                codes = {diagnostic["code"] for diagnostic in summary["diagnostics"]}
+                documents[path] = documents[path].replace(
+                    fixture["old"], fixture["new"], 1
+                )
+                summary = governance.validate_documents(
+                    documents, self.task_filenames
+                )
                 self.assertEqual("invalid", summary["status"])
-                self.assertIn(fixture["expected_code"], codes)
+                self.assertIn(
+                    fixture["expected_code"],
+                    {item["code"] for item in summary["diagnostics"]},
+                )
 
-    def test_valid_history_does_not_trigger_alias_or_ui_diagnostics(self):
-        history = " ".join(self.documents[governance.ADR_0009].split())
-        self.assertIn("Task 012B becomes the immediate task", history)
-        self.assertIn("Tasks 013A-013D and B6 remain planned", history)
-        summary = governance.validate_documents(self.documents, self.task_filenames)
-        codes = {diagnostic["code"] for diagnostic in summary["diagnostics"]}
-        self.assertNotIn("LETTERED_TASK_ALIAS_PRESENT", codes)
-        self.assertNotIn("INFORMAL_TASK_ALIAS_PRESENT", codes)
-        self.assertNotIn("TASK_012B_UI_RESURRECTED", codes)
+    def test_active_state_and_contract_shape_fail_closed_without_fixed_task_literals(self):
+        state = json.loads(self.documents[governance.STATE])
+        active = state["active_task"]
+        self.assertIsNotNone(active)
+
+        invalid_state = copy.deepcopy(state)
+        invalid_state["active_task"]["status"] = "complete-local"
+        documents = copy.deepcopy(self.documents)
+        documents[governance.STATE] = json.dumps(invalid_state, indent=2) + "\n"
+        summary = governance.validate_documents(documents, self.task_filenames)
+        self.assertIn(
+            "ACTIVE_TASK_INVALID",
+            {item["code"] for item in summary["diagnostics"]},
+        )
 
         documents = copy.deepcopy(self.documents)
-        documents[governance.HISTORY] += (
-            "\nHistorical note: Task 013A and B6 were superseded planning labels.\n"
+        contract = active["contract"]
+        self.assertEqual(1, documents[contract].count("## Acceptance tests"))
+        documents[contract] = documents[contract].replace(
+            "## Acceptance tests", "## Informal checks", 1
         )
         summary = governance.validate_documents(documents, self.task_filenames)
-        self.assertEqual("valid", summary["status"])
-
-    def test_missing_document_and_aliased_filename_fail_closed(self):
-        documents = copy.deepcopy(self.documents)
-        documents.pop(governance.ADR_0012)
-        summary = governance.validate_documents(
-            documents, [*self.task_filenames, "013a-reintroduced-compiler-task.md"]
+        self.assertIn(
+            "TASK_CONTRACT_INCOMPLETE",
+            {item["code"] for item in summary["diagnostics"]},
         )
-        codes = {diagnostic["code"] for diagnostic in summary["diagnostics"]}
-        self.assertIn("GOVERNANCE_DOCUMENT_MISSING", codes)
-        self.assertIn("TASK_ARCHIVE_POLICY_VIOLATION", codes)
 
-    def test_cli_summary_is_deterministic_one_line_and_read_only(self):
-        governed_paths = [ROOT / path for path in governance.DOCUMENT_PATHS]
+    def test_active_phase_and_cross_field_work_units_are_structural(self):
+        state = json.loads(self.documents[governance.STATE])
+        phased = copy.deepcopy(state)
+        phased["active_task"]["phase"] = 3
+        diagnostics = []
+        governance._validate_state(phased, self.documents, diagnostics)
+        self.assertNotIn("ACTIVE_TASK_INVALID", {item["code"] for item in diagnostics})
+
+        active = state["active_task"]
+        mutations = []
+        duplicated_next = copy.deepcopy(state)
+        duplicated_next["next_candidate"] = {
+            "task_id": active["task_id"],
+            "phase": active["phase"],
+            "status": "not-activated",
+        }
+        mutations.append(duplicated_next)
+        completed_active = copy.deepcopy(state)
+        completed_active["recent_completed_milestones"].append(
+            {
+                "task_id": active["task_id"],
+                "phase": active["phase"],
+                "status": "complete-local",
+                "commit": active["baseline_commit"],
+            }
+        )
+        mutations.append(completed_active)
+        deferred_active = copy.deepcopy(state)
+        deferred_active["deferred_tasks"].append(active["task_id"])
+        mutations.append(deferred_active)
+        for mutated in mutations:
+            with self.subTest(mutated=mutated):
+                documents = copy.deepcopy(self.documents)
+                documents[governance.STATE] = json.dumps(mutated, indent=2) + "\n"
+                summary = governance.validate_documents(
+                    documents, self.task_filenames
+                )
+                self.assertIn(
+                    "WORK_UNIT_STATE_INVALID",
+                    {item["code"] for item in summary["diagnostics"]},
+                )
+
+    def test_active_status_transition_requires_matching_status_prose(self):
+        def replace_in_section(text, heading, old, new):
+            marker = f"## {heading}"
+            prefix, remainder = text.split(marker, 1)
+            section, separator, tail = remainder.partition("\n## ")
+            self.assertIn(old, section)
+            section = section.replace(old, new, 1)
+            suffix = "" if not separator else "\n## " + tail
+            return prefix + marker + section + suffix
+
+        documents = copy.deepcopy(self.documents)
+        state = json.loads(documents[governance.STATE])
+        old_marker = governance.routing_marker(state)
+        live_status = state["active_task"]["status"]
+        alternate_status = (
+            "review-ready" if live_status == "in-progress" else "in-progress"
+        )
+        phrases = {"in-progress": "in progress", "review-ready": "review-ready"}
+        state["active_task"]["status"] = alternate_status
+        new_marker = governance.routing_marker(state)
+        documents[governance.STATE] = json.dumps(state, indent=2) + "\n"
+        for path in (governance.STATUS, governance.ROADMAP, governance.TASKS_INDEX):
+            documents[path] = documents[path].replace(old_marker, new_marker, 1)
+        contract = state["active_task"]["contract"]
+        documents[contract], count = re.subn(
+            re.escape(phrases[live_status]).replace(r"\ ", r"\s+"),
+            phrases[alternate_status],
+            documents[contract],
+            count=1,
+        )
+        self.assertEqual(1, count)
+        headings = {
+            governance.STATUS: "Current work",
+            governance.ROADMAP: "Active maintenance",
+            governance.TASKS_INDEX: "Active",
+        }
+        for path, heading in headings.items():
+            documents[path] = replace_in_section(
+                documents[path],
+                heading,
+                phrases[live_status],
+                phrases[alternate_status],
+            )
+        coherent = governance.validate_documents(documents, self.task_filenames)
+        self.assertEqual("valid", coherent["status"], coherent["diagnostics"])
+
+        stale_documents = copy.deepcopy(documents)
+        stale_documents[governance.TASKS_INDEX] = replace_in_section(
+            stale_documents[governance.TASKS_INDEX],
+            headings[governance.TASKS_INDEX],
+            phrases[alternate_status],
+            phrases[live_status],
+        )
+        stale = governance.validate_documents(stale_documents, self.task_filenames)
+        self.assertIn(
+            "GOVERNANCE_INDEX_INVALID",
+            {item["code"] for item in stale["diagnostics"]},
+        )
+
+    def test_no_active_task_transition_requires_clean_active_sections(self):
+        def replace_section(text, heading, body):
+            marker = f"## {heading}"
+            prefix, remainder = text.split(marker, 1)
+            section, separator, tail = remainder.partition("\n## ")
+            del section
+            suffix = "" if not separator else "\n## " + tail
+            return prefix + marker + "\n\n" + body + "\n" + suffix
+
+        documents = copy.deepcopy(self.documents)
+        state = json.loads(documents[governance.STATE])
+        old_marker = governance.routing_marker(state)
+        state["active_task"] = None
+        new_marker = governance.routing_marker(state)
+        documents[governance.STATE] = json.dumps(state, indent=2) + "\n"
+        for path in (governance.STATUS, governance.ROADMAP, governance.TASKS_INDEX):
+            documents[path] = documents[path].replace(old_marker, new_marker, 1)
+        documents[governance.STATUS] = replace_section(
+            documents[governance.STATUS], "Current work", "There is no active task."
+        )
+        documents[governance.ROADMAP] = replace_section(
+            documents[governance.ROADMAP],
+            "Active maintenance",
+            "There is no active task.",
+        )
+        documents[governance.TASKS_INDEX] = replace_section(
+            documents[governance.TASKS_INDEX], "Active", "There is no active task."
+        )
+        summary = governance.validate_documents(documents, self.task_filenames)
+        self.assertEqual("valid", summary["status"], summary["diagnostics"])
+
+    def test_historical_aliases_and_new_archive_files_are_not_live_routing(self):
+        documents = copy.deepcopy(self.documents)
+        documents[governance.HISTORY] += (
+            "\nHistorical note: Task 013A and B6 were superseded labels.\n"
+        )
+        summary = governance.validate_documents(
+            documents, [*self.task_filenames, "research-note.md"]
+        )
+        self.assertEqual("valid", summary["status"], summary["diagnostics"])
+
+    def test_missing_document_and_live_aliased_filename_fail_closed(self):
+        documents = copy.deepcopy(self.documents)
+        adr0012 = next(
+            path for path in documents if path.startswith("docs/decisions/0012-")
+        )
+        documents.pop(adr0012)
+        summary = governance.validate_documents(
+            documents, [*self.task_filenames, "013a-reintroduced-task.md"]
+        )
+        codes = {item["code"] for item in summary["diagnostics"]}
+        self.assertIn("AUTHORITATIVE_DECISION_INVALID", codes)
+        self.assertIn("TASK_FILENAME_INVALID", codes)
+
+    def test_in_process_summary_is_deterministic_and_read_only(self):
+        governed_paths = [ROOT / path for path in self.documents]
 
         def snapshot():
             return {
@@ -186,6 +268,19 @@ class BackboneGovernanceTest(unittest.TestCase):
             }
 
         before = snapshot()
+        first = governance.summary_bytes(
+            governance.validate_documents(self.documents, self.task_filenames)
+        )
+        second = governance.summary_bytes(
+            governance.validate_documents(self.documents, self.task_filenames)
+        )
+        self.assertEqual(first, second)
+        self.assertEqual(1, first.count(b"\n"))
+        self.assertEqual("valid", json.loads(first)["status"])
+        self.assertEqual(before, snapshot())
+
+    @requires_profile("reproduction")
+    def test_cli_summary_is_deterministic_across_working_directories(self):
         environment = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
         first = subprocess.run(
             [sys.executable, str(VALIDATOR)],
@@ -206,7 +301,6 @@ class BackboneGovernanceTest(unittest.TestCase):
         self.assertEqual(first.stdout, second.stdout)
         self.assertEqual(1, first.stdout.count(b"\n"))
         self.assertEqual("valid", json.loads(first.stdout)["status"])
-        self.assertEqual(before, snapshot())
 
 
 if __name__ == "__main__":

@@ -13,7 +13,9 @@ and independently versioned.
 
 ## Current direction
 
-[Development status](docs/STATUS.md) is the sole current-status authority.
+[`docs/governance/current-state.json`](docs/governance/current-state.json) is
+the current routing authority; [Development status](docs/STATUS.md) is its
+plain-language summary.
 Schuss has a persistent project model, shared CLI operations, a reusable
 compiler front half, exact build execution, and deterministic direct ARM
 compile/link evidence for one eight-node Gills slice. The
@@ -87,12 +89,17 @@ Task 034 is complete locally for exact record set
 and performance-control semantics from exact Gills and portable MIDI
 configurations, and adds shared read-only inspection without executing the
 control graph.
-Task 033 Phase 1 is complete under
+Task 033 Phases 1 and 2 are complete locally under
 [ADR 0017](docs/decisions/0017-separate-object-collections-from-implementation-providers.md).
-It retains exact Mutable-derived and pinned-JUCE audits while keeping source
-collections, catalog implementations, providers, and runtime factories
-separate. No object support or JUCE runtime dependency follows from those
-audits; later Task 033 phases remain unstarted.
+Phase 1 retains exact Mutable-derived and pinned-JUCE audits; Phase 2 adds
+source releases, object collections, provider availability, seven exact native
+catalog companions, and shared read-only inspection in record set
+`schuss-record-set-000031@1`. No JUCE runtime dependency follows from this work;
+Task 033 Phases 3 and 4 remain unstarted.
+Task 035 is the active review-ready maintenance task. It adopts proportional
+validation profiles under
+[ADR 0018](docs/decisions/0018-adopt-proportional-validation.md) and allocates
+no product semantics.
 The explicitly authorized unnumbered desktop lane is locally implemented
 through its build/device workflow. `apps/schuss_desktop/` is the sole maintained
 React/Tauri product UI: it combines object browsing and project-backed node
@@ -237,45 +244,29 @@ mode and exact safety/evidence limits.
 
 ## Local validation
 
-The ordinary Python suites and current routing guards are read only:
+The profile runner keeps routine, compatibility, configured-source, native,
+and copied-root work explicit:
 
 ```bash
-python3 -m unittest discover -s tools/inventory/tests
-python3 -m unittest discover -s tools/catalog/tests
-python3 -m unittest discover -s tools/contracts/tests
-python3 -m unittest tools.contracts.tests.test_mcp_read_only_server
-python3 -m unittest tools.contracts.tests.test_ai_sonic_authoring
-python3 tools/contracts/generate_ai_sonic_authoring_records.py --check
-python3 tools/contracts/generate_task031_records.py --check
-python3 tools/contracts/generate_task031_fixtures.py --check
-python3 tools/contracts/validate_backbone_governance.py
-python3 tools/contracts/validate_task018_contract.py
-python3 tools/contracts/validate_task021_contract.py
-python3 tools/contracts/validate_task022_contract.py
-python3 tools/contracts/validate_task023_contract.py
-python3 tools/contracts/generate_task023_records.py --check
-python3 tools/contracts/validate_task023.py
-python3 tools/contracts/validate_task024_contract.py
-python3 tools/contracts/generate_task024_records.py --check
-python3 tools/contracts/validate_task024.py
-python3 tools/contracts/validate_task025_contract.py
-python3 tools/contracts/generate_task025_records.py --check
-python3 tools/contracts/generate_task025_evidence.py --check
-python3 tools/contracts/validate_task025.py
-python3 tools/contracts/validate_task027_contract.py
-python3 tools/contracts/generate_task027_records.py --check
-python3 tools/contracts/validate_task027.py
-python3 tools/contracts/validate_task028_contract.py
-python3 tools/contracts/generate_task028_records.py --check
-python3 tools/contracts/validate_task028.py
-python3 tools/contracts/validate_task022.py
+python3 tools/validation/run.py --profile current
+python3 tools/validation/run.py --profile compatibility
+python3 tools/validation/run.py --profile configured-sources
+python3 tools/validation/run.py --profile native
+python3 tools/validation/run.py --profile reproduction
+python3 tools/validation/run.py --profile release
 ```
 
-Some authenticated legacy checks additionally require the ignored local Task
-009 content store. Their absence in a clean checkout is not evidence failure or
-success; run the explicitly documented authenticated validators when that
-store is available. No ordinary validation command uploads, flashes, or writes
-hardware.
+Run only profiles affected by the change unless the active contract or a
+release requires the composed `release` profile. Use `--plan` to inspect a
+profile without running it, or repeat `--only CHECK_ID` to select exact checks.
+The `current` profile performs no native compilation, long render matrix, or
+copied-root reproduction; compatibility coverage may retain small subprocess or
+temporary-root boundary tests where isolation is itself the contract. The
+`release` profile composes current, compatibility, native, and reproduction
+checks. Configured-source checks remain orthogonal and run only when a task
+affects those inputs. Missing ignored source configuration is an explicit
+not-run prerequisite, never a pass. No validation profile performs hardware or
+network actions.
 
 ## Repository map
 

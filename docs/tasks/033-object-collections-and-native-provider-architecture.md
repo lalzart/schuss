@@ -1,14 +1,12 @@
 # Task 033: Source-neutral object collections and native implementation providers
 
-Status: explicitly activated by the user on 2026-08-20. Phase 1 is implemented
-and passes its focused audit validation. Task 034's validated successor is now
-integrated into local `main` at commit `6010f29`. The serialization gate is
-therefore open for a separately frozen Phase 2 allocation, but Phase 2 has not
-started and Task 033 has not yet reserved a stable ID, schema version,
-operation version, application capability version, or semantic record set.
-Activation authorizes only the implementation described by this contract; it
-does not authorize a source import, dependency change, device action, Git
-publication, or UI change.
+Status: explicitly activated by the user on 2026-08-20. Phase 1 and Phase 2
+implementation are complete locally. Phase 1 is retained at commit `5dccfd2`;
+Phase 2 is retained at commit `ccafc1d` with exact successor record set
+`schuss-record-set-000031@1`. Phases 3 and 4 have not started and are not
+activated. Task 035 temporarily owns validation/governance consolidation before
+any Phase 3 work. This status authorizes no source import, dependency change,
+device action, Git publication, or UI change.
 
 Task 034 owns the accepted parent semantic record set and shared operation/
 governance versions. Its integrated result is
@@ -22,9 +20,10 @@ it. Task numbering does not override record-set ancestry.
 Phase 2 was explicitly started by the user on 2026-08-20 in isolated worktree
 `codex/task033-phase2-collection-provider-contracts`. The exact allocation
 below was frozen against local `main` commit `2be7eb7` before any shared
-semantic implementation file was changed. Phase 2 implementation, validation,
-and review remain in progress; no commit, push, UI, source import, dependency
-change, or hardware action is authorized by this status.
+semantic implementation file was changed. Its implementation, focused and
+adjacent validation, reproduction, and review completed at `ccafc1d`. No push,
+UI, source import, dependency change, or hardware action followed from that
+completion.
 
 ## Goal and why it exists
 
@@ -313,9 +312,9 @@ owns record set `schuss-record-set-000030@1` at content hash
 operation/result v17, application capability v10, instrument v1, performance
 schemas, and shared semantic/governance integration. The reviewed result was
 committed as `6010f29` and fast-forwarded into local `main` on 2026-08-20.
-Phases 2-4 are no longer blocked by Task 034 ownership, but remain unimplemented;
-Phase 2 must freeze exact successor allocations before changing shared
-semantics.
+At that point Phases 2-4 were no longer blocked by Task 034 ownership. Phase 2
+subsequently froze the allocation below and completed at `ccafc1d`; Phases 3
+and 4 remain unimplemented and unactivated.
 
 Phase 1 produced and focused-validated:
 

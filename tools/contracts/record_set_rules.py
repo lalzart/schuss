@@ -1,10 +1,18 @@
-"""Exact accepted/prospective record-set loading for the Task 009 prerequisite."""
+"""Exact accepted/prospective record-set loading.
+
+One manifest is a cumulative snapshot.  Parent manifests authenticate the
+snapshot's ancestry, but their members are already present byte-for-byte in the
+selected snapshot.  A top-level load therefore validates the selected member
+union once and validates every manifest/parent edge separately.  Load-scoped
+caches only avoid duplicate filesystem work inside that one call; later calls
+always observe the filesystem again.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 import validator_core as core
 
@@ -80,15 +88,6 @@ class LoadedRecordSet:
         }
 
 
-def _repository_path(repository_root: Path, portable_path: str) -> Path:
-    path = repository_root / portable_path
-    try:
-        path.resolve().relative_to(repository_root.resolve())
-    except ValueError as exc:
-        raise RecordSetError(f"record-set path escapes repository: {portable_path}") from exc
-    return path
-
-
 def _schema_version(schema: dict[str, Any]) -> str:
     identity = schema.get("$id")
     if not isinstance(identity, str) or not identity.endswith(".schema.json"):
@@ -106,7 +105,245 @@ def _stable_id(record: dict[str, Any]) -> str:
 def _exact_file_members(directory: Path) -> set[Path]:
     if not directory.is_dir():
         raise RecordSetError(f"enforced record directory is missing: {directory}")
-    return {path.resolve() for path in directory.glob("*.json") if path.is_file()}
+    members: set[Path] = set()
+    for path in directory.glob("*.json"):
+        if path.is_symlink():
+            raise RecordSetError(f"enforced record directory contains a symlink: {path}")
+        if path.is_file():
+            members.add(path.resolve())
+    return members
+
+
+@dataclass
+class _LoadSession:
+    repository_root: Path
+    record_set_schema: dict[str, Any]
+    resolved_paths: dict[str, Path]
+    raw_manifests: dict[Path, dict[str, Any]]
+    validated_manifests: dict[Path, dict[str, Any]]
+    candidate_directories: dict[Path, tuple[tuple[Path, dict[str, Any]], ...]]
+    directory_members: dict[Path, frozenset[Path]]
+
+    @classmethod
+    def create(cls, repository_root: Path) -> "_LoadSession":
+        root = repository_root.resolve()
+        schema = core.load_json(root / RECORD_SET_SCHEMA)
+        return cls(root, schema, {}, {}, {}, {}, {})
+
+    def repository_path(self, portable_path: str) -> Path:
+        cached = self.resolved_paths.get(portable_path)
+        if cached is not None:
+            return cached
+        resolved = self.contained_path(self.repository_root / portable_path)
+        self.resolved_paths[portable_path] = resolved
+        return resolved
+
+    def contained_path(self, path: Path) -> Path:
+        resolved = path.resolve()
+        try:
+            resolved.relative_to(self.repository_root)
+        except ValueError as exc:
+            raise RecordSetError(
+                f"record-set path escapes repository: {path}"
+            ) from exc
+        return resolved
+
+    def manifest(self, path: Path) -> dict[str, Any]:
+        resolved = self.contained_path(path)
+        cached = self.validated_manifests.get(resolved)
+        if cached is not None:
+            return cached
+        value = self.raw_manifests.get(resolved)
+        if value is None:
+            value = core.load_json(resolved)
+            if not isinstance(value, dict):
+                raise RecordSetError("record-set manifest must be a JSON object")
+            self.raw_manifests[resolved] = value
+        errors = core.validate_schema_annotations(
+            self.record_set_schema
+        ) + core.schema_errors(value, self.record_set_schema, self.record_set_schema)
+        if errors:
+            raise RecordSetError(
+                "record-set schema validation failed: " + "; ".join(errors)
+            )
+        expected_hash = core.record_content_hash(value, self.record_set_schema)
+        if value["content_hash"] != expected_hash:
+            raise RecordSetError("record-set content hash mismatch")
+        self.validated_manifests[resolved] = value
+        return value
+
+    def candidates(self, directory: Path) -> tuple[tuple[Path, dict[str, Any]], ...]:
+        resolved_directory = self.contained_path(directory)
+        cached = self.candidate_directories.get(resolved_directory)
+        if cached is not None:
+            return cached
+        values: list[tuple[Path, dict[str, Any]]] = []
+        for candidate in sorted(resolved_directory.glob("*.json")):
+            resolved = self.contained_path(candidate)
+            try:
+                value = core.load_json(resolved)
+            except (OSError, core.DuplicateJsonMemberError, ValueError):
+                continue
+            if not isinstance(value, dict):
+                continue
+            self.raw_manifests.setdefault(resolved, value)
+            values.append((resolved, value))
+        result = tuple(values)
+        self.candidate_directories[resolved_directory] = result
+        return result
+
+    def exact_directory_members(self, directory: Path) -> frozenset[Path]:
+        resolved = self.contained_path(directory)
+        cached = self.directory_members.get(resolved)
+        if cached is not None:
+            return cached
+        members = frozenset(_exact_file_members(resolved))
+        self.directory_members[resolved] = members
+        return members
+
+
+def _manifest_reference(manifest: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "record_set_id": manifest["record_set_id"],
+        "revision": manifest["revision"],
+        "content_hash": manifest["content_hash"],
+    }
+
+
+def _schema_member_keys(manifest: dict[str, Any]) -> set[tuple[str, str, str]]:
+    return {
+        (item["schema_version"], item["portable_path"], item["byte_sha256"])
+        for item in manifest["schema_members"]
+    }
+
+
+def _record_member_keys(
+    manifest: dict[str, Any],
+) -> set[tuple[str, str, int, str, str, str]]:
+    fields = (
+        "record_kind",
+        "stable_id",
+        "revision",
+        "content_hash",
+        "portable_path",
+        "byte_sha256",
+    )
+    return {tuple(item[key] for key in fields) for item in manifest["record_members"]}
+
+
+def _record_member_key(member: dict[str, Any]) -> tuple[str, str, int, str, str, str]:
+    fields = (
+        "record_kind",
+        "stable_id",
+        "revision",
+        "content_hash",
+        "portable_path",
+        "byte_sha256",
+    )
+    return tuple(member[key] for key in fields)
+
+
+def _validate_enforced_directories(
+    session: _LoadSession,
+    manifest: dict[str, Any],
+) -> None:
+    listed_record_paths = {
+        session.repository_path(member["portable_path"])
+        for member in manifest["record_members"]
+    }
+    for portable_directory in manifest["enforced_directories"]:
+        directory = session.repository_path(portable_directory)
+        actual = session.exact_directory_members(directory)
+        expected = {
+            path for path in listed_record_paths if path.parent == directory
+        }
+        if actual != expected:
+            missing = sorted(path.name for path in expected - actual)
+            extra = sorted(path.name for path in actual - expected)
+            raise RecordSetError(
+                f"enforced directory membership mismatch: {portable_directory}; "
+                f"missing={missing}; extra={extra}"
+            )
+
+
+def _resolve_parent_path(
+    session: _LoadSession,
+    manifest_path: Path,
+    parent: dict[str, Any],
+    override: Path | None,
+) -> Path:
+    if override is not None:
+        return (
+            override.resolve()
+            if override.is_absolute()
+            else (session.repository_root / override).resolve()
+        )
+    expected = {
+        key: parent[key] for key in ("record_set_id", "revision", "content_hash")
+    }
+    candidates = [
+        path
+        for path, value in session.candidates(manifest_path.parent)
+        if path != manifest_path.resolve()
+        and {key: value.get(key) for key in expected} == expected
+    ]
+    if len(candidates) != 1:
+        raise RecordSetError("prospective parent manifest must resolve exactly once")
+    return candidates[0]
+
+
+def _validate_parent_chain(
+    session: _LoadSession,
+    selected_path: Path,
+    selected_manifest: dict[str, Any],
+    accepted_manifest_path: Path | None,
+    selected_record_schema_versions: dict[
+        tuple[str, str, int, str, str, str], str
+    ],
+) -> None:
+    path = selected_path.resolve()
+    manifest = selected_manifest
+    visited = {path}
+    first = True
+    while manifest["purpose"] == "prospective-task":
+        parent = manifest["parent_reference"]
+        if parent["status"] != "included":
+            raise RecordSetError("prospective record set must name an accepted parent")
+        parent_path = _resolve_parent_path(
+            session,
+            path,
+            parent,
+            accepted_manifest_path if first else None,
+        )
+        first = False
+        if parent_path in visited:
+            raise RecordSetError("record-set parent cycle")
+        parent_manifest = session.manifest(parent_path)
+        if parent != {"status": "included", **_manifest_reference(parent_manifest)}:
+            raise RecordSetError("prospective parent reference mismatch")
+        if not _schema_member_keys(parent_manifest) <= _schema_member_keys(manifest):
+            raise RecordSetError(
+                "prospective view changes or omits accepted parent members"
+            )
+        if not _record_member_keys(parent_manifest) <= _record_member_keys(manifest):
+            raise RecordSetError(
+                "prospective view changes or omits accepted parent members"
+            )
+        parent_schema_versions = {
+            item["schema_version"] for item in parent_manifest["schema_members"]
+        }
+        for member in parent_manifest["record_members"]:
+            record_version = selected_record_schema_versions[_record_member_key(member)]
+            if record_version not in parent_schema_versions:
+                raise RecordSetError(
+                    f"parent record schema is not listed: {member['portable_path']}"
+                )
+        _validate_enforced_directories(session, parent_manifest)
+        visited.add(parent_path)
+        path = parent_path
+        manifest = parent_manifest
+    if manifest["parent_reference"] != {"status": "omitted"}:
+        raise RecordSetError("accepted baseline must omit its parent reference")
 
 
 def load_record_set(
@@ -115,17 +352,14 @@ def load_record_set(
     *,
     accepted_manifest_path: Path | None = None,
 ) -> LoadedRecordSet:
-    repository_root = repository_root.resolve()
-    manifest_path = manifest_path if manifest_path.is_absolute() else repository_root / manifest_path
-    schema_path = repository_root / RECORD_SET_SCHEMA
-    schema = core.load_json(schema_path)
-    manifest = core.load_json(manifest_path)
-    errors = core.validate_schema_annotations(schema) + core.schema_errors(manifest, schema, schema)
-    if errors:
-        raise RecordSetError("record-set schema validation failed: " + "; ".join(errors))
-    expected_hash = core.record_content_hash(manifest, schema)
-    if manifest["content_hash"] != expected_hash:
-        raise RecordSetError("record-set content hash mismatch")
+    session = _LoadSession.create(repository_root)
+    repository_root = session.repository_root
+    manifest_path = session.contained_path(
+        manifest_path.resolve()
+        if manifest_path.is_absolute()
+        else (repository_root / manifest_path).resolve()
+    )
+    manifest = session.manifest(manifest_path)
 
     schema_members: dict[str, dict[str, Any]] = {}
     schema_paths: dict[str, Path] = {}
@@ -134,10 +368,10 @@ def load_record_set(
         version = member["schema_version"]
         if version in schema_members:
             raise RecordSetError(f"duplicate schema member: {version}")
-        path = _repository_path(repository_root, member["portable_path"])
-        if path.resolve() in listed_paths:
+        path = session.repository_path(member["portable_path"])
+        if path in listed_paths:
             raise RecordSetError(f"duplicate record-set path: {member['portable_path']}")
-        listed_paths.add(path.resolve())
+        listed_paths.add(path)
         if not path.is_file() or core.sha256_file(path) != member["byte_sha256"]:
             raise RecordSetError(f"schema member missing or hash-mismatched: {member['portable_path']}")
         value = core.load_json(path)
@@ -153,11 +387,14 @@ def load_record_set(
     record_paths: dict[str, list[Path]] = {}
     exact_keys: set[tuple[str, str, int, str]] = set()
     stable_revisions: dict[tuple[str, str, int], str] = {}
+    selected_record_schema_versions: dict[
+        tuple[str, str, int, str, str, str], str
+    ] = {}
     for member in manifest["record_members"]:
-        path = _repository_path(repository_root, member["portable_path"])
-        if path.resolve() in listed_paths:
+        path = session.repository_path(member["portable_path"])
+        if path in listed_paths:
             raise RecordSetError(f"duplicate record-set path: {member['portable_path']}")
-        listed_paths.add(path.resolve())
+        listed_paths.add(path)
         if not path.is_file() or core.sha256_file(path) != member["byte_sha256"]:
             raise RecordSetError(f"record member missing or hash-mismatched: {member['portable_path']}")
         record = core.load_json(path)
@@ -180,6 +417,7 @@ def load_record_set(
             raise RecordSetError(f"record identity mismatch: {member['portable_path']}")
         if core.record_content_hash(record, record_schema) != record["content_hash"]:
             raise RecordSetError(f"record content hash mismatch: {member['portable_path']}")
+        selected_record_schema_versions[_record_member_key(member)] = version
         if actual in exact_keys:
             raise RecordSetError(f"duplicate exact record key: {actual}")
         exact_keys.add(actual)
@@ -190,71 +428,14 @@ def load_record_set(
         records.setdefault(member["record_kind"], []).append(record)
         record_paths.setdefault(member["record_kind"], []).append(path)
 
-    listed_record_paths = {
-        _repository_path(repository_root, member["portable_path"]).resolve()
-        for member in manifest["record_members"]
-    }
-    for portable_directory in manifest["enforced_directories"]:
-        directory = _repository_path(repository_root, portable_directory)
-        actual = _exact_file_members(directory)
-        expected = {path for path in listed_record_paths if path.parent == directory.resolve()}
-        if actual != expected:
-            missing = sorted(path.name for path in expected - actual)
-            extra = sorted(path.name for path in actual - expected)
-            raise RecordSetError(
-                f"enforced directory membership mismatch: {portable_directory}; missing={missing}; extra={extra}"
-            )
-
-    if manifest["purpose"] == "prospective-task":
-        parent = manifest["parent_reference"]
-        if parent["status"] != "included":
-            raise RecordSetError("prospective record set must name an accepted parent")
-        if accepted_manifest_path is not None:
-            parent_path = accepted_manifest_path
-        else:
-            candidates: list[Path] = []
-            for candidate in sorted(manifest_path.parent.glob("*.json")):
-                if candidate.resolve() == manifest_path.resolve():
-                    continue
-                try:
-                    value = core.load_json(candidate)
-                except (OSError, core.DuplicateJsonMemberError, ValueError):
-                    continue
-                reference = {
-                    key: value.get(key)
-                    for key in ("record_set_id", "revision", "content_hash")
-                }
-                if reference == {
-                    key: parent[key]
-                    for key in ("record_set_id", "revision", "content_hash")
-                }:
-                    candidates.append(candidate)
-            if len(candidates) != 1:
-                raise RecordSetError(
-                    "prospective parent manifest must resolve exactly once"
-                )
-            parent_path = candidates[0]
-        accepted = load_record_set(repository_root, parent_path)
-        if parent != {"status": "included", **accepted.reference}:
-            raise RecordSetError("prospective parent reference mismatch")
-        accepted_schemas = {
-            (item["schema_version"], item["portable_path"], item["byte_sha256"])
-            for item in accepted.manifest["schema_members"]
-        }
-        current_schemas = {
-            (item["schema_version"], item["portable_path"], item["byte_sha256"])
-            for item in manifest["schema_members"]
-        }
-        accepted_records = {
-            tuple(item[key] for key in ("record_kind", "stable_id", "revision", "content_hash", "portable_path", "byte_sha256"))
-            for item in accepted.manifest["record_members"]
-        }
-        current_records = {
-            tuple(item[key] for key in ("record_kind", "stable_id", "revision", "content_hash", "portable_path", "byte_sha256"))
-            for item in manifest["record_members"]
-        }
-        if not accepted_schemas <= current_schemas or not accepted_records <= current_records:
-            raise RecordSetError("prospective view changes or omits accepted parent members")
+    _validate_enforced_directories(session, manifest)
+    _validate_parent_chain(
+        session,
+        manifest_path,
+        manifest,
+        accepted_manifest_path,
+        selected_record_schema_versions,
+    )
 
     return LoadedRecordSet(
         manifest=manifest,

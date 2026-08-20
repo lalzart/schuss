@@ -144,14 +144,7 @@ def validate() -> dict[str, Any]:
     if effects_plan["status"] != "unsupported" or {item["code"] for item in effects_plan["diagnostics"]} != {"COMPILER_BINDING_UNSUPPORTED"}:
         raise ValueError("effects graph did not report deterministic unsupported diagnostics")
 
-    retained_files, live_summary = runner.generated()
-    stale_evidence = [
-        relative for relative, payload in retained_files.items()
-        if not (EVIDENCE_ROOT / relative).is_file()
-        or (EVIDENCE_ROOT / relative).read_bytes() != payload
-    ]
-    if stale_evidence:
-        raise ValueError("retained Task 017 evidence differs: " + ", ".join(sorted(stale_evidence)))
+    live_summary = runner.check_retained()
     if live_summary["direct_execution_performed"]:
         raise ValueError("unsupported Task 017 elements must not enter direct execution")
 

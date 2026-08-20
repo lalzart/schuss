@@ -20,3 +20,4 @@ details remain in task files unless they change a durable boundary.
 - `0015-retarget-task-027-to-mutable-catalog-provenance.md` - accepted; current Task 027 retarget and Mutable-provenance authority
 - `0016-adopt-portable-desktop-host-runtime.md` - accepted; current portable desktop host-runtime and JUCE adapter authority
 - `0017-separate-object-collections-from-implementation-providers.md` - accepted; current source-collection and implementation-provider boundary authority
+- `0018-adopt-proportional-validation.md` - accepted; current validation-profile, cost, and evidence-cadence authority

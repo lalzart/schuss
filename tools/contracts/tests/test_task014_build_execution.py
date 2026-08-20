@@ -11,6 +11,8 @@ import sys
 import tempfile
 import unittest
 
+from tools.validation.profile import requires_profile
+
 
 ROOT = Path(__file__).resolve().parents[3]
 TOOLS = ROOT / "tools/contracts"
@@ -144,6 +146,7 @@ class Task014BuildExecutionTest(unittest.TestCase):
             schema = core.load_json(ROOT / "schemas/build-execution-result-v0.schema.json")
             self.assertEqual([], core.schema_errors(result, schema, schema))
 
+    @requires_profile("reproduction")
     def test_two_fresh_roots_have_identical_portable_result(self):
         with tempfile.TemporaryDirectory() as temporary:
             first = self._execute(Path(temporary) / "a")

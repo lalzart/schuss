@@ -21,6 +21,7 @@ from packages.schuss_core import dispatch_operation, load_repository_context
 import record_set_rules
 import task009_prerequisite_rules as prerequisite
 import validator_core as core
+from tools.validation.profile import requires_profile
 
 
 class Task009PrerequisiteTest(unittest.TestCase):
@@ -69,6 +70,7 @@ class Task009PrerequisiteTest(unittest.TestCase):
         self.assertEqual(self.prospective.reference, prospective_context.record_set_reference)
         self.assertNotEqual(self.context.record_set_reference, prospective_context.record_set_reference)
 
+    @requires_profile("configured-sources")
     def test_accepted_view_preserves_operation_result_hashes(self):
         expected = {
             "records_validate": (4324, "cb0735df54a0baade54c8cc16807a94771c1e7cbbc93a6710291084fcb656543"),

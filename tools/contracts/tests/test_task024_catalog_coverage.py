@@ -18,6 +18,7 @@ from packages.schuss_core.product_cli import catalog_inspect_request, catalog_se
 
 import generate_task024_records as generator  # noqa: E402
 import validator_core as core  # noqa: E402
+from tools.validation.profile import requires_profile  # noqa: E402
 
 
 RECORD_SET = ROOT / "contracts/record-sets/task024-catalog-coverage-v1.json"
@@ -213,6 +214,7 @@ class Task024CatalogCoverageTest(unittest.TestCase):
         self.assertEqual(["axoloti-factory:delay/read interp"], inspected["value"]["family"]["current_ksoloti_base_refs"])
 
     @unittest.skipUnless(LOCAL_SOURCES.is_file(), LOCAL_SOURCE_SKIP)
+    @requires_profile("configured-sources")
     def test_generated_outputs_are_fresh_and_byte_deterministic(self) -> None:
         first_files, first_manifest, first_summary = generator.generated()
         second_files, second_manifest, second_summary = generator.generated()

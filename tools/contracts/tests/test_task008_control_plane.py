@@ -25,6 +25,7 @@ from packages.schuss_core import control_plane
 from packages.schuss_core.cli import run as run_cli
 
 import validator_core as core
+from tools.validation.profile import requires_profile
 
 
 FIXTURE_PATH = (
@@ -167,6 +168,7 @@ class Task008ControlPlaneTest(unittest.TestCase):
         }
         self.assertTrue(domain_names <= aggregate_imports)
 
+    @requires_profile("configured-sources")
     def test_all_legacy_validator_stdout_bytes_are_preserved(self):
         expected = {
             "validate_device_instrument_contracts.py": (

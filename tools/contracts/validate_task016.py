@@ -70,14 +70,7 @@ def validate() -> dict[str, object]:
     if (EVIDENCE_ROOT / "semantic-goldens.json").read_bytes() != golden_bytes:
         raise ValueError("Task 016 retained semantic goldens differ")
     verify_execution_config(DirectExecutionConfig.local_default())
-    evidence_files, live_summary = runner.generated()
-    stale_evidence = [
-        relative for relative, payload in evidence_files.items()
-        if not (EVIDENCE_ROOT / relative).is_file()
-        or (EVIDENCE_ROOT / relative).read_bytes() != payload
-    ]
-    if stale_evidence:
-        raise ValueError("Task 016 retained execution evidence differs: " + ", ".join(sorted(stale_evidence)))
+    live_summary = runner.check_retained()
     task015 = validate_task015.validate()
     if task015["status"] != "valid":
         raise ValueError("Task 015 byte-stability validation failed")

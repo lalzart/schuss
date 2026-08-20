@@ -41,6 +41,7 @@ import device_instrument_rules as device_rules  # noqa: E402
 import generate_task018_records as generator  # noqa: E402
 import gills_mapping_rules as gills_rules  # noqa: E402
 import validator_core as core  # noqa: E402
+from tools.validation.profile import requires_profile  # noqa: E402
 
 
 RECORD_SET = ROOT / "contracts/record-sets/task018-full-gills-v1.json"
@@ -284,6 +285,7 @@ class Task018GillsMappingTest(unittest.TestCase):
         self.assertFalse(summary["real_time_validation_performed"])
         self.assertFalse(summary["audible_validation_performed"])
 
+    @requires_profile("native")
     def test_product_cli_selects_only_the_exact_mapped_handler(self) -> None:
         with tempfile.TemporaryDirectory(prefix="schuss-task018-cli-") as temporary:
             output = Path(temporary) / "published"

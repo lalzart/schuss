@@ -3,11 +3,11 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -15,6 +15,9 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tools/contracts"))
+
+from compiler_determinism_matrix import copy_current_tree  # noqa: E402
 
 ARTIFACTS = (
     "contracts/record-sets/task033-phase2-collection-provider-v1.json",
@@ -74,20 +77,10 @@ def reproduce() -> dict[str, Any]:
         temporary_root = Path(temporary)
         for index, variant in enumerate(variants, start=1):
             copy_root = temporary_root / f"root-{index}"
-            shutil.copytree(
+            copy_current_tree(
                 ROOT,
                 copy_root,
-                symlinks=True,
-                ignore=shutil.ignore_patterns(
-                    ".git",
-                    "build",
-                    "node_modules",
-                    "target",
-                    "sources.local.yml",
-                    "__pycache__",
-                    ".pytest_cache",
-                    ".DS_Store",
-                ),
+                include_task009_capsule=False,
             )
             environment = os.environ.copy()
             environment.update(variant)
@@ -131,6 +124,9 @@ def reproduce() -> dict[str, Any]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--reproduce", action="store_true", required=True)
+    parser.parse_args()
     print(json.dumps(reproduce(), ensure_ascii=False, sort_keys=True, separators=(",", ":")))
     return 0
 

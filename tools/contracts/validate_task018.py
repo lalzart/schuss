@@ -186,18 +186,7 @@ def validate() -> dict[str, Any]:
         raise ValueError("deterministic host panel vectors differ")
 
     verify_execution_config(DirectExecutionConfig.local_default())
-    retained_files, live_summary = runner.generated()
-    stale_evidence = [
-        relative
-        for relative, payload in retained_files.items()
-        if not (EVIDENCE_ROOT / relative).is_file()
-        or (EVIDENCE_ROOT / relative).read_bytes() != payload
-    ]
-    if stale_evidence:
-        raise ValueError(
-            "retained Task 018 evidence differs: "
-            + ", ".join(sorted(stale_evidence))
-        )
+    live_summary = runner.check_retained()
     if [item["status"] for item in live_summary["evidence_levels"]] != (
         ["passed"] * 5 + ["not-run"] * 3
     ):
