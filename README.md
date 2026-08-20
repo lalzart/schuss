@@ -82,6 +82,17 @@ seven host node types now share one registry-based runtime, and one prepared
 successor can replace the active graph at a block boundary with reset state.
 The host DSP palette did not widen, and physical-device, general real-time,
 audible, packaging, and release claims remain separate.
+Task 034 is complete locally for exact record set
+`schuss-record-set-000030@1`. It separates controller-independent instrument
+and performance-control semantics from exact Gills and portable MIDI
+configurations, and adds shared read-only inspection without executing the
+control graph.
+Task 033 Phase 1 is complete under
+[ADR 0017](docs/decisions/0017-separate-object-collections-from-implementation-providers.md).
+It retains exact Mutable-derived and pinned-JUCE audits while keeping source
+collections, catalog implementations, providers, and runtime factories
+separate. No object support or JUCE runtime dependency follows from those
+audits; later Task 033 phases remain unstarted.
 The explicitly authorized unnumbered desktop lane is locally implemented
 through its build/device workflow. `apps/schuss_desktop/` is the sole maintained
 React/Tauri product UI: it combines object browsing and project-backed node

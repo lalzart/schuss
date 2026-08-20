@@ -24,7 +24,8 @@ portable desktop-host runtime as Task 031. Task 032 is its bounded successor:
 it removes Task 031's whole-profile restriction without widening its DSP
 palette and is now complete locally after separate activation. Task 034 is the
 separately authorized semantic performance-control successor; Task 033 was not
-allocated by this work.
+allocated by that work. Task 033 was separately activated; only its exact audit
+and architecture-decision Phase 1 is complete.
 Completion of one row does not authorize the next.
 
 | Phase | Outcome | Status |
@@ -49,6 +50,7 @@ Completion of one row does not authorize the next.
 | 30 | Complete exact Mutable-derived catalog cohort and object CLI | Complete; 56 attributed implementations, 107 families, shared CLI v3 discovery, levels 1-2 |
 | 31 | Portable desktop host runtime and headless JUCE audio/MIDI engine | Complete locally; exact seven-node offline render and one bounded Mac callback observation, with no general level-7 or audible promotion |
 | 32 | Bounded variable-graph desktop host runtime and safe patch replacement | Complete locally; bounded acyclic shapes over the existing seven host node types plus reset-state block-boundary replacement |
+| 33 | Source-neutral object collections and native implementation providers | Phase 1 complete; exact Mutable/JUCE audits and ADR 0017 accepted; Phases 2-4 unstarted |
 | 34 | Controller-independent performance graphs and explicit device bindings | Complete locally; structural device-independent instrument, shared control graph, Gills/MIDI configurations, and read-only inspection; no execution |
 | Unnumbered UI | Consolidated desktop authoring, build jobs, and Ksoloti volatile deployment | Implemented locally after explicit authorization; fake-transport acceptance only; real hardware, packaging, and publication separately gated |
 | Unnumbered AI | Sonic-first planning plus explicit project-local object and patch authoring over shared operations/MCP | Implemented locally after explicit authorization; bounded compounds/native kernels and atomic project acceptance only; no target lowering, model UX, build, device, HTTP, or publication authority |
@@ -132,6 +134,14 @@ portable MIDI CC presentations, and adds only read-only structural inspection.
 Control execution, JUCE/MIDI adapters, client UI, project migration, native
 build, hardware, real-time/resource, and audible evidence remain outside it.
 
+Task 033 Phase 1 is complete. ADR 0017 separates source releases, object
+collections, catalog implementations, implementation providers, and derived
+runtime factory descriptors. The retained audits account for the exact 56
+Mutable-derived implementations and all 39 pinned `juce_dsp` umbrella headers
+without promoting support or linking JUCE. Phase 2 remains unstarted; it must
+inherit Task 034's exact record set before allocating collection/provider
+semantics.
+
 The separately authorized unnumbered AI lane now includes the original local
 read-only MCP adapter and its sonic-first v13 successor. The default process
 offers seven read-only discovery/planning tools. One explicit absolute project
@@ -148,8 +158,9 @@ individual implementation search without adding compiler or device support.
 Both are complete. Task 031 was later authorized in full and is complete
 locally. Task 032 was then separately authorized and completed locally. Task
 034 was separately authorized and completed locally without allocating Task
-033; no next numbered task is selected and no numbered implementation lane is
-active.
+033. Task 033 was separately activated and its Phase 1 is complete; Phase 2 is
+the next candidate phase but remains unstarted. No new task is selected and no
+numbered implementation lane is active.
 
 A parent may declare children such as `023A`, `023B`, and `023C`. Those are
 exact parent-owned work packages, not aliases or independent roadmap entries;

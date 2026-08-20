@@ -29,6 +29,7 @@ ADR_0013 = "docs/decisions/0013-version-gills-runtime-correction-and-level6-evid
 ADR_0014 = "docs/decisions/0014-sequence-application-spine-and-authorize-ui-architecture.md"
 ADR_0015 = "docs/decisions/0015-retarget-task-027-to-mutable-catalog-provenance.md"
 ADR_0016 = "docs/decisions/0016-adopt-portable-desktop-host-runtime.md"
+ADR_0017 = "docs/decisions/0017-separate-object-collections-from-implementation-providers.md"
 TASK_012B = "docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md"
 TASK_018 = "docs/tasks/018-full-gills-implementation-and-parameter-control-mapping.md"
 TASK_021 = "docs/tasks/021-gills-dma-safe-oled-and-connected-device-evidence.md"
@@ -42,6 +43,7 @@ TASK_028 = "docs/tasks/028-twenty-item-direct-palette.md"
 TASK_030 = "docs/tasks/030-complete-mutable-catalog-and-object-cli.md"
 TASK_031 = "docs/DESKTOP_HOST_RUNTIME_IMPLEMENTATION_CONTRACT.md"
 TASK_032 = "docs/tasks/032-variable-graph-desktop-host-runtime.md"
+TASK_033 = "docs/tasks/033-object-collections-and-native-provider-architecture.md"
 TASK_034 = "docs/tasks/034-performance-control-graph-contracts.md"
 UI_DESKTOP_INITIALIZATION = "docs/tasks/ui-desktop-initialization.md"
 UI_DESKTOP_CATALOG = "docs/tasks/ui-desktop-read-only-catalog.md"
@@ -71,6 +73,7 @@ DOCUMENT_PATHS = (
     ADR_0014,
     ADR_0015,
     ADR_0016,
+    ADR_0017,
     TASK_012B,
     TASK_018,
     TASK_021,
@@ -84,6 +87,7 @@ DOCUMENT_PATHS = (
     TASK_030,
     TASK_031,
     TASK_032,
+    TASK_033,
     TASK_034,
     UI_DESKTOP_INITIALIZATION,
     UI_DESKTOP_CATALOG,
@@ -96,7 +100,7 @@ DOCUMENT_PATHS = (
     AI_SONIC_AUTHORING,
 )
 
-ACTIVE_SEQUENCE = (*tuple(f"{number:03d}" for number in range(13, 33)), "034")
+ACTIVE_SEQUENCE = tuple(f"{number:03d}" for number in range(13, 35))
 PLANNED_SEQUENCE: tuple[str, ...] = ()
 EXPECTED_TASK_FILENAMES = {
     "README.md",
@@ -112,6 +116,7 @@ EXPECTED_TASK_FILENAMES = {
     "028-twenty-item-direct-palette.md",
     "030-complete-mutable-catalog-and-object-cli.md",
     "032-variable-graph-desktop-host-runtime.md",
+    "033-object-collections-and-native-provider-architecture.md",
     "034-performance-control-graph-contracts.md",
     "ui-desktop-initialization.md",
     "ui-desktop-read-only-catalog.md",
@@ -219,6 +224,7 @@ def validate_documents(
         ADR_0014: "accepted",
         ADR_0015: "accepted",
         ADR_0016: "accepted",
+        ADR_0017: "accepted",
     }
     for path, expected in expected_adr_statuses.items():
         if _metadata(documents.get(path, ""), "Status") != expected:
@@ -248,6 +254,7 @@ def validate_documents(
         "`0014-sequence-application-spine-and-authorize-ui-architecture.md` - accepted; application-spine and UI-architecture authority, amended by ADR 0015 for Task 027 only",
         "`0015-retarget-task-027-to-mutable-catalog-provenance.md` - accepted; current Task 027 retarget and Mutable-provenance authority",
         "`0016-adopt-portable-desktop-host-runtime.md` - accepted; current portable desktop host-runtime and JUCE adapter authority",
+        "`0017-separate-object-collections-from-implementation-providers.md` - accepted; current source-collection and implementation-provider boundary authority",
     )
     _require_phrases(
         diagnostics,
@@ -303,6 +310,46 @@ def validate_documents(
             "Task 017 must be complete before Task 018 may create",
             "Task 017 itself depends on Task 016",
             "Task 018 may not bypass either dependency",
+        ),
+    )
+
+    task33_status = _leading_status(documents.get(TASK_033, "")) or ""
+    for fragment in (
+        "explicitly activated by the user on 2026-08-20",
+        "phase 1 is implemented",
+        "integrated into local `main` at commit `6010f29`",
+        "serialization gate is therefore open",
+        "phase 2 has not started",
+        "has not yet reserved a stable id",
+    ):
+        if fragment not in task33_status.lower():
+            diagnostics.append(
+                _diagnostic(
+                    "TASK_033_CONTRACT_INVALID",
+                    TASK_033,
+                    f"Task 033 contract status must contain: {fragment}",
+                )
+            )
+    _require_phrases(
+        diagnostics,
+        code="TASK_033_CONTRACT_INVALID",
+        document=TASK_033,
+        scope=documents.get(TASK_033, ""),
+        phrases=(
+            "## Goal and why it exists",
+            "## In scope after explicit activation",
+            "## Out of scope",
+            "## Inputs and deliverables",
+            "## Serialized implementation phases",
+            "## Validation cadence",
+            "## Acceptance tests",
+            "## Decisions Task 033 may make after activation",
+            "## Decisions Task 033 must not make",
+            "schuss-record-set-000030@1",
+            "accepted ADR 0017",
+            "56-entry Mutable audit",
+            "39-header JUCE audit",
+            "Phase 2 must freeze exact successor allocations",
         ),
     )
 
@@ -947,6 +994,11 @@ def validate_documents(
         "`instrument-v1`",
         "`performance.inspect`",
         "Control-graph execution, native build, physical-controller, real-time/resource, and audible evidence remain `not-run`",
+        "Task 033 Phase 1 is complete",
+        "ADR 0017",
+        "56-entry Mutable audit",
+        "39-header JUCE audit",
+        "Phase 2 remains unstarted",
         "The unnumbered desktop patcher implementation is locally complete",
         "The active unnumbered desktop authoring-performance slice",
         "warm repeated inspection falls from about 18.7 seconds to about 0.012 seconds",
@@ -1089,6 +1141,7 @@ def validate_documents(
         "30": "complete; 56 attributed implementations, 107 families, shared cli v3 discovery, levels 1-2",
         "31": "complete locally; exact seven-node offline render and one bounded mac callback observation",
         "32": "complete locally; bounded acyclic shapes over the existing seven host node types plus reset-state block-boundary replacement",
+        "33": "phase 1 complete; exact mutable/juce audits and adr 0017 accepted; phases 2-4 unstarted",
         "34": "complete locally; structural device-independent instrument, shared control graph, gills/midi configurations, and read-only inspection; no execution",
     }
     for label, expected in expected_roadmap_status.items():
@@ -1131,6 +1184,7 @@ def validate_documents(
             "ADR 0016 adds the portable desktop-host runtime as Task 031",
             "Task 031 is the completed bounded desktop-host successor selected by ADR 0016",
             "Task 032 was explicitly authorized and is complete locally",
+            "Task 033 Phase 1 is complete",
             "Task 034 was explicitly authorized and its implementation is complete locally",
             "Task 026 consumes the independently accepted reverb-free seven-node executable profile",
             "desktop catalog and patcher are implemented locally",
@@ -1198,6 +1252,19 @@ def validate_documents(
             "does not automatically activate any child",
         ),
     )
+    _require_phrases(
+        diagnostics,
+        code="ADR_0017_PROVIDER_BOUNDARY_DRIFT",
+        document=ADR_0017,
+        scope=_section(documents.get(ADR_0017, ""), "## Decision"),
+        phrases=(
+            "source releases, object collections, catalog implementations, component contracts, implementation providers, and runtime factory descriptors as separate owned layers",
+            "Collection names and source/library paths are browse and provenance facets",
+            "Provider selection occurs only after graph validation and target/backend selection",
+            "machine-local collection profile",
+            "Task 033 does not add or link `juce_dsp`",
+        ),
+    )
 
     adr10_decision = _normalized(_section(documents.get(ADR_0010, ""), "## Decision"))
     for number in range(13, 21):
@@ -1247,6 +1314,7 @@ def validate_documents(
         ADR_0014: documents.get(ADR_0014, ""),
         ADR_0015: documents.get(ADR_0015, ""),
         ADR_0016: documents.get(ADR_0016, ""),
+        ADR_0017: documents.get(ADR_0017, ""),
         APPLICATION_SPINE_PLAN: documents.get(APPLICATION_SPINE_PLAN, ""),
         TASK_012B: documents.get(TASK_012B, ""),
         TASK_018: documents.get(TASK_018, ""),
@@ -1261,6 +1329,7 @@ def validate_documents(
         TASK_030: documents.get(TASK_030, ""),
         TASK_031: documents.get(TASK_031, ""),
         TASK_032: documents.get(TASK_032, ""),
+        TASK_033: documents.get(TASK_033, ""),
         TASK_034: documents.get(TASK_034, ""),
         UI_DESKTOP_INITIALIZATION: documents.get(UI_DESKTOP_INITIALIZATION, ""),
         UI_DESKTOP_CATALOG: documents.get(UI_DESKTOP_CATALOG, ""),
@@ -1301,12 +1370,12 @@ def validate_documents(
 
     diagnostics.sort(key=lambda item: (item["code"], item["document"], item["detail"]))
     return {
-        "active_product_task": "task034-performance-control-implementation-complete-local",
+        "active_product_task": "task033-phase1-complete-phase2-not-started",
         "active_evidence_task": "022-failed-diagnostic-promotion-stopped",
         "active_task_sequence": list(ACTIVE_SEQUENCE),
         "authoritative_decisions": [
             "ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014", "ADR 0015",
-            "ADR 0016",
+            "ADR 0016", "ADR 0017",
         ],
         "checked_documents": len([path for path in DOCUMENT_PATHS if path in documents]),
         "current_status_source": STATUS,
@@ -1315,7 +1384,7 @@ def validate_documents(
         "next_planned_task": "none-selected",
         "planned_task_sequence": list(PLANNED_SEQUENCE),
         "promotion_gate": "next-numbered-task-requires-explicit-contract-and-activation",
-        "schema_version": "backbone-governance-summary-v24",
+        "schema_version": "backbone-governance-summary-v25",
         "status": "valid" if not diagnostics else "invalid",
         "task_statuses": {
             "012B": "retired",
@@ -1339,6 +1408,7 @@ def validate_documents(
             "030": "complete-mutable-catalog-cohort-level-2-cli-v3",
             "031": "complete-desktop-host-bounded-observation-no-level7-or-audible-promotion",
             "032": "complete-variable-graph-host-runtime-reset-state-replacement-no-level7-or-audible-promotion",
+            "033": "phase1-complete-audits-and-adr-phase2-not-started",
             "034": "complete-structural-performance-control-no-execution-or-device-promotion",
         },
         "ui_milestone_status": "unnumbered-desktop-workspace-shell-implemented-locally-target-hardware-publication-gated",

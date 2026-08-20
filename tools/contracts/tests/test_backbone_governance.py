@@ -31,17 +31,17 @@ class BackboneGovernanceTest(unittest.TestCase):
     def test_live_repository_is_valid(self):
         summary = governance.validate_documents(self.documents, self.task_filenames)
         self.assertEqual("valid", summary["status"])
-        self.assertEqual("backbone-governance-summary-v24", summary["schema_version"])
+        self.assertEqual("backbone-governance-summary-v25", summary["schema_version"])
         self.assertEqual([], summary["diagnostics"])
         self.assertEqual(
             [
                 "ADR 0010", "ADR 0011", "ADR 0012", "ADR 0013", "ADR 0014",
-                "ADR 0015", "ADR 0016",
+                "ADR 0015", "ADR 0016", "ADR 0017",
             ],
             summary["authoritative_decisions"],
         )
         self.assertEqual(
-            "task034-performance-control-implementation-complete-local",
+            "task033-phase1-complete-phase2-not-started",
             summary["active_product_task"],
         )
         self.assertEqual(
@@ -56,7 +56,7 @@ class BackboneGovernanceTest(unittest.TestCase):
             [
                 "013", "014", "015", "016", "017", "018", "019", "020",
                 "021", "022", "023", "024", "025", "026", "027", "028",
-                "029", "030", "031", "032", "034",
+                "029", "030", "031", "032", "033", "034",
             ],
             summary["active_task_sequence"],
         )
@@ -116,6 +116,10 @@ class BackboneGovernanceTest(unittest.TestCase):
         self.assertEqual(
             "complete-variable-graph-host-runtime-reset-state-replacement-no-level7-or-audible-promotion",
             summary["task_statuses"]["032"],
+        )
+        self.assertEqual(
+            "phase1-complete-audits-and-adr-phase2-not-started",
+            summary["task_statuses"]["033"],
         )
         self.assertEqual(
             "complete-structural-performance-control-no-execution-or-device-promotion",

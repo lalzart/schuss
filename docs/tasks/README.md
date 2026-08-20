@@ -54,6 +54,11 @@ contracts pending their normal archival step:
   shapes made only from the seven Task 031 node types and adds reset-state,
   block-boundary patch replacement. It adds no broader DSP palette, physical
   device, audible, packaging, or release claim.
+- `033-object-collections-and-native-provider-architecture.md` is the active
+  source-neutral collection/provider contract. Phase 1 is complete with ADR
+  0017 and exact 56-entry Mutable-derived and 39-header pinned-JUCE audits.
+  Phases 2-4 are unstarted; no provider, catalog promotion, source import, or
+  runtime dependency follows from the audits.
 - `034-performance-control-graph-contracts.md` is the locally completed
   structural performance-control contract. It adds a device-independent
   instrument successor, reusable typed control graph, exact Gills and portable
@@ -88,12 +93,14 @@ contracts pending their normal archival step:
   atomic acceptance, plus explicit project-scoped MCP tools. Target lowering,
   build/device authority, and listening claims remain absent.
 
-Tasks 023-032 and Task 034 are complete locally; Task 033 was not allocated by
-this work. ADR 0016 and the Task 031 parent contract
+Tasks 023-032 and Task 034 are complete locally; Task 034 did not allocate Task
+033. Task 033 was separately activated and only its Phase 1 audits and ADR are
+complete. ADR 0016 and the Task 031 parent contract
 define the original bounded desktop-host route; Task 032 is its separately
 authorized variable-graph and safe-replacement successor. Task 034 is the
-separately authorized structural performance-control successor. No next
-numbered task is selected. ADR 0015 retargeted the previously unstarted Task 027
+separately authorized structural performance-control successor. Task 033 Phase
+2 is the next candidate phase but remains unstarted and is not authorized by
+this status update. ADR 0015 retargeted the previously unstarted Task 027
 assignment.
 Task 028's prior transparent-compound outcome remains deferred; the original
 sessions/jobs/diagnostics outcome is deferred without a replacement number.
