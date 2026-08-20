@@ -39,6 +39,7 @@ from packages.schuss_core.product_cli import (
 
 import record_set_rules
 import validator_core as core
+from tools.validation.profile import requires_profile
 
 
 CLI = ROOT / "bin/schuss"
@@ -330,14 +331,11 @@ class Task010ProductCliTest(unittest.TestCase):
             ),
         }
 
-    def test_human_outputs_match_golden_hashes_and_keep_exact_statuses(self):
-        golden = core.load_json(GOLDEN_HASHES)["human"]
-        observed = {}
+    def test_human_outputs_keep_exact_statuses_and_portability(self):
         for name, (arguments, input_bytes) in self._human_cases().items():
             process = _process(arguments, input_bytes=input_bytes)
             self.assertIn(process.returncode, (0, 1), name)
             self.assertEqual(b"", process.stderr, name)
-            observed[name] = _digest(process.stdout)
             self.assertNotIn(b"\x1b", process.stdout)
             self.assertNotIn(b"\r", process.stdout)
             self.assertNotRegex(
@@ -355,7 +353,6 @@ class Task010ProductCliTest(unittest.TestCase):
                 b"/tmp/",
             ):
                 self.assertNotIn(forbidden, process.stdout, name)
-        self.assertEqual(golden, observed)
         self.assertIn(b"status: unresolved\n", _process(
             [
                 "build",
@@ -385,6 +382,14 @@ class Task010ProductCliTest(unittest.TestCase):
             b"audible-listening-validation",
         ):
             self.assertIn(evidence_level, validation)
+
+    @requires_profile("configured-sources")
+    def test_configured_human_outputs_match_historical_golden_hashes(self):
+        observed = {
+            name: _digest(_process(arguments, input_bytes=input_bytes).stdout)
+            for name, (arguments, input_bytes) in self._human_cases().items()
+        }
+        self.assertEqual(core.load_json(GOLDEN_HASHES)["human"], observed)
 
     def test_human_transaction_is_explicitly_non_persisted(self):
         graph = ROOT / "contracts/graphs/blend-crossfader-v0.json"
@@ -436,6 +441,7 @@ class Task010ProductCliTest(unittest.TestCase):
         self.assertEqual(b"", invalid.stderr)
         self.assertIn(b"status: invalid\n", invalid.stdout)
 
+    @requires_profile("reproduction")
     def test_human_output_is_fresh_process_cwd_locale_width_and_host_independent(self):
         arguments = ["graph", "inspect", "schuss-graph-000001@1"]
         outputs = []
@@ -972,7 +978,7 @@ class Task010ProductCliTest(unittest.TestCase):
             text = (ROOT / relative).read_text(encoding="utf-8")
             self.assertNotIn("run_task009", text)
 
-    def test_all_task005_through_task009_inputs_and_outputs_are_preserved(self):
+    def test_all_task005_through_task009_inputs_are_preserved(self):
         raw_hashes = {
             ACCEPTED: "389b82834f41e4c8b1c2058cb7a9eccba348f7922f5de6abaeadb42bfd00e7a8",
             PREREQUISITE: "1ba2baf4affe2d0e1c08ec34f54659c89e4989d184df7421cd94c8bc72507553",
@@ -1017,6 +1023,8 @@ class Task010ProductCliTest(unittest.TestCase):
         )
         self.assertEqual(0, comparison.returncode)
 
+    @requires_profile("configured-sources")
+    def test_configured_task005_through_task009_operation_hashes_are_preserved(self):
         operation_hashes = {
             "records_validate": "cb0735df54a0baade54c8cc16807a94771c1e7cbbc93a6710291084fcb656543",
             "graph_inspect": "88d5a4f52f4d3bfc31ff361ebe3a8835860e7b5890e9c9791be21cd86c179ee1",

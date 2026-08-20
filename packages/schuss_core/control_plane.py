@@ -21,6 +21,7 @@ if str(CONTRACT_TOOLS) not in sys.path:
 
 import aggregate_validator as aggregate
 import component_graph_rules as component
+import collection_provider_rules as collection_provider
 import device_instrument_rules as device
 import gills_mapping_rules as gills
 import machine_rules as machine
@@ -143,6 +144,19 @@ TASK034_SCHEMA_NAMES = {
     "performance_control_graph": "performance-control-graph-v0.schema.json",
 }
 
+TASK033_PHASE2_SCHEMA_NAMES = {
+    "application_capability_description_v11": "application-capability-description-v11.schema.json",
+    "catalog_corpus_v6": "catalog-corpus-v6.schema.json",
+    "catalog_projection_v6": "catalog-projection-v6.schema.json",
+    "collection_profile_v0": "collection-profile-v0.schema.json",
+    "implementation_availability_policy_v0": "implementation-availability-policy-v0.schema.json",
+    "implementation_provider_v0": "implementation-provider-v0.schema.json",
+    "object_collection_v0": "object-collection-v0.schema.json",
+    "operation_request_v18": "operation-request-v18.schema.json",
+    "operation_result_v18": "operation-result-v18.schema.json",
+    "source_release_v0": "source-release-v0.schema.json",
+}
+
 TASK015_SCHEMA_NAMES = {
     "normalized_dsp_module": "normalized-dsp-module-v0.schema.json",
     "direct_frontend_result": "direct-frontend-result-v0.schema.json",
@@ -181,6 +195,10 @@ DOMAIN_GROUPS = (
     "performance_control_contracts",
     "performance_control_graphs",
     "performance_configurations",
+    "source_releases",
+    "object_collections",
+    "implementation_providers",
+    "availability_policies",
     "panel_evidence",
     "mapping_coverage",
     "runtime_realizations",
@@ -218,6 +236,7 @@ class OperationContext:
     task018_summary: dict[str, Any]
     machine_summary: dict[str, Any]
     performance_summary: dict[str, Any]
+    collection_provider_summary: dict[str, Any]
     record_set_reference: dict[str, Any]
     catalog_projection: dict[str, Any] | None
     loaded_record_set: record_set_rules.LoadedRecordSet
@@ -359,6 +378,18 @@ def load_repository_context(
         "machines": _stable_records(selected.records.get("machine", ())),
         "selection_packets": _stable_records(selected.records.get("core-selection-packet", ())),
     }
+    phase2_records = {
+        "source_releases": _stable_records(selected.records.get("source-release", ())),
+        "object_collections": _stable_records(selected.records.get("object-collection", ())),
+        "implementation_providers": _stable_records(
+            selected.records.get("implementation-provider", ())
+        ),
+        "availability_policies": _stable_records(
+            selected.records.get("implementation-availability-policy", ())
+        ),
+    }
+    if any(phase2_records.values()):
+        records.update(phase2_records)
     if any(performance_records.values()):
         records.update(performance_records)
     if selected.records.get("catalog-source-review"):
@@ -447,6 +478,7 @@ def load_repository_context(
             "catalog-corpus-v3": "catalog-projection-v3",
             "catalog-corpus-v4": "catalog-projection-v4",
             "catalog-corpus-v5": "catalog-projection-v5",
+            "catalog-corpus-v6": "catalog-projection-v6",
         }
         projection_version = projection_versions.get(catalog_schema_version)
         if projection_version is not None:
@@ -523,7 +555,15 @@ def load_repository_context(
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
-    if "application_capability_description_v10" in schemas:
+    for key, filename in TASK033_PHASE2_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    if "application_capability_description_v11" in schemas:
+        schemas["application_capability_description"] = schemas[
+            "application_capability_description_v11"
+        ]
+    elif "application_capability_description_v10" in schemas:
         schemas["application_capability_description"] = schemas[
             "application_capability_description_v10"
         ]
@@ -617,6 +657,19 @@ def load_repository_context(
             if item["implementation_id"] in bound_implementation_ids
             and item["implementation_id"] not in overlay_implementation_ids
         ]
+
+    collection_provider_summary = collection_provider.validate_values(
+        records,
+        selected.schemas,
+        derived_catalog,
+        repository_root=repository_root,
+        all_records=selected.records,
+    )
+    if collection_provider_summary["status"] == "invalid":
+        raise ValueError(
+            "collection/provider closure is invalid: "
+            + core.canonical_json(collection_provider_summary["diagnostics"])
+        )
 
     component_result = component.validate_component_graph_values(
         list(records["families"]),
@@ -803,6 +856,7 @@ def load_repository_context(
         task018_summary=copy.deepcopy(task018_summary),
         machine_summary=copy.deepcopy(machine_summary),
         performance_summary=copy.deepcopy(performance_summary),
+        collection_provider_summary=copy.deepcopy(collection_provider_summary),
         record_set_reference=copy.deepcopy(selected.reference),
         catalog_projection=derived_catalog,
         loaded_record_set=selected,
@@ -886,6 +940,7 @@ def canonical_result_bytes(
         "schuss-operation-result-v15": "operation_result_v15",
         "schuss-operation-result-v16": "operation_result_v16",
         "schuss-operation-result-v17": "operation_result_v17",
+        "schuss-operation-result-v18": "operation_result_v18",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -2380,6 +2435,14 @@ def dispatch_operation(
     audio_session_service: Any | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v18"
+    ):
+        from .collection_provider import dispatch_collection_provider_operation
+
+        return dispatch_collection_provider_operation(request, context)
 
     if (
         isinstance(request, dict)

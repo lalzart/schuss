@@ -7,7 +7,6 @@ import argparse
 import hashlib
 import json
 import os
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -18,6 +17,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools/contracts"))
 
+from compiler_determinism_matrix import copy_current_tree  # noqa: E402
 import validator_core as core  # noqa: E402
 
 
@@ -166,20 +166,10 @@ def reproduce() -> dict[str, Any]:
         temporary_root = Path(temporary)
         for index, variant in enumerate(variants, start=1):
             copy_root = temporary_root / f"root-{index}"
-            shutil.copytree(
+            copy_current_tree(
                 ROOT,
                 copy_root,
-                symlinks=True,
-                ignore=shutil.ignore_patterns(
-                    ".git",
-                    "build",
-                    "node_modules",
-                    "target",
-                    "sources.local.yml",
-                    "__pycache__",
-                    ".pytest_cache",
-                    ".DS_Store",
-                ),
+                include_task009_capsule=False,
             )
             environment = os.environ.copy()
             environment.update(variant)
@@ -255,13 +245,18 @@ def check_retained() -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--check", action="store_true")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true")
+    mode.add_argument("--reproduce", action="store_true")
     option = parser.parse_args()
     try:
         result = check_retained() if option.check else reproduce()
-        if not option.check:
-            EVIDENCE.parent.mkdir(parents=True, exist_ok=True)
-            EVIDENCE.write_bytes(core.canonical_json(result).encode("utf-8") + b"\n")
+        payload = core.canonical_json(result).encode("utf-8") + b"\n"
+        if option.reproduce:
+            if not EVIDENCE.is_file() or EVIDENCE.read_bytes() != payload:
+                raise ValueError(
+                    "Task 032 fresh-root reproduction differs from retained evidence"
+                )
     except (OSError, ValueError, json.JSONDecodeError) as error:
         print("Task 032 fresh-root reproduction failed: " + str(error), file=sys.stderr)
         return 1

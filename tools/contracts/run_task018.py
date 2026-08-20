@@ -31,11 +31,40 @@ from packages.schuss_core.gills_mapped_backend import (  # noqa: E402
     registration,
 )
 
+import historical_reproduction  # noqa: E402
+import retained_evidence  # noqa: E402
 import validator_core as core  # noqa: E402
 
 
 RECORD_SET = ROOT / "contracts/record-sets/task018-full-gills-v1.json"
 EVIDENCE_ROOT = ROOT / "evidence/task018-completion-v1"
+HISTORICAL_COMMIT = "0ee69391bc2d43f4caf2580a3f0db139249d2307"
+
+
+def check_retained() -> dict[str, Any]:
+    return retained_evidence.check_summary(
+        EVIDENCE_ROOT,
+        repository_root=ROOT,
+        anchor_commit=HISTORICAL_COMMIT,
+        schema_version="task018-validation-summary-v1",
+    )
+
+
+def reproduce_historical(
+    source_configuration: Path | None = None,
+) -> dict[str, Any]:
+    return historical_reproduction.reproduce_summary(
+        repository_root=ROOT,
+        completion_commit=HISTORICAL_COMMIT,
+        runner_path=Path("tools/contracts/run_task018.py"),
+        retained_summary=check_retained(),
+        report_schema_version="task018-historical-reproduction-v1",
+        source_configuration=(
+            source_configuration
+            if source_configuration is not None
+            else ROOT / "catalog/sources.local.yml"
+        ),
+    )
 INSTRUMENTS = {
     "executable": ("schuss-instrument-000002", 2),
     "percussion": ("schuss-instrument-000003", 2),
@@ -290,9 +319,14 @@ def copy_reference(value: dict[str, Any]) -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--check", action="store_true")
-    parser.add_argument("--worker-root", type=Path)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true")
+    mode.add_argument("--reproduce", action="store_true")
+    mode.add_argument("--worker-root", type=Path)
+    parser.add_argument("--source-configuration", type=Path)
     args = parser.parse_args()
+    if args.source_configuration is not None and not args.reproduce:
+        parser.error("--source-configuration requires --reproduce")
     if args.worker_root is not None:
         try:
             print(core.canonical_json(_worker(args.worker_root)))
@@ -301,33 +335,11 @@ def main() -> int:
             return 1
         return 0
     try:
-        files, summary = generated()
-        stale = [
-            relative
-            for relative, payload in files.items()
-            if not (EVIDENCE_ROOT / relative).is_file()
-            or (EVIDENCE_ROOT / relative).read_bytes() != payload
-        ]
-        if args.check and stale:
-            raise ValueError(
-                "retained Task 018 evidence is stale: "
-                + ", ".join(sorted(stale))
-            )
-        if not args.check:
-            expected_artifacts = {
-                (EVIDENCE_ROOT / relative).resolve()
-                for relative in files
-                if relative.startswith("artifacts/sha256/")
-            }
-            artifact_root = EVIDENCE_ROOT / "artifacts/sha256"
-            if artifact_root.is_dir():
-                for obsolete in artifact_root.iterdir():
-                    if obsolete.is_file() and obsolete.resolve() not in expected_artifacts:
-                        obsolete.unlink()
-            for relative, payload in files.items():
-                path = EVIDENCE_ROOT / relative
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_bytes(payload)
+        if args.check:
+            summary = check_retained()
+            print(json.dumps(summary, sort_keys=True))
+            return 0
+        summary = reproduce_historical(args.source_configuration)
     except (OSError, ValueError, subprocess.SubprocessError) as exc:
         print("Task 018 execution failed: " + str(exc), file=sys.stderr)
         return 1

@@ -163,17 +163,7 @@ def validate() -> dict[str, Any]:
     ):
         raise ValueError("Task 021 level-6 claim differs")
 
-    retained_files, live_summary = runner.generated()
-    stale_evidence = [
-        relative
-        for relative, payload in retained_files.items()
-        if not (EVIDENCE_ROOT / relative).is_file()
-        or (EVIDENCE_ROOT / relative).read_bytes() != payload
-    ]
-    if stale_evidence:
-        raise ValueError(
-            "retained Task 021 evidence differs: " + ", ".join(stale_evidence)
-        )
+    live_summary = runner.check_retained()
     if [item["status"] for item in live_summary["product_evidence_levels"]] != (
         ["passed"] * 6 + ["not-run"] * 2
     ):

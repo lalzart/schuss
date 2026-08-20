@@ -5,6 +5,8 @@ import sys
 import unittest
 from pathlib import Path
 
+from tools.validation.profile import requires_profile
+
 
 ROOT = Path(__file__).resolve().parents[3]
 TOOLS = ROOT / "tools/contracts"
@@ -129,6 +131,7 @@ class DeviceInstrumentContractTest(unittest.TestCase):
             VALIDATOR.canonical_record_bytes(changed, self.instrument_schema),
         )
 
+    @requires_profile("reproduction")
     def test_two_fresh_processes_emit_identical_summary_and_canonical_bytes(self):
         validation_command = [
             sys.executable,

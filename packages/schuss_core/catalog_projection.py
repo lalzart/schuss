@@ -170,6 +170,8 @@ def _authority_values(
         return [authority["evidence_ref"]], {"schuss"}
     if authority["kind"] == "pinned-source-object":
         return [authority["evidence_ref"]], {authority["source_id"]}
+    if authority["kind"] == "schuss-native-core":
+        return [authority["evidence_ref"]], {"schuss-native-core"}
     raise CatalogProjectionError("catalog addition source authority is unsupported")
 
 
@@ -302,6 +304,7 @@ def _validate_corpus(
         "catalog-corpus-v3",
         "catalog-corpus-v4",
         "catalog-corpus-v5",
+        "catalog-corpus-v6",
     }:
         review = corpus.get("current_ksoloti_review")
         if not isinstance(review, dict):
@@ -334,7 +337,11 @@ def _validate_corpus(
                 raise CatalogProjectionError(
                     f"catalog v3 current-Ksoloti implementation family is stale: {family_id}"
                 )
-    if corpus["schema_version"] in {"catalog-corpus-v4", "catalog-corpus-v5"}:
+    if corpus["schema_version"] in {
+        "catalog-corpus-v4",
+        "catalog-corpus-v5",
+        "catalog-corpus-v6",
+    }:
         review = corpus.get("mutable_instruments_review")
         if not isinstance(review, dict):
             raise CatalogProjectionError("catalog v4 Mutable Instruments review is absent")
@@ -435,7 +442,7 @@ def _validate_corpus(
             raise CatalogProjectionError(
                 "catalog v4 pinned extended implementation authority is stale"
             )
-        if corpus["schema_version"] == "catalog-corpus-v5":
+        if corpus["schema_version"] in {"catalog-corpus-v5", "catalog-corpus-v6"}:
             task030_ids = {
                 f"schuss-implementation-{value:06d}" for value in range(112, 162)
             }
@@ -497,6 +504,29 @@ def _validate_corpus(
                         raise CatalogProjectionError(
                             f"catalog v5 extended source authority is stale: {identifier}"
                         )
+        if corpus["schema_version"] == "catalog-corpus-v6":
+            host_ids = {
+                f"schuss-implementation-{value:06d}" for value in range(162, 169)
+            }
+            host_additions = {
+                value["implementation_id"]: value
+                for value in corpus["implementation_additions"]
+                if value["implementation_id"] in host_ids
+            }
+            if set(host_additions) != host_ids or len(corpus["implementation_additions"]) != 102:
+                raise CatalogProjectionError(
+                    "catalog v6 must add exactly the seven accepted host companions"
+                )
+            for identifier, implementation in host_additions.items():
+                authority = implementation.get("source_authority", {})
+                if (
+                    authority.get("kind") != "schuss-native-core"
+                    or authority.get("provider_boundary") != "static-native-provider"
+                    or implementation.get("form") != "native-cpp"
+                ):
+                    raise CatalogProjectionError(
+                        f"catalog v6 host source/provider boundary is stale: {identifier}"
+                    )
 
 
 def _evidence_for_binding(
@@ -569,6 +599,224 @@ def _evidence_for_binding(
     return references, states, result_references, artifact_references
 
 
+def _typed_reference_as_generic(reference: Mapping[str, Any]) -> dict[str, Any]:
+    identifiers = sorted(set(reference) - {"revision", "content_hash"})
+    if len(identifiers) != 1:
+        raise CatalogProjectionError("typed exact reference has ambiguous identity")
+    return {
+        "stable_id": reference[identifiers[0]],
+        "revision": reference["revision"],
+        "content_hash": reference["content_hash"],
+    }
+
+
+def _pair_key(
+    target_reference: Mapping[str, Any], backend_reference: Mapping[str, Any]
+) -> tuple[str, int, str, str, int, str]:
+    return (
+        target_reference["compute_target_id"],
+        target_reference["revision"],
+        target_reference["content_hash"],
+        backend_reference["backend_id"],
+        backend_reference["revision"],
+        backend_reference["content_hash"],
+    )
+
+
+def _task033_availability_context(
+    corpus: Mapping[str, Any],
+    records: Mapping[str, tuple[dict[str, Any], ...]],
+    core: Any,
+) -> tuple[dict[str, Any], dict[tuple[str, tuple[str, int, str, str, int, str]], list[tuple[dict[str, Any], dict[str, Any]]]]] | None:
+    if corpus.get("schema_version") != "catalog-corpus-v6":
+        return None
+    policies = list(records.get("availability_policies", ()))
+    if len(policies) != 1:
+        raise CatalogProjectionError(
+            "catalog v6 requires exactly one implementation availability policy"
+        )
+    policy = policies[0]
+    expected_catalog = {
+        "catalog_id": corpus["catalog_id"],
+        "revision": corpus["revision"],
+        "content_hash": corpus["content_hash"],
+    }
+    if policy.get("catalog_reference") != expected_catalog:
+        raise CatalogProjectionError("availability policy catalog reference is stale")
+    pair_keys = {
+        _pair_key(pair["target_reference"], pair["backend_reference"])
+        for pair in policy["reported_pairs"]
+    }
+    if len(pair_keys) != len(policy["reported_pairs"]):
+        raise CatalogProjectionError("availability policy target/backend pair is duplicated")
+    provider_map: dict[
+        tuple[str, tuple[str, int, str, str, int, str]],
+        list[tuple[dict[str, Any], dict[str, Any]]],
+    ] = {}
+    for provider in records.get("implementation_providers", ()):
+        for binding in provider["bindings"]:
+            locator = binding["catalog_implementation_locator"]
+            if locator["catalog_reference"] != expected_catalog:
+                raise CatalogProjectionError(
+                    "provider catalog implementation locator is stale"
+                )
+            key = _pair_key(
+                binding["target_reference"], binding["backend_reference"]
+            )
+            if key not in pair_keys:
+                raise CatalogProjectionError(
+                    "provider target/backend pair is absent from availability policy"
+                )
+            provider_map.setdefault((locator["implementation_id"], key), []).append(
+                (provider, binding)
+            )
+    for values in provider_map.values():
+        values.sort(key=lambda item: core.canonical_json(item[0]))
+    return policy, provider_map
+
+
+def _target_availability(
+    *,
+    implementation_id: str,
+    bindings: list[dict[str, Any]],
+    eligibility_by_binding: Mapping[
+        tuple[str, int, str], list[dict[str, Any]]
+    ],
+    policy: Mapping[str, Any],
+    provider_map: Mapping[
+        tuple[str, tuple[str, int, str, str, int, str]],
+        list[tuple[dict[str, Any], dict[str, Any]]],
+    ],
+    records: Mapping[str, tuple[dict[str, Any], ...]],
+    core: Any,
+) -> list[dict[str, Any]]:
+    binding_refs = _sorted_references(
+        ((binding, "implementation_id") for binding in bindings), core
+    )
+    rows: list[dict[str, Any]] = []
+    for pair in policy["reported_pairs"]:
+        pair_key = _pair_key(
+            pair["target_reference"], pair["backend_reference"]
+        )
+        matching: list[tuple[dict[str, Any], dict[str, Any]]] = []
+        for binding in bindings:
+            binding_key = (
+                binding["implementation_id"],
+                binding["revision"],
+                binding["content_hash"],
+            )
+            for eligibility in eligibility_by_binding.get(binding_key, ()):
+                allowed = eligibility["allowed_pair"]
+                if _pair_key(
+                    allowed["target_reference"], allowed["backend_reference"]
+                ) == pair_key:
+                    matching.append((binding, eligibility))
+        statuses = {
+            eligibility["allowed_pair"]["state"]["status"]
+            for _, eligibility in matching
+        }
+        supported = [
+            (binding, eligibility)
+            for binding, eligibility in matching
+            if eligibility["allowed_pair"]["state"]["status"] == "supported"
+        ]
+        if supported:
+            highest = max(
+                eligibility["selection_policy"]["priority"]
+                for _, eligibility in supported
+            )
+            highest_bindings = {
+                (
+                    binding["implementation_id"],
+                    binding["revision"],
+                    binding["content_hash"],
+                )
+                for binding, eligibility in supported
+                if eligibility["selection_policy"]["priority"] == highest
+            }
+            eligibility_status = (
+                "ambiguous" if len(highest_bindings) > 1 else "supported"
+            )
+        elif not matching:
+            eligibility_status = "no-binding-or-eligibility"
+        elif "unresolved" in statuses:
+            eligibility_status = "unresolved"
+        elif "unsupported" in statuses:
+            eligibility_status = "unsupported"
+        else:
+            eligibility_status = "not-evaluated"
+
+        provider_values = provider_map.get((implementation_id, pair_key), ())
+        provider_refs = sorted(
+            {
+                core.canonical_json(_generic_reference(provider, "implementation_provider_id")):
+                _generic_reference(provider, "implementation_provider_id")
+                for provider, _ in provider_values
+            }.values(),
+            key=core.canonical_json,
+        )
+        provider_status = (
+            "not-declared"
+            if not provider_refs
+            else "available"
+            if len(provider_refs) == 1
+            else "ambiguous"
+        )
+        readiness: set[str] = set()
+        unresolved: set[str] = set()
+        if bindings:
+            readiness.update(("contracted", "bound"))
+        else:
+            readiness.add("catalogued-only")
+            unresolved.add("No exact implementation binding is present.")
+        if eligibility_status == "supported":
+            readiness.add("eligible")
+        elif eligibility_status == "ambiguous":
+            unresolved.add("Equal-priority eligible bindings are ambiguous.")
+        elif eligibility_status == "no-binding-or-eligibility":
+            unresolved.add("No exact eligibility exists for this target/backend pair.")
+        else:
+            unresolved.add(
+                f"Target/backend eligibility is {eligibility_status}."
+            )
+        if provider_status == "ambiguous":
+            unresolved.add("More than one provider claims the exact implementation pair.")
+        elif provider_status == "not-declared" and eligibility_status == "supported":
+            unresolved.add("No implementation provider is declared for this target/backend pair.")
+        for binding, _ in matching:
+            _, evidence_states, _, _ = _evidence_for_binding(binding, records, core)
+            readiness.update(evidence_states)
+        if unresolved:
+            readiness.add("unresolved")
+        eligibility_refs = _sorted_references(
+            ((eligibility, "binding_eligibility_id") for _, eligibility in matching),
+            core,
+        )
+        rows.append(
+            {
+                "pair_id": pair["pair_id"],
+                "display_name": pair["display_name"],
+                "target_reference": _typed_reference_as_generic(
+                    pair["target_reference"]
+                ),
+                "backend_reference": _typed_reference_as_generic(
+                    pair["backend_reference"]
+                ),
+                "binding_status": "present" if bindings else "absent",
+                "eligibility_status": eligibility_status,
+                "provider_status": provider_status,
+                "binding_references": copy.deepcopy(binding_refs),
+                "eligibility_references": eligibility_refs,
+                "provider_references": provider_refs,
+                "readiness_states": [
+                    state for state in READINESS_ORDER if state in readiness
+                ],
+                "unresolved_facts": sorted(unresolved),
+            }
+        )
+    return rows
+
+
 def build_catalog_projection(
     *,
     corpus: dict[str, Any],
@@ -606,6 +854,7 @@ def build_catalog_projection(
         value["implementation_id"]: value
         for value in corpus["implementation_additions"]
     }
+    availability_context = _task033_availability_context(corpus, records, core)
     treatment_by_family = {
         value["family_reference"]["family_id"]: value
         for value in corpus.get("current_ksoloti_review", {}).get(
@@ -922,9 +1171,21 @@ def build_catalog_projection(
                     ],
                     "unresolved_facts": sorted(unresolved),
                 }
+            if availability_context is not None:
+                availability_policy, provider_map = availability_context
+                implementation_summary["target_availability"] = _target_availability(
+                    implementation_id=identifier,
+                    bindings=bindings,
+                    eligibility_by_binding=eligibility_by_binding,
+                    policy=availability_policy,
+                    provider_map=provider_map,
+                    records=records,
+                    core=core,
+                )
             if corpus["schema_version"] in {
                 "catalog-corpus-v4",
                 "catalog-corpus-v5",
+                "catalog-corpus-v6",
             }:
                 implementation_summary["provenance_tags"] = sorted(provenance_tags)
             implementation_summaries.append(implementation_summary)
@@ -960,6 +1221,7 @@ def build_catalog_projection(
             "catalog-corpus-v3",
             "catalog-corpus-v4",
             "catalog-corpus-v5",
+            "catalog-corpus-v6",
         }:
             entry.update(
                 {
@@ -1028,6 +1290,11 @@ def build_catalog_projection(
         },
         "families": entries,
     }
+    if availability_context is not None:
+        availability_policy, _ = availability_context
+        projection["availability_policy_reference"] = _generic_reference(
+            availability_policy, "implementation_availability_policy_id"
+        )
     errors = core.schema_errors(projection, projection_schema, projection_schema)
     if errors:
         raise CatalogProjectionError(

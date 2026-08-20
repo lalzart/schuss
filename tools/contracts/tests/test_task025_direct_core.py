@@ -30,6 +30,7 @@ from packages.schuss_core.effects_direct_semantics import (  # noqa: E402
 
 import generate_task025_records as generator  # noqa: E402
 import validator_core as core  # noqa: E402
+from tools.validation.profile import requires_profile  # noqa: E402
 
 
 RECORD_SET = ROOT / "contracts/record-sets/task025-direct-core-v1.json"
@@ -231,6 +232,7 @@ class Task025DirectCoreTest(unittest.TestCase):
         self.assertFalse(self.plan["authoritative_records_mutated"])
 
     @unittest.skipUnless(LOCAL_SOURCES.is_file(), LOCAL_SOURCE_SKIP)
+    @requires_profile("configured-sources")
     def test_reverb_source_audit_and_absent_native_records_are_exact(self) -> None:
         observed = generator._verify_source_authority()
         self.assertEqual(
@@ -304,6 +306,7 @@ class Task025DirectCoreTest(unittest.TestCase):
         self.assertEqual([], result["value"]["artifacts"])
 
     @unittest.skipUnless(LOCAL_SOURCES.is_file(), LOCAL_SOURCE_SKIP)
+    @requires_profile("configured-sources")
     def test_generated_records_are_fresh_and_deterministic(self) -> None:
         first_files, first_manifest, first_summary = generator.generated()
         second_files, second_manifest, second_summary = generator.generated()

@@ -32,9 +32,9 @@ RECORD_SET = Path("contracts/record-sets/task034-performance-control-v1.json")
 class Task034PerformanceControlTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.selected = record_set_rules.load_record_set(ROOT, RECORD_SET)
+        cls.context = load_repository_context(ROOT, record_set_path=RECORD_SET)
+        cls.selected = cls.context.loaded_record_set
         cls.component = aggregate._component_record_set_validation(cls.selected, ROOT)
-        cls.context = load_repository_context(record_set_path=RECORD_SET)
         cls.schemas = {
             version: cls.selected.schemas[version]
             for version in performance.SCHEMA_VERSIONS.values()

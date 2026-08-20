@@ -1,0 +1,478 @@
+{
+  "schema_version": "schuss-validation-manifest-v1",
+  "compatibility_test_modules": [
+    "tools.contracts.tests.test_ai_sonic_authoring",
+    "tools.contracts.tests.test_cli_contract_hardening",
+    "tools.contracts.tests.test_compiler_determinism_matrix",
+    "tools.contracts.tests.test_component_graph_contracts",
+    "tools.contracts.tests.test_desktop_authoring_performance",
+    "tools.contracts.tests.test_desktop_build_device_sessions",
+    "tools.contracts.tests.test_desktop_patcher_bridge",
+    "tools.contracts.tests.test_desktop_patcher_operations",
+    "tools.contracts.tests.test_desktop_ui_structure",
+    "tools.contracts.tests.test_desktop_workspace_shell",
+    "tools.contracts.tests.test_device_instrument_contracts",
+    "tools.contracts.tests.test_mcp_read_only_server",
+    "tools.contracts.tests.test_target_backend_build_contracts",
+    "tools.contracts.tests.test_task008_control_plane",
+    "tools.contracts.tests.test_task009_backend",
+    "tools.contracts.tests.test_task009_prerequisite",
+    "tools.contracts.tests.test_task009_prerequisite_repair",
+    "tools.contracts.tests.test_task010_cli",
+    "tools.contracts.tests.test_task011a_catalog",
+    "tools.contracts.tests.test_task011b",
+    "tools.contracts.tests.test_task011c",
+    "tools.contracts.tests.test_task012a_project",
+    "tools.contracts.tests.test_task013_compiler_front_half",
+    "tools.contracts.tests.test_task014_build_execution",
+    "tools.contracts.tests.test_task015_direct_frontend",
+    "tools.contracts.tests.test_task016_direct_frontend",
+    "tools.contracts.tests.test_task017_curated_core",
+    "tools.contracts.tests.test_task018_gills_mapping",
+    "tools.contracts.tests.test_task021_dma_safe_oled",
+    "tools.contracts.tests.test_task022_panel_diagnostic",
+    "tools.contracts.tests.test_task023_application_capabilities",
+    "tools.contracts.tests.test_task023_application_smoke",
+    "tools.contracts.tests.test_task023_cli_v2",
+    "tools.contracts.tests.test_task024_catalog_coverage",
+    "tools.contracts.tests.test_task025_direct_core",
+    "tools.contracts.tests.test_task026_authoring_workflow",
+    "tools.contracts.tests.test_task026a_executable_profile",
+    "tools.contracts.tests.test_task027_mutable_catalog",
+    "tools.contracts.tests.test_task028_direct_palette",
+    "tools.contracts.tests.test_task029_gills_machines",
+    "tools.contracts.tests.test_task030_complete_mutable_catalog",
+    "tools.contracts.tests.test_task031_audio_sessions",
+    "tools.contracts.tests.test_task031_desktop_host_runtime",
+    "tools.contracts.tests.test_task032_variable_audio_sessions",
+    "tools.contracts.tests.test_task032_variable_host_runtime",
+    "tools.contracts.tests.test_task033_phase1_audits",
+    "tools.contracts.tests.test_task033_phase2_collection_provider",
+    "tools.contracts.tests.test_task034_performance_control"
+  ],
+  "checks": [
+    {
+      "id": "inventory.discovery",
+      "kind": "unittest-discover",
+      "start_dir": "tools/inventory/tests",
+      "pattern": "test_*.py",
+      "validation_profile": "current",
+      "cost_class": "fast",
+      "inputs": ["tools/inventory/**", "catalog/sources.lock.json", "catalog/snapshots/**"]
+    },
+    {
+      "id": "catalog.discovery",
+      "kind": "unittest-discover",
+      "start_dir": "tools/catalog/tests",
+      "pattern": "test_*.py",
+      "validation_profile": "current",
+      "cost_class": "fast",
+      "inputs": ["tools/catalog/**", "catalog/**"]
+    },
+    {
+      "id": "contracts.current-closure",
+      "kind": "command",
+      "argv": ["{python}", "tools/validation/current_closure.py"],
+      "validation_profile": "current",
+      "cost_class": "semantic",
+      "inputs": ["contracts/**", "schemas/**", "packages/schuss_core/**", "tools/contracts/**"]
+    },
+    {
+      "id": "contracts.current-tests",
+      "kind": "command",
+      "argv": ["{python}", "tools/validation/contract_suite.py", "--partition", "current"],
+      "validation_profile": "current",
+      "cost_class": "semantic",
+      "inputs": ["tools/contracts/record_set_rules.py", "tools/validation/**", "AGENTS.md", "docs/**"]
+    },
+    {
+      "id": "contracts.compatibility-history",
+      "kind": "command",
+      "argv": ["{python}", "tools/validation/contract_suite.py", "--partition", "compatibility"],
+      "validation_profile": "compatibility",
+      "cost_class": "semantic",
+      "inputs": ["tools/contracts/**", "packages/schuss_core/**", "contracts/**", "schemas/**", "fixtures/**", "evidence/**"]
+    },
+    {
+      "id": "configured.sources",
+      "kind": "unittest-names",
+      "tests": [
+        "tools.contracts.tests.test_task008_control_plane.Task008ControlPlaneTest.test_all_legacy_validator_stdout_bytes_are_preserved",
+        "tools.contracts.tests.test_task009_prerequisite.Task009PrerequisiteTest.test_accepted_view_preserves_operation_result_hashes",
+        "tools.contracts.tests.test_task010_cli.Task010ProductCliTest.test_configured_human_outputs_match_historical_golden_hashes",
+        "tools.contracts.tests.test_task010_cli.Task010ProductCliTest.test_configured_task005_through_task009_operation_hashes_are_preserved",
+        "tools.contracts.tests.test_task011a_catalog.Task011ACatalogTest.test_configured_v1_operation_result_bytes_are_preserved",
+        "tools.contracts.tests.test_task024_catalog_coverage.Task024CatalogCoverageTest.test_generated_outputs_are_fresh_and_byte_deterministic",
+        "tools.contracts.tests.test_task025_direct_core.Task025DirectCoreTest.test_reverb_source_audit_and_absent_native_records_are_exact",
+        "tools.contracts.tests.test_task025_direct_core.Task025DirectCoreTest.test_generated_records_are_fresh_and_deterministic",
+        "tools.contracts.tests.test_task027_mutable_catalog.Task027MutableCatalogTest.test_configured_pinned_source_bytes_match_accepted_review"
+      ],
+      "validation_profile": "configured-sources",
+      "prerequisites": ["catalog/sources.local.yml"],
+      "cost_class": "configured",
+      "inputs": ["catalog/sources.local.yml", "catalog/sources.lock.json", "catalog/reviews/**", "contracts/task024/**", "contracts/task025/**", "contracts/task027/**"]
+    },
+    {
+      "id": "native.execution-preflight",
+      "kind": "command",
+      "argv": ["{python}", "tools/validation/native_execution_preflight.py"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "preflight": true,
+      "tool_prerequisites": ["git", "/usr/bin/make"],
+      "inputs": ["tools/validation/native_execution_preflight.py", "packages/schuss_core/gills_direct_backend.py", "evidence/task-011c-v1/**"]
+    },
+    {
+      "id": "native.task015-syntax",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_task015_direct_frontend.Task015DirectFrontendTest.test_cpp_syntax"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "tool_prerequisites": ["clang++"],
+      "inputs": ["packages/schuss_core/direct_frontend.py", "contracts/**", "schemas/**"]
+    },
+    {
+      "id": "native.task015-vectors",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_task015_direct_frontend.Task015DirectFrontendTest.test_compiled_vectors_match_reference"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "tool_prerequisites": ["clang++"],
+      "inputs": ["packages/schuss_core/direct_frontend.py", "contracts/**", "schemas/**"]
+    },
+    {
+      "id": "native.task016-handler",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_task016_direct_frontend.Task016DirectFrontendTest.test_product_cli_executes_only_the_requested_direct_handler"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "depends_on": ["native.execution-preflight"],
+      "tool_prerequisites": ["git", "/usr/bin/make"],
+      "inputs": ["packages/schuss_core/gills_direct_backend.py", "contracts/task016/**"]
+    },
+    {
+      "id": "native.task018-handler",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_task018_gills_mapping.Task018GillsMappingTest.test_product_cli_selects_only_the_exact_mapped_handler"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "depends_on": ["native.execution-preflight"],
+      "tool_prerequisites": ["git", "/usr/bin/make"],
+      "inputs": ["packages/schuss_core/gills_mapped_backend.py", "contracts/task018/**"]
+    },
+    {
+      "id": "native.task021-handler",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_task021_dma_safe_oled.Task021DmaSafeOledTest.test_product_cli_selects_only_the_exact_task021_handler"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "depends_on": ["native.execution-preflight"],
+      "tool_prerequisites": ["git", "/usr/bin/make"],
+      "inputs": ["packages/schuss_core/gills_mapped_backend.py", "contracts/task021/**"]
+    },
+    {
+      "id": "native.task031-render",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_task031_desktop_host_runtime.Task031DesktopHostRuntimeTest.test_native_runtime_build_and_offline_render_match_retained_bytes"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "tool_prerequisites": ["/usr/bin/xcrun"],
+      "inputs": ["packages/schuss_rt/**", "apps/schuss_audio_engine/**", "fixtures/task031/**"]
+    },
+    {
+      "id": "native.task032-render-matrix",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_task032_variable_host_runtime.Task032VariableHostRuntimeTest.test_native_offline_renderer_is_block_equivalent_for_every_fixture"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "tool_prerequisites": ["/usr/bin/xcrun"],
+      "inputs": ["packages/schuss_rt/**", "apps/schuss_audio_engine/**", "fixtures/task032/**"]
+    },
+    {
+      "id": "native.compiler-determinism",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_compiler_determinism_matrix.CompilerDeterminismMatrixTest.test_forward_and_reverse_worker_facts_are_identical"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "tool_prerequisites": ["clang++", "git"],
+      "inputs": ["packages/schuss_core/**", "tools/contracts/compiler_determinism_matrix.py"]
+    },
+    {
+      "id": "native.runtime-cmake",
+      "kind": "command",
+      "argv": ["{python}", "tools/validation/native_runtime.py", "--mode", "runtime"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "tool_prerequisites": ["cmake", "ctest", "clang++"],
+      "inputs": ["packages/schuss_rt/**", "fixtures/task031/**", "fixtures/task032/**"]
+    },
+    {
+      "id": "native.engine-cmake",
+      "kind": "command",
+      "argv": ["{python}", "tools/validation/native_runtime.py", "--mode", "engine"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "tool_prerequisites": ["cmake", "ctest", "clang++"],
+      "inputs": ["apps/schuss_audio_engine/**", "packages/schuss_rt/**"]
+    },
+    {
+      "id": "native.runtime-asan-ubsan",
+      "kind": "command",
+      "argv": ["{python}", "tools/validation/native_runtime.py", "--mode", "asan-ubsan"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "tool_prerequisites": ["cmake", "ctest", "clang++"],
+      "inputs": ["packages/schuss_rt/**", "fixtures/task031/**", "fixtures/task032/**"]
+    },
+    {
+      "id": "native.runtime-tsan",
+      "kind": "command",
+      "argv": ["{python}", "tools/validation/native_runtime.py", "--mode", "tsan"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "tool_prerequisites": ["cmake", "ctest", "clang++"],
+      "inputs": ["packages/schuss_rt/**", "fixtures/task031/**", "fixtures/task032/**"]
+    },
+    {
+      "id": "reproduction.component-graph-process",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_component_graph_contracts.ComponentGraphContractTest.test_fresh_process_summary_and_all_production_canonical_bytes_are_deterministic"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "inputs": ["tools/contracts/validate_component_graph_contracts.py", "contracts/**", "schemas/**"]
+    },
+    {
+      "id": "reproduction.device-instrument-process",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_device_instrument_contracts.DeviceInstrumentContractTest.test_two_fresh_processes_emit_identical_summary_and_canonical_bytes"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "inputs": ["tools/contracts/validate_device_instrument_contracts.py", "contracts/**", "schemas/**"]
+    },
+    {
+      "id": "reproduction.target-build-process",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_target_backend_build_contracts.TargetBackendBuildContractTest.test_fresh_process_summary_and_canonical_emission_are_identical"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "inputs": ["tools/contracts/validate_target_backend_build_contracts.py", "contracts/**", "schemas/**"]
+    },
+    {
+      "id": "reproduction.task010-process-matrix",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_task010_cli.Task010ProductCliTest.test_human_output_is_fresh_process_cwd_locale_width_and_host_independent"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "inputs": ["bin/schuss", "packages/schuss_core/**", "contracts/record-sets/task005-008-accepted-v0.json"]
+    },
+    {
+      "id": "reproduction.task014-output-roots",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_task014_build_execution.Task014BuildExecutionTest.test_two_fresh_roots_have_identical_portable_result"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "inputs": ["packages/schuss_core/build_execution.py", "contracts/**", "schemas/**"]
+    },
+    {
+      "id": "reproduction.governance-cli",
+      "kind": "unittest-names",
+      "tests": ["tools.contracts.tests.test_backbone_governance.BackboneGovernanceTest.test_cli_summary_is_deterministic_across_working_directories"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "inputs": ["tools/contracts/validate_backbone_governance.py", "docs/governance/current-state.json"]
+    },
+    {
+      "id": "reproduction.task016",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task016.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "depends_on": ["native.execution-preflight"],
+      "tool_prerequisites": ["git"],
+      "inputs": ["tools/contracts/run_task016.py", "tools/contracts/historical_reproduction.py", "tools/contracts/retained_evidence.py", "evidence/task016-completion-v1/**", "contracts/task016/**"]
+    },
+    {
+      "id": "reproduction.task017",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task017.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "tool_prerequisites": ["git"],
+      "inputs": ["tools/contracts/run_task017.py", "tools/contracts/historical_reproduction.py", "tools/contracts/retained_evidence.py", "evidence/task017-completion-v1/**", "contracts/task017/**"]
+    },
+    {
+      "id": "reproduction.task018",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task018.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "depends_on": ["native.execution-preflight"],
+      "prerequisites": ["catalog/sources.local.yml"],
+      "explicit_only": true,
+      "tool_prerequisites": ["git"],
+      "inputs": ["tools/contracts/run_task018.py", "tools/contracts/historical_reproduction.py", "tools/contracts/retained_evidence.py", "catalog/sources.local.yml", "evidence/task018-completion-v1/**", "contracts/task018/**"]
+    },
+    {
+      "id": "reproduction.task021",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task021.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "depends_on": ["native.execution-preflight"],
+      "prerequisites": ["catalog/sources.local.yml"],
+      "explicit_only": true,
+      "tool_prerequisites": ["git"],
+      "inputs": ["tools/contracts/run_task021.py", "tools/contracts/historical_reproduction.py", "tools/contracts/retained_evidence.py", "catalog/sources.local.yml", "evidence/task021-completion-v1/**", "contracts/task021/**"]
+    },
+    {
+      "id": "reproduction.task022",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task022.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "depends_on": ["native.execution-preflight"],
+      "tool_prerequisites": ["git"],
+      "inputs": ["tools/contracts/run_task022.py", "tools/contracts/historical_reproduction.py", "tools/contracts/retained_evidence.py", "evidence/task022-completion-v1/**", "contracts/task022/**"]
+    },
+    {
+      "id": "reproduction.task023",
+      "kind": "unittest-names",
+      "tests": [
+        "tools.contracts.tests.test_task023_application_smoke.Task023ApplicationSmokeTest.test_two_fresh_roots_processes_and_varied_environments_are_identical"
+      ],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "tool_prerequisites": ["git"],
+      "inputs": ["tools/contracts/validate_task023.py", "tools/contracts/compiler_determinism_matrix.py", "tools/contracts/tests/test_task023_application_smoke.py", "tools/contracts/tests/fixtures/task023-smoke-cases.json", "contracts/record-sets/task023-application-spine-v1.json", "fixtures/task012a/minimal-project/**", "packages/schuss_core/**"]
+    },
+    {
+      "id": "reproduction.task027-historical",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task027_fresh_root.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "prerequisites": ["catalog/sources.local.yml"],
+      "cost_class": "reproduction",
+      "explicit_only": true,
+      "tool_prerequisites": ["git"],
+      "inputs": ["tools/contracts/run_task027_fresh_root.py", "catalog/sources.local.yml", "catalog/reviews/task027-mutable-sources-v1/**", "contracts/task027/**"]
+    },
+    {
+      "id": "reproduction.task028",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task028_fresh_root.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "tool_prerequisites": ["git"],
+      "inputs": ["tools/contracts/run_task028_fresh_root.py", "tools/contracts/historical_reproduction.py", "tools/contracts/retained_evidence.py", "tools/contracts/validator_core.py", "schemas/**", "contracts/record-sets/task028-direct-palette-v1.json", "contracts/task028/**", "evidence/task028-completion-v1/**"]
+    },
+    {
+      "id": "reproduction.task029",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task029_fresh_process.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "inputs": ["tools/contracts/run_task029_fresh_process.py", "tools/contracts/retained_evidence.py", "tools/contracts/validator_core.py", "tools/contracts/tests/fixtures/task029-machine-operation-requests.json", "bin/schuss", "apps/schuss_machine_viewer/fixtures/**", "evidence/task029-completion-v1/**", "contracts/**", "schemas/**", "catalog/**", "packages/schuss_core/**"]
+    },
+    {
+      "id": "reproduction.task030",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task030_fresh_root.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "tool_prerequisites": ["git"],
+      "inputs": ["tools/contracts/run_task030_fresh_root.py", "tools/contracts/compiler_determinism_matrix.py", "contracts/task030/**", "evidence/task030-completion-v1/**"]
+    },
+    {
+      "id": "reproduction.task032",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task032_fresh_root.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "tool_prerequisites": ["git", "/usr/bin/xcrun"],
+      "inputs": ["tools/contracts/run_task032_fresh_root.py", "tools/contracts/compiler_determinism_matrix.py", "tools/contracts/generate_task032_records.py", "tools/contracts/generate_task032_fixtures.py", "contracts/**", "schemas/**", "fixtures/task032/**", "evidence/task032-completion-v1/fresh-root-reproduction.json", "packages/schuss_core/**", "packages/schuss_rt/**", "apps/schuss_audio_engine/**"]
+    },
+    {
+      "id": "reproduction.task033-phase2",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task033_phase2_reproduction.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "tool_prerequisites": ["git"],
+      "inputs": ["tools/contracts/run_task033_phase2_reproduction.py", "tools/contracts/compiler_determinism_matrix.py", "tools/contracts/generate_task033_phase2_records.py", "tools/contracts/validate_task033_phase2.py", "contracts/**", "schemas/**", "packages/schuss_core/**"]
+    }
+  ],
+  "profiles": {
+    "current": [
+      "inventory.discovery",
+      "catalog.discovery",
+      "contracts.current-closure",
+      "contracts.current-tests"
+    ],
+    "compatibility": ["contracts.compatibility-history"],
+    "configured-sources": ["configured.sources"],
+    "native": [
+      "native.execution-preflight",
+      "native.task015-syntax",
+      "native.task015-vectors",
+      "native.task016-handler",
+      "native.task018-handler",
+      "native.task021-handler",
+      "native.task031-render",
+      "native.task032-render-matrix",
+      "native.compiler-determinism",
+      "native.runtime-cmake",
+      "native.engine-cmake",
+      "native.runtime-asan-ubsan",
+      "native.runtime-tsan"
+    ],
+    "reproduction": [
+      "reproduction.component-graph-process",
+      "reproduction.device-instrument-process",
+      "reproduction.target-build-process",
+      "reproduction.task010-process-matrix",
+      "reproduction.task014-output-roots",
+      "reproduction.governance-cli",
+      "reproduction.task016",
+      "reproduction.task017",
+      "reproduction.task022",
+      "reproduction.task023",
+      "reproduction.task028",
+      "reproduction.task029",
+      "reproduction.task030",
+      "reproduction.task032",
+      "reproduction.task033-phase2"
+    ],
+    "release": [
+      "@current",
+      "@compatibility",
+      "@native",
+      "@reproduction"
+    ]
+  },
+  "gated_tests": [
+    {"test": "tools.contracts.tests.test_task008_control_plane.Task008ControlPlaneTest.test_all_legacy_validator_stdout_bytes_are_preserved", "profile": "configured-sources"},
+    {"test": "tools.contracts.tests.test_task009_prerequisite.Task009PrerequisiteTest.test_accepted_view_preserves_operation_result_hashes", "profile": "configured-sources"},
+    {"test": "tools.contracts.tests.test_task010_cli.Task010ProductCliTest.test_configured_human_outputs_match_historical_golden_hashes", "profile": "configured-sources"},
+    {"test": "tools.contracts.tests.test_task010_cli.Task010ProductCliTest.test_configured_task005_through_task009_operation_hashes_are_preserved", "profile": "configured-sources"},
+    {"test": "tools.contracts.tests.test_task011a_catalog.Task011ACatalogTest.test_configured_v1_operation_result_bytes_are_preserved", "profile": "configured-sources"},
+    {"test": "tools.contracts.tests.test_task024_catalog_coverage.Task024CatalogCoverageTest.test_generated_outputs_are_fresh_and_byte_deterministic", "profile": "configured-sources"},
+    {"test": "tools.contracts.tests.test_task025_direct_core.Task025DirectCoreTest.test_reverb_source_audit_and_absent_native_records_are_exact", "profile": "configured-sources"},
+    {"test": "tools.contracts.tests.test_task025_direct_core.Task025DirectCoreTest.test_generated_records_are_fresh_and_deterministic", "profile": "configured-sources"},
+    {"test": "tools.contracts.tests.test_task027_mutable_catalog.Task027MutableCatalogTest.test_configured_pinned_source_bytes_match_accepted_review", "profile": "configured-sources"},
+    {"test": "tools.contracts.tests.test_task015_direct_frontend.Task015DirectFrontendTest.test_cpp_syntax", "profile": "native"},
+    {"test": "tools.contracts.tests.test_task015_direct_frontend.Task015DirectFrontendTest.test_compiled_vectors_match_reference", "profile": "native"},
+    {"test": "tools.contracts.tests.test_task016_direct_frontend.Task016DirectFrontendTest.test_product_cli_executes_only_the_requested_direct_handler", "profile": "native"},
+    {"test": "tools.contracts.tests.test_task018_gills_mapping.Task018GillsMappingTest.test_product_cli_selects_only_the_exact_mapped_handler", "profile": "native"},
+    {"test": "tools.contracts.tests.test_task021_dma_safe_oled.Task021DmaSafeOledTest.test_product_cli_selects_only_the_exact_task021_handler", "profile": "native"},
+    {"test": "tools.contracts.tests.test_task031_desktop_host_runtime.Task031DesktopHostRuntimeTest.test_native_runtime_build_and_offline_render_match_retained_bytes", "profile": "native"},
+    {"test": "tools.contracts.tests.test_task032_variable_host_runtime.Task032VariableHostRuntimeTest.test_native_offline_renderer_is_block_equivalent_for_every_fixture", "profile": "native"},
+    {"test": "tools.contracts.tests.test_compiler_determinism_matrix.CompilerDeterminismMatrixTest.test_forward_and_reverse_worker_facts_are_identical", "profile": "native"},
+    {"test": "tools.contracts.tests.test_component_graph_contracts.ComponentGraphContractTest.test_fresh_process_summary_and_all_production_canonical_bytes_are_deterministic", "profile": "reproduction"},
+    {"test": "tools.contracts.tests.test_device_instrument_contracts.DeviceInstrumentContractTest.test_two_fresh_processes_emit_identical_summary_and_canonical_bytes", "profile": "reproduction"},
+    {"test": "tools.contracts.tests.test_target_backend_build_contracts.TargetBackendBuildContractTest.test_fresh_process_summary_and_canonical_emission_are_identical", "profile": "reproduction"},
+    {"test": "tools.contracts.tests.test_task010_cli.Task010ProductCliTest.test_human_output_is_fresh_process_cwd_locale_width_and_host_independent", "profile": "reproduction"},
+    {"test": "tools.contracts.tests.test_task014_build_execution.Task014BuildExecutionTest.test_two_fresh_roots_have_identical_portable_result", "profile": "reproduction"},
+    {"test": "tools.contracts.tests.test_backbone_governance.BackboneGovernanceTest.test_cli_summary_is_deterministic_across_working_directories", "profile": "reproduction"},
+    {"test": "tools.contracts.tests.test_task023_application_smoke.Task023ApplicationSmokeTest.test_two_fresh_roots_processes_and_varied_environments_are_identical", "profile": "reproduction"}
+  ]
+}

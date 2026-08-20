@@ -34,6 +34,7 @@ from packages.schuss_core.gills_panel_runtime import (  # noqa: E402
 import generate_task018_records as task018_generator  # noqa: E402
 import generate_task021_records as generator  # noqa: E402
 import validator_core as core  # noqa: E402
+from tools.validation.profile import requires_profile  # noqa: E402
 
 
 RECORD_SET = ROOT / "contracts/record-sets/task021-gills-dma-safe-v1.json"
@@ -254,6 +255,7 @@ class Task021DmaSafeOledTest(unittest.TestCase):
         ):
             correct_mapped_cpp_dma_buffers("void unrelated();\n")
 
+    @requires_profile("native")
     def test_product_cli_selects_only_the_exact_task021_handler(self) -> None:
         with tempfile.TemporaryDirectory(prefix="schuss-task021-cli-") as temporary:
             completed = subprocess.run(

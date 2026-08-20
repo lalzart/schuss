@@ -23,6 +23,7 @@ from packages.schuss_core.gills_direct_frontend import (  # noqa: E402
 )
 
 import validator_core as core  # noqa: E402
+from tools.validation.profile import requires_profile  # noqa: E402
 
 
 RECORD_SET = ROOT / "contracts/record-sets/task016-complete-gills-direct-v1.json"
@@ -176,6 +177,7 @@ class Task016DirectFrontendTest(unittest.TestCase):
         self.assertFalse(evidence["real_time_validation_performed"])
         self.assertFalse(evidence["audible_validation_performed"])
 
+    @requires_profile("native")
     def test_product_cli_executes_only_the_requested_direct_handler(self) -> None:
         with tempfile.TemporaryDirectory(prefix="schuss-task016-cli-") as temporary:
             output = Path(temporary) / "published"

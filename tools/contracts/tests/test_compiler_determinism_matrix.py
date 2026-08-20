@@ -13,6 +13,7 @@ import sys
 sys.path[:0] = [str(ROOT), str(TOOLS)]
 
 import compiler_determinism_matrix as matrix
+from tools.validation.profile import requires_profile
 
 
 class CompilerDeterminismMatrixTest(unittest.TestCase):
@@ -30,6 +31,7 @@ class CompilerDeterminismMatrixTest(unittest.TestCase):
             matrix.find_leaks(value, ("/tmp/private-output",)),
         )
 
+    @requires_profile("native")
     def test_forward_and_reverse_worker_facts_are_identical(self):
         before = matrix.parent_semantic_snapshot(ROOT)
         with tempfile.TemporaryDirectory() as temporary:

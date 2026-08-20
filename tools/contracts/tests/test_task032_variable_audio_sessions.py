@@ -168,7 +168,11 @@ class Task032VariableAudioSessionsTest(unittest.TestCase):
     def setUpClass(cls):
         cls.context = load_repository_context(ROOT, record_set_path=RECORD_SET)
         cls.services = {
-            name: ProjectService(FIXTURES / f"{name}-project", repository_root=ROOT)
+            name: ProjectService(
+                FIXTURES / f"{name}-project",
+                repository_root=ROOT,
+                initial_context=cls.context,
+            )
             for name in ("smaller", "reference", "larger")
         }
         cls.loaded = {name: service.load() for name, service in cls.services.items()}

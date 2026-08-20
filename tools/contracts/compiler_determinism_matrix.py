@@ -126,7 +126,9 @@ def find_leaks(serialized: bytes, forbidden_values: Iterable[str]) -> list[str]:
     return sorted(findings)
 
 
-def _repository_files(repository_root: Path) -> list[Path]:
+def _repository_files(
+    repository_root: Path, *, require_git_membership: bool = False
+) -> list[Path]:
     completed = subprocess.run(
         ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
         cwd=repository_root,
@@ -144,7 +146,24 @@ def _repository_files(repository_root: Path) -> list[Path]:
             key=lambda value: value.as_posix(),
         )
 
-    excluded = {".git", "build", "__pycache__", ".pytest_cache", ".DS_Store"}
+    if require_git_membership:
+        raise MatrixFailure(
+            "Git source membership is unavailable; refusing an unrestricted copy"
+        )
+
+    # A copied root intentionally has no .git directory.  This fallback is used
+    # only to hash that already-bounded copy, never to decide what to copy from
+    # the source worktree.
+    excluded = {
+        ".git",
+        "build",
+        "node_modules",
+        "target",
+        "__pycache__",
+        ".pytest_cache",
+        ".DS_Store",
+        "sources.local.yml",
+    }
     return sorted(
         (
             path.relative_to(repository_root)
@@ -164,7 +183,9 @@ def copy_current_tree(
     """Copy current tracked/untracked task bytes without Git or ignored outputs."""
 
     destination_root.mkdir(parents=True)
-    for relative in _repository_files(source_root):
+    for relative in _repository_files(
+        source_root, require_git_membership=True
+    ):
         source = source_root / relative
         if not source.exists() and not source.is_symlink():
             continue

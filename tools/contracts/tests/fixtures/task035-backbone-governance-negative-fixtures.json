@@ -1,0 +1,26 @@
+{
+  "schema_version": "backbone-governance-negative-fixtures-v11",
+  "cases": [
+    {
+      "name": "hardware-evidence-promotion",
+      "path": "docs/governance/current-state.json",
+      "old": "\"hardware_action_performed\": false",
+      "new": "\"hardware_action_performed\": \"unknown\"",
+      "expected_code": "EVIDENCE_BOUNDARY_INVALID"
+    },
+    {
+      "name": "adr0018-not-accepted",
+      "path": "docs/decisions/0018-adopt-proportional-validation.md",
+      "old": "- Status: accepted",
+      "new": "- Status: proposed",
+      "expected_code": "AUTHORITATIVE_DECISION_INVALID"
+    },
+    {
+      "name": "task012b-retirement-removed",
+      "path": "docs/tasks/012b-object-drawer-and-transparent-graph-canvas.md",
+      "old": "No UI\nimplementation was accepted",
+      "new": "A UI implementation was accepted",
+      "expected_code": "TASK_012B_RETIREMENT_INVALID"
+    }
+  ]
+}

@@ -1,14 +1,12 @@
 # Task 033: Source-neutral object collections and native implementation providers
 
-Status: explicitly activated by the user on 2026-08-20. Phase 1 is implemented
-and passes its focused audit validation. Task 034's validated successor is now
-integrated into local `main` at commit `6010f29`. The serialization gate is
-therefore open for a separately frozen Phase 2 allocation, but Phase 2 has not
-started and Task 033 has not yet reserved a stable ID, schema version,
-operation version, application capability version, or semantic record set.
-Activation authorizes only the implementation described by this contract; it
-does not authorize a source import, dependency change, device action, Git
-publication, or UI change.
+Status: explicitly activated by the user on 2026-08-20. Phase 1 and Phase 2
+implementation are complete locally. Phase 1 is retained at commit `5dccfd2`;
+Phase 2 is retained at commit `ccafc1d` with exact successor record set
+`schuss-record-set-000031@1`. Phases 3 and 4 have not started and are not
+activated. Task 035 temporarily owns validation/governance consolidation before
+any Phase 3 work. This status authorizes no source import, dependency change,
+device action, Git publication, or UI change.
 
 Task 034 owns the accepted parent semantic record set and shared operation/
 governance versions. Its integrated result is
@@ -18,6 +16,14 @@ Any Task 033 phase that needs a semantic record, record set, public operation,
 application capability, or shared governance edit must consume that exact
 accepted result in the current baseline, then allocate exact successors from
 it. Task numbering does not override record-set ancestry.
+
+Phase 2 was explicitly started by the user on 2026-08-20 in isolated worktree
+`codex/task033-phase2-collection-provider-contracts`. The exact allocation
+below was frozen against local `main` commit `2be7eb7` before any shared
+semantic implementation file was changed. Its implementation, focused and
+adjacent validation, reproduction, and review completed at `ccafc1d`. No push,
+UI, source import, dependency change, or hardware action followed from that
+completion.
 
 ## Goal and why it exists
 
@@ -306,9 +312,9 @@ owns record set `schuss-record-set-000030@1` at content hash
 operation/result v17, application capability v10, instrument v1, performance
 schemas, and shared semantic/governance integration. The reviewed result was
 committed as `6010f29` and fast-forwarded into local `main` on 2026-08-20.
-Phases 2-4 are no longer blocked by Task 034 ownership, but remain unimplemented;
-Phase 2 must freeze exact successor allocations before changing shared
-semantics.
+At that point Phases 2-4 were no longer blocked by Task 034 ownership. Phase 2
+subsequently froze the allocation below and completed at `ccafc1d`; Phases 3
+and 4 remain unimplemented and unactivated.
 
 Phase 1 produced and focused-validated:
 
@@ -337,6 +343,66 @@ The source-authenticated generator check, committed-output validator, and three
 focused unit tests pass. Phase 1 creates no provider, catalog promotion,
 runtime dependency, source-lock change, graph/project change, or target
 eligibility.
+
+### Phase 2 frozen allocation
+
+Phase 2 consumes exactly `schuss-record-set-000030@1` at content hash
+`sha256:199b3b2f8fe20ea6a2ce4751a9bd4d35a2e6522d69252ef916c7668ad5e93c54`
+and allocates only the following additive successors:
+
+- record set `schuss-record-set-000031@1`;
+- catalog corpus `schuss-catalog-000001@6`, projection
+  `schuss-catalog-projection-v6`, and selector
+  `schuss-catalog-selection-000001@5`;
+- schema families `source-release-v0`, `object-collection-v0`,
+  `implementation-provider-v0`, `implementation-availability-policy-v0`,
+  `collection-profile-v0`, `catalog-corpus-v6`, `catalog-projection-v6`,
+  operation request/result v18, and application capability description v11;
+- source releases `schuss-source-release-000001` through `000007`, assigned in
+  order to `axoloti-factory`, `ksoloti-objects`, `axoloti-contrib`,
+  `ksoloti-contrib`, the pinned Ksoloti patcher tree, the unchanged Task 032
+  Schuss native runtime source, and pinned JUCE 8.0.15;
+- collections `schuss-object-collection-000001` through `000004`, assigned in
+  order to Schuss Native Core, Ksoloti first-party, Ksoloti contributed, and
+  the exact Mutable-derived audited cohort;
+- provider `schuss-implementation-provider-000001`, the statically linked,
+  JUCE-independent `schuss_rt` native core under ABI `schuss-rt-abi-v1` and
+  registry version `schuss-rt-factory-registry-v1`;
+- availability policy `schuss-implementation-availability-policy-000001`,
+  reporting the exact desktop-host pair
+  `schuss-compute-target-000002@1` / `schuss-backend-000003@1` and the exact
+  current direct-Ksoloti pair `schuss-compute-target-000001@2` /
+  `schuss-backend-000002@4` independently; and
+- read-only operations `collections.inspect` and
+  `implementation.availability.inspect`, carried only by request/result v18
+  and capability v11. Existing CLI, desktop, AI, and MCP allowlists remain
+  closed.
+
+Catalog corpus revision 6 adds exactly seven catalog members using the already
+allocated host implementation identities `schuss-implementation-000162`
+through `000168`. Each member remains a catalog companion at revision 1 and
+joins, through exact references, to the accepted revision-2 component binding,
+eligibility, component contract, provider entry, target, and backend. No
+Task 030 member byte is rewritten and no new DSP implementation identity is
+allocated.
+
+An exact catalog implementation locator for collection membership is the
+immutable catalog reference plus one implementation ID that resolves exactly
+once in that catalog projection. This keeps all frozen Phase 4A and Task 030
+members addressable without inventing revisions or hashes for legacy overlay
+members. It is not valid graph identity.
+
+`collection-profile-v0` is a non-semantic operation input. It may name exact
+installed source/provider releases, enabled discovery collections, and a local
+presentation order. It is not a record-set member, project dependency, build
+priority, or selection input. Phase 2 allocates no profile stable ID and no
+mutation operation. Project-owned objects remain a separate exact-project
+source view and are never installed into these collections.
+
+The provider record binds the seven exact accepted host bindings to their
+existing provider-local factory IDs, but Phase 2 does not allocate the Phase 3
+canonical factory manifest or modify Python/C++ registry tables. Phase 3 alone
+owns descriptor shape, generated language surfaces, and the registry refactor.
 
 ## In scope after explicit activation
 

@@ -207,6 +207,12 @@ was not uploaded. Levels 7 and 8 remain `not-run`.
 
 ## Reproduction
 
+The ordinary `--check` commands below only authenticate the immutable retained
+evidence against each task's completion commit. They do not compile or create
+fresh roots. Full historical reproduction is explicit: Task 018 and Task 021
+require an already-authenticated local source mapping, while Task 022 needs no
+configured source. None of these commands accesses connected hardware.
+
 ```bash
 python3 tools/contracts/generate_task018_records.py --check
 python3 -m unittest tools.contracts.tests.test_task018_gills_mapping
@@ -226,5 +232,13 @@ python3 tools/contracts/validate_task022_contract.py
 python3 tools/contracts/validate_backbone_governance.py
 ```
 
-These checks perform local validation and authenticated ARM compilation only.
-They do not upload, flash, write an SD card, or access connected hardware.
+```bash
+python3 tools/contracts/run_task018.py --reproduce --source-configuration /path/to/sources.local.yml
+python3 tools/contracts/run_task021.py --reproduce --source-configuration /path/to/sources.local.yml
+python3 tools/contracts/run_task022.py --reproduce
+```
+
+The full historical reproduction commands perform local validation and
+authenticated ARM compilation; retained `--check` commands do not compile.
+Neither mode uploads, flashes, writes an SD card, or accesses connected
+hardware.

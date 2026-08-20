@@ -128,7 +128,11 @@ class Task031AudioSessionsTest(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix="schuss-task031-audio-test-")
         self.workspace = Path(self.temporary.name) / "project"
         shutil.copytree(FIXTURE_PROJECT, self.workspace)
-        self.project_service = ProjectService(self.workspace, repository_root=ROOT)
+        self.project_service = ProjectService(
+            self.workspace,
+            repository_root=ROOT,
+            initial_context=self.context,
+        )
         loaded = self.project_service.load()
         self.project_reference = {
             "project_id": loaded.manifest["project_id"],

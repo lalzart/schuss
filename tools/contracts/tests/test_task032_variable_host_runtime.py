@@ -21,6 +21,7 @@ from packages.schuss_core.project_service import ProjectService
 from packages.schuss_core.variable_host_runtime import lower_variable_host_package
 from tools.contracts import record_set_rules
 from tools.contracts import validator_core as core
+from tools.validation.profile import requires_profile
 
 
 RECORD_SET = ROOT / "contracts/record-sets/task032-variable-host-runtime-v1.json"
@@ -46,7 +47,9 @@ class Task032VariableHostRuntimeTest(unittest.TestCase):
         cls.packages = {}
         for name in NAMES:
             loaded = ProjectService(
-                FIXTURES / f"{name}-project", repository_root=ROOT
+                FIXTURES / f"{name}-project",
+                repository_root=ROOT,
+                initial_context=cls.context,
             ).load()
             cls.loaded_projects[name] = loaded
             request_reference = loaded.manifest["build_request_references"][0]
@@ -329,6 +332,7 @@ class Task032VariableHostRuntimeTest(unittest.TestCase):
             hashlib.sha256(v0_wav).hexdigest(),
         )
 
+    @requires_profile("native")
     def test_native_offline_renderer_is_block_equivalent_for_every_fixture(self):
         clang = subprocess.run(
             ["/usr/bin/xcrun", "--find", "clang++"], text=True, capture_output=True

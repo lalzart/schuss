@@ -16,6 +16,7 @@ for value in (ROOT, TOOLS):
 
 import validate_task023
 import validator_core as core
+from tools.validation.profile import profile_enabled, requires_profile
 
 
 FIXTURE = ROOT / "tools/contracts/tests/fixtures/task023-smoke-cases.json"
@@ -25,7 +26,9 @@ class Task023ApplicationSmokeTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.before_fixture = FIXTURE.read_bytes()
-        cls.result = validate_task023.validate(ROOT, fresh_roots=True)
+        cls.result = validate_task023.validate(
+            ROOT, fresh_roots=profile_enabled("reproduction")
+        )
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -52,6 +55,7 @@ class Task023ApplicationSmokeTest(unittest.TestCase):
         )
         self.assertTrue(all(item["status"] == "success" for item in smoke["cases"]))
 
+    @requires_profile("reproduction")
     def test_two_fresh_roots_processes_and_varied_environments_are_identical(self):
         self.assertEqual("identical", self.result["fresh_roots"])
         smoke = self.result["smoke"]
