@@ -1,0 +1,74 @@
+{
+  "schema_version": "schuss-prototype-controller-surface-v1",
+  "artifact_status": {
+    "canonical_schuss_record": false,
+    "purpose": "prototype-only reusable physical surface topology",
+    "stable_ids_allocated": false
+  },
+  "controller": {
+    "manufacturer": "Novation",
+    "model": "Launch Control 3",
+    "variant": "regular",
+    "endless_encoders": 16,
+    "assignable_buttons": 8,
+    "faders": 0
+  },
+  "custom_mode_contract": {
+    "channel": 16,
+    "encoder_message": "midi-1.0-control-change-7-bit-absolute",
+    "encoder_minimum": 0,
+    "encoder_maximum": 127,
+    "encoder_response": "medium",
+    "button_message": "midi-1.0-control-change-momentary",
+    "button_press_value": 127,
+    "button_release_value": 0,
+    "merge_enabled": false,
+    "midi_thru_enabled": false,
+    "output_ports": [
+      "main-usb-midi"
+    ],
+    "slot": 1
+  },
+  "surface": {
+    "encoders": [
+      {"id": "encoder-top-01", "row": 1, "column": 1, "cc": 20},
+      {"id": "encoder-top-02", "row": 1, "column": 2, "cc": 21},
+      {"id": "encoder-top-03", "row": 1, "column": 3, "cc": 22},
+      {"id": "encoder-top-04", "row": 1, "column": 4, "cc": 23},
+      {"id": "encoder-top-05", "row": 1, "column": 5, "cc": 24},
+      {"id": "encoder-top-06", "row": 1, "column": 6, "cc": 25},
+      {"id": "encoder-top-07", "row": 1, "column": 7, "cc": 26},
+      {"id": "encoder-top-08", "row": 1, "column": 8, "cc": 27},
+      {"id": "encoder-bottom-01", "row": 2, "column": 1, "cc": 28},
+      {"id": "encoder-bottom-02", "row": 2, "column": 2, "cc": 29},
+      {"id": "encoder-bottom-03", "row": 2, "column": 3, "cc": 30},
+      {"id": "encoder-bottom-04", "row": 2, "column": 4, "cc": 31},
+      {"id": "encoder-bottom-05", "row": 2, "column": 5, "cc": 32},
+      {"id": "encoder-bottom-06", "row": 2, "column": 6, "cc": 33},
+      {"id": "encoder-bottom-07", "row": 2, "column": 7, "cc": 34},
+      {"id": "encoder-bottom-08", "row": 2, "column": 8, "cc": 35}
+    ],
+    "buttons": [
+      {"id": "button-01", "row": 1, "column": 1, "cc": 40},
+      {"id": "button-02", "row": 1, "column": 2, "cc": 41},
+      {"id": "button-03", "row": 1, "column": 3, "cc": 42},
+      {"id": "button-04", "row": 1, "column": 4, "cc": 43},
+      {"id": "button-05", "row": 1, "column": 5, "cc": 44},
+      {"id": "button-06", "row": 1, "column": 6, "cc": 45},
+      {"id": "button-07", "row": 1, "column": 7, "cc": 46},
+      {"id": "button-08", "row": 1, "column": 8, "cc": 47}
+    ]
+  },
+  "ordering": [
+    "sample_timestamp",
+    "ingress_sequence"
+  ],
+  "unknown_message_policy": "ignore-and-count",
+  "instrument_semantics": "not-modelled",
+  "physical_evidence": {
+    "state": "user-confirmed",
+    "observation": "The same channel and CC layout controlled the Cinderwheel standalone app.",
+    "date": "2026-08-20",
+    "limits": "No feedback, OLED, reconnect, or device-identity claim is made."
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "acceptance_tests": [
+    "Canonical macOS zero-BSS CLEAN reference is byte-identical or the first divergence is localized and blocks promotion",
+    "Core remains exactly 48000 Hz and 16 internal frames while supported outer block partitions are invariant",
+    "Source scales, mutation, gestures, effect crossfade, capture, pickup, and display state pass focused tests",
+    "Direct semantic events and adapted MIDI produce equivalent accepted Core state and audio",
+    "UI snapshot reports accepted effective values rather than uncaptured raw FX controls",
+    "Pinned JUCE renderer and standalone application build without source-checkout mutation"
+  ],
+  "decision_rights": {
+    "may": [
+      "Choose fixed storage, semantic-event, snapshot, renderer, CMake, and UI implementation seams",
+      "Use the proposal-labelled desktop audition preset for physical controls with no canonical source startup value",
+      "Synthesize original Gills tap and hold timing from separate Launch Control buttons",
+      "Generate the frozen two-expression defined-C++ voice overlay only while authoritative/output hashes, int16 range proof, exact golden, and fail-fast sanitizer evidence all match"
+    ],
+    "must_not": [
+      "Change source DSP equations, scale arrays, timing, state semantics, labels, or known quirks without a frozen deviation",
+      "Add Cinderwheel musical features or a new scale",
+      "Modify external Gills or Ksoloti checkouts",
+      "Allocate Schuss production identities, graphs, providers, schemas, records, or runtime factories",
+      "Promote build or host-signal evidence to launch, real-time, device, listening, or production proof"
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Exact source and dependency manifests with retained MIT notices",
+    "Portable C++17 48 kHz and 16-frame reference Core",
+    "Deterministic golden and objective renderer",
+    "Bounded semantic MIDI adapter and Core-state snapshot",
+    "Pinned JUCE 8.0.15 standalone Tide Pit Gills.app",
+    "Focused, sanitizer, partition, parity, and build evidence",
+    "Updated RESULTS.md and GAPS.md"
+  ],
+  "dependency_contracts": [
+    {
+      "id": "mutable-instruments-minimal-closure",
+      "license": "MIT",
+      "manifest_sha256": "0903f25038f0116422a8512b15f1c3531e7b22371da8ad393b130a16d821508f",
+      "revision": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c"
+    },
+    {
+      "archive_sha256": "04f8d5055382582c757be9da069ea98338005f98248facd9c2804435ac853e70",
+      "commit": "91ad83ae34a81e0833b1a2b0866f54846370ae53",
+      "distribution": "local standalone trial; distribution review deferred",
+      "id": "juce",
+      "version": "8.0.15"
+    }
+  ],
+  "goal": {
+    "primary_claim": "At 48000 Hz the portable reference Core preserves the canonical Tide Pit CLEAN Q27 byte stream and its semantic state remains invariant across supported outer host partitions and MIDI adaptation.",
+    "why": "Create a repeatable existing-DSP-to-JUCE workflow while preserving a favorite Gills instrument rather than approximating it."
+  },
+  "inputs": [
+    "Approved proposal revision 0.2 and its exact fingerprint",
+    "gills-instruments Tide Pit target introduced at 53287e49e5bcc5fb0d73b546d88431f82467f969",
+    "Ksoloti Mutable Instruments 21-file MIT closure at 08d3e6e1e2b61230308c20a15ded58ffdaf4656c",
+    "Fresh source-bound 12000-block CLEAN reference SHA-256 39d8c2a67a1b9511b4a063914b01ab816635996a47530e6c09baa8accf45ad2b",
+    "Legacy automatic-storage host result 9e47bed8399382ebc383911809d8a04081b1a2bbe83d1f3e809ebb38b71dab00 retained as provenance only",
+    "Regular Launch Control 3 prototype surface v1",
+    "Cinderwheel JUCE host seam manifest v1"
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "User request in this thread on 2026-08-20 for uninterrupted workflow improvement and Tide Pit implementation",
+      "state": "approved"
+    },
+    "path": "research/proposals/tide-pit-gills-juce-port.md",
+    "revision": "0.2",
+    "sha256": "3c2157eaa26ceed61afe87b256a395dccc5fbbd0dab889189926ffb72b5c2157"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "Isolated exact-source prototype under research/prototypes/tide-pit-gills",
+      "Portable Core, renderer, semantic control/MIDI adapter, standalone GUI, and focused evidence",
+      "Reusable prototype-only controller topology under research/prototype_support"
+    ],
+    "out": [
+      "Shared schuss_rt, canonical catalogs/graphs/providers/records, plugin formats, non-48000-Hz redesign, hardware actions, publication, and production packaging",
+      "Real-time, connected-device, listening, and distribution claims"
+    ]
+  },
+  "status": "ready",
+  "target": "Isolated 48 kHz C++17 reference Core, deterministic renderer, and pinned JUCE 8.0.15 standalone app",
+  "title": "Tide Pit Gills Portable JUCE Port",
+  "work_type": "source-reimplementation",
+  "working_definition": {
+    "artifact": "Built Tide Pit Gills.app with canonical reference and deterministic host-signal evidence",
+    "evidence_level": "host-signal",
+    "success_observation": "The canonical reference hash, supported partition matrix, objective signal limits, adapter parity, and pinned standalone build all pass with retained results."
+  }
+}

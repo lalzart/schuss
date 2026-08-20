@@ -1,0 +1,138 @@
+{
+  "dependencies": [
+    {
+      "authentication": "21 per-file SHA-256 values plus sorted path-sensitive manifest 0903f25038f0116422a8512b15f1c3531e7b22371da8ad393b130a16d821508f",
+      "distribution_disposition": "Vendor only the audited files and retain Emilie Gillet MIT notices",
+      "id": "ksoloti-mutable-instruments-minimal-closure",
+      "license": "MIT",
+      "revision": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c"
+    },
+    {
+      "authentication": "Commit plus SHA-256-authenticated source archive 04f8d5055382582c757be9da069ea98338005f98248facd9c2804435ac853e70",
+      "distribution_disposition": "Local standalone trial; distribution and license obligations remain a separate gate",
+      "id": "juce",
+      "license": "JUCE license boundary; local trial only",
+      "revision": "8.0.15 commit 91ad83ae34a81e0833b1a2b0866f54846370ae53"
+    }
+  ],
+  "fidelity": {
+    "allowed_changes": [
+      "Replace Ksoloti sdram_malloc with prepare-time fixed owned storage while preserving allocation order and capacity",
+      "Save and restore the compatible stmlib LCG as per-instance state while preserving the canonical single-instance sequence",
+      "Generate a source-hash-checked voice overlay replacing exactly two signed Mix-result left shifts with multiplication by two; int16 input proves the int32 result remains in [-65536,65534] and the canonical stream must remain byte-identical",
+      "Translate Q27 output to JUCE float by division by 2^27",
+      "Use semantic controller events and synthesize original tap and hold levels",
+      "Render the source-owned display strings and state in an independent JUCE UI"
+    ],
+    "excluded": [
+      "Physical ADC jitter, contact bounce, headphone output gain, and GPL Gills display-driver behavior",
+      "Non-48000-Hz operation and resampling",
+      "Preset serialization and evolving-buffer recall",
+      "Cross-platform byte identity",
+      "Real-time, connected-device, listening, and production-integration claims"
+    ],
+    "preserve": [
+      "Exact Tide Pit signal graph, lookup tables, algorithms, constants, update order, 48000-Hz rate, and 16-frame quantum",
+      "Q27 control and output reference boundary",
+      "Four exact scale arrays including the HARM label and interval mismatch",
+      "Mutation, lock, source, effect, capture, target, pickup, display, and discrete startup behavior",
+      "Original buffer lengths, effect crossfade, debounce, hold timing, and random sequences"
+    ]
+  },
+  "files": [
+    {
+      "license": "MIT, Lance Ship",
+      "path": "projects/tide-pit-gills/LICENSE.md",
+      "role": "normative",
+      "sha256": "2701d4f24dfe91723d1d43103daa123e8be61e53ad09f142735c91f58a06baac"
+    },
+    {
+      "license": "Project documentation",
+      "path": "projects/tide-pit-gills/README.md",
+      "role": "supporting",
+      "sha256": "be3a5174d13f03fc02faff57b9afa3275faf34b3210850c7f50b219fdad7b52a"
+    },
+    {
+      "license": "MIT project",
+      "path": "projects/tide-pit-gills/tidepit-gills.axp",
+      "role": "normative",
+      "sha256": "35b8df83ffc06bacca1890d936525c75758b193bcf7ef7edd69082acdb7e963c"
+    },
+    {
+      "license": "MIT project",
+      "path": "projects/tide-pit-gills/tidepit.axo",
+      "role": "normative",
+      "sha256": "8e62fdfd1f6b101cb5b6f876d3d54538af8be9a04a46cddba2711eaabc3b9009"
+    },
+    {
+      "license": "MIT, Lance Ship, with attributed MIT Mutable DSP",
+      "path": "projects/tide-pit-gills/tidepit_dsp.h",
+      "role": "normative",
+      "sha256": "3f75a3aa337109e7de270cb4a4aa7281f71ba4de443f057b4e37299e3bd7b32e"
+    },
+    {
+      "license": "MIT, Lance Ship, with attributed MIT Mutable DSP",
+      "path": "projects/tide-pit-gills/tidepit_voice.h",
+      "role": "normative",
+      "sha256": "e6cd224160df87afbfda5743c5124a4600c5f3c6fe4c02df272c41916cd6566c"
+    }
+  ],
+  "intentional_deviations": [
+    "A labelled desktop audition preset supplies continuous controls that have no canonical physical-pot startup state",
+    "Separate Launch Control buttons synthesize the original overloaded effect and encoder gestures",
+    "The portable Core rejects non-48000-Hz preparation rather than silently redesigning the source",
+    "stmlib LCG ownership becomes per Core instance while its algorithm and canonical sequence remain exact",
+    "A generated defined-C++ voice header changes only two `signed Mix result << 1` expressions to `signed Mix result * 2`; authoritative SHA-256 e6cd224160df87afbfda5743c5124a4600c5f3c6fe4c02df272c41916cd6566c, generated SHA-256 d076fa8df10eab0fdbac0ce1cd846e54fd1fa3896bba8ad7608a0ca5202b59ea, exact golden unchanged, fail-fast ASan/UBSan clean",
+    "The portable Core fails preparation and remains silent if its exact fixed arena cannot satisfy every source allocation; it does not continue into the source's partial-allocation NO GRAIN state"
+  ],
+  "not_applicable_rationale": "",
+  "oracle": {
+    "commands": [
+      "ctest --test-dir build/tide-pit-core --output-on-failure -R tide_pit_reference_golden",
+      "ctest --test-dir build/tide-pit-juce --output-on-failure -R tide_pit"
+    ],
+    "fixtures": [
+      "12000 source blocks with RNG 0x21, controls .18/.52/.83/.34/.55/.78/.47/.31/.42/.58 and root 60",
+      "Expected planar little-endian int32 stream of 1536000 bytes and SHA-256 39d8c2a67a1b9511b4a063914b01ab816635996a47530e6c09baa8accf45ad2b under zero-BSS semantics",
+      "Legacy 9e47bed8399382ebc383911809d8a04081b1a2bbe83d1f3e809ebb38b71dab00 is provenance-only because its automatic-storage Reverb histories were uninitialized"
+    ],
+    "kind": "bit-exact",
+    "metrics": [
+      "Canonical Q27 output byte count and SHA-256",
+      "Outer block partition equality",
+      "Exact final snapshot plus focused state and display checkpoint equality",
+      "Peak, RMS, DC, finite sample count, allocation count, and adapter drop diagnostics"
+    ],
+    "tolerances": {
+      "canonical_macos_reference": "byte-equal with Apple Clang 16, C++17, -O2, and default floating-point contraction",
+      "cross_platform_reference": "state-exact and signal tolerances defined by retained platform result",
+      "raw_dc_mean_policy": "measure-and-report-only; changing or filtering the exact source to meet a generic DC limit is forbidden",
+      "finite_samples": "all",
+      "normalized_peak_maximum": 0.999
+    }
+  },
+  "reuse": {
+    "controller_map": {
+      "artifact": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+      "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b",
+      "strategy": "reuse-fingerprinted"
+    },
+    "ui_shell": {
+      "artifact": "research/prototype_support/reuse/cinderwheel-juce-host-seams-v1.json",
+      "sha256": "19425167e2c27a37508a7acf594ed2263f36b06ea0051d177c6b9cf21c2320a9",
+      "strategy": "reuse-fingerprinted"
+    }
+  },
+  "schema_version": "sonic-research-lab-source-equivalence-v1",
+  "source_authority": {
+    "dirty_state": "Target directory clean and unchanged since import; unrelated modified and untracked work exists elsewhere and remains untouched",
+    "observed_branch": "main",
+    "repository_id": "gills-instruments",
+    "revision": "target import 53287e49e5bcc5fb0d73b546d88431f82467f969 observed at repository HEAD 33038b5de6315bce9bbe167062f2876823ff1adc",
+    "source_id": "gills-instruments:tide-pit-gills",
+    "source_root_id": "gills-instruments"
+  },
+  "status": "ready",
+  "unresolved_items": [],
+  "work_type": "source-reimplementation"
+}

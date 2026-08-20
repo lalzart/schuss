@@ -1,0 +1,326 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "research/prototypes/tide-pit-gills/tests/validate_source_lock.py",
+        "--source-root",
+        "operator-supplied-gills-root",
+        "--mutable-root",
+        "operator-supplied-ksoloti-root"
+      ],
+      "cost": "fast",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "source-equivalence.json",
+        "tests/validate_source_lock.py",
+        "tools/generate_ported_tidepit_voice.py",
+        "third_party/SOURCE_LOCK.json",
+        "third_party/THIRD_PARTY_NOTICES.md",
+        "third_party/tidepit",
+        "third_party/ksoloti"
+      ],
+      "id": "source-review"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "research/prototypes/tide-pit-gills",
+        "-B",
+        "build/tide-pit-core",
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "CMakeLists.txt",
+        "include",
+        "src",
+        "tests",
+        "tools",
+        "generated",
+        "third_party",
+        "control-map.json"
+      ],
+      "id": "core-configure"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build/tide-pit-core",
+        "--parallel"
+      ],
+      "cost": "fast",
+      "depends_on": [
+        "core-configure"
+      ],
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "CMakeLists.txt",
+        "include",
+        "src",
+        "tests",
+        "tools",
+        "generated",
+        "third_party",
+        "control-map.json"
+      ],
+      "id": "core-build"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/tide-pit-core",
+        "--output-on-failure"
+      ],
+      "cost": "fast",
+      "depends_on": [
+        "core-build"
+      ],
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "include",
+        "src",
+        "tests",
+        "tools",
+        "generated",
+        "third_party",
+        "control-map.json"
+      ],
+      "id": "core-and-golden-tests"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "research/prototypes/tide-pit-gills",
+        "-B",
+        "build/tide-pit-sanitize",
+        "-DCMAKE_BUILD_TYPE=Debug",
+        "-DTIDE_PIT_ENABLE_SANITIZERS=ON"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "CMakeLists.txt",
+        "include",
+        "src",
+        "tests",
+        "tools",
+        "generated",
+        "third_party"
+      ],
+      "id": "sanitizer-configure"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build/tide-pit-sanitize",
+        "--parallel"
+      ],
+      "cost": "fast",
+      "depends_on": [
+        "sanitizer-configure"
+      ],
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "include",
+        "src",
+        "tests",
+        "tools",
+        "generated",
+        "third_party"
+      ],
+      "id": "sanitizer-build"
+    },
+    {
+      "command": [
+        "env",
+        "ASAN_OPTIONS=detect_leaks=0",
+        "UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1",
+        "ctest",
+        "--test-dir",
+        "build/tide-pit-sanitize",
+        "--output-on-failure"
+      ],
+      "cost": "fast",
+      "depends_on": [
+        "sanitizer-build"
+      ],
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "include",
+        "src",
+        "tests",
+        "tools",
+        "generated",
+        "third_party"
+      ],
+      "id": "sanitizer-tests"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "research/prototypes/tide-pit-gills",
+        "-B",
+        "build/tide-pit-juce",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DTIDE_PIT_ENABLE_JUCE=ON",
+        "-DTIDE_PIT_JUCE_SOURCE_DIR=operator-supplied-authenticated-juce-8.0.15-root"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "CMakeLists.txt",
+        "include",
+        "src",
+        "tests",
+        "tools",
+        "generated",
+        "third_party",
+        "control-map.json",
+        "experiment.json"
+      ],
+      "id": "pinned-juce-configure",
+      "prerequisites": [
+        "Operator supplies and separately authenticates the exact JUCE 8.0.15 tree bound by source-equivalence.json"
+      ]
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build/tide-pit-juce",
+        "--parallel"
+      ],
+      "cost": "native",
+      "depends_on": [
+        "pinned-juce-configure"
+      ],
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "CMakeLists.txt",
+        "include",
+        "src",
+        "tests",
+        "tools",
+        "generated",
+        "third_party",
+        "control-map.json",
+        "experiment.json"
+      ],
+      "id": "pinned-juce-build"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/tide-pit-juce",
+        "--output-on-failure",
+        "-R",
+        "tide_pit_render_matrix"
+      ],
+      "cost": "native",
+      "depends_on": [
+        "pinned-juce-build"
+      ],
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "CMakeLists.txt",
+        "experiment.json",
+        "control-map.json",
+        "include",
+        "src",
+        "tests",
+        "tools",
+        "generated",
+        "third_party"
+      ],
+      "id": "objective-render"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "The exact source and prior host evidence are identified without a novelty claim.",
+      "status": "available"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "Approved proposal revision 0.2 fingerprint matches the ready contract.",
+      "status": "available"
+    },
+    {
+      "check_ids": [
+        "source-review"
+      ],
+      "level": "source",
+      "promotion_rule": "Normative and dependency bytes match their locks, notices are retained, and external targets remain unchanged.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "core-configure",
+        "core-build",
+        "core-and-golden-tests",
+        "sanitizer-configure",
+        "sanitizer-build",
+        "sanitizer-tests"
+      ],
+      "level": "host-structural",
+      "promotion_rule": "State, bounds, source golden, partition, negative, multiple-instance, and adapter-parity checks pass.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "objective-render"
+      ],
+      "level": "host-signal",
+      "promotion_rule": "Frozen renders meet hash, finite, peak, final-state, focused-checkpoint, and partition tolerances; raw DC mean is retained as a source characteristic, not gated.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "pinned-juce-configure",
+        "pinned-juce-build"
+      ],
+      "level": "target-build",
+      "promotion_rule": "The exact pinned JUCE renderer and standalone application compile and link.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "Worst-case and p99 callback measurements meet a declared budget.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "An authorized Launch Control session verifies mappings, pickup, gestures, reconnect, and diagnostics.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "The user compares the app with the remembered or recorded Gills instrument and records the result.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "A separate accepted Schuss task allocates canonical identities, graph/provider/runtime records, packaging, and release gates.",
+      "status": "deferred"
+    }
+  ],
+  "command_working_directory": "workspace-root",
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

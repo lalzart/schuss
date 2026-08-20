@@ -1,0 +1,115 @@
+{
+  "adapter_owned_desktop_audition_preset": {
+    "canonical_source_default": false,
+    "controls": {
+      "fx-a": 0.6,
+      "fx-b": 0.35,
+      "material": 0.5,
+      "memory": 0.78,
+      "position": 0.31,
+      "rate": 0.55,
+      "root": 60,
+      "stage-1": 0.2,
+      "stage-2": 0.5,
+      "stage-3": 0.8,
+      "stage-4": 0.3
+    },
+    "owner": "desktop-adapter",
+    "source": "approved proposal revision 0.2",
+    "startup_contract": "Core::prepare resets to Controls{}; compile-time and runtime tests require those values to equal this map-generated preset, so the JUCE app sends no synthetic startup MIDI."
+  },
+  "application_feedback": [
+    {
+      "destination": "all-continuous-controls",
+      "rule": "UI sliders show accepted Core snapshot values; FX-A and FX-B do not jump to uncaptured raw input during soft pickup."
+    },
+    {
+      "destination": "display-state",
+      "rule": "UI shows the four exact 21-character source lines, active stage, source, scale, target, effect, lock, capture, MIDI receive count, and last accepted CC."
+    }
+  ],
+  "compiled_surface": {
+    "buttons": [
+      {"assigned": true, "cc": 40, "control": "source-next", "gesture": "direct-rising-edge", "label": "SOURCE", "physical_control": "button-1", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 41, "control": "mutate", "gesture": "direct-rising-edge", "label": "MUTATE", "physical_control": "button-2", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 42, "control": "lock-toggle", "gesture": "direct-rising-edge", "label": "LOCK", "physical_control": "button-3", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 43, "control": "capture-toggle", "gesture": "source-effect-button-hold", "label": "FREEZE", "physical_control": "button-4", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 44, "control": "effect-next", "gesture": "source-effect-button-tap", "label": "FX MODE", "physical_control": "button-5", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 45, "control": "target-next", "gesture": "source-encoder-switch-hold", "label": "TARGET", "physical_control": "button-6", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 46, "control": "scale-next", "gesture": "source-encoder-switch-tap", "label": "SCALE", "physical_control": "button-7", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": false, "cc": 47, "control": "unassigned", "gesture": "none", "label": "UNASSIGNED", "physical_control": "button-8", "press_value": 127, "release_value": 0, "type": "unassigned"}
+    ],
+    "channel": 16,
+    "encoders": [
+      {"adapter_owned_default": {"midi_value": 25, "semantic_value": 0.2, "unit": "normalized"}, "assigned": true, "cc": 20, "control": "stage-1", "label": "STAGE 1", "midi_curve": "linear-normalized", "physical_control": "top-1", "source_curve": "direct-normalized", "timing": "next-source-quantum", "type": "continuous"},
+      {"adapter_owned_default": {"midi_value": 64, "semantic_value": 0.5, "unit": "normalized"}, "assigned": true, "cc": 21, "control": "stage-2", "label": "STAGE 2", "midi_curve": "linear-normalized", "physical_control": "top-2", "source_curve": "direct-normalized", "timing": "next-source-quantum", "type": "continuous"},
+      {"adapter_owned_default": {"midi_value": 102, "semantic_value": 0.8, "unit": "normalized"}, "assigned": true, "cc": 22, "control": "stage-3", "label": "STAGE 3", "midi_curve": "linear-normalized", "physical_control": "top-3", "source_curve": "direct-normalized", "timing": "next-source-quantum", "type": "continuous"},
+      {"adapter_owned_default": {"midi_value": 38, "semantic_value": 0.3, "unit": "normalized"}, "assigned": true, "cc": 23, "control": "stage-4", "label": "STAGE 4", "midi_curve": "linear-normalized", "physical_control": "top-4", "source_curve": "direct-normalized", "timing": "next-source-quantum", "type": "continuous"},
+      {"adapter_owned_default": {"midi_value": 70, "semantic_value": 0.55, "unit": "normalized"}, "assigned": true, "cc": 24, "control": "rate", "label": "RATE", "midi_curve": "linear-normalized", "physical_control": "top-5", "source_curve": "0.08-plus-5.92-x-squared-hz", "timing": "next-source-quantum", "type": "continuous"},
+      {"adapter_owned_default": {"midi_value": 99, "semantic_value": 0.78, "unit": "normalized"}, "assigned": true, "cc": 25, "control": "memory", "label": "MEMORY", "midi_curve": "linear-normalized", "physical_control": "top-6", "source_curve": "mutation-threshold-memory-squared", "timing": "next-source-quantum", "type": "continuous"},
+      {"adapter_owned_default": {"midi_value": 64, "semantic_value": 0.5, "unit": "normalized"}, "assigned": true, "cc": 26, "control": "material", "label": "MATERIAL", "midi_curve": "linear-normalized", "physical_control": "top-7", "source_curve": "contextual-source-material", "timing": "next-source-quantum", "type": "continuous"},
+      {"adapter_owned_default": {"midi_value": 39, "semantic_value": 0.31, "unit": "normalized"}, "assigned": true, "cc": 27, "control": "position", "label": "POSITION", "midi_curve": "linear-normalized", "physical_control": "top-8", "source_curve": "grain-position", "timing": "next-source-quantum", "type": "continuous"},
+      {"adapter_owned_default": {"midi_value": 76, "semantic_value": 0.6, "unit": "normalized"}, "assigned": true, "cc": 28, "control": "fx-a", "label": "FX-A", "midi_curve": "linear-normalized", "physical_control": "bottom-1", "source_curve": "contextual-source-effect-a-with-soft-pickup", "timing": "next-source-quantum-after-pickup", "type": "continuous"},
+      {"adapter_owned_default": {"midi_value": 44, "semantic_value": 0.35, "unit": "normalized"}, "assigned": true, "cc": 29, "control": "fx-b", "label": "FX-B", "midi_curve": "linear-normalized", "physical_control": "bottom-2", "source_curve": "contextual-source-effect-b-with-soft-pickup", "timing": "next-source-quantum-after-pickup", "type": "continuous"},
+      {"adapter_owned_default": {"midi_value": 85, "semantic_value": 60, "unit": "midi-note"}, "assigned": true, "cc": 30, "control": "root", "label": "ROOT", "midi_curve": "round-half-up-36-plus-36-value-over-127", "physical_control": "bottom-3", "source_curve": "quantized-midi-note-36-through-72", "timing": "next-source-quantum", "type": "continuous"},
+      {"adapter_owned_default": null, "assigned": false, "cc": 31, "control": "unassigned", "label": "UNASSIGNED", "midi_curve": "none", "physical_control": "bottom-4", "source_curve": "none", "timing": "ignore-and-count", "type": "unassigned"},
+      {"adapter_owned_default": null, "assigned": false, "cc": 32, "control": "unassigned", "label": "UNASSIGNED", "midi_curve": "none", "physical_control": "bottom-5", "source_curve": "none", "timing": "ignore-and-count", "type": "unassigned"},
+      {"adapter_owned_default": null, "assigned": false, "cc": 33, "control": "unassigned", "label": "UNASSIGNED", "midi_curve": "none", "physical_control": "bottom-6", "source_curve": "none", "timing": "ignore-and-count", "type": "unassigned"},
+      {"adapter_owned_default": null, "assigned": false, "cc": 34, "control": "unassigned", "label": "UNASSIGNED", "midi_curve": "none", "physical_control": "bottom-7", "source_curve": "none", "timing": "ignore-and-count", "type": "unassigned"},
+      {"adapter_owned_default": null, "assigned": false, "cc": 35, "control": "unassigned", "label": "UNASSIGNED", "midi_curve": "none", "physical_control": "bottom-8", "source_curve": "none", "timing": "ignore-and-count", "type": "unassigned"}
+    ],
+    "topology": {
+      "artifact": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+      "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
+    }
+  },
+  "endpoint_device_evidence": {
+    "notes": "The same physical channel and CC surface controlled Cinderwheel in a user session. Tide Pit behavior, feedback, reconnect, and endpoint identity remain deferred.",
+    "state": "surface-user-confirmed-tide-pit-session-deferred"
+  },
+  "gesture_state_machines": [
+    {"action": "effect-next", "source_synthesis": "Drive 76 high blocks total (one candidate-change observation plus 75 matching observations), then 76 low blocks by the same rule; effect changes on debounced release."},
+    {"action": "capture-toggle", "source_synthesis": "Drive 1575 high blocks total: one candidate-change observation, 75 matching observations to accept high, and 1499 further high blocks so the hold counter reaches 1500 including the acceptance block; then drive 76 low blocks without a tap action."},
+    {"action": "scale-next", "source_synthesis": "Drive 9 high blocks total (one candidate-change observation plus 8 matching observations), then 9 low blocks by the same rule; scale changes on debounced release."},
+    {"action": "target-next", "source_synthesis": "Drive 1508 high blocks total: one candidate-change observation, 8 matching observations to accept high, and 1499 further high blocks so the hold counter reaches 1500 including the acceptance block; then drive 9 low blocks without a tap action."}
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {"cc": 20, "control": "stage-1", "mapping": "value/127", "timing": "next-source-quantum", "type": "continuous"},
+    {"cc": 21, "control": "stage-2", "mapping": "value/127", "timing": "next-source-quantum", "type": "continuous"},
+    {"cc": 22, "control": "stage-3", "mapping": "value/127", "timing": "next-source-quantum", "type": "continuous"},
+    {"cc": 23, "control": "stage-4", "mapping": "value/127", "timing": "next-source-quantum", "type": "continuous"},
+    {"cc": 24, "control": "rate", "mapping": "value/127", "timing": "next-source-quantum", "type": "continuous"},
+    {"cc": 25, "control": "memory", "mapping": "value/127", "timing": "next-source-quantum", "type": "continuous"},
+    {"cc": 26, "control": "material", "mapping": "value/127", "timing": "next-source-quantum", "type": "continuous"},
+    {"cc": 27, "control": "position", "mapping": "value/127", "timing": "next-source-quantum", "type": "continuous"},
+    {"cc": 28, "control": "fx-a", "mapping": "value/127 with source soft pickup", "timing": "next-source-quantum", "type": "continuous"},
+    {"cc": 29, "control": "fx-b", "mapping": "value/127 with source soft pickup", "timing": "next-source-quantum", "type": "continuous"},
+    {"cc": 30, "control": "root", "mapping": "round(36 + 36*value/127)", "timing": "next-source-quantum", "type": "continuous"},
+    {"cc": 40, "control": "source-next", "edge": "press-127", "type": "action"},
+    {"cc": 41, "control": "mutate", "edge": "press-127", "type": "action"},
+    {"cc": 42, "control": "lock-toggle", "edge": "press-127", "type": "action"},
+    {"cc": 43, "control": "capture-toggle", "edge": "press-127", "type": "action"},
+    {"cc": 44, "control": "effect-next", "edge": "press-127", "type": "action"},
+    {"cc": 45, "control": "target-next", "edge": "press-127", "type": "action"},
+    {"cc": 46, "control": "scale-next", "edge": "press-127", "type": "action"}
+  ],
+  "source_of_truth": {
+    "artifact": "control-map.json compiled_surface",
+    "freshness": "generated header records SHA-256 of the current control-map.json and controller topology bytes",
+    "generated_artifact": "generated/control_descriptors.hpp",
+    "strategy": "generate"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "artifact": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+      "buttons": "CC40-47 momentary 127/0; CC47 visibly unassigned",
+      "channel": 16,
+      "encoders": "CC20-35; CC31-35 visibly unassigned",
+      "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
+    }
+  ],
+  "title": "Tide Pit Gills Portable JUCE Port"
+}

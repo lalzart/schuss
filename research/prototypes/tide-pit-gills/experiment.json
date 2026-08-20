@@ -1,0 +1,129 @@
+{
+  "artifact_retention": {
+    "location": "ignored build/tide-pit-render-* directories plus hashes and metrics in RESULTS.md",
+    "policy": "reproducible-only"
+  },
+  "comparator_condition_id": "source-bound-clean-reference",
+  "conditions": [
+    {
+      "controls": {
+        "fx_a": 0.42,
+        "fx_b": 0.58,
+        "material": 0.47,
+        "memory": 0.78,
+        "position": 0.31,
+        "rate": 0.55,
+        "root": 60,
+        "stage_1": 0.18,
+        "stage_2": 0.52,
+        "stage_3": 0.83,
+        "stage_4": 0.34
+      },
+      "duration_internal_blocks": 12000,
+      "events": [],
+      "id": "source-bound-clean-reference",
+      "purpose": "Canonical byte-exact comparator from exact source with Ksoloti-equivalent zero-BSS storage"
+    },
+    {
+      "controls": {
+        "fx_a": 0.6,
+        "fx_b": 0.35,
+        "material": 0.5,
+        "memory": 0.78,
+        "position": 0.31,
+        "rate": 0.55,
+        "root": 60,
+        "stage_1": 0.2,
+        "stage_2": 0.5,
+        "stage_3": 0.8,
+        "stage_4": 0.3
+      },
+      "duration_samples": 400000,
+      "events": [
+        {"action": "source-next", "sample_index": 48000},
+        {"action": "source-next", "sample_index": 96000},
+        {"action": "mutate", "sample_index": 120000},
+        {"action": "lock-toggle", "sample_index": 144000},
+        {"action": "effect-next", "sample_index": 168000},
+        {"action": "set-fx-a", "sample_index": 192000, "value": 0.75},
+        {"action": "set-fx-b", "sample_index": 216000, "value": 0.65},
+        {"action": "effect-next", "sample_index": 240000},
+        {"action": "effect-next", "sample_index": 248000},
+        {"action": "capture-toggle", "sample_index": 264000},
+        {"action": "capture-toggle", "sample_index": 312000},
+        {"action": "scale-next", "sample_index": 336000},
+        {"action": "target-next", "sample_index": 360000}
+      ],
+      "id": "performance-state-trace",
+      "purpose": "Exercise all source/effect/capture state families, including a return to an initialized effect with contextual pickup inactive"
+    },
+    {
+      "controls": {
+        "fx_a": 0.0,
+        "fx_b": 1.0,
+        "material": 1.0,
+        "memory": 0.0,
+        "position": 1.0,
+        "rate": 1.0,
+        "root": 72,
+        "stage_1": 0.0,
+        "stage_2": 1.0,
+        "stage_3": 0.0,
+        "stage_4": 1.0
+      },
+      "duration_samples": 192000,
+      "events": [
+        {"action": "set-root", "sample_index": 48000, "value": 36},
+        {"action": "set-fx-a", "sample_index": 72000, "value": 1.0},
+        {"action": "set-fx-b", "sample_index": 96000, "value": 0.0},
+        {"action": "source-next", "sample_index": 120000},
+        {"action": "effect-next", "sample_index": 144000}
+      ],
+      "id": "parameter-extremes",
+      "purpose": "Falsify numeric safety and bound output under hostile valid controls"
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "application/octet-stream",
+      "name": "source-bound-clean-reference.q27le"
+    },
+    {
+      "kind": "audio/wav",
+      "name": "performance-state-trace.wav"
+    },
+    {
+      "kind": "audio/wav",
+      "name": "parameter-extremes.wav"
+    },
+    {
+      "kind": "application/json",
+      "name": "render-manifest.json"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 33,
+  "status": "ready",
+  "supported_block_frames": [
+    16,
+    64,
+    128,
+    512
+  ],
+  "timeline_convention": "Semantic events are ordered by sample_index then ingress_sequence, quantized forward to the next 16-frame source quantum, and affect that quantum before source processing.",
+  "title": "Tide Pit Gills Portable JUCE Port",
+  "tolerances": {
+    "canonical_clean_bytes": 1536000,
+    "canonical_clean_peak_q27": 39182832,
+    "canonical_clean_rms_q27": 14011444.589680206,
+    "canonical_clean_sha256": "39d8c2a67a1b9511b4a063914b01ab816635996a47530e6c09baa8accf45ad2b",
+    "canonical_toolchain": "Apple Clang 16, C++17, -O2, default floating-point contraction",
+    "legacy_uninitialized_harness_sha256": "9e47bed8399382ebc383911809d8a04081b1a2bbe83d1f3e809ebb38b71dab00 provenance-only",
+    "raw_dc_mean_policy": "measure-and-report-only; the exact source-bound finite render has a non-zero mean, so DC removal is not a fidelity gate",
+    "finite_samples": "all",
+    "normalized_peak_maximum": 0.999,
+    "outer_partition_equivalence": "byte-equal on canonical macOS build",
+    "state_checkpoint_equivalence": "exact final snapshot plus focused Core and MIDI-adapter state checkpoints"
+  }
+}

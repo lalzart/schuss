@@ -1,0 +1,40 @@
+{
+  "schema_version": "schuss-prototype-reuse-manifest-v1",
+  "artifact_status": {
+    "canonical_schuss_component": false,
+    "purpose": "fingerprint the Cinderwheel trial seams inspected for Tide Pit reuse"
+  },
+  "source_artifacts": [
+    {
+      "path": "research/prototypes/cinderwheel/CMakeLists.txt",
+      "sha256": "d349220c04bf0a6cd9349b7e004ed3e673d67b1fa8c16971c57967a8df786ea9",
+      "reuse": "JUCE pin, opt-in fetch, target and CTest pattern"
+    },
+    {
+      "path": "research/prototypes/cinderwheel/include/cinderwheel/juce_midi_adapter.hpp",
+      "sha256": "5b107623b154402c3b4fb6e0af943f1c9ff15f920ff5c278c4c21082f4ed7d75",
+      "reuse": "fixed-capacity raw MIDI intake pattern"
+    },
+    {
+      "path": "research/prototypes/cinderwheel/src/juce_midi_adapter.cpp",
+      "sha256": "5d3212fec8ea60f2c5268e71f6dcf0ccd33030a6de67ea4c5025a232fd7b4e61",
+      "reuse": "bounded timestamp and ingress-order mechanics"
+    },
+    {
+      "path": "research/prototypes/cinderwheel/src/juce_main.cpp",
+      "sha256": "2d9001f5db02c6c4e1cd356e4d1ebeda787a6ed4df898f4dd5bc66c10fe8e734",
+      "reuse": "audio-device shell, MIDI input selector, and descriptor-driven layout patterns"
+    },
+    {
+      "path": "research/prototypes/cinderwheel/tests/juce_midi_adapter_tests.cpp",
+      "sha256": "292e91fe69b81997a05ff6a432fdb04ce3330252c275937725a98f3f30375727",
+      "reuse": "direct-versus-adapted parity and lifecycle test pattern"
+    }
+  ],
+  "must_not_reuse": [
+    "Cinderwheel DSP state or algorithms",
+    "Cinderwheel semantic control destinations, defaults, scales, or gestures",
+    "raw-input UI reflection where soft pickup makes accepted state differ"
+  ],
+  "extraction_decision": "Use as inspected patterns for Tide Pit; defer a permanent shared C++ library until both prototypes expose a stable common seam."
+}
