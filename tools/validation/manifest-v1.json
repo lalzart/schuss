@@ -94,6 +94,14 @@
       "inputs": ["tools/contracts/**", "packages/schuss_core/**", "contracts/**", "schemas/**", "fixtures/**", "evidence/**"]
     },
     {
+      "id": "instrument-lab.contracts",
+      "kind": "command",
+      "argv": ["{python}", "tools/instrument_lab/validate_repository.py", "--repo-root", "."],
+      "validation_profile": "current",
+      "cost_class": "fast",
+      "inputs": ["tools/instrument_lab/**", "research/prototype_support/instrument_lab/**", "research/prototypes/cinderwheel/prototype-index.json", "research/prototypes/cinderwheel/dsp-topology.json", "research/prototypes/cinderwheel/IMPLEMENTATION_HANDOFF.md", "research/prototypes/cinderwheel/PROMOTION_NEEDS.json", "research/prototypes/tide-pit-gills/prototype-index.json", "research/prototypes/tide-pit-gills/dsp-topology.json", "research/prototypes/tide-pit-gills/IMPLEMENTATION_HANDOFF.md", "research/prototypes/tide-pit-gills/PROMOTION_NEEDS.json", "docs/tasks/036-INSTRUMENT-LAB-HANDOFF.json"]
+    },
+    {
       "id": "configured.sources",
       "kind": "unittest-names",
       "tests": [
@@ -232,6 +240,15 @@
       "cost_class": "native",
       "tool_prerequisites": ["cmake", "ctest", "clang++"],
       "inputs": ["packages/schuss_rt/**", "fixtures/task031/**", "fixtures/task032/**"]
+    },
+    {
+      "id": "native.instrument-lab-core",
+      "kind": "command",
+      "argv": ["{python}", "tools/instrument_lab/run_native.py", "--mode", "core"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "tool_prerequisites": ["cmake", "ctest", "clang++"],
+      "inputs": ["tools/instrument_lab/**", "research/prototype_support/instrument_lab/**", "research/prototypes/cinderwheel/**", "research/prototypes/tide-pit-gills/**", "packages/dsp_sources/mutable_ksoloti_v1/**"]
     },
     {
       "id": "reproduction.component-graph-process",
@@ -399,6 +416,15 @@
       "cost_class": "reproduction",
       "tool_prerequisites": ["git"],
       "inputs": ["tools/contracts/run_task033_phase2_reproduction.py", "tools/contracts/compiler_determinism_matrix.py", "tools/contracts/generate_task033_phase2_records.py", "tools/contracts/validate_task033_phase2.py", "contracts/**", "schemas/**", "packages/schuss_core/**"]
+    },
+    {
+      "id": "reproduction.instrument-lab",
+      "kind": "command",
+      "argv": ["{python}", "tools/instrument_lab/reproduce.py", "--repo-root", ".", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "tool_prerequisites": ["cmake", "ctest", "clang++"],
+      "inputs": ["tools/instrument_lab/**", "research/prototype_support/instrument_lab/**"]
     }
   ],
   "profiles": {
@@ -406,7 +432,8 @@
       "inventory.discovery",
       "catalog.discovery",
       "contracts.current-closure",
-      "contracts.current-tests"
+      "contracts.current-tests",
+      "instrument-lab.contracts"
     ],
     "compatibility": ["contracts.compatibility-history"],
     "configured-sources": ["configured.sources"],
@@ -423,7 +450,8 @@
       "native.runtime-cmake",
       "native.engine-cmake",
       "native.runtime-asan-ubsan",
-      "native.runtime-tsan"
+      "native.runtime-tsan",
+      "native.instrument-lab-core"
     ],
     "reproduction": [
       "reproduction.component-graph-process",
@@ -440,7 +468,8 @@
       "reproduction.task029",
       "reproduction.task030",
       "reproduction.task032",
-      "reproduction.task033-phase2"
+      "reproduction.task033-phase2",
+      "reproduction.instrument-lab"
     ],
     "release": [
       "@current",

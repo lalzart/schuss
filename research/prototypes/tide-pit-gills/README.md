@@ -19,6 +19,14 @@ the exact source hash, the result stays inside int32 range, fail-fast UBSan is
 clean, and the canonical output remains byte-identical. Vendored source bytes
 are not edited.
 
+The exact 21-file Mutable/Ksoloti closure is retained once in
+`packages/dsp_sources/mutable_ksoloti_v1`. Tide Pit resolves its three linked
+resource/unit translation units from that physical package while keeping the
+compiled target, numeric profile, random ownership, arena, overlays, and
+sanitizer/optimization flags local. Accepted
+`schuss-source-release-000005@1` remains authoritative for upstream identity,
+provenance, and license/distribution review state.
+
 ## Build and run
 
 Core-only validation does not require JUCE:
@@ -67,6 +75,21 @@ FX-A and FX-B retain Tide Pit's contextual soft pickup. After changing effect
 mode, turn the encoder through the recalled value before it takes over. The UI
 shows the value actually accepted by the Core, so it will not falsely jump to
 an uncaptured MIDI value. The controller sends no display or LED feedback.
+
+## Desktop state and oscilloscope
+
+The button faces show the state accepted by the Core rather than only their
+action names: Source shows REED/RND/FOLD, Lock and Freeze show ON/OFF, FX Mode
+shows CLEAN/FILT/DRIVE, Target shows PIT/BODY/GRAIN/ALL, and Scale shows the
+active scale. Mutate briefly shows `DONE` only after its action count advances.
+This feedback works for mouse and MIDI input because both paths are read back
+from the same Core snapshot.
+
+The stereo output scope overlays 1,024 recent left/right samples (about 21 ms
+at 48 kHz) and reports the peak level for each channel. Its audio-thread side
+uses fixed storage and a bounded mailbox; painting, path construction, and text
+formatting stay on the UI thread. It is a performance display, not a triggered
+measurement oscilloscope, and no real-time deadline claim is made.
 
 ## What to listen for
 

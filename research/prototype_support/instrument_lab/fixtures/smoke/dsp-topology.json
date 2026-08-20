@@ -1,0 +1,30 @@
+{
+  "claims": {"canonical_schuss_record": false, "executable_graph": false},
+  "connections": [
+    {"from": "role.parameter.value", "kind": "accepted-value", "to": "role.node.value-holder"},
+    {"from": "role.node.value-holder", "kind": "constant-test-signal", "to": "role.node.output"},
+    {"from": "role.node.output", "kind": "left", "to": "role.port.audio-out-left"},
+    {"from": "role.node.output", "kind": "right", "to": "role.port.audio-out-right"}
+  ],
+  "feedback_edges": [],
+  "fusion_boundary": {
+    "implementation_note": "This is a non-musical generated contract fixture.",
+    "includes": ["role.node.value-holder", "role.node.output"],
+    "local_role": "role.fusion.fixture"
+  },
+  "nodes": [
+    {"internals": ["bounded accepted value", "event count", "reset count"], "local_role": "role.node.value-holder", "name": "value holder", "origin": "adapter", "responsibility": "retain one accepted test value", "state_owner": true, "unresolved_component_contract": ["bounded value holder"]},
+    {"internals": ["constant left value", "inverted right value"], "local_role": "role.node.output", "name": "test output", "origin": "adapter", "responsibility": "emit deterministic non-musical test samples", "state_owner": false, "unresolved_component_contract": ["deterministic test output"]}
+  ],
+  "prototype_id": "instrument-lab-smoke",
+  "public_facets": {
+    "actions": [{"data_type": "reset action", "direction": "input", "local_role": "role.action.reset", "name": "reset"}],
+    "displays": [{"data_type": "test snapshot", "direction": "output", "local_role": "role.display.state", "name": "accepted test state"}],
+    "parameters": [{"data_type": "normalized test value", "direction": "input", "local_role": "role.parameter.value", "name": "test value"}],
+    "ports": [
+      {"data_type": "float32 test signal", "direction": "output", "local_role": "role.port.audio-out-left", "name": "test out left"},
+      {"data_type": "float32 test signal", "direction": "output", "local_role": "role.port.audio-out-right", "name": "test out right"}
+    ]
+  },
+  "schema_version": "schuss-instrument-lab-dsp-topology-v1"
+}

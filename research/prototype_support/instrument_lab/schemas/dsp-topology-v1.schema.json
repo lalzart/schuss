@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:schuss:prototype-only:instrument-lab:dsp-topology:v1",
+  "additionalProperties": false,
+  "properties": {
+    "claims": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_schuss_record": {"const": false},
+        "executable_graph": {"const": false}
+      },
+      "required": ["canonical_schuss_record", "executable_graph"],
+      "type": "object"
+    },
+    "connections": {"type": "array"},
+    "feedback_edges": {"type": "array"},
+    "fusion_boundary": {"type": "object"},
+    "nodes": {"type": "array"},
+    "prototype_id": {"pattern": "^[a-z][a-z0-9-]*$", "type": "string"},
+    "public_facets": {"type": "object"},
+    "schema_version": {"const": "schuss-instrument-lab-dsp-topology-v1"}
+  },
+  "required": [
+    "schema_version",
+    "prototype_id",
+    "claims",
+    "public_facets",
+    "nodes",
+    "connections",
+    "feedback_edges",
+    "fusion_boundary"
+  ],
+  "title": "Noncanonical nonexecutable Instrument Lab DSP topology v1",
+  "type": "object"
+}

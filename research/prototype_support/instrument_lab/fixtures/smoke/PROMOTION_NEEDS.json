@@ -1,0 +1,18 @@
+{
+  "claims": {
+    "allocates_canonical_records": false,
+    "executable_graph": false
+  },
+  "needs": [
+    {
+      "local_role": "role.node.output",
+      "required_contract": "deterministic test output"
+    },
+    {
+      "local_role": "role.node.value-holder",
+      "required_contract": "bounded value holder"
+    }
+  ],
+  "prototype_id": "instrument-lab-smoke",
+  "schema_version": "schuss-instrument-lab-promotion-needs-v1"
+}

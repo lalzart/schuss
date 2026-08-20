@@ -1155,9 +1155,15 @@ StateSnapshot Core::snapshot() const noexcept {
     result.pulse_counter = impl_->pulse_counter;
     result.cycle_phase = impl_->cycle_phase;
     result.rate_hz = impl_->rate.current;
+    result.memory = impl_->memory.current;
+    result.body = impl_->body.current;
+    result.position = impl_->position.current;
     const auto active_fx_mode = static_cast<std::size_t>(impl_->fx_mode);
     result.fx_a = impl_->fx_parameters[active_fx_mode][0].current;
     result.fx_b = impl_->fx_parameters[active_fx_mode][1].current;
+    result.wake = impl_->wake.current;
+    result.structure = impl_->structure.current;
+    result.ember = impl_->ember.current;
     result.parent_frequency_hz = impl_->parent_frequency_hz;
     result.undertow_frequency_hz = impl_->undertow_divisor == 0 ? 0.0 : impl_->undertow_frequency_hz;
     result.undertow_resonator_frequency_hz = impl_->undertow_divisor == 0

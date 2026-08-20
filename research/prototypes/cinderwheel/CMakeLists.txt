@@ -19,22 +19,25 @@ option(
     OFF
 )
 
-set(CINDERWHEEL_JUCE_COMMIT "91ad83ae34a81e0833b1a2b0866f54846370ae53")
-set(CINDERWHEEL_JUCE_ARCHIVE_SHA256 "04f8d5055382582c757be9da069ea98338005f98248facd9c2804435ac853e70")
-
-function(cinderwheel_enable_warnings target)
-    target_compile_options(${target} PRIVATE
-        $<$<CXX_COMPILER_ID:AppleClang,Clang,GNU>:-Wall;-Wextra;-Wpedantic;-Werror>
-    )
-endfunction()
+set(CINDERWHEEL_INSTRUMENT_LAB
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../prototype_support/instrument_lab")
+add_subdirectory("${CINDERWHEEL_INSTRUMENT_LAB}"
+    "${CMAKE_CURRENT_BINARY_DIR}/instrument_lab" EXCLUDE_FROM_ALL)
 
 add_library(cinderwheel_core STATIC
     src/control_map.cpp
     src/core.cpp
 )
 target_include_directories(cinderwheel_core PUBLIC include)
+target_link_libraries(cinderwheel_core PUBLIC SchussInstrumentLab::Core)
 target_compile_features(cinderwheel_core PUBLIC cxx_std_17)
-cinderwheel_enable_warnings(cinderwheel_core)
+schuss_instrument_lab_enable_warnings(cinderwheel_core)
+
+add_library(cinderwheel_ui_model STATIC src/ui_model.cpp)
+target_include_directories(cinderwheel_ui_model PUBLIC include)
+target_link_libraries(cinderwheel_ui_model PUBLIC cinderwheel_core)
+target_compile_features(cinderwheel_ui_model PUBLIC cxx_std_17)
+schuss_instrument_lab_enable_warnings(cinderwheel_ui_model)
 
 enable_testing()
 add_executable(cinderwheel_core_tests
@@ -42,8 +45,14 @@ add_executable(cinderwheel_core_tests
 )
 target_link_libraries(cinderwheel_core_tests PRIVATE cinderwheel_core)
 target_compile_features(cinderwheel_core_tests PRIVATE cxx_std_17)
-cinderwheel_enable_warnings(cinderwheel_core_tests)
+schuss_instrument_lab_enable_warnings(cinderwheel_core_tests)
 add_test(NAME cinderwheel_core_tests COMMAND cinderwheel_core_tests)
+
+add_executable(cinderwheel_ui_model_tests tests/ui_model_tests.cpp)
+target_link_libraries(cinderwheel_ui_model_tests PRIVATE cinderwheel_ui_model)
+target_compile_features(cinderwheel_ui_model_tests PRIVATE cxx_std_17)
+schuss_instrument_lab_enable_warnings(cinderwheel_ui_model_tests)
+add_test(NAME cinderwheel_ui_model_tests COMMAND cinderwheel_ui_model_tests)
 
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 add_test(
@@ -54,52 +63,10 @@ add_test(
 )
 
 if(CINDERWHEEL_ENABLE_JUCE)
-    if(CINDERWHEEL_JUCE_SOURCE_DIR)
-        cmake_path(
-            ABSOLUTE_PATH CINDERWHEEL_JUCE_SOURCE_DIR
-            NORMALIZE
-            OUTPUT_VARIABLE cinderwheel_juce_source
-        )
-        if(NOT EXISTS "${cinderwheel_juce_source}/CMakeLists.txt"
-            OR NOT EXISTS "${cinderwheel_juce_source}/modules/juce_core/juce_core.h")
-            message(FATAL_ERROR
-                "CINDERWHEEL_JUCE_SOURCE_DIR is not an extracted JUCE source tree"
-            )
-        endif()
-        file(
-            READ
-            "${cinderwheel_juce_source}/modules/juce_core/system/juce_StandardHeader.h"
-            cinderwheel_juce_version_header
-        )
-        if(NOT cinderwheel_juce_version_header MATCHES "JUCE_MAJOR_VERSION[ \t]+8"
-            OR NOT cinderwheel_juce_version_header MATCHES "JUCE_MINOR_VERSION[ \t]+0"
-            OR NOT cinderwheel_juce_version_header MATCHES "JUCE_BUILDNUMBER[ \t]+15")
-            message(FATAL_ERROR
-                "CINDERWHEEL_JUCE_SOURCE_DIR must identify JUCE 8.0.15 source; "
-                "the operator remains responsible for commit/hash authentication"
-            )
-        endif()
-        add_subdirectory(
-            "${cinderwheel_juce_source}"
-            "${CMAKE_CURRENT_BINARY_DIR}/juce"
-            EXCLUDE_FROM_ALL
-        )
-    elseif(CINDERWHEEL_ALLOW_JUCE_FETCH)
-        include(FetchContent)
-        FetchContent_Declare(
-            JUCE
-            URL
-                "https://github.com/juce-framework/JUCE/archive/${CINDERWHEEL_JUCE_COMMIT}.tar.gz"
-            URL_HASH "SHA256=${CINDERWHEEL_JUCE_ARCHIVE_SHA256}"
-            DOWNLOAD_EXTRACT_TIMESTAMP FALSE
-        )
-        FetchContent_MakeAvailable(JUCE)
-    else()
-        message(FATAL_ERROR
-            "CINDERWHEEL_ENABLE_JUCE requires CINDERWHEEL_JUCE_SOURCE_DIR or "
-            "an explicit CINDERWHEEL_ALLOW_JUCE_FETCH=ON"
-        )
-    endif()
+    schuss_instrument_lab_add_authenticated_juce(
+        SOURCE_DIR "${CINDERWHEEL_JUCE_SOURCE_DIR}"
+        BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/juce"
+        ALLOW_FETCH "${CINDERWHEEL_ALLOW_JUCE_FETCH}")
 
     add_library(cinderwheel_juce_adapter STATIC
         src/juce_midi_adapter.cpp
@@ -110,7 +77,7 @@ if(CINDERWHEEL_ENABLE_JUCE)
         juce::juce_audio_basics
     )
     target_compile_features(cinderwheel_juce_adapter PUBLIC cxx_std_17)
-    cinderwheel_enable_warnings(cinderwheel_juce_adapter)
+    schuss_instrument_lab_enable_warnings(cinderwheel_juce_adapter)
 
     add_executable(cinderwheel_juce_adapter_tests
         tests/juce_midi_adapter_tests.cpp
@@ -119,7 +86,7 @@ if(CINDERWHEEL_ENABLE_JUCE)
         cinderwheel_juce_adapter
     )
     target_compile_features(cinderwheel_juce_adapter_tests PRIVATE cxx_std_17)
-    cinderwheel_enable_warnings(cinderwheel_juce_adapter_tests)
+    schuss_instrument_lab_enable_warnings(cinderwheel_juce_adapter_tests)
     add_test(
         NAME cinderwheel_juce_adapter_tests
         COMMAND cinderwheel_juce_adapter_tests
@@ -138,7 +105,7 @@ if(CINDERWHEEL_ENABLE_JUCE)
         JUCE_USE_CURL=0
         JUCE_WEB_BROWSER=0
     )
-    cinderwheel_enable_warnings(cinderwheel-render)
+    schuss_instrument_lab_enable_warnings(cinderwheel-render)
     add_test(
         NAME cinderwheel_render_matrix
         COMMAND
@@ -158,6 +125,7 @@ if(CINDERWHEEL_ENABLE_JUCE)
     )
     target_link_libraries(cinderwheel-instrument PRIVATE
         cinderwheel_juce_adapter
+        cinderwheel_ui_model
         juce::juce_audio_basics
         juce::juce_audio_devices
         juce::juce_core
@@ -170,5 +138,5 @@ if(CINDERWHEEL_ENABLE_JUCE)
         JUCE_USE_CURL=0
         JUCE_WEB_BROWSER=0
     )
-    cinderwheel_enable_warnings(cinderwheel-instrument)
+    schuss_instrument_lab_enable_warnings(cinderwheel-instrument)
 endif()

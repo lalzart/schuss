@@ -1,0 +1,140 @@
+{
+  "negative_claims": {
+    "device_promoted": false,
+    "distribution_promoted": false,
+    "graph_promoted": false,
+    "listening_promoted": false,
+    "provider_promoted": false,
+    "publication_promoted": false,
+    "real_time_promoted": false,
+    "runtime_promoted": false
+  },
+  "results": {
+    "gaps": {
+      "path": "docs/tasks/036-GAPS.md",
+      "sha256": "1881d848b597516d077f233313d44e4f829fc609e807bd7954cb7747fb8d841d"
+    },
+    "results": {
+      "path": "docs/tasks/036-RESULTS.md",
+      "sha256": "227c59b6a09ac5ee8f6d5824ec5171010296d20b12a4f60e035a2adbe17dfa81"
+    }
+  },
+  "schema_version": "task036-instrument-lab-source-handoff-v1",
+  "source_package": {
+    "authority_source_release": {
+      "content_hash": "sha256:51750a00f07f98c783cfc1972580c9399ac64690eaf3d40ad6e1d736698c972c",
+      "path": "contracts/task033/phase2/source-release-05.json",
+      "revision": 1,
+      "source_release_id": "schuss-source-release-000005"
+    },
+    "closure_manifest_sha256": "0903f25038f0116422a8512b15f1c3531e7b22371da8ad393b130a16d821508f",
+    "cmake_include": {
+      "path": "packages/dsp_sources/mutable_ksoloti_v1/cmake/MutableKsolotiSource.cmake",
+      "sha256": "f758007bb935d44c5b5ca50dd63282d550400c3adcb759c23e4965728a245259"
+    },
+    "component_groups": [
+      "braids-resources",
+      "clouds-granular-headers",
+      "clouds-resources",
+      "stmlib-core-headers",
+      "stmlib-random-source",
+      "stmlib-units-source"
+    ],
+    "component_resolution_function": "mutable_ksoloti_v1_resolve_components",
+    "generator": {
+      "path": "tools/source_packages/generate_mutable_ksoloti_v1.py",
+      "sha256": "a448977784e4343b07f808ef715c7edd1a7b90e5268364e47b7a1fbdbe315b51"
+    },
+    "interface_target": "MutableKsolotiV1::Headers",
+    "manifest": {
+      "path": "packages/dsp_sources/mutable_ksoloti_v1/SOURCE_PACKAGE.json",
+      "sha256": "9f45e860f1fff388cc18dab077232196befbc7cfb6f383effd35331bf102f2a1"
+    },
+    "package_id": "mutable-ksoloti-v1",
+    "package_path": "packages/dsp_sources/mutable_ksoloti_v1",
+    "package_revision": "1",
+    "validator": {
+      "path": "tools/source_packages/validate_source_package.py",
+      "sha256": "a663bf63572593efa94816c2c34645d8b85d09b954fe38bc13342b77818408c2"
+    },
+    "validator_command": [
+      "python3",
+      "tools/source_packages/validate_source_package.py",
+      "packages/dsp_sources/mutable_ksoloti_v1"
+    ],
+    "validator_tests": {
+      "path": "tools/source_packages/tests/test_validate_source_package.py",
+      "sha256": "980b962c2beccbc83a749af358141d7a9ed9dd0d28108b136c3fc2da40488b8a"
+    }
+  },
+  "status": "complete",
+  "task": {
+    "contract": {
+      "path": "docs/tasks/036-shared-authenticated-mutable-dsp-source-package-pilot.md",
+      "sha256": "4bdd4b60fff8cc28c7f21a17763a949e2e123cafea84e2aad30252338be501f0"
+    },
+    "proposal": {
+      "path": "research/proposals/shared-authenticated-mutable-dsp-source-package-pilot.md",
+      "sha256": "be4636f2550481bd45cb982fe47c01ee8fbe0de74621f22e9d27cffca680cf7a"
+    }
+  },
+  "tide_pit": {
+    "compile_policy": {
+      "path": "research/prototypes/tide-pit-gills/CMakeLists.txt",
+      "sha256": "cf305455847da80dbc56bce13d83922a1c30d18b41051328bf7af7bbc420dd75"
+    },
+    "compiled_target": "tide_pit_mutable",
+    "consumer_path": "research/prototypes/tide-pit-gills",
+    "evidence": {
+      "control_map": {
+        "path": "research/prototypes/tide-pit-gills/control-map.json",
+        "sha256": "a91f4ee46b3339f455d5d277f4b8f25d378c652eb946d6c017076e44fd356f60"
+      },
+      "experiment": {
+        "path": "research/prototypes/tide-pit-gills/experiment.json",
+        "sha256": "f8baac381d1e83f2e5db6ee4b56988299d5ae7b3e5b1b2ff4bcdfd1a0459c9fd"
+      },
+      "source_lock_validator": {
+        "path": "research/prototypes/tide-pit-gills/tests/validate_source_lock.py",
+        "sha256": "67d35a6252b02428a1af3a4855981f3f428dfad1cd493b082dbb320f48918e32"
+      },
+      "validation_plan": {
+        "path": "research/prototypes/tide-pit-gills/validation-plan.json",
+        "sha256": "8af0e49522c235b1cb6f3be368742de004e23d8949070447f379b28e7345d594"
+      }
+    },
+    "reference_golden": {
+      "expected_bytes": 1536000,
+      "expected_peak_q27": 39182832,
+      "expected_rms_q27": "14011444.589680206",
+      "expected_sha256": "39d8c2a67a1b9511b4a063914b01ab816635996a47530e6c09baa8accf45ad2b",
+      "test": {
+        "path": "research/prototypes/tide-pit-gills/tests/reference_golden_tests.cpp",
+        "sha256": "f019f624b85cdd9dd9bb46575f763fa4ecf7c8d4beac11c6f6821a0769920fd9"
+      }
+    },
+    "source_equivalence": {
+      "path": "research/prototypes/tide-pit-gills/source-equivalence.json",
+      "sha256": "2c661c07068d552a696cb222f78c37aea27c468939f386b3a793eac82b7cf747"
+    },
+    "source_lock": {
+      "path": "research/prototypes/tide-pit-gills/third_party/SOURCE_LOCK.json",
+      "sha256": "52a13c11dbd81df05a3590d2aaa5cf1efc95bdddcc874d69cf6961c18de61a02"
+    }
+  },
+  "validation": {
+    "handoff_validator": {
+      "path": "tools/source_packages/validate_task036_handoff.py",
+      "sha256": "e62ccd1f46cee56e00727c3df321e5b5e7876b6bafe2f1f20508c7d387c8eb16"
+    },
+    "handoff_validator_command": [
+      "python3",
+      "tools/source_packages/validate_task036_handoff.py",
+      "docs/tasks/036-INSTRUMENT-LAB-HANDOFF.json"
+    ],
+    "handoff_validator_tests": {
+      "path": "tools/source_packages/tests/test_validate_task036_handoff.py",
+      "sha256": "55052941a3d8f3cb30f97e8908a599f07dd96adbc4945dc6908edf2536970d73"
+    }
+  }
+}

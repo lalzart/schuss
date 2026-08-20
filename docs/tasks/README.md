@@ -19,6 +19,23 @@ successor.
   explicitly activates it. Task 033 Phase 2 is complete locally at `ccafc1d`;
   Phases 3 and 4 remain unstarted.
 
+## Documented sequential follow-ups, not activated
+
+- Task 036 specifies an isolated shared authenticated Mutable source-package
+  pilot with Tide Pit as its first exact consumer. Its documentation records
+  the user's intent to implement it in a new chat, but it does not alter the
+  current routing above, activate Task 033, or allocate product/provider
+  semantics. Completion must emit the exact Instrument Lab handoff defined by
+  the task.
+- Task 037 specifies Instrument Lab v1: a two-prototype differential extraction
+  of reusable JUCE, MIDI, control, UI, renderer, build, and validation mechanics
+  plus a prototype-only DSP-topology artifact. It is hard-blocked on a complete
+  Task 036 handoff. It allocates no canonical graph/provider identity and does
+  not execute Task 034 performance-control graphs.
+
+The required order is Task 036 followed by Task 037. Neither documentation
+entry is an activation or a change to `docs/governance/current-state.json`.
+
 ## Recent retained contracts
 
 - Task 035 is complete and owns proportional validation profiles, one-pass

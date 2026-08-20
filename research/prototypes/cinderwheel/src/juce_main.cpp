@@ -1,4 +1,5 @@
 #include "cinderwheel/juce_midi_adapter.hpp"
+#include "cinderwheel/ui_model.hpp"
 
 #include <juce_audio_devices/juce_audio_devices.h>
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -23,7 +24,12 @@ public:
     InstrumentAudioEngine() {
         collector_.ensureStorageAllocated(4096);
         midi_block_.ensureSize(4096);
-        clearPhysicalEncoderValues();
+        for (std::size_t index = 0; index < accepted_encoder_values_.size(); ++index) {
+            accepted_encoder_values_[index].store(
+                juce::roundToInt(
+                    cinderwheel::kLaunchControl3Encoders[index].default_normalized * 127.0),
+                std::memory_order_relaxed);
+        }
     }
 
     ~InstrumentAudioEngine() override {
@@ -85,7 +91,6 @@ public:
         last_midi_channel_.store(0, std::memory_order_release);
         last_midi_cc_.store(-1, std::memory_order_release);
         last_midi_value_.store(-1, std::memory_order_release);
-        clearPhysicalEncoderValues();
         return "MIDI input active: " + device.name;
     }
 
@@ -116,9 +121,9 @@ public:
         return status;
     }
 
-    [[nodiscard]] int physicalEncoderValue(std::size_t index) const noexcept {
-        if (index >= physical_encoder_values_.size()) return -1;
-        return physical_encoder_values_[index].load(std::memory_order_acquire);
+    [[nodiscard]] int acceptedEncoderValue(std::size_t index) const noexcept {
+        if (index >= accepted_encoder_values_.size()) return -1;
+        return accepted_encoder_values_[index].load(std::memory_order_acquire);
     }
 
     void injectCc(std::uint8_t controller, std::uint8_t value) {
@@ -137,20 +142,6 @@ public:
             last_midi_channel_.store(message.getChannel(), std::memory_order_relaxed);
             last_midi_cc_.store(message.getControllerNumber(), std::memory_order_relaxed);
             last_midi_value_.store(message.getControllerValue(), std::memory_order_relaxed);
-            if (message.getChannel() == 16) {
-                for (std::size_t index = 0;
-                     index < cinderwheel::kLaunchControl3Encoders.size();
-                     ++index) {
-                    if (message.getControllerNumber()
-                        == cinderwheel::kLaunchControl3Encoders[index].cc) {
-                        physical_encoder_values_[index].store(
-                            message.getControllerValue(),
-                            std::memory_order_release
-                        );
-                        break;
-                    }
-                }
-            }
         }
         collector_.handleIncomingMidiMessage(nullptr, message);
     }
@@ -175,6 +166,7 @@ public:
             return;
         }
         core_ = std::move(core);
+        publishAcceptedState();
         ready_.store(true, std::memory_order_release);
     }
 
@@ -223,14 +215,19 @@ public:
             wake_events.size()
         );
         static_cast<void>(report);
+        publishAcceptedState();
         std::copy_n(left_.data(), frames, output_channels[0]);
         std::copy_n(right_.data(), frames, output_channels[1]);
     }
 
 private:
-    void clearPhysicalEncoderValues() noexcept {
-        for (auto& value : physical_encoder_values_) {
-            value.store(-1, std::memory_order_relaxed);
+    void publishAcceptedState() noexcept {
+        if (core_ == nullptr) return;
+        const auto values = cinderwheel::encoderPresentation(core_->snapshot());
+        for (std::size_t index = 0; index < values.size(); ++index) {
+            accepted_encoder_values_[index].store(
+                juce::roundToInt(values[index]),
+                std::memory_order_release);
         }
     }
 
@@ -276,7 +273,7 @@ private:
     std::array<
         std::atomic<int>,
         cinderwheel::kLaunchControl3Encoders.size()
-    > physical_encoder_values_;
+    > accepted_encoder_values_;
 };
 
 class MainComponent final
@@ -473,7 +470,7 @@ private:
 
     void timerCallback() override {
         for (std::size_t index = 0; index < encoders_.size(); ++index) {
-            const auto value = engine_.physicalEncoderValue(index);
+            const auto value = engine_.acceptedEncoderValue(index);
             if (value >= 0
                 && encoders_[index] != nullptr
                 && juce::roundToInt(encoders_[index]->getValue()) != value) {

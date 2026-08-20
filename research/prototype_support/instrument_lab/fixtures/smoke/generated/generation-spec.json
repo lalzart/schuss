@@ -1,0 +1,11 @@
+{
+  "internal_quantum": 0,
+  "lane": "non-musical-smoke",
+  "maximum_host_block": 64,
+  "namespace": "instrument_lab_smoke",
+  "owns_conversion": false,
+  "project_id": "instrument_lab_smoke",
+  "prototype_id": "instrument-lab-smoke",
+  "sample_rate_hz": 48000,
+  "sample_representation": "float32"
+}

@@ -1,0 +1,14 @@
+{
+  "cases": [
+    {"expected_code": "UNKNOWN_FIELD", "id": "unknown-index-field", "mutation": "add-index-field"},
+    {"expected_code": "CANONICAL_ID_FORBIDDEN", "id": "canonical-prototype-id", "mutation": "canonical-prototype-id"},
+    {"expected_code": "ESCAPING_AUTHORITY_PATH", "id": "absolute-authority", "mutation": "absolute-authority"},
+    {"expected_code": "AMBIGUOUS_AUTHORITY_PATH", "id": "mutable-reference", "mutation": "latest-authority"},
+    {"expected_code": "INVALID_SHA256", "id": "invalid-hash", "mutation": "invalid-hash"},
+    {"expected_code": "MISSING_AUTHORITY", "id": "missing-authority", "mutation": "missing-authority"},
+    {"expected_code": "FORBIDDEN_TOPOLOGY_LEAKAGE", "id": "host-framework-leak", "mutation": "forbidden-topology-host"},
+    {"expected_code": "FORBIDDEN_TOPOLOGY_LEAKAGE", "id": "provider-leak", "mutation": "forbidden-topology-provider"},
+    {"expected_code": "DUPLICATE_LOCAL_ROLE", "id": "duplicate-role", "mutation": "duplicate-topology-role"}
+  ],
+  "schema_version": "instrument-lab-negative-contract-fixtures-v1"
+}

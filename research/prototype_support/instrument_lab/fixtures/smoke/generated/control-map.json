@@ -1,0 +1,19 @@
+{
+  "assignments": [
+    {
+      "bytes": [
+        176,
+        1
+      ],
+      "label": "Accepted value",
+      "range": [
+        0,
+        127
+      ]
+    }
+  ],
+  "claims": {
+    "physical_controller_evidence": false
+  },
+  "schema_version": "instrument-lab-smoke-control-map-v1"
+}

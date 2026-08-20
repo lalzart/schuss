@@ -91,8 +91,10 @@ diagnostics; interactive controls display the accepted Core snapshot.
 
 ## What should remain un-generalized for now
 
-The Core API, gesture synthesizer, source-state overlay, Q27 buffering, and
-Mutable dependency closure are Tide Pit-specific. Cinderwheel uses native float
+The Core API, gesture synthesizer, source-state overlay, Q27 buffering,
+compiled Mutable target, and runtime policy are Tide Pit-specific. The
+exact raw 21-file Mutable closure is now a shared physical build input, not a
+general provider or catalog entry. Cinderwheel uses native float
 DSP and different state semantics. Copying those into a broad framework now
 would encode the second example as policy. The stable candidates for later
 extraction are narrower: pinned-JUCE configuration, fixed-capacity MIDI intake,

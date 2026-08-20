@@ -1,0 +1,41 @@
+{
+  "authorities": {
+    "control_map": {"path": "research/prototypes/cinderwheel/fixtures/launch-control-3-test-map-v0.json", "sha256": "d5df5f569bf37ed0dbd3e356a9c2f42ac01ed8364c2dc2bc6b07da2243e390f8"},
+    "controller_topology": {"path": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json", "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"},
+    "dsp_topology": {"path": "research/prototypes/cinderwheel/dsp-topology.json", "sha256": "dff93dc5025be7280d2c565f9c388572acbe9707b13d967413cf471f21dc0b78"},
+    "experiment": {"path": "research/prototypes/cinderwheel/src/render.cpp", "sha256": "fb612c3e26ec0a236d2d2d8859ca802ab371d71fecc62c65d7102bb418595810"},
+    "gaps": {"path": "research/prototypes/cinderwheel/TRIAL_GAPS.md", "sha256": "8866b8d962ca6f350ab791b9d26439f14737e2a5eb15912745ae11b1b639b863"},
+    "implementation_contract": {"path": "research/prototypes/cinderwheel/README.md", "sha256": "0cff98936464389e25d0a675e4e612dd5ed632eb25a48cbe935b450f204b80d6"},
+    "proposal": {"path": "research/proposals/cinderwheel.md", "sha256": "cd0c09e0df22f382d74bb380fa9ab91549faf1894199f5d02e4ac5e3795a1549"},
+    "results": {"path": "research/prototypes/cinderwheel/RESULTS.md", "sha256": "02670d7a4d244c692b2953ec1cf20249e47834fcf385a867bef98330b02fa551"},
+    "state_matrix": {"path": "research/prototypes/cinderwheel/README.md", "sha256": "0cff98936464389e25d0a675e4e612dd5ed632eb25a48cbe935b450f204b80d6"},
+    "validation_plan": {"path": "research/prototypes/cinderwheel/tests/validate_render_matrix.py", "sha256": "4569226c08c8f485fb31f1caf5b65a2950bad4c0759c508b08f4be47bede1021"}
+  },
+  "claims": {"canonical_schuss_record": false, "production_ready": false},
+  "core_adapter": {
+    "conversion_owner": "Core emits float32 directly",
+    "internal_quantum": 0,
+    "maximum_host_block": 512,
+    "output_clearing": "host clears before Core process",
+    "sample_rate_hz": 48000,
+    "sample_representation": "float32",
+    "semantic_event_capacity": 128,
+    "target": "cinderwheel_core"
+  },
+  "evidence": {
+    "deferred": ["callback deadline", "audio and MIDI device lifecycle", "physical control surface", "application launch", "listening", "distribution", "production integration"],
+    "requested": ["structural", "host signal", "authenticated JUCE target build"]
+  },
+  "handoff": {
+    "allowed_edits": ["instrument-owned adapter and presentation mechanics", "prototype-only experiments and tests", "noncanonical topology annotations"],
+    "open_decisions": ["future component-contract promotion"],
+    "required_commands": ["cmake -S research/prototypes/cinderwheel -B BUILD -DCMAKE_BUILD_TYPE=Release", "cmake --build BUILD --parallel", "ctest --test-dir BUILD --output-on-failure"],
+    "reusable_entry_points": ["SchussInstrumentLab::Core", "cinderwheel_core", "cinderwheel_ui_model", "cinderwheel::JuceMidiAdapter"],
+    "stop_conditions": ["Core or map bytes change", "render matrix changes", "unsupported evidence promotion"],
+    "working_artifact": "portable float Core plus optional authenticated JUCE renderer, adapter, and standalone target"
+  },
+  "lane": "new-design",
+  "prototype_id": "cinderwheel",
+  "revision": "0.1",
+  "schema_version": "schuss-instrument-lab-prototype-index-v1"
+}

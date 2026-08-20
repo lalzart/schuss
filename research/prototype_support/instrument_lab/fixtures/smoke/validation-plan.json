@@ -1,0 +1,5 @@
+{
+  "claims": {"device": false, "listening": false, "musical": false, "real_time": false},
+  "checks": ["generation-freshness", "core-only-build", "bounded-message", "snapshot-projection", "renderer-hash", "authenticated-juce-probe", "fresh-root-reproduction"],
+  "schema_version": "instrument-lab-smoke-validation-v1"
+}

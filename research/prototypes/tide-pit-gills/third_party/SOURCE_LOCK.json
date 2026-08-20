@@ -16,34 +16,10 @@
     "vendored_root": "third_party/tidepit/upstream"
   },
   "mutable_instruments": {
-    "source_id": "ksoloti:firmware/mutable_instruments",
-    "revision": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c",
-    "canonical_manifest_sha256": "0903f25038f0116422a8512b15f1c3531e7b22371da8ad393b130a16d821508f",
-    "manifest_algorithm": "SHA-256 lines with digest, two spaces, repository-relative path, LF; LC_ALL=C complete-line sort; SHA-256 of sorted bytes",
-    "files": [
-      {"path": "firmware/mutable_instruments/clouds/resources.h", "sha256": "02d89753235e62fcb8b1a180c333518159bfa222999214f7a28c07e3f54d2f60"},
-      {"path": "firmware/mutable_instruments/clouds/dsp/grain.h", "sha256": "08feb5ac5408e2cb30eb037a844f6ee187d8dedd53fee913d1b5ab2c74ebfac3"},
-      {"path": "firmware/mutable_instruments/stmlib/dsp/units.cpp", "sha256": "0acbe230ffaa2d181ba285fce54f2fd0b2339b3ec163a1dd00c946e6bf82ea4a"},
-      {"path": "firmware/mutable_instruments/clouds/dsp/audio_buffer.h", "sha256": "110c63276ec84cbb211f98a5897d075307471da25ae1845da82dac504d052657"},
-      {"path": "firmware/mutable_instruments/stmlib/utils/random.cpp", "sha256": "145c4d7a30e373d001fd664ce6f97a475458f7dc8286252d24ca6f592e0cdb93"},
-      {"path": "firmware/mutable_instruments/clouds/dsp/parameters.h", "sha256": "1d41ec7d86063204ef8f2301ee62170df0cf5933a955545be37e9ab400c46e64"},
-      {"path": "firmware/mutable_instruments/clouds/dsp/frame.h", "sha256": "203a758cd626f7d5ca0d3bd70457ba15b36d2ddc9fea5a2c56eab3cdd15ec3b4"},
-      {"path": "firmware/mutable_instruments/stmlib/dsp/cosine_oscillator.h", "sha256": "32aabaf95eec930ead9e02b88d8ddaf4d52262cfb9039bd1eb07ad26230de5c8"},
-      {"path": "firmware/mutable_instruments/stmlib/utils/random.h", "sha256": "423f01e905fa279864878f34e42136ad1eb37a33dad58739affaaab06b793e5d"},
-      {"path": "firmware/mutable_instruments/clouds/dsp/fx/reverb.h", "sha256": "721226338def6f28adc60215073ce97ef1a3f6ef0c4d8fc889b5056d7717e174"},
-      {"path": "firmware/mutable_instruments/stmlib/dsp/dsp.h", "sha256": "756219ce25649d28e03faddcf2f5d6a072d8a72e774b39374a82d80f644ac3f6"},
-      {"path": "firmware/mutable_instruments/clouds/dsp/fx/fx_engine.h", "sha256": "8bd367622b97247a371f70871446971b63191df51b7d2a4e06163c86f3408641"},
-      {"path": "firmware/mutable_instruments/stmlib/dsp/rsqrt.h", "sha256": "a827501522f85d7045783619404366eb0fb338ede3cb1480650cf5f038d68c91"},
-      {"path": "firmware/mutable_instruments/stmlib/stmlib.h", "sha256": "aa98ad93fe5862bb2e8f7153f886439c6b95783ae08168ac6d32bd7edb91d8e3"},
-      {"path": "firmware/mutable_instruments/braids/braids_resources.cpp", "sha256": "b28a075193e7568e53621361ba95e3c9ff952b350eafe02e47dfb070b76f6b53"},
-      {"path": "firmware/mutable_instruments/clouds/dsp/mu_law.h", "sha256": "b35c5c89c66632efeb86c94411dbe6fdbb618a9ddbfbfd741168728fd1a7d0a9"},
-      {"path": "firmware/mutable_instruments/braids/resources.h", "sha256": "b718316c76f53a5c6f7235c163dab7814c14eb566316ef27d316bc03d344c85d"},
-      {"path": "firmware/mutable_instruments/stmlib/dsp/filter.h", "sha256": "bc647a8ab7441c381a0c72d56ae84c7dbeeecf55763941835c8438a6aab131e0"},
-      {"path": "firmware/mutable_instruments/stmlib/dsp/units.h", "sha256": "be38219743728af8e081373371153eab8a3461d8d01128f81b0dfee2be7bff2d"},
-      {"path": "firmware/mutable_instruments/stmlib/utils/dsp.h", "sha256": "c0fad7f6b5b20f053d184614a35baf595e41f1394db53f80ac742d7467dbbe1b"},
-      {"path": "firmware/mutable_instruments/clouds/clouds_resources.cpp", "sha256": "ff5aad218cb381d1a1e34bfb67361493a7a922202bb973abe7dfa5aa210c37f2"}
-    ],
-    "vendored_root": "third_party/ksoloti"
+    "package_id": "mutable-ksoloti-v1",
+    "package_path": "packages/dsp_sources/mutable_ksoloti_v1",
+    "package_revision": "1",
+    "source_package_manifest_sha256": "9f45e860f1fff388cc18dab077232196befbc7cfb6f383effd35331bf102f2a1"
   },
   "port_overrides": {
     "policy": "Upstream bytes remain immutable. Port-only observability, per-instance RNG ownership, and the two-expression defined-C++ voice generation live outside both vendored roots and require golden parity.",

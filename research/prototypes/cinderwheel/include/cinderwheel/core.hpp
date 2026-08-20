@@ -69,8 +69,14 @@ struct StateSnapshot {
     std::uint32_t pulse_counter{};
     double cycle_phase{};
     double rate_hz{};
+    double memory{};
+    double body{};
+    double position{};
     double fx_a{};
     double fx_b{};
+    double wake{};
+    double structure{};
+    double ember{};
     double parent_frequency_hz{};
     double undertow_frequency_hz{};
     double undertow_resonator_frequency_hz{};

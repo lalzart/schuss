@@ -1,0 +1,50 @@
+{
+  "claims": {"canonical_schuss_record": false, "executable_graph": false},
+  "connections": [
+    {"from": "role.node.stage-cycle", "kind": "stage-values", "to": "role.node.voice"},
+    {"from": "role.node.voice", "kind": "signal", "to": "role.node.resonance"},
+    {"from": "role.node.resonance", "kind": "signal", "to": "role.node.granular"},
+    {"from": "role.node.granular", "kind": "signal", "to": "role.node.effects"},
+    {"from": "role.node.effects", "kind": "stereo-signal", "to": "role.node.output"},
+    {"from": "role.node.output", "kind": "left", "to": "role.port.audio-out-left"},
+    {"from": "role.node.output", "kind": "right", "to": "role.port.audio-out-right"}
+  ],
+  "feedback_edges": [
+    {"from": "role.node.resonance", "kind": "resonator-state", "to": "role.node.resonance"},
+    {"from": "role.node.granular", "kind": "recorded-memory", "to": "role.node.granular"},
+    {"from": "role.node.effects", "kind": "effect-state", "to": "role.node.effects"}
+  ],
+  "fusion_boundary": {
+    "implementation_note": "The fixed-Q27 portable Core fuses source-exact and prototype-owned roles while leaving every internal role inspectable here.",
+    "includes": ["role.node.stage-cycle", "role.node.voice", "role.node.resonance", "role.node.granular", "role.node.effects", "role.node.output"],
+    "local_role": "role.fusion.core"
+  },
+  "nodes": [
+    {"internals": ["four stage values", "root", "scale", "pulse divider"], "local_role": "role.node.stage-cycle", "name": "four-stage cycle", "origin": "source-derived", "responsibility": "advance and quantize the stage sequence", "state_owner": true, "unresolved_component_contract": ["source-exact four-stage cycle"]},
+    {"internals": ["ported excitation voice", "source selection", "mutation"], "local_role": "role.node.voice", "name": "excitation voice", "origin": "source-derived", "responsibility": "render the selected excitation mode", "state_owner": true, "unresolved_component_contract": ["authenticated excitation voice"]},
+    {"internals": ["body modes", "undertow", "wake allocation"], "local_role": "role.node.resonance", "name": "resonant body", "origin": "newly-designed", "responsibility": "produce resonant counterpoint and body response", "state_owner": true, "unresolved_component_contract": ["fixed-point resonant body"]},
+    {"internals": ["record memory", "grain pool", "capture state", "read heads"], "local_role": "role.node.granular", "name": "granular memory", "origin": "source-derived", "responsibility": "capture and replay bounded grains", "state_owner": true, "unresolved_component_contract": ["fixed-point granular memory"]},
+    {"internals": ["clean", "filter", "drive", "remembered mode values", "crossfade"], "local_role": "role.node.effects", "name": "effect bank", "origin": "newly-designed", "responsibility": "apply mode-local effect processing", "state_owner": true, "unresolved_component_contract": ["mode-local fixed-point effects"]},
+    {"internals": ["stereo mix", "finite guard", "Q27 output"], "local_role": "role.node.output", "name": "output stage", "origin": "fused-implementation", "responsibility": "emit bounded planar Q27 stereo", "state_owner": false, "unresolved_component_contract": ["bounded planar Q27 output"]}
+  ],
+  "prototype_id": "tide-pit-gills",
+  "public_facets": {
+    "actions": [
+      {"data_type": "momentary action", "direction": "input", "local_role": "role.action.capture", "name": "capture"},
+      {"data_type": "momentary action", "direction": "input", "local_role": "role.action.mutate", "name": "mutate"},
+      {"data_type": "momentary action", "direction": "input", "local_role": "role.action.reset", "name": "reset"}
+    ],
+    "displays": [
+      {"data_type": "immutable state snapshot", "direction": "output", "local_role": "role.display.state", "name": "accepted state"},
+      {"data_type": "diagnostics", "direction": "output", "local_role": "role.display.diagnostics", "name": "processing diagnostics"}
+    ],
+    "parameters": [
+      {"data_type": "normalized and quantized controls", "direction": "input", "local_role": "role.parameter.performance", "name": "instrument controls"}
+    ],
+    "ports": [
+      {"data_type": "Q27 audio", "direction": "output", "local_role": "role.port.audio-out-left", "name": "audio out left"},
+      {"data_type": "Q27 audio", "direction": "output", "local_role": "role.port.audio-out-right", "name": "audio out right"}
+    ]
+  },
+  "schema_version": "schuss-instrument-lab-dsp-topology-v1"
+}

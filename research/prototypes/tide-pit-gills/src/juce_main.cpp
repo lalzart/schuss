@@ -1,4 +1,5 @@
 #include "tidepit/juce_midi_adapter.hpp"
+#include "tidepit/ui_model.hpp"
 
 #include <juce_audio_devices/juce_audio_devices.h>
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -17,6 +18,7 @@ namespace {
 
 constexpr int kRequestedBlockFrames = 128;
 constexpr std::size_t kUiMailboxCapacity = 8;
+constexpr std::size_t kScopeMailboxCapacity = 4;
 
 struct UiFrame {
     tidepit::Snapshot snapshot{};
@@ -170,6 +172,10 @@ public:
         return ui_mailbox_.consumeLatest(frame);
     }
 
+    bool consumeLatestScope(tidepit::ScopeFrame& frame) noexcept {
+        return scope_mailbox_.consumeLatest(frame);
+    }
+
     void handleIncomingMidiMessage(
         juce::MidiInput*,
         const juce::MidiMessage& message
@@ -184,6 +190,8 @@ public:
         midi_adapter_.reset();
         bridge_.reset();
         ui_mailbox_.reset();
+        scope_accumulator_.reset();
+        scope_mailbox_.reset();
         midi_block_.clear();
         if (device == nullptr
             || device->getCurrentSampleRate() != tidepit::kReferenceSampleRate
@@ -205,6 +213,7 @@ public:
     void audioDeviceStopped() override {
         ready_.store(false, std::memory_order_release);
         core_.reset();
+        scope_accumulator_.reset();
         midi_block_.clear();
     }
 
@@ -241,6 +250,14 @@ public:
             adapted.events,
             adapted.event_count
         );
+        for (int index = 0; index < frames; ++index) {
+            if (const auto* completed = scope_accumulator_.pushSample(
+                    output_channels[0][index],
+                    output_channels[1][index]);
+                completed != nullptr) {
+                static_cast<void>(scope_mailbox_.publish(*completed));
+            }
+        }
         publishUiFrame();
     }
 
@@ -251,7 +268,7 @@ private:
             core_->snapshot(),
             core_->diagnostics(),
             midi_adapter_.diagnostics(),
-            bridge_.droppedEvents(),
+            bridge_.adapter().droppedEvents(),
         };
         static_cast<void>(ui_mailbox_.publish(frame));
     }
@@ -287,8 +304,10 @@ private:
     juce::MidiMessageCollector collector_;
     juce::MidiBuffer midi_block_;
     tidepit::JuceMidiAdapter midi_adapter_;
-    tidepit::Q27HostBridge bridge_;
+    tidepit::ParameterizedQ27HostBridge bridge_;
     SpscMailbox<UiFrame, kUiMailboxCapacity> ui_mailbox_;
+    tidepit::ScopeAccumulator scope_accumulator_;
+    SpscMailbox<tidepit::ScopeFrame, kScopeMailboxCapacity> scope_mailbox_;
     std::unique_ptr<tidepit::Core> core_;
     std::atomic<bool> ready_{false};
     std::atomic<std::uint64_t> received_midi_messages_{0};
@@ -329,12 +348,114 @@ double valueForControl(tidepit::ControlId id, const tidepit::Snapshot& snapshot)
     }
 }
 
+class OscilloscopeComponent final : public juce::Component {
+public:
+    OscilloscopeComponent() {
+        setName("Stereo output oscilloscope");
+        setInterceptsMouseClicks(false, false);
+    }
+
+    void setFrame(const tidepit::ScopeFrame& frame) {
+        if (frame.generation == frame_.generation) return;
+        frame_ = frame;
+        repaint();
+    }
+
+    void paint(juce::Graphics& graphics) override {
+        const auto bounds = getLocalBounds().toFloat();
+        graphics.setColour(juce::Colour(0xff181d1f));
+        graphics.fillRect(bounds);
+        graphics.setColour(juce::Colour(0xff3a4448));
+        graphics.drawRect(bounds.reduced(0.5f), 1.0f);
+
+        auto header = bounds.reduced(8.0f, 4.0f).removeFromTop(18.0f);
+        graphics.setFont(juce::FontOptions(11.0f, juce::Font::bold));
+        graphics.setColour(juce::Colour(0xffd9dee1));
+        graphics.drawText("STEREO OUTPUT SCOPE", header, juce::Justification::centredLeft);
+
+        if (frame_.sample_count > 1) {
+            const auto peaks = "L " + peakText(frame_.peak_left)
+                + "   R " + peakText(frame_.peak_right);
+            graphics.setColour(juce::Colour(0xff89969c));
+            graphics.drawText(peaks, header, juce::Justification::centredRight);
+        }
+
+        auto plot = bounds.reduced(8.0f, 5.0f);
+        plot.removeFromTop(20.0f);
+        graphics.setColour(juce::Colour(0xff2c3437));
+        graphics.drawHorizontalLine(
+            juce::roundToInt(plot.getCentreY()),
+            plot.getX(),
+            plot.getRight()
+        );
+        for (int division = 1; division < 4; ++division) {
+            const auto x = plot.getX()
+                + plot.getWidth() * static_cast<float>(division) / 4.0f;
+            graphics.drawVerticalLine(
+                juce::roundToInt(x),
+                plot.getY(),
+                plot.getBottom()
+            );
+        }
+
+        if (frame_.sample_count < 2) {
+            graphics.setColour(juce::Colour(0xff687177));
+            graphics.drawText(
+                "waiting for 48 kHz audio",
+                plot,
+                juce::Justification::centred
+            );
+            return;
+        }
+
+        drawWaveform(graphics, plot, frame_.left, juce::Colour(0xffe7b75b));
+        drawWaveform(graphics, plot, frame_.right, juce::Colour(0xff6fa9bd));
+    }
+
+private:
+    static juce::String peakText(float peak) {
+        if (peak <= 0.000001f) return "-inf dB";
+        return juce::String(20.0f * std::log10(peak), 1) + " dB";
+    }
+
+    void drawWaveform(
+        juce::Graphics& graphics,
+        juce::Rectangle<float> plot,
+        const std::array<float, tidepit::kScopeFrameSamples>& samples,
+        juce::Colour colour
+    ) const {
+        juce::Path path;
+        const auto width = std::max(1.0f, plot.getWidth() - 1.0f);
+        const auto amplitude = plot.getHeight() * 0.46f;
+        for (int pixel = 0; pixel < juce::roundToInt(plot.getWidth()); ++pixel) {
+            const auto normalized_x = static_cast<float>(pixel) / width;
+            const auto index = std::min(
+                frame_.sample_count - 1,
+                static_cast<std::size_t>(normalized_x
+                    * static_cast<float>(frame_.sample_count - 1))
+            );
+            const auto x = plot.getX() + static_cast<float>(pixel);
+            const auto y = plot.getCentreY()
+                - std::clamp(samples[index], -1.0f, 1.0f) * amplitude;
+            if (pixel == 0) {
+                path.startNewSubPath(x, y);
+            } else {
+                path.lineTo(x, y);
+            }
+        }
+        graphics.setColour(colour.withAlpha(0.86f));
+        graphics.strokePath(path, juce::PathStrokeType(1.25f));
+    }
+
+    tidepit::ScopeFrame frame_{};
+};
+
 class MainComponent final
     : public juce::Component,
       private juce::Timer {
 public:
     MainComponent() {
-        title_.setText("TIDE PIT — GILLS", juce::dontSendNotification);
+        title_.setText("TIDE PIT - GILLS", juce::dontSendNotification);
         title_.setFont(juce::FontOptions(23.0f, juce::Font::bold));
         title_.setColour(juce::Label::textColourId, juce::Colour(0xffe7b75b));
         addAndMakeVisible(title_);
@@ -373,6 +494,7 @@ public:
             line.setJustificationType(juce::Justification::centredLeft);
             addAndMakeVisible(line);
         }
+        addAndMakeVisible(oscilloscope_);
 
         const auto& descriptors = tidepit::encoderDescriptors();
         for (std::size_t index = 0; index < encoders_.size(); ++index) {
@@ -436,6 +558,7 @@ public:
             button->setColour(juce::TextButton::textColourOffId, juce::Colour(0xffedf1f2));
             button->setColour(juce::TextButton::textColourOnId, juce::Colour(0xff15191b));
             button->setEnabled(descriptor.kind != tidepit::ControlKind::unassigned);
+            button->setClickingTogglesState(false);
             button->onStateChange = [this, index] {
                 const bool down = buttons_[index]->isDown();
                 if (down == button_edges_[index]) return;
@@ -450,6 +573,7 @@ public:
             buttons_[index] = std::move(button);
         }
 
+        applySnapshot(ui_frame_.snapshot);
         status_.setText(engine_.start(), juce::dontSendNotification);
         refreshMidiInputs(true);
         startTimerHz(30);
@@ -479,10 +603,13 @@ public:
         area.removeFromTop(7);
 
         mode_state_.setBounds(area.removeFromTop(24));
-        auto display_area = area.removeFromTop(86).reduced(3, 1);
+        auto monitor_area = area.removeFromTop(112);
+        auto display_area = monitor_area.removeFromLeft(430).reduced(3, 1);
         for (auto& line : display_lines_) {
-            line.setBounds(display_area.removeFromTop(21));
+            line.setBounds(display_area.removeFromTop(27));
         }
+        monitor_area.removeFromLeft(8);
+        oscilloscope_.setBounds(monitor_area);
         area.removeFromTop(5);
 
         constexpr int encoder_row_height = 139;
@@ -571,23 +698,45 @@ private:
             juce::dontSendNotification
         );
 
+        applyButtonStates(snapshot);
+    }
+
+    void applyButtonStates(const tidepit::Snapshot& snapshot) {
         const auto& descriptors_buttons = tidepit::buttonDescriptors();
         for (std::size_t index = 0; index < buttons_.size(); ++index) {
-            bool active = false;
-            if (descriptors_buttons[index].id == tidepit::ControlId::lock_toggle) {
-                active = snapshot.locked;
-            } else if (descriptors_buttons[index].id == tidepit::ControlId::capture_toggle) {
-                active = snapshot.captured;
-            }
-            buttons_[index]->setToggleState(active, juce::dontSendNotification);
+            const auto presentation = tidepit::buttonPresentation(
+                descriptors_buttons[index].id,
+                snapshot,
+                mutate_feedback_ticks_ > 0
+            );
+            buttons_[index]->setButtonText(
+                juce::String(presentation.label.data(), presentation.label.size())
+                    + "  "
+                    + juce::String(presentation.state.data(), presentation.state.size())
+            );
+            buttons_[index]->setToggleState(
+                presentation.latched_active,
+                juce::dontSendNotification
+            );
         }
     }
 
     void timerCallback() override {
         UiFrame next;
         if (engine_.consumeLatestFrame(next)) {
+            if (next.core_diagnostics.manual_mutations
+                > ui_frame_.core_diagnostics.manual_mutations) {
+                mutate_feedback_ticks_ = 6;
+            }
             ui_frame_ = next;
             applySnapshot(ui_frame_.snapshot);
+        }
+        tidepit::ScopeFrame scope;
+        if (engine_.consumeLatestScope(scope)) {
+            oscilloscope_.setFrame(scope);
+        }
+        if (mutate_feedback_ticks_ > 0 && --mutate_feedback_ticks_ == 0) {
+            applyButtonStates(ui_frame_.snapshot);
         }
         if (++status_timer_ticks_ >= 8) {
             status_timer_ticks_ = 0;
@@ -606,10 +755,12 @@ private:
     juce::Array<juce::MidiDeviceInfo> midi_inputs_;
     juce::Label mode_state_;
     std::array<juce::Label, 4> display_lines_;
+    OscilloscopeComponent oscilloscope_;
     std::array<std::unique_ptr<juce::Slider>, 16> encoders_;
     std::array<std::unique_ptr<juce::Label>, 16> encoder_labels_;
     std::array<std::unique_ptr<juce::TextButton>, 8> buttons_;
     std::array<bool, 8> button_edges_{};
+    int mutate_feedback_ticks_{};
     int status_timer_ticks_{};
 };
 
@@ -617,7 +768,7 @@ class MainWindow final : public juce::DocumentWindow {
 public:
     MainWindow()
         : juce::DocumentWindow(
-              "Tide Pit — Gills",
+              "Tide Pit - Gills",
               juce::Colour(0xff111516),
               juce::DocumentWindow::closeButton
           ) {
@@ -637,7 +788,7 @@ public:
 
 class TidePitApplication final : public juce::JUCEApplication {
 public:
-    const juce::String getApplicationName() override { return "Tide Pit — Gills"; }
+    const juce::String getApplicationName() override { return "Tide Pit - Gills"; }
     const juce::String getApplicationVersion() override { return "0.1.0"; }
     bool moreThanOneInstanceAllowed() override { return true; }
 

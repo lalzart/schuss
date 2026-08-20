@@ -1,0 +1,42 @@
+{
+  "authorities": {
+    "control_map": {"path": "research/prototypes/tide-pit-gills/control-map.json", "sha256": "a91f4ee46b3339f455d5d277f4b8f25d378c652eb946d6c017076e44fd356f60"},
+    "controller_topology": {"path": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json", "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"},
+    "dsp_topology": {"path": "research/prototypes/tide-pit-gills/dsp-topology.json", "sha256": "8bf0267454a6fa30cb01d1a6ae3970bc24e3d4d0fefd835634d2c06670b467a9"},
+    "experiment": {"path": "research/prototypes/tide-pit-gills/experiment.json", "sha256": "f8baac381d1e83f2e5db6ee4b56988299d5ae7b3e5b1b2ff4bcdfd1a0459c9fd"},
+    "gaps": {"path": "research/prototypes/tide-pit-gills/GAPS.md", "sha256": "e5a3922a37f1e587e8071d4aedfa15207f684e6b8b5dcd3aecdb46229ca9a543"},
+    "implementation_contract": {"path": "research/prototypes/tide-pit-gills/implementation-contract.json", "sha256": "81071c9cac8b76770eb4184d9afd07dda5bc47a1b0bfcdd6075d56a42e01b8c2"},
+    "proposal": {"path": "research/proposals/tide-pit-gills-juce-port.md", "sha256": "3c2157eaa26ceed61afe87b256a395dccc5fbbd0dab889189926ffb72b5c2157"},
+    "results": {"path": "research/prototypes/tide-pit-gills/RESULTS.md", "sha256": "29e7bdda6a54431623f1969fc3f89868e689b9f7fde3b581fa1c5fe441b8255b"},
+    "source_package_handoff": {"path": "docs/tasks/036-INSTRUMENT-LAB-HANDOFF.json", "sha256": "313a3acf451b926739baa14d13ef2abf6747208b5774cfcd5ea9111fbf94938b"},
+    "state_matrix": {"path": "research/prototypes/tide-pit-gills/state-matrix.md", "sha256": "4ab9467b645dd4e75c2b633c39d94db2f535e91fd527498a5c07aa54c2455d8e"},
+    "validation_plan": {"path": "research/prototypes/tide-pit-gills/validation-plan.json", "sha256": "8af0e49522c235b1cb6f3be368742de004e23d8949070447f379b28e7345d594"}
+  },
+  "claims": {"canonical_schuss_record": false, "production_ready": false},
+  "core_adapter": {
+    "conversion_owner": "instrument adapter converts exact planar Q27 output to host float32",
+    "internal_quantum": 16,
+    "maximum_host_block": 2147483647,
+    "output_clearing": "host clears before the partition bridge",
+    "sample_rate_hz": 48000,
+    "sample_representation": "q27",
+    "semantic_event_capacity": 128,
+    "target": "tide_pit_core"
+  },
+  "evidence": {
+    "deferred": ["callback deadline", "collector allocation", "restart-safe snapshot mailbox", "physical control surface", "application launch", "listening", "distribution", "production integration"],
+    "requested": ["source authentication", "exact Q27 golden", "host signal", "authenticated JUCE target build"]
+  },
+  "handoff": {
+    "allowed_edits": ["instrument-owned adapter and presentation mechanics", "prototype-only experiments and tests", "noncanonical topology annotations"],
+    "open_decisions": ["restart-safe snapshot transport", "future component-contract promotion"],
+    "required_commands": ["cmake -S research/prototypes/tide-pit-gills -B BUILD -DCMAKE_BUILD_TYPE=Release", "cmake --build BUILD --parallel", "ctest --test-dir BUILD --output-on-failure"],
+    "reusable_entry_points": ["SchussInstrumentLab::Core", "tide_pit_core", "tidepit::ParameterizedQ27HostBridge", "tidepit::JuceMidiAdapter"],
+    "stop_conditions": ["Task 036 handoff drifts", "source lock or exact golden changes", "control, UI, adapter, or render parity changes"],
+    "working_artifact": "source-authenticated fixed-Q27 Core plus optional authenticated JUCE renderer, adapter, UI, and standalone target"
+  },
+  "lane": "source-reimplementation",
+  "prototype_id": "tide-pit-gills",
+  "revision": "0.1",
+  "schema_version": "schuss-instrument-lab-prototype-index-v1"
+}

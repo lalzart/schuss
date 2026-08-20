@@ -1,10 +1,10 @@
 #pragma once
 
 #include "cinderwheel/core.hpp"
+#include "schuss/instrument_lab/bounded_midi.hpp"
 
 #include <juce_audio_basics/juce_audio_basics.h>
 
-#include <array>
 #include <cstddef>
 #include <cstdint>
 
@@ -31,8 +31,9 @@ public:
     ) noexcept;
 
 private:
-    std::array<MidiEvent, kMaximumMidiEventsPerBlock> events_{};
-    std::uint64_t ingress_sequence_{};
+    schuss::instrument_lab::FixedEventBuffer<
+        MidiEvent, kMaximumMidiEventsPerBlock> events_{};
+    schuss::instrument_lab::IngressSequence ingress_sequence_{};
 };
 
 }  // namespace cinderwheel

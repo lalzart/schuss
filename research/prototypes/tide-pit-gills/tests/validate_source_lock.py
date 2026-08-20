@@ -13,7 +13,11 @@ from pathlib import Path
 
 
 PROTOTYPE_ROOT = Path(__file__).resolve().parent.parent
+REPOSITORY_ROOT = PROTOTYPE_ROOT.parents[2]
 LOCK_PATH = PROTOTYPE_ROOT / "third_party" / "SOURCE_LOCK.json"
+SOURCE_PACKAGE_VALIDATOR = (
+    REPOSITORY_ROOT / "tools" / "source_packages" / "validate_source_package.py"
+)
 
 
 def sha256(path: Path) -> str:
@@ -190,6 +194,68 @@ def validate_ported_voice(document: dict[str, object], errors: list[str]) -> Non
             fail("ported voice did not contain exactly the locked replacements", errors)
 
 
+def validate_mutable_package(
+    document: dict[str, object],
+    source_root: Path | None,
+    errors: list[str],
+) -> None:
+    raw = document.get("mutable_instruments")
+    expected_fields = {
+        "package_id",
+        "package_path",
+        "package_revision",
+        "source_package_manifest_sha256",
+    }
+    if not isinstance(raw, dict) or set(raw) != expected_fields:
+        fail("mutable_instruments package reference fields are invalid", errors)
+        return
+    package_path = raw.get("package_path")
+    if (
+        not isinstance(package_path, str)
+        or not package_path
+        or Path(package_path).is_absolute()
+        or ".." in Path(package_path).parts
+    ):
+        fail("mutable_instruments package path must be portable", errors)
+        return
+    package_root = (REPOSITORY_ROOT / package_path).resolve()
+    try:
+        package_root.relative_to(REPOSITORY_ROOT.resolve())
+    except ValueError:
+        fail("mutable_instruments package path escapes the repository", errors)
+        return
+    manifest = package_root / "SOURCE_PACKAGE.json"
+    if not manifest.is_file():
+        fail("mutable_instruments source package is missing", errors)
+        return
+    if sha256(manifest) != raw.get("source_package_manifest_sha256"):
+        fail("mutable_instruments source-package manifest drifted", errors)
+        return
+    if not SOURCE_PACKAGE_VALIDATOR.is_file():
+        fail("source-package validator is missing", errors)
+        return
+    command = [
+        sys.executable,
+        str(SOURCE_PACKAGE_VALIDATOR),
+        str(package_root),
+        "--expected-package-id",
+        str(raw.get("package_id")),
+        "--expected-package-revision",
+        str(raw.get("package_revision")),
+    ]
+    if source_root is not None:
+        command.extend(["--source-root", str(source_root.resolve())])
+    completed = subprocess.run(
+        command,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if completed.returncode != 0:
+        diagnostic = f"{completed.stdout}{completed.stderr}".strip()
+        fail(f"mutable_instruments source package is invalid: {diagnostic}", errors)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -218,17 +284,18 @@ def main() -> int:
         errors=errors,
     )
     validate_ported_voice(document, errors)
-    validate_group(
-        name="mutable_instruments",
-        group=document["mutable_instruments"],
-        vendored_root=PROTOTYPE_ROOT / document["mutable_instruments"]["vendored_root"],
-        source_root=args.mutable_root.resolve() if args.mutable_root else None,
-        source_prefix=lambda path: path,
-        errors=errors,
+    validate_mutable_package(
+        document,
+        args.mutable_root.resolve() if args.mutable_root else None,
+        errors,
     )
     notices = PROTOTYPE_ROOT / "third_party" / "THIRD_PARTY_NOTICES.md"
-    if not notices.is_file() or "Emilie Gillet" not in notices.read_text(encoding="utf-8"):
-        fail("third-party notices are missing the Mutable attribution", errors)
+    if (
+        not notices.is_file()
+        or "packages/dsp_sources/mutable_ksoloti_v1/THIRD_PARTY_NOTICES.md"
+        not in notices.read_text(encoding="utf-8")
+    ):
+        fail("third-party notices are missing the shared Mutable notice reference", errors)
     if errors:
         for error in errors:
             print(f"- {error}")

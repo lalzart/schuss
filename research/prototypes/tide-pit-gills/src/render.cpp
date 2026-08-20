@@ -1,4 +1,5 @@
 #include "tidepit/core.hpp"
+#include "schuss/instrument_lab/renderer_artifacts.hpp"
 
 #include <juce_audio_formats/juce_audio_formats.h>
 #include <juce_core/juce_core.h>
@@ -101,32 +102,10 @@ struct RenderResult {
     throw std::runtime_error(message);
 }
 
-std::string jsonEscape(std::string_view text) {
-    std::string result;
-    result.reserve(text.size() + 8U);
-    for (const unsigned char character : text) {
-        switch (character) {
-            case '"': result += "\\\""; break;
-            case '\\': result += "\\\\"; break;
-            case '\b': result += "\\b"; break;
-            case '\f': result += "\\f"; break;
-            case '\n': result += "\\n"; break;
-            case '\r': result += "\\r"; break;
-            case '\t': result += "\\t"; break;
-            default:
-                if (character >= 0x20U) result.push_back(static_cast<char>(character));
-                break;
-        }
-    }
-    return result;
-}
+using schuss::instrument_lab::jsonEscape;
 
 std::string jsonNumber(double value) {
-    if (!std::isfinite(value)) fail("non-finite manifest value");
-    std::ostringstream stream;
-    stream.imbue(std::locale::classic());
-    stream << std::setprecision(std::numeric_limits<double>::max_digits10) << value;
-    return stream.str();
+    return schuss::instrument_lab::finiteJsonNumber(value);
 }
 
 const juce::DynamicObject& requireObject(const juce::var& value, std::string_view context) {

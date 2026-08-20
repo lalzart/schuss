@@ -1,0 +1,56 @@
+{
+  "claims": {
+    "canonical_schuss_record": false,
+    "executable_graph": false
+  },
+  "connections": [
+    {"from": "role.port.audio-out-left", "kind": "stereo-signal", "to": "role.node.output"},
+    {"from": "role.port.audio-out-right", "kind": "stereo-signal", "to": "role.node.output"},
+    {"from": "role.node.clock", "kind": "stage-transition", "to": "role.node.stage-cycle"},
+    {"from": "role.node.stage-cycle", "kind": "pitch-and-excitation", "to": "role.node.voice"},
+    {"from": "role.node.voice", "kind": "signal", "to": "role.node.body"},
+    {"from": "role.node.body", "kind": "signal", "to": "role.node.grain-memory"},
+    {"from": "role.node.grain-memory", "kind": "signal", "to": "role.node.effects"},
+    {"from": "role.node.effects", "kind": "signal", "to": "role.node.output"},
+    {"from": "role.node.wake-ledger", "kind": "afterstrike-excitation", "to": "role.node.body"}
+  ],
+  "feedback_edges": [
+    {"from": "role.node.body", "kind": "bounded-resonator-state", "to": "role.node.body"},
+    {"from": "role.node.grain-memory", "kind": "bounded-grain-history", "to": "role.node.grain-memory"},
+    {"from": "role.node.wake-ledger", "kind": "decaying-ledger-state", "to": "role.node.wake-ledger"}
+  ],
+  "fusion_boundary": {
+    "implementation_note": "One portable instrument-owned Core fuses these inspectable local roles.",
+    "includes": ["role.node.clock", "role.node.stage-cycle", "role.node.voice", "role.node.body", "role.node.grain-memory", "role.node.wake-ledger", "role.node.effects", "role.node.output"],
+    "local_role": "role.fusion.core"
+  },
+  "nodes": [
+    {"internals": ["cycle phase", "rate smoother", "transition counter"], "local_role": "role.node.clock", "name": "cycle clock", "origin": "newly-designed", "responsibility": "advance the four-stage cycle", "state_owner": true, "unresolved_component_contract": ["phase-preserving stage clock"]},
+    {"internals": ["four stage values", "mutation offsets", "scale and root quantization"], "local_role": "role.node.stage-cycle", "name": "four-stage pitch cycle", "origin": "newly-designed", "responsibility": "select and mutate the active stage", "state_owner": true, "unresolved_component_contract": ["four-stage pitch sequencer", "bounded mutation state"]},
+    {"internals": ["reed", "random", "fold", "dust", "undertow"], "local_role": "role.node.voice", "name": "source voice bank", "origin": "newly-designed", "responsibility": "produce the selected excitation voice", "state_owner": true, "unresolved_component_contract": ["multi-mode excitation voice"]},
+    {"internals": ["four body modes", "undertow resonator", "wake voices"], "local_role": "role.node.body", "name": "resonant body", "origin": "newly-designed", "responsibility": "turn stage excitation into resonant stereo body signal", "state_owner": true, "unresolved_component_contract": ["stereo resonant body"]},
+    {"internals": ["grain ring", "freeze state", "read position"], "local_role": "role.node.grain-memory", "name": "grain memory", "origin": "newly-designed", "responsibility": "retain and replay bounded body history", "state_owner": true, "unresolved_component_contract": ["bounded grain memory"]},
+    {"internals": ["primary ledger", "afterstrike energy", "rotor allocation"], "local_role": "role.node.wake-ledger", "name": "wake ledger", "origin": "newly-designed", "responsibility": "schedule and account for resonance-driven afterstrikes", "state_owner": true, "unresolved_component_contract": ["event-energy ledger"]},
+    {"internals": ["clean", "filter", "drive", "remembered mode parameters"], "local_role": "role.node.effects", "name": "effect bank", "origin": "newly-designed", "responsibility": "apply the selected output treatment", "state_owner": true, "unresolved_component_contract": ["mode-local effect state"]},
+    {"internals": ["stereo mix", "finite guard", "output ceiling"], "local_role": "role.node.output", "name": "output guard", "origin": "fused-implementation", "responsibility": "mix and bound the final stereo signal", "state_owner": false, "unresolved_component_contract": ["bounded stereo output"]}
+  ],
+  "prototype_id": "cinderwheel",
+  "public_facets": {
+    "actions": [
+      {"data_type": "momentary action", "direction": "input", "local_role": "role.action.reset-panic", "name": "reset or panic"},
+      {"data_type": "momentary action", "direction": "input", "local_role": "role.action.mutate", "name": "mutate"}
+    ],
+    "displays": [
+      {"data_type": "state snapshot", "direction": "output", "local_role": "role.display.state", "name": "accepted state"},
+      {"data_type": "diagnostics", "direction": "output", "local_role": "role.display.diagnostics", "name": "processing diagnostics"}
+    ],
+    "parameters": [
+      {"data_type": "normalized and quantized controls", "direction": "input", "local_role": "role.parameter.performance", "name": "instrument controls"}
+    ],
+    "ports": [
+      {"data_type": "float32 audio", "direction": "output", "local_role": "role.port.audio-out-left", "name": "audio out left"},
+      {"data_type": "float32 audio", "direction": "output", "local_role": "role.port.audio-out-right", "name": "audio out right"}
+    ]
+  },
+  "schema_version": "schuss-instrument-lab-dsp-topology-v1"
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:schuss:prototype-only:instrument-lab:prototype-index:v1",
+  "additionalProperties": false,
+  "properties": {
+    "authorities": {"type": "object"},
+    "claims": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_schuss_record": {"const": false},
+        "production_ready": {"const": false}
+      },
+      "required": ["canonical_schuss_record", "production_ready"],
+      "type": "object"
+    },
+    "core_adapter": {"type": "object"},
+    "evidence": {"type": "object"},
+    "handoff": {"type": "object"},
+    "lane": {"enum": ["new-design", "source-reimplementation", "non-musical-smoke"]},
+    "prototype_id": {"pattern": "^[a-z][a-z0-9-]*$", "type": "string"},
+    "revision": {"pattern": "^[0-9]+\\.[0-9]+$", "type": "string"},
+    "schema_version": {"const": "schuss-instrument-lab-prototype-index-v1"}
+  },
+  "required": [
+    "schema_version",
+    "prototype_id",
+    "revision",
+    "lane",
+    "claims",
+    "authorities",
+    "core_adapter",
+    "evidence",
+    "handoff"
+  ],
+  "title": "Noncanonical Instrument Lab prototype index v1",
+  "type": "object"
+}

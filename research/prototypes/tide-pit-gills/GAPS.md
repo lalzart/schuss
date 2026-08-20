@@ -7,7 +7,7 @@
 | ID | Former gap | Closing evidence |
 |---|---|---|
 | CLOSED-001 | No permanent source comparator | Apple clang 16 reference test matches 1,536,000-byte Q27 SHA-256 `39d8...ad2b` |
-| CLOSED-002 | Source and Mutable closure not authenticated | external and vendored source-lock validation passes; notices retained |
+| CLOSED-002 | Source and Mutable closure not authenticated | accepted Task 033 source-release authority plus external/shared-closure source-lock validation passes; physical notice retained without license promotion |
 | CLOSED-003 | Global stmlib RNG ownership unsuitable for instances | compatible per-instance save/restore preserves the canonical stream and passes interleaved/concurrent-instance tests |
 | CLOSED-004 | Source state not observable to the host | behavior-neutral overlay plus complete snapshots preserve the golden and pass state/display tests |
 | CLOSED-005 | Upstream negative signed shift triggered UBSan | exact two-expression defined-C++ generated overlay; output hash locked; fail-fast ASan/UBSan clean; golden unchanged |
@@ -34,9 +34,13 @@
 | GAP-012 | Generic local-JUCE source mode checks version, not tree bytes | medium | dependency intake | This build was separately authenticated against the retained exact archive | reusable source-tree fingerprint/authentication step |
 | GAP-013 | Prototype links JUCE modules beyond the canonical Schuss device lock | medium | dependency/packaging | Permit only for this local renderer/GUI trial | module/license review before distribution or shared-host extraction |
 | GAP-014 | JUCE distribution, signing, and plugin formats are not approved | medium | packaging | Local unsigned standalone only | distribution license review, signing/notarization, and explicit AU/VST3 task |
-| GAP-015 | The application UI has not been launched or visually exercised | medium | host launch | Compile/link evidence only | authorized launch, audio/MIDI selection, resize/display, and shutdown test |
+| GAP-015 | The rebuilt application UI has not been visually exercised in a fresh process | medium | host launch | Accessibility attached to the user's already-running pre-follow-up process, which was deliberately not closed; compile/link evidence covers the rebuilt app | quit/reopen the rebuilt app, then inspect state labels, stereo scope, resize/display, and shutdown |
 | GAP-016 | No permanent shared C++/JUCE support library exists | medium | workflow | Reuse fingerprinted topology and patterns; defer code extraction until seams stabilize across both prototypes | two-instrument differential audit and adjacent regressions |
 | GAP-017 | Canonical Schuss graph/provider/control-runtime integration is outside this task | high | production | Keep the prototype isolated | accepted successor task, identities, records, runtime, packaging, and release gates |
+| GAP-018 | The fixed scope tap adds bounded work to the audio callback but has no deadline measurement | high | real-time host | Keep all scope storage fixed and all drawing on the UI thread; retain the existing no-real-time-claim boundary | include the scope-enabled build in worst-case and p99 callback measurements under load |
+| GAP-019 | Only Tide Pit consumes the shared Mutable physical closure | medium | source-package architecture | Keep compiled target, flags, numeric profile, RNG, allocation, and lifecycle policy consumer-local | validate a second real consumer before proposing a shared compiled target or provider ABI |
+| GAP-020 | Cross-revision coexistence is defined only as parallel immutable package roots | medium | dependency governance | Never mutate `mutable_ksoloti_v1` in place | prove package discovery and consumer selection with a genuine second source revision |
+| GAP-021 | Task 033 source-release licensing and distribution remain unreviewed | high | source-release/distribution | The package notice accompanies physical bytes but does not promote accepted source-release evidence | accepted semantic review plus exact release-content, JUCE, signing, and distribution assessment |
 
 The legacy `9e47...ab00` stream remains provenance evidence only. It is not an
 open comparator: its automatic-storage Clouds reverb history was undefined.

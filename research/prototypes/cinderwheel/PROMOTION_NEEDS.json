@@ -1,0 +1,46 @@
+{
+  "claims": {
+    "allocates_canonical_records": false,
+    "executable_graph": false
+  },
+  "needs": [
+    {
+      "local_role": "role.node.body",
+      "required_contract": "stereo resonant body"
+    },
+    {
+      "local_role": "role.node.clock",
+      "required_contract": "phase-preserving stage clock"
+    },
+    {
+      "local_role": "role.node.effects",
+      "required_contract": "mode-local effect state"
+    },
+    {
+      "local_role": "role.node.grain-memory",
+      "required_contract": "bounded grain memory"
+    },
+    {
+      "local_role": "role.node.output",
+      "required_contract": "bounded stereo output"
+    },
+    {
+      "local_role": "role.node.stage-cycle",
+      "required_contract": "bounded mutation state"
+    },
+    {
+      "local_role": "role.node.stage-cycle",
+      "required_contract": "four-stage pitch sequencer"
+    },
+    {
+      "local_role": "role.node.voice",
+      "required_contract": "multi-mode excitation voice"
+    },
+    {
+      "local_role": "role.node.wake-ledger",
+      "required_contract": "event-energy ledger"
+    }
+  ],
+  "prototype_id": "cinderwheel",
+  "schema_version": "schuss-instrument-lab-promotion-needs-v1"
+}

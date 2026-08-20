@@ -115,7 +115,8 @@ void Q27HostBridge::renderNextQuantum(Core& core) noexcept {
 }
 
 void JuceMidiAdapter::reset() noexcept {
-    ingress_sequence_ = 0;
+    ingress_sequence_.reset();
+    events_.clear();
     diagnostics_ = {};
 }
 
@@ -123,17 +124,10 @@ AdaptedMidiBlock JuceMidiAdapter::adapt(
     const juce::MidiBuffer& source,
     std::uint32_t block_frames
 ) noexcept {
-    std::size_t event_count = 0;
-    std::size_t dropped_events = 0;
-    const auto maximum_sample_position = block_frames > 0
-        ? static_cast<int>(std::min<std::uint32_t>(
-              block_frames - 1U,
-              static_cast<std::uint32_t>(0x7fffffffU)
-          ))
-        : 0;
+    events_.clear();
 
     for (const auto metadata : source) {
-        const auto sequence = ++ingress_sequence_;
+        const auto sequence = ingress_sequence_.next();
         ++diagnostics_.raw_messages;
         if (metadata.data == nullptr || metadata.numBytes != 3) {
             ++diagnostics_.malformed_messages;
@@ -184,30 +178,25 @@ AdaptedMidiBlock JuceMidiAdapter::adapt(
             ++diagnostics_.invalid_values;
             continue;
         }
-        if (event_count == events_.size()) {
-            ++dropped_events;
-            ++diagnostics_.dropped_events;
-            continue;
-        }
-
         const auto semantic_value = mapping.status == MappingStatus::accepted_action_press
             ? 0.0
             : (mapping.id == ControlId::set_root
                    ? static_cast<double>(mapping.root_note)
                    : mapping.normalized_value);
-        events_[event_count++] = {
-            static_cast<std::uint32_t>(std::clamp(
-                metadata.samplePosition,
-                0,
-                maximum_sample_position
-            )),
+        const SemanticEvent event{
+            schuss::instrument_lab::clampSampleOffset(
+                metadata.samplePosition, block_frames),
             sequence,
             *action,
             semantic_value,
         };
+        if (!events_.push(event)) {
+            ++diagnostics_.dropped_events;
+            continue;
+        }
         ++diagnostics_.semantic_events;
     }
-    return {events_.data(), event_count, dropped_events};
+    return {events_.data(), events_.size(), events_.dropped()};
 }
 
 MidiAdapterDiagnostics JuceMidiAdapter::diagnostics() const noexcept {

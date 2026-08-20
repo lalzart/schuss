@@ -24,3 +24,9 @@ injected handlers, not an ambient fallback.
 Current capability and proof gaps are maintained in `docs/STATUS.md`. Record-
 set manifests, not directory scans or “latest” inference, define every accepted
 input closure.
+
+`dsp_sources/` is a separate non-semantic package family for immutable physical
+build closures. Its manifests reference accepted source-release authority;
+they are not `schuss_core` modules, source releases, catalog collections, graph
+components, implementations, providers, runtime capabilities, or support
+claims.

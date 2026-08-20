@@ -1,0 +1,8 @@
+{
+  "artifact": "deterministic in-memory smoke",
+  "claims": {
+    "listening_evidence": false,
+    "musical_instrument": false
+  },
+  "schema_version": "instrument-lab-smoke-experiment-v1"
+}

@@ -1,0 +1,34 @@
+{
+  "claims": {
+    "allocates_canonical_records": false,
+    "executable_graph": false
+  },
+  "needs": [
+    {
+      "local_role": "role.node.effects",
+      "required_contract": "mode-local fixed-point effects"
+    },
+    {
+      "local_role": "role.node.granular",
+      "required_contract": "fixed-point granular memory"
+    },
+    {
+      "local_role": "role.node.output",
+      "required_contract": "bounded planar Q27 output"
+    },
+    {
+      "local_role": "role.node.resonance",
+      "required_contract": "fixed-point resonant body"
+    },
+    {
+      "local_role": "role.node.stage-cycle",
+      "required_contract": "source-exact four-stage cycle"
+    },
+    {
+      "local_role": "role.node.voice",
+      "required_contract": "authenticated excitation voice"
+    }
+  ],
+  "prototype_id": "tide-pit-gills",
+  "schema_version": "schuss-instrument-lab-promotion-needs-v1"
+}

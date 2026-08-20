@@ -1,0 +1,181 @@
+{
+  "authority": {
+    "source_release": {
+      "content_hash": "sha256:51750a00f07f98c783cfc1972580c9399ac64690eaf3d40ad6e1d736698c972c",
+      "path": "contracts/task033/phase2/source-release-05.json",
+      "revision": 1,
+      "source_release_id": "schuss-source-release-000005"
+    },
+    "source_release_schema_path": "schemas/source-release-v0.schema.json"
+  },
+  "claims": {
+    "does_not_provide": [
+      "audible-evidence",
+      "catalog-membership",
+      "collection-membership",
+      "device-evidence",
+      "distribution-approval",
+      "graph-identity",
+      "implementation-identity",
+      "license-authority",
+      "provenance-authority",
+      "provider-identity",
+      "real-time-evidence",
+      "runtime-support",
+      "source-release-identity"
+    ],
+    "provides": [
+      "physical-build-closure"
+    ]
+  },
+  "closure": {
+    "files": [
+      {
+        "path": "firmware/mutable_instruments/braids/braids_resources.cpp",
+        "sha256": "b28a075193e7568e53621361ba95e3c9ff952b350eafe02e47dfb070b76f6b53"
+      },
+      {
+        "path": "firmware/mutable_instruments/braids/resources.h",
+        "sha256": "b718316c76f53a5c6f7235c163dab7814c14eb566316ef27d316bc03d344c85d"
+      },
+      {
+        "path": "firmware/mutable_instruments/clouds/clouds_resources.cpp",
+        "sha256": "ff5aad218cb381d1a1e34bfb67361493a7a922202bb973abe7dfa5aa210c37f2"
+      },
+      {
+        "path": "firmware/mutable_instruments/clouds/dsp/audio_buffer.h",
+        "sha256": "110c63276ec84cbb211f98a5897d075307471da25ae1845da82dac504d052657"
+      },
+      {
+        "path": "firmware/mutable_instruments/clouds/dsp/frame.h",
+        "sha256": "203a758cd626f7d5ca0d3bd70457ba15b36d2ddc9fea5a2c56eab3cdd15ec3b4"
+      },
+      {
+        "path": "firmware/mutable_instruments/clouds/dsp/fx/fx_engine.h",
+        "sha256": "8bd367622b97247a371f70871446971b63191df51b7d2a4e06163c86f3408641"
+      },
+      {
+        "path": "firmware/mutable_instruments/clouds/dsp/fx/reverb.h",
+        "sha256": "721226338def6f28adc60215073ce97ef1a3f6ef0c4d8fc889b5056d7717e174"
+      },
+      {
+        "path": "firmware/mutable_instruments/clouds/dsp/grain.h",
+        "sha256": "08feb5ac5408e2cb30eb037a844f6ee187d8dedd53fee913d1b5ab2c74ebfac3"
+      },
+      {
+        "path": "firmware/mutable_instruments/clouds/dsp/mu_law.h",
+        "sha256": "b35c5c89c66632efeb86c94411dbe6fdbb618a9ddbfbfd741168728fd1a7d0a9"
+      },
+      {
+        "path": "firmware/mutable_instruments/clouds/dsp/parameters.h",
+        "sha256": "1d41ec7d86063204ef8f2301ee62170df0cf5933a955545be37e9ab400c46e64"
+      },
+      {
+        "path": "firmware/mutable_instruments/clouds/resources.h",
+        "sha256": "02d89753235e62fcb8b1a180c333518159bfa222999214f7a28c07e3f54d2f60"
+      },
+      {
+        "path": "firmware/mutable_instruments/stmlib/dsp/cosine_oscillator.h",
+        "sha256": "32aabaf95eec930ead9e02b88d8ddaf4d52262cfb9039bd1eb07ad26230de5c8"
+      },
+      {
+        "path": "firmware/mutable_instruments/stmlib/dsp/dsp.h",
+        "sha256": "756219ce25649d28e03faddcf2f5d6a072d8a72e774b39374a82d80f644ac3f6"
+      },
+      {
+        "path": "firmware/mutable_instruments/stmlib/dsp/filter.h",
+        "sha256": "bc647a8ab7441c381a0c72d56ae84c7dbeeecf55763941835c8438a6aab131e0"
+      },
+      {
+        "path": "firmware/mutable_instruments/stmlib/dsp/rsqrt.h",
+        "sha256": "a827501522f85d7045783619404366eb0fb338ede3cb1480650cf5f038d68c91"
+      },
+      {
+        "path": "firmware/mutable_instruments/stmlib/dsp/units.cpp",
+        "sha256": "0acbe230ffaa2d181ba285fce54f2fd0b2339b3ec163a1dd00c946e6bf82ea4a"
+      },
+      {
+        "path": "firmware/mutable_instruments/stmlib/dsp/units.h",
+        "sha256": "be38219743728af8e081373371153eab8a3461d8d01128f81b0dfee2be7bff2d"
+      },
+      {
+        "path": "firmware/mutable_instruments/stmlib/stmlib.h",
+        "sha256": "aa98ad93fe5862bb2e8f7153f886439c6b95783ae08168ac6d32bd7edb91d8e3"
+      },
+      {
+        "path": "firmware/mutable_instruments/stmlib/utils/dsp.h",
+        "sha256": "c0fad7f6b5b20f053d184614a35baf595e41f1394db53f80ac742d7467dbbe1b"
+      },
+      {
+        "path": "firmware/mutable_instruments/stmlib/utils/random.cpp",
+        "sha256": "145c4d7a30e373d001fd664ce6f97a475458f7dc8286252d24ca6f592e0cdb93"
+      },
+      {
+        "path": "firmware/mutable_instruments/stmlib/utils/random.h",
+        "sha256": "423f01e905fa279864878f34e42136ad1eb37a33dad58739affaaab06b793e5d"
+      }
+    ],
+    "immutable_root": "upstream",
+    "manifest_algorithm": "SHA-256 lines with digest, two spaces, repository-relative path, LF; LC_ALL=C complete-line sort; SHA-256 of sorted bytes",
+    "manifest_sha256": "0903f25038f0116422a8512b15f1c3531e7b22371da8ad393b130a16d821508f",
+    "retained_notice_path": "THIRD_PARTY_NOTICES.md"
+  },
+  "component_groups": [
+    {
+      "name": "braids-resources",
+      "paths": [
+        "firmware/mutable_instruments/braids/braids_resources.cpp",
+        "firmware/mutable_instruments/braids/resources.h"
+      ]
+    },
+    {
+      "name": "clouds-granular-headers",
+      "paths": [
+        "firmware/mutable_instruments/clouds/dsp/audio_buffer.h",
+        "firmware/mutable_instruments/clouds/dsp/frame.h",
+        "firmware/mutable_instruments/clouds/dsp/fx/fx_engine.h",
+        "firmware/mutable_instruments/clouds/dsp/fx/reverb.h",
+        "firmware/mutable_instruments/clouds/dsp/grain.h",
+        "firmware/mutable_instruments/clouds/dsp/mu_law.h",
+        "firmware/mutable_instruments/clouds/dsp/parameters.h"
+      ]
+    },
+    {
+      "name": "clouds-resources",
+      "paths": [
+        "firmware/mutable_instruments/clouds/clouds_resources.cpp",
+        "firmware/mutable_instruments/clouds/resources.h"
+      ]
+    },
+    {
+      "name": "stmlib-core-headers",
+      "paths": [
+        "firmware/mutable_instruments/stmlib/dsp/cosine_oscillator.h",
+        "firmware/mutable_instruments/stmlib/dsp/dsp.h",
+        "firmware/mutable_instruments/stmlib/dsp/filter.h",
+        "firmware/mutable_instruments/stmlib/dsp/rsqrt.h",
+        "firmware/mutable_instruments/stmlib/dsp/units.h",
+        "firmware/mutable_instruments/stmlib/stmlib.h",
+        "firmware/mutable_instruments/stmlib/utils/dsp.h"
+      ]
+    },
+    {
+      "name": "stmlib-random-source",
+      "paths": [
+        "firmware/mutable_instruments/stmlib/utils/random.cpp",
+        "firmware/mutable_instruments/stmlib/utils/random.h"
+      ]
+    },
+    {
+      "name": "stmlib-units-source",
+      "paths": [
+        "firmware/mutable_instruments/stmlib/dsp/units.cpp",
+        "firmware/mutable_instruments/stmlib/dsp/units.h"
+      ]
+    }
+  ],
+  "package_id": "mutable-ksoloti-v1",
+  "package_revision": "1",
+  "schema_version": "physical-source-closure-manifest-v1",
+  "transitive_support": []
+}

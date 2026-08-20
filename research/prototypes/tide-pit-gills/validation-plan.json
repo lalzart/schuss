@@ -13,12 +13,13 @@
       "evidence_level": "source",
       "freshness_inputs": [
         "source-equivalence.json",
+        "../../../packages/dsp_sources/mutable_ksoloti_v1",
+        "../../../tools/source_packages",
         "tests/validate_source_lock.py",
         "tools/generate_ported_tidepit_voice.py",
         "third_party/SOURCE_LOCK.json",
         "third_party/THIRD_PARTY_NOTICES.md",
-        "third_party/tidepit",
-        "third_party/ksoloti"
+        "third_party/tidepit"
       ],
       "id": "source-review"
     },

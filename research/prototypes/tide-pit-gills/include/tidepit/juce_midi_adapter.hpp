@@ -2,6 +2,8 @@
 
 #include "tidepit/control_map.hpp"
 #include "tidepit/core.hpp"
+#include "schuss/instrument_lab/bounded_midi.hpp"
+#include "schuss/instrument_lab/host_bridge.hpp"
 
 #include <juce_audio_basics/juce_audio_basics.h>
 
@@ -43,6 +45,18 @@ inline constexpr std::size_t kMaximumPendingHostEvents = 512;
 // because juce::MidiBuffer iteration is timestamp ordered.
 class Q27HostBridge final {
 public:
+    [[nodiscard]] static constexpr schuss::instrument_lab::HostProfile
+    profile() noexcept {
+        return {
+            schuss::instrument_lab::SampleRepresentation::q27,
+            kReferenceSampleRate,
+            0x7fffffffU,
+            kReferenceQuantumFrames,
+            true,
+            true,
+        };
+    }
+
     void reset() noexcept;
 
     void process(
@@ -96,9 +110,13 @@ public:
     [[nodiscard]] MidiAdapterDiagnostics diagnostics() const noexcept;
 
 private:
-    std::array<SemanticEvent, kMaximumSemanticEvents> events_{};
-    std::uint64_t ingress_sequence_{};
+    schuss::instrument_lab::FixedEventBuffer<
+        SemanticEvent, kMaximumSemanticEvents> events_{};
+    schuss::instrument_lab::IngressSequence ingress_sequence_{};
     MidiAdapterDiagnostics diagnostics_{};
 };
+
+using ParameterizedQ27HostBridge =
+    schuss::instrument_lab::HostBridge<Q27HostBridge>;
 
 }  // namespace tidepit
