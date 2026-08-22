@@ -29,6 +29,10 @@ vi.mock("./PatchEditor", () => ({
   </div>,
 }));
 
+vi.mock("./InstrumentLibrary", () => ({
+  InstrumentLibrary: () => <div>Instrument library mounted</div>,
+}));
+
 const hash = (value: string) => `sha256:${value.repeat(64)}`;
 const project = {
   workspace: "/tmp/schuss-projects/test-patch",
@@ -49,7 +53,7 @@ describe("DesktopApp workspace shell", () => {
     localStorage.clear();
   });
 
-  it("keeps the canvas mounted while a one-time projects root is configured", async () => {
+  it("opens in Instruments and retains the Workshop setup flow", async () => {
     const user = userEvent.setup();
     dispatchMock.mockResolvedValue({
       projects_root: "/tmp/schuss-projects",
@@ -60,7 +64,12 @@ describe("DesktopApp workspace shell", () => {
     });
     render(<DesktopApp />);
 
+    expect(screen.getByText("Instrument library mounted")).toBeVisible();
+    expect(screen.getByText("Canvas mounted")).not.toBeVisible();
+    expect(screen.queryByRole("dialog", { name: "Desktop settings" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Workshop" }));
     expect(screen.getByText("Canvas mounted")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Settings" }));
     const dialog = screen.getByRole("dialog", { name: "Desktop settings" });
     await user.type(within(dialog).getByLabelText("Projects root"), "/tmp/schuss-projects");
     await user.click(within(dialog).getByRole("button", { name: "Use projects root" }));
@@ -90,6 +99,7 @@ describe("DesktopApp workspace shell", () => {
       .mockResolvedValueOnce({ projects_root: "/tmp/schuss-projects", project_count: 1, rejected_child_count: 0, truncated: false, projects: [project] })
       .mockImplementationOnce(() => created.promise);
     render(<DesktopApp />);
+    await user.click(screen.getByRole("button", { name: "Workshop" }));
     expect(await screen.findByText(project.workspace)).toBeVisible();
 
     await user.click(screen.getByRole("button", { name: "New patch" }));

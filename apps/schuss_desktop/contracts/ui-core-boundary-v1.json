@@ -8,7 +8,7 @@
       "shell": "Tauri 2",
       "view": "React"
     },
-    "status": "workspace-patcher-shell"
+    "status": "instrument-library-home"
   },
   "ownership": {
     "core_owned_semantics": [
@@ -19,6 +19,7 @@
       "device-identity-and-upload-sessions",
       "evidence-records",
       "graph-and-instrument-records",
+      "instrument-audition-library-and-session-state",
       "project-and-workspace-records"
     ],
     "direct_catalog_file_access": "forbidden",
@@ -27,6 +28,7 @@
     "direct_workspace_mutation": "forbidden",
     "semantic_mutation_mode": "shared-operation-only",
     "ui_owned_ephemeral_state": [
+      "active-application-surface",
       "draft-form-state",
       "external-project-notice",
       "panel-layout",
@@ -37,6 +39,15 @@
     ]
   },
   "planned_capability_phases": [
+    {
+      "operations": [
+        "instrument.library.list",
+        "instrument.session.start",
+        "instrument.session.inspect"
+      ],
+      "phase": "instrument-library-home",
+      "status": "implemented"
+    },
     {
       "operations": [
         "application.describe",
@@ -172,6 +183,24 @@
       "result_schema_version": "schuss-operation-result-v1"
     },
     {
+      "effect_class": "read-only",
+      "operation": "instrument.library.list",
+      "request_schema_version": "schuss-operation-request-v19",
+      "result_schema_version": "schuss-operation-result-v19"
+    },
+    {
+      "effect_class": "native-application-launch",
+      "operation": "instrument.session.start",
+      "request_schema_version": "schuss-operation-request-v19",
+      "result_schema_version": "schuss-operation-result-v19"
+    },
+    {
+      "effect_class": "read-only",
+      "operation": "instrument.session.inspect",
+      "request_schema_version": "schuss-operation-request-v19",
+      "result_schema_version": "schuss-operation-result-v19"
+    },
+    {
       "effect_class": "proposal-only",
       "operation": "graph.transact",
       "request_schema_version": "schuss-operation-request-v11",
@@ -253,8 +282,8 @@
     "operation_selection": "closed-listed-allowlist",
     "renderer_file_access": "absent",
     "request_handling": "submit-one-versioned-schuss-operation-and-explicit-workspace",
-    "selected_record_set": "contracts/record-sets/ui-desktop-workspace-shell-v1.json",
-    "status": "implemented-workspace-patcher-shell",
+    "selected_record_set": "contracts/record-sets/ui-desktop-instrument-library-v1.json",
+    "status": "implemented-instrument-library-home",
     "unknown_operation": "reject",
     "unknown_result_schema": "reject",
     "version_mismatch": "reject"

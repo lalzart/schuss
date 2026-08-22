@@ -138,7 +138,7 @@ export type OperationResult<T, O extends string> = {
   schema_version: string;
   canonical_profile: "schuss-canonical-json-v1";
   operation: O;
-  status: "success" | "invalid" | "unresolved" | "unsupported" | "ambiguous" | "conflict";
+  status: "success" | "invalid" | "unresolved" | "unsupported" | "ambiguous" | "conflict" | "unavailable" | "failed" | "cancelled" | "budget-failure";
   value: T | null;
   diagnostics: OperationDiagnostic[];
 };
@@ -496,4 +496,50 @@ export type DesktopOperationRequest = {
   canonical_profile: "schuss-canonical-json-v1";
   operation: string;
   payload: Record<string, unknown>;
+};
+
+export type InstrumentAvailability =
+  | "verified-local-build"
+  | "build-required"
+  | "stale-build"
+  | "research-only";
+
+export type InstrumentEvidenceBoundary = {
+  application_launch: "not-evaluated";
+  listening: "not-evaluated";
+  physical_controller: "not-evaluated";
+};
+
+export type InstrumentLibraryEntry = {
+  prototype_id: string;
+  revision: string;
+  display_name: string;
+  summary: string;
+  controller_label: string;
+  lane: string;
+  availability: InstrumentAvailability;
+  launchable: boolean;
+  evidence: InstrumentEvidenceBoundary;
+  executable_sha256?: string;
+};
+
+export type InstrumentLibraryValue = {
+  library_id: "instrument-lab-audition-library";
+  library_revision: 1;
+  claims: {
+    canonical_schuss_records: false;
+    production_ready: false;
+  };
+  instrument_count: number;
+  instruments: InstrumentLibraryEntry[];
+};
+
+export type InstrumentSessionValue = {
+  instrument_session_id: string;
+  prototype_id: string;
+  revision: string;
+  display_name: string;
+  status: "running" | "exited";
+  executable_sha256: string;
+  exit_code?: number;
 };

@@ -1,17 +1,16 @@
 # Schuss roadmap
 
-<!-- schuss-governance-routing: active=none; next=033-phase-3@not-activated -->
+<!-- schuss-governance-routing: active=039@review-ready; next=033-phase-3@not-activated -->
 
 Current routing is defined by `docs/governance/current-state.json`; this roadmap
 describes sequencing rather than silently activating work.
 
 ## Active maintenance
 
-There is no active task. Task 035 completed locally at `88788c5` under ADR
-0018. Cumulative record-set loading is one-pass, routine checks are separated
-from native and copied-root reproduction, and current task/phase state now has
-a small structured source. Its frozen release passed all 33 unique checks; the
-routine current portion took 17.842 seconds.
+- Task 039, the desktop instrument library and bounded JUCE audition-launch
+  slice, is review-ready. It changes the desktop entry surface and adds only
+  manifest-bound fake-tested launch sessions; validation launched no app and
+  promoted no prototype, device, listening, or production evidence.
 
 ## Next candidate
 

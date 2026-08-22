@@ -1,13 +1,14 @@
 # Desktop UI boundary
 
-Status: the consolidated Tauri desktop implements catalog/object browsing,
+Status: the consolidated Tauri desktop opens on an exact noncanonical
+Instrument Lab audition library and implements catalog/object browsing,
 exact graph visualization and proposal, project-backed authoring, process-local
 build jobs, explicit Ksoloti Core discovery, and a read-back-verified
 volatile-RAM upload path. It also presents accepted project-local objects and
 safely follows externally accepted project revisions.
-The canvas is now the application home; Objects and Patches are contextual
-drawers, and one remembered projects root is browsed and mutated only through
-shared core operations.
+The existing canvas is retained as Workshop; Objects and Patches remain its
+contextual drawers, and one remembered projects root is browsed and mutated
+only through shared core operations.
 Connected-hardware execution, firmware/SD mutation, packaging, and publication
 remain separately gated.
 
@@ -25,8 +26,10 @@ React/TypeScript presentation
 
 The product application is `apps/schuss_desktop/`. Browser-mode development
 uses a localhost Vite proxy to the same Python adapter; production has no
-renderer fallback. Both paths select exact record set
-`schuss-record-set-000028@1` for new-project creation. Additive v15 supplies
+renderer fallback. Both paths select exact application record set
+`schuss-record-set-000033@1` for the instrument library and capability surface.
+Workshop new-project creation remains pinned to
+`schuss-record-set-000028@1`. Additive v15 supplies
 `workspace.projects.list` and `workspace.project.create`; the renderer passes
 one explicit absolute projects root and never scans it. The desktop also
 retains only the v13 `project.objects.list` and `project.object.inspect` reads;
@@ -39,6 +42,7 @@ their project manifest.
 
 | Group | Operations | Effect |
 | --- | --- | --- |
+| Instrument audition | `instrument.library.list`, `instrument.session.start`, `instrument.session.inspect` | read-only / exact native application launch / read-only inspection |
 | Catalog | `application.describe`, `catalog.search`, `catalog.inspect`, `catalog.implementations.search`, `component.inspect` | read-only |
 | Graph | `graph.inspect`, `graph.transact` | read-only / proposal-only |
 | Project | `project.init`, `project.inspect`, `project.validate`, `project.profile.fork`, `project.profile.transact`, `project.history.inspect`, `project.revert` | explicit workspace read/write |
@@ -53,6 +57,29 @@ raw `build.execute`, flash, DFU, reset, SD, filesystem export, and arbitrary
 USB operations. The application capability description may report shared
 operations that require other services; description does not grant the
 desktop permission to invoke them.
+
+## Instrument audition seam
+
+The generated audition library binds five exact prototype IDs and revisions to
+their current prototype-index and result-evidence bytes. Launch targets are
+explicit repository-relative build locators; the core rejects symlinks and
+escapes, requires a regular executable within its declared application bundle,
+and compares the current executable SHA-256 with retained exact evidence.
+Missing, unresolved, or changed builds remain visible but cannot launch.
+
+The renderer receives presentation metadata, availability, evidence boundary,
+and an opaque process-local session ID. It never receives a filesystem path,
+command, environment, or process handle, and it cannot submit any of them.
+Start requires exact prototype ID/revision and the literal
+`explicit-native-juce-audition` intent; core invokes the already-verified
+executable directly without a shell. No background launch or automatic
+relaunch exists.
+
+Library listing and application launching do not open MIDI or audio endpoints
+inside Schuss. Each JUCE standalone remains responsible for its own direct
+audio/MIDI lifecycle after the user explicitly opens it. A running-session
+observation is not device, controller-receipt, listening, deadline, safety,
+distribution, or production evidence.
 
 ## Ownership
 
@@ -78,9 +105,10 @@ identifiable added node. A dirty editor retains its complete draft and presents
 the successor revision plus a guarded reload action. The renderer never reads
 or watches the workspace head directly.
 
-The application always mounts one patcher canvas. Objects and Patches switch a
-compact left drawer rather than application routes; the right inspector remains
-node-contextual. The object drawer defaults to the existing `contracted`
+The application defaults to Instruments and reaches Workshop in one action.
+Workshop keeps its patcher canvas mounted while switching surfaces, preserving
+unsaved presentation state. Objects and Patches switch a compact left drawer;
+the right inspector remains node-contextual. The object drawer defaults to the existing `contracted`
 readiness projection, exposes an explicit All catalog view, and expands exact
 form, readiness, provenance, and project evidence in place. One Add action
 performs exact component resolution and then emits only the existing unsaved

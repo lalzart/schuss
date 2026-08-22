@@ -177,7 +177,7 @@ class DesktopPatcherBridgeTest(unittest.TestCase):
         capabilities = {
             item["operation"]: item for item in results[6]["value"]["operations"]
         }
-        self.assertEqual(43, len(capabilities))
+        self.assertEqual(50, len(capabilities))
         self.assertEqual(
             "requires-project-workspace",
             capabilities["authoring.draft.create"]["availability"],
@@ -187,6 +187,11 @@ class DesktopPatcherBridgeTest(unittest.TestCase):
             "requires-execution-service", capabilities["build.execute"]["availability"]
         )
         self.assertEqual("available", capabilities["build.session.start"]["availability"])
+        self.assertEqual("available", capabilities["instrument.library.list"]["availability"])
+        self.assertEqual(
+            "native-application-launch",
+            capabilities["instrument.session.start"]["effect_class"],
+        )
         self.assertEqual("device-volatile-write", capabilities["device.upload.start"]["effect_class"])
         self.assertEqual(
             "Band-limited Saw Oscillator",
@@ -204,6 +209,31 @@ class DesktopPatcherBridgeTest(unittest.TestCase):
         self.assertEqual(
             "BRIDGE_PROJECT_OBJECTS_UNAVAILABLE", results[13]["error"]["code"]
         )
+
+    def test_instrument_list_crosses_the_closed_bridge_without_launching(self):
+        value = envelope(
+            {
+                "schema_version": "schuss-operation-request-v19",
+                "canonical_profile": "schuss-canonical-json-v1",
+                "operation": "instrument.library.list",
+                "payload": {},
+            }
+        )
+        completed = subprocess.run(
+            [sys.executable, str(BRIDGE)],
+            cwd=ROOT,
+            env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
+            input=core.canonical_json(value).encode("utf-8") + b"\n",
+            capture_output=True,
+            check=False,
+            timeout=60,
+        )
+        self.assertEqual(0, completed.returncode, completed.stderr.decode("utf-8"))
+        result = json.loads(completed.stdout)
+        self.assertEqual("success", result["status"])
+        self.assertEqual(5, result["value"]["instrument_count"])
+        self.assertNotIn(str(ROOT), completed.stdout.decode("utf-8"))
+        self.assertNotIn("executable_path", completed.stdout.decode("utf-8"))
 
 
 if __name__ == "__main__":

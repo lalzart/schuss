@@ -15,10 +15,12 @@ import type {
   WorkspaceProjectCreateValue,
   WorkspaceProjectsValue,
 } from "../core/types";
+import { InstrumentLibrary } from "./InstrumentLibrary";
 import { PatchEditor } from "./PatchEditor";
 import styles from "./DesktopApp.module.css";
 
 export function DesktopApp() {
+  const [surface, setSurface] = useState<"instruments" | "workshop">("instruments");
   const [preferences, setPreferences] = useState(loadDesktopPreferences);
   const [workspace, setWorkspace] = useState("");
   const [projects, setProjects] = useState<WorkspaceProject[]>([]);
@@ -27,7 +29,7 @@ export function DesktopApp() {
   );
   const [error, setError] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
-  const [showSettings, setShowSettings] = useState(!preferences.projectsRoot);
+  const [showSettings, setShowSettings] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [rootDraft, setRootDraft] = useState(preferences.projectsRoot);
   const [patchName, setPatchName] = useState("Untitled patch");
@@ -53,6 +55,7 @@ export function DesktopApp() {
   }, [dirty, workspace]);
 
   useEffect(() => {
+    if (surface !== "workshop") return undefined;
     const root = preferences.projectsRoot;
     if (!root) {
       setProjects([]);
@@ -134,7 +137,7 @@ export function DesktopApp() {
       })
       .finally(() => active && setLibraryStage(null));
     return () => { active = false; };
-  }, [preferences.projectsRoot]);
+  }, [preferences.projectsRoot, surface]);
 
   const createProject = useCallback(async () => {
     const displayName = patchName.trim();
@@ -193,20 +196,33 @@ export function DesktopApp() {
 
   return (
     <>
-      <PatchEditor
-        workspace={workspace || null}
-        projects={projects}
-        projectsRoot={preferences.projectsRoot}
-        drawer={preferences.drawer}
-        libraryStage={libraryStage}
-        shellError={error}
-        onDirtyChange={setDirty}
-        onSelectProject={selectProject}
-        onCreateProject={() => setShowNew(true)}
-        onOpenSettings={() => { setRootDraft(preferences.projectsRoot); setShowSettings(true); }}
-        onChooseDrawer={chooseDrawer}
-        onDrawerWidth={(width) => updateDrawer({ width })}
-      />
+      <div className={styles.desktop}>
+        <nav className={styles.navigation} aria-label="Application">
+          <button type="button" data-active={surface === "instruments"} aria-current={surface === "instruments" ? "page" : undefined} onClick={() => setSurface("instruments")}>Instruments</button>
+          <button type="button" data-active={surface === "workshop"} aria-current={surface === "workshop" ? "page" : undefined} onClick={() => setSurface("workshop")}>Workshop</button>
+          <span />
+          <small>{surface === "instruments" ? "JUICE LIBRARY" : "PATCH · BUILD · KSOLATI"}</small>
+        </nav>
+        <div className={styles.surface} hidden={surface !== "instruments"}>
+          <InstrumentLibrary />
+        </div>
+        <div className={styles.surface} hidden={surface !== "workshop"}>
+          <PatchEditor
+            workspace={workspace || null}
+            projects={projects}
+            projectsRoot={preferences.projectsRoot}
+            drawer={preferences.drawer}
+            libraryStage={libraryStage}
+            shellError={error}
+            onDirtyChange={setDirty}
+            onSelectProject={selectProject}
+            onCreateProject={() => setShowNew(true)}
+            onOpenSettings={() => { setRootDraft(preferences.projectsRoot); setShowSettings(true); }}
+            onChooseDrawer={chooseDrawer}
+            onDrawerWidth={(width) => updateDrawer({ width })}
+          />
+        </div>
+      </div>
       {showSettings && (
         <div className={styles.scrim} role="presentation" onMouseDown={() => preferences.projectsRoot && setShowSettings(false)}>
           <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="settings-title" onMouseDown={(event) => event.stopPropagation()}>

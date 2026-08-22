@@ -7,10 +7,10 @@ vi.mock("./components/DesktopApp", () => ({
 }));
 
 describe("App shell", () => {
-  it("opens directly into one patcher application without page navigation", () => {
+  it("hosts the desktop surface below the native titlebar", () => {
     render(<App />);
     expect(screen.getByText("Always-on patcher shell")).toBeVisible();
-    expect(screen.getByText("PATCHER")).toBeVisible();
+    expect(screen.getByText("DESKTOP")).toBeVisible();
     expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Objects" })).not.toBeInTheDocument();
   });

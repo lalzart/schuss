@@ -9,7 +9,7 @@ export function App() {
           <span className={styles.routeMark} aria-hidden="true">S</span>
           <span>SCHUSS</span>
         </div>
-        <span className={styles.appTitle}>PATCHER</span>
+        <span className={styles.appTitle}>DESKTOP</span>
         <div className={styles.titlebarMeta} data-tauri-drag-region>
           <span>LOCAL</span>
           <span className={styles.statusLight} aria-hidden="true" />

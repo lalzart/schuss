@@ -220,6 +220,7 @@ fn operation_versions(operation: &str) -> Option<(&'static str, &'static str, bo
         "component.inspect" => Some(("schuss-operation-request-v11", "schuss-operation-result-v11", false)),
         "build.session.start" | "build.session.inspect" | "device.session.discover" | "device.session.inspect" | "device.upload.start" | "device.upload.inspect" => Some(("schuss-operation-request-v12", "schuss-operation-result-v12", true)),
         "graph.inspect" => Some(("schuss-operation-request-v1", "schuss-operation-result-v1", false)),
+        "instrument.library.list" | "instrument.session.inspect" | "instrument.session.start" => Some(("schuss-operation-request-v19", "schuss-operation-result-v19", false)),
         "graph.transact" | "project.profile.transact" => Some(("schuss-operation-request-v11", "schuss-operation-result-v11", true)),
         "project.history.inspect" | "project.profile.fork" | "project.revert" => Some(("schuss-operation-request-v8", "schuss-operation-result-v8", true)),
         "project.init" | "project.inspect" | "project.validate" => Some(("schuss-operation-request-v3", "schuss-operation-result-v3", true)),
@@ -347,6 +348,11 @@ mod tests {
         assert!(validate_request(&request(
             "workspace.projects.list",
             "schuss-operation-request-v15"
+        ))
+        .is_ok());
+        assert!(validate_request(&request(
+            "instrument.library.list",
+            "schuss-operation-request-v19"
         ))
         .is_ok());
         assert!(validate_request(&request(

@@ -8,7 +8,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
-  "description": "Schuss patch authoring and catalog desktop application.",
+  "description": "Schuss instrument library and patch workshop desktop application.",
   "devDependencies": {
     "@tauri-apps/cli": "2.11.4",
     "@testing-library/jest-dom": "7.0.1",
@@ -28,8 +28,8 @@
   "schuss": {
     "applicationBoundary": "apps/schuss_desktop",
     "coreBoundaryContract": "contracts/ui-core-boundary-v1.json",
-    "recordSet": "schuss-record-set-000028@1",
-    "status": "workspace-patcher-shell",
+    "recordSet": "schuss-record-set-000033@1",
+    "status": "instrument-library-home",
     "targetStack": {
       "language": "TypeScript",
       "shell": "Tauri 2",

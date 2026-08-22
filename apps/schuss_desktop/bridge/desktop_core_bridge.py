@@ -23,12 +23,13 @@ from packages.schuss_core.build_sessions import BuildSessionService  # noqa: E40
 from packages.schuss_core.device_sessions import DeviceSessionService  # noqa: E402
 from packages.schuss_core.ai_authoring import SonicAuthoringService  # noqa: E402
 from packages.schuss_core.workspace_library import WorkspaceLibraryService  # noqa: E402
+from packages.schuss_core.instrument_library import InstrumentLibraryService  # noqa: E402
 from tools.contracts import validator_core as core  # noqa: E402
 
 
 RECORD_SET_PATH = (
     REPOSITORY_ROOT
-    / "contracts/record-sets/ui-desktop-workspace-shell-v1.json"
+    / "contracts/record-sets/ui-desktop-instrument-library-v1.json"
 )
 ALLOWED_OPERATIONS = {
     "application.describe": (
@@ -95,6 +96,21 @@ ALLOWED_OPERATIONS = {
         "schuss-operation-request-v11",
         "schuss-operation-result-v11",
         True,
+    ),
+    "instrument.library.list": (
+        "schuss-operation-request-v19",
+        "schuss-operation-result-v19",
+        False,
+    ),
+    "instrument.session.inspect": (
+        "schuss-operation-request-v19",
+        "schuss-operation-result-v19",
+        False,
+    ),
+    "instrument.session.start": (
+        "schuss-operation-request-v19",
+        "schuss-operation-result-v19",
+        False,
     ),
     "project.history.inspect": (
         "schuss-operation-request-v8",
@@ -239,10 +255,15 @@ class DesktopCore:
             repository_root=REPOSITORY_ROOT,
             record_set_path=RECORD_SET_PATH,
         )
+        self.workspace_context = None
         self.services: dict[Path, ProjectService] = {}
         self.authoring_services: dict[Path, SonicAuthoringService] = {}
         self.build_sessions = BuildSessionService()
         self.device_sessions = DeviceSessionService(self.build_sessions)
+        self.instrument_library = InstrumentLibraryService(
+            REPOSITORY_ROOT,
+            context=self.context,
+        )
 
     def service(self, workspace: Path) -> ProjectService:
         normalized = workspace.resolve(strict=False)
@@ -256,6 +277,15 @@ class DesktopCore:
             self.services[normalized] = service
         return service
 
+    def workspace_library_context(self):
+        if self.workspace_context is None:
+            self.workspace_context = load_repository_context(
+                repository_root=REPOSITORY_ROOT,
+                record_set_path=REPOSITORY_ROOT
+                / "contracts/record-sets/ui-desktop-workspace-shell-v1.json",
+            )
+        return self.workspace_context
+
     def dispatch(self, request: dict[str, Any], workspace: Path | None) -> dict[str, Any]:
         is_workspace_operation = request.get("schema_version") == "schuss-operation-request-v15"
         service = (
@@ -267,7 +297,7 @@ class DesktopCore:
             WorkspaceLibraryService(
                 workspace,
                 repository_root=REPOSITORY_ROOT,
-                initial_context=self.context,
+                initial_context=self.workspace_library_context(),
             )
             if workspace is not None and is_workspace_operation
             else None
@@ -292,6 +322,7 @@ class DesktopCore:
             device_session_service=self.device_sessions,
             authoring_service=authoring_service,
             workspace_service=workspace_service,
+            instrument_library_service=self.instrument_library,
         )
 
 
@@ -320,6 +351,7 @@ def dispatch_line(line: bytes, desktop: DesktopCore) -> bytes:
         if result.get("schema_version") in {
             "schuss-operation-result-v12",
             "schuss-operation-result-v15",
+            "schuss-operation-result-v19",
         }
         else desktop.service(workspace).context
         if workspace is not None

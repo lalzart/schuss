@@ -157,6 +157,13 @@ TASK033_PHASE2_SCHEMA_NAMES = {
     "source_release_v0": "source-release-v0.schema.json",
 }
 
+TASK039_SCHEMA_NAMES = {
+    "application_capability_description_v12": "application-capability-description-v12.schema.json",
+    "instrument_audition_library_v1": "instrument-audition-library-v1.schema.json",
+    "operation_request_v19": "operation-request-v19.schema.json",
+    "operation_result_v19": "operation-result-v19.schema.json",
+}
+
 TASK015_SCHEMA_NAMES = {
     "normalized_dsp_module": "normalized-dsp-module-v0.schema.json",
     "direct_frontend_result": "direct-frontend-result-v0.schema.json",
@@ -559,7 +566,15 @@ def load_repository_context(
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
-    if "application_capability_description_v11" in schemas:
+    for key, filename in TASK039_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    if "application_capability_description_v12" in schemas:
+        schemas["application_capability_description"] = schemas[
+            "application_capability_description_v12"
+        ]
+    elif "application_capability_description_v11" in schemas:
         schemas["application_capability_description"] = schemas[
             "application_capability_description_v11"
         ]
@@ -941,6 +956,7 @@ def canonical_result_bytes(
         "schuss-operation-result-v16": "operation_result_v16",
         "schuss-operation-result-v17": "operation_result_v17",
         "schuss-operation-result-v18": "operation_result_v18",
+        "schuss-operation-result-v19": "operation_result_v19",
     }.get(result.get("schema_version"))
     if result_schema_name is None or result_schema_name not in context.schemas:
         raise ValueError("operation result uses an unavailable public schema")
@@ -983,6 +999,7 @@ def _dispatch_application_operation(
     workspace_library_available: bool = False,
     host_runtime_service_available: bool = False,
     audio_session_service_available: bool = False,
+    instrument_library_service_available: bool = False,
 ) -> dict[str, Any]:
     operation = request.get("operation") if isinstance(request, dict) else None
     required_schemas = (
@@ -1056,6 +1073,7 @@ def _dispatch_application_operation(
             workspace_library_available=workspace_library_available,
             host_runtime_service_available=host_runtime_service_available,
             audio_session_service_available=audio_session_service_available,
+            instrument_library_service_available=instrument_library_service_available,
         )
         value_schema = context.schemas["application_capability_description"]
         value_errors = core.schema_errors(value, value_schema, value_schema)
@@ -2433,8 +2451,19 @@ def dispatch_operation(
     workspace_service: Any | None = None,
     host_render_service: Any | None = None,
     audio_session_service: Any | None = None,
+    instrument_library_service: Any | None = None,
 ) -> dict[str, Any]:
     """Dispatch one parsed request through the public pure operation API."""
+
+    if (
+        isinstance(request, dict)
+        and request.get("schema_version") == "schuss-operation-request-v19"
+    ):
+        from .instrument_library import dispatch_instrument_operation
+
+        return dispatch_instrument_operation(
+            request, context, instrument_library_service
+        )
 
     if (
         isinstance(request, dict)
@@ -2585,6 +2614,7 @@ def dispatch_operation(
                 workspace_library_available=workspace_service is not None,
                 host_runtime_service_available=host_render_service is not None,
                 audio_session_service_available=audio_session_service is not None,
+                instrument_library_service_available=instrument_library_service is not None,
             )
         return _dispatch_application_operation(
             request,
@@ -2598,6 +2628,7 @@ def dispatch_operation(
             workspace_library_available=workspace_service is not None,
             host_runtime_service_available=host_render_service is not None,
             audio_session_service_available=audio_session_service is not None,
+            instrument_library_service_available=instrument_library_service is not None,
         )
 
     if (

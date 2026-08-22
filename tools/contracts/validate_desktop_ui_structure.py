@@ -21,6 +21,7 @@ PERFORMANCE_TASK_CONTRACT = Path("docs/tasks/ui-desktop-authoring-performance.md
 BUILD_DEVICE_TASK_CONTRACT = Path("docs/tasks/ui-desktop-build-device-workflow.md")
 PROJECT_OBJECT_TASK_CONTRACT = Path("docs/tasks/ui-desktop-project-object-handoff.md")
 WORKSPACE_SHELL_TASK_CONTRACT = Path("docs/tasks/ui-desktop-workspace-shell.md")
+INSTRUMENT_LIBRARY_TASK_CONTRACT = Path("docs/tasks/039-desktop-instrument-library.md")
 BOUNDARY_DOCUMENT = Path("docs/DESKTOP_UI_BOUNDARY.md")
 
 REQUIRED_APP_FILES = {
@@ -51,6 +52,9 @@ REQUIRED_APP_FILES = {
         "src/components/DesktopApp.module.css",
         "src/components/DesktopApp.test.tsx",
         "src/components/DesktopApp.tsx",
+        "src/components/InstrumentLibrary.module.css",
+        "src/components/InstrumentLibrary.test.tsx",
+        "src/components/InstrumentLibrary.tsx",
         "src/components/ObjectLibrary.module.css",
         "src/components/ObjectLibrary.test.tsx",
         "src/components/ObjectLibrary.tsx",
@@ -62,6 +66,8 @@ REQUIRED_APP_FILES = {
         "src/core/bridge.ts",
         "src/core/desktopPreferences.ts",
         "src/core/desktopPreferences.test.ts",
+        "src/core/instrumentRequests.test.ts",
+        "src/core/instrumentRequests.ts",
         "src/core/patcherRequests.test.ts",
         "src/core/patcherRequests.ts",
         "src/core/requests.test.ts",
@@ -80,7 +86,7 @@ REQUIRED_APP_FILES = {
 GOVERNED_PATHS = tuple(
     sorted(
         [APP_ROOT / path for path in REQUIRED_APP_FILES]
-        + [TASK_CONTRACT, PERFORMANCE_TASK_CONTRACT, BUILD_DEVICE_TASK_CONTRACT, PROJECT_OBJECT_TASK_CONTRACT, WORKSPACE_SHELL_TASK_CONTRACT, BOUNDARY_DOCUMENT],
+        + [TASK_CONTRACT, PERFORMANCE_TASK_CONTRACT, BUILD_DEVICE_TASK_CONTRACT, PROJECT_OBJECT_TASK_CONTRACT, WORKSPACE_SHELL_TASK_CONTRACT, INSTRUMENT_LIBRARY_TASK_CONTRACT, BOUNDARY_DOCUMENT],
         key=lambda path: path.as_posix(),
     )
 )
@@ -102,6 +108,9 @@ EXPECTED_RUNTIME = (
     "catalog.search",
     "component.inspect",
     "graph.inspect",
+    "instrument.library.list",
+    "instrument.session.start",
+    "instrument.session.inspect",
     "graph.transact",
     "project.history.inspect",
     "project.init",
@@ -172,7 +181,7 @@ def validate_structure(root: Path) -> dict[str, Any]:
             _diagnostic(diagnostics, "DESKTOP_SEMANTIC_RECORD_OWNERSHIP_INVALID", APP_ROOT / relative, "renderer may not own semantic records")
 
     package = _load(root, PACKAGE, diagnostics)
-    if not isinstance(package, dict) or package.get("dependencies") != EXPECTED_DEPENDENCIES or package.get("schuss", {}).get("recordSet") != "schuss-record-set-000028@1" or package.get("schuss", {}).get("status") != "workspace-patcher-shell":
+    if not isinstance(package, dict) or package.get("dependencies") != EXPECTED_DEPENDENCIES or package.get("schuss", {}).get("recordSet") != "schuss-record-set-000033@1" or package.get("schuss", {}).get("status") != "instrument-library-home":
         _diagnostic(diagnostics, "DESKTOP_PACKAGE_INVALID", PACKAGE, "desktop dependency or boundary metadata drifted")
     lock = _load(root, PACKAGE_LOCK, diagnostics)
     if not isinstance(lock, dict) or lock.get("packages", {}).get("", {}).get("dependencies") != EXPECTED_DEPENDENCIES:
@@ -181,7 +190,7 @@ def validate_structure(root: Path) -> dict[str, Any]:
     boundary = _load(root, BOUNDARY, diagnostics)
     runtime_count = 0
     planned_count = 0
-    if not isinstance(boundary, dict) or boundary.get("schema_version") != "schuss-desktop-core-boundary-v1" or boundary.get("client", {}).get("status") != "workspace-patcher-shell":
+    if not isinstance(boundary, dict) or boundary.get("schema_version") != "schuss-desktop-core-boundary-v1" or boundary.get("client", {}).get("status") != "instrument-library-home":
         _diagnostic(diagnostics, "DESKTOP_CORE_BOUNDARY_INVALID", BOUNDARY, "desktop workflow boundary identity drifted")
     else:
         runtime = boundary.get("runtime_capabilities")
@@ -193,7 +202,7 @@ def validate_structure(root: Path) -> dict[str, Any]:
         if isinstance(phases, list):
             planned_count = sum(len(item.get("operations", [])) for item in phases if isinstance(item, dict))
         transport = boundary.get("transport", {})
-        if transport.get("command") != "dispatch_desktop_operation" or transport.get("selected_record_set") != "contracts/record-sets/ui-desktop-workspace-shell-v1.json":
+        if transport.get("command") != "dispatch_desktop_operation" or transport.get("selected_record_set") != "contracts/record-sets/ui-desktop-instrument-library-v1.json":
             _diagnostic(diagnostics, "DESKTOP_TRANSPORT_BOUNDARY_INVALID", BOUNDARY, "desktop transport or exact record set drifted")
         ownership = boundary.get("ownership", {})
         if any(ownership.get(key) != "forbidden" for key in ("direct_catalog_file_access", "direct_renderer_process_access", "direct_semantic_json_access", "direct_workspace_mutation")):
@@ -208,6 +217,8 @@ def validate_structure(root: Path) -> dict[str, Any]:
         for path in (
             APP_ROOT / "src/core/bridge.ts",
             APP_ROOT / "src/core/patcherRequests.ts",
+            APP_ROOT / "src/core/instrumentRequests.ts",
+            APP_ROOT / "src/components/InstrumentLibrary.tsx",
             APP_ROOT / "src/components/PatchEditor.tsx",
             APP_ROOT / "src-tauri/src/desktop_bridge.rs",
             APP_ROOT / "bridge/desktop_core_bridge.py",
@@ -216,7 +227,7 @@ def validate_structure(root: Path) -> dict[str, Any]:
     for token in ("@tauri-apps/plugin-fs", "@tauri-apps/plugin-shell"):
         if token in source:
             _diagnostic(diagnostics, "DESKTOP_FORBIDDEN_CAPABILITY_PRESENT", APP_ROOT, f"forbidden runtime token {token!r} is present")
-    for token in ("ReactFlow", "project.profile.transact", "project.objects.list", "workspace.projects.list", "workspace.project.create", "component.inspect", "build.session.start", "device.upload.start", "dispatch_desktop_operation"):
+    for token in ("ReactFlow", "project.profile.transact", "project.objects.list", "workspace.projects.list", "workspace.project.create", "component.inspect", "build.session.start", "device.upload.start", "instrument.library.list", "instrument.session.start", "dispatch_desktop_operation"):
         if token not in source:
             _diagnostic(diagnostics, "DESKTOP_REQUIRED_CAPABILITY_MISSING", APP_ROOT, f"required implementation token {token!r} is absent")
 

@@ -1,6 +1,6 @@
 # Task contracts
 
-<!-- schuss-governance-routing: active=none; next=033-phase-3@not-activated -->
+<!-- schuss-governance-routing: active=039@review-ready; next=033-phase-3@not-activated -->
 
 Current scheduling authority is `../governance/current-state.json`. Task files
 define frozen boundaries; their presence in this directory does not make them
@@ -9,9 +9,10 @@ from Git.
 
 ## Active
 
-There is no active task. Task 035 completed locally at `88788c5`; it owns
-validation/governance maintenance only and created no semantic record-set
-successor.
+- Task 039, desktop instrument library and bounded JUCE audition launch, is review-ready.
+  Its contract is `039-desktop-instrument-library.md`; it owns the
+  noncanonical audition manifest, exact list/start/inspect operations, closed
+  desktop bridge additions, and Instruments-first presentation only.
 
 ## Next candidate, not activated
 

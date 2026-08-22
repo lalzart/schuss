@@ -18,6 +18,7 @@ APPLICATION_DESCRIPTION_VERSION_V8 = "schuss-application-capability-description-
 APPLICATION_DESCRIPTION_VERSION_V9 = "schuss-application-capability-description-v9"
 APPLICATION_DESCRIPTION_VERSION_V10 = "schuss-application-capability-description-v10"
 APPLICATION_DESCRIPTION_VERSION_V11 = "schuss-application-capability-description-v11"
+APPLICATION_DESCRIPTION_VERSION_V12 = "schuss-application-capability-description-v12"
 
 
 class CapabilityRegistryError(ValueError):
@@ -638,6 +639,49 @@ APPLICATION_CAPABILITY_ENTRIES_V11 = (
     *COLLECTION_PROVIDER_CAPABILITY_ENTRIES,
 )
 
+INSTRUMENT_LIBRARY_CAPABILITY_ENTRIES = (
+    _entry(
+        "instrument.library.list",
+        "instrument",
+        "List the exact noncanonical Instrument Lab audition library and current verified-build availability.",
+        19,
+        ("exact-record-set", "repository-instrument-library"),
+        "read-only",
+        ("exact-record-set",),
+    ),
+    _entry(
+        "instrument.session.inspect",
+        "instrument",
+        "Inspect one process-local native instrument audition session.",
+        19,
+        ("process-local-instrument-session-service",),
+        "read-only",
+        ("exact-session",),
+    ),
+    _entry(
+        "instrument.session.start",
+        "instrument",
+        "Launch one exact verified native JUCE audition application through a process-local session.",
+        19,
+        (
+            "exact-record-set",
+            "process-local-instrument-session-service",
+            "repository-instrument-library",
+        ),
+        "native-application-launch",
+        (
+            "exact-prototype-revision",
+            "native-application-launch-intent",
+            "verified-executable",
+        ),
+    ),
+)
+
+APPLICATION_CAPABILITY_ENTRIES_V12 = (
+    *APPLICATION_CAPABILITY_ENTRIES_V11,
+    *INSTRUMENT_LIBRARY_CAPABILITY_ENTRIES,
+)
+
 
 EXPECTED_OPERATIONS = tuple(sorted(entry["operation"] for entry in CAPABILITY_ENTRIES))
 EXPECTED_OPERATIONS_V1 = tuple(
@@ -691,6 +735,9 @@ EXPECTED_OPERATIONS_V10 = tuple(
 EXPECTED_OPERATIONS_V11 = tuple(
     sorted(entry["operation"] for entry in APPLICATION_CAPABILITY_ENTRIES_V11)
 )
+EXPECTED_OPERATIONS_V12 = tuple(
+    sorted(entry["operation"] for entry in APPLICATION_CAPABILITY_ENTRIES_V12)
+)
 
 
 def _schema_key(version: str, kind: str) -> str:
@@ -709,6 +756,7 @@ def _availability(
     workspace_library_available: bool,
     host_runtime_service_available: bool,
     audio_session_service_available: bool,
+    instrument_library_service_available: bool,
 ) -> str:
     operation = entry["operation"]
     if operation.startswith("workspace.") and not workspace_library_available:
@@ -717,6 +765,8 @@ def _availability(
         return "requires-host-runtime-service"
     if operation.startswith("audio.") and not audio_session_service_available:
         return "requires-audio-session-service"
+    if operation.startswith("instrument.") and not instrument_library_service_available:
+        return "requires-instrument-library-service"
     if operation.startswith("authoring.") or operation in {
         "project.objects.list",
         "project.object.inspect",
@@ -758,10 +808,12 @@ def build_application_description(
     workspace_library_available: bool = False,
     host_runtime_service_available: bool = False,
     audio_session_service_available: bool = False,
+    instrument_library_service_available: bool = False,
 ) -> dict[str, Any]:
     """Return the deterministic application description for one exact context."""
 
-    uses_v11 = "application_capability_description_v11" in schemas
+    uses_v12 = "application_capability_description_v12" in schemas
+    uses_v11 = uses_v12 or "application_capability_description_v11" in schemas
     uses_v10 = uses_v11 or "application_capability_description_v10" in schemas
     uses_v9 = uses_v10 or "application_capability_description_v9" in schemas
     uses_v8 = uses_v9 or "application_capability_description_v8" in schemas
@@ -772,7 +824,10 @@ def build_application_description(
     uses_v3 = uses_v4 or "application_capability_description_v3" in schemas
     uses_v2 = uses_v3 or "application_capability_description_v2" in schemas
     uses_v1 = uses_v2 or "application_capability_description_v1" in schemas
-    if uses_v11:
+    if uses_v12:
+        default_entries = APPLICATION_CAPABILITY_ENTRIES_V12
+        expected_operations = EXPECTED_OPERATIONS_V12
+    elif uses_v11:
         default_entries = APPLICATION_CAPABILITY_ENTRIES_V11
         expected_operations = EXPECTED_OPERATIONS_V11
     elif uses_v10:
@@ -841,11 +896,14 @@ def build_application_description(
             workspace_library_available=workspace_library_available,
             host_runtime_service_available=host_runtime_service_available,
             audio_session_service_available=audio_session_service_available,
+            instrument_library_service_available=instrument_library_service_available,
         )
         described.append(entry)
     return {
         "schema_version": (
-            "application-capability-description-v11"
+            "application-capability-description-v12"
+            if uses_v12
+            else "application-capability-description-v11"
             if uses_v11
             else "application-capability-description-v10"
             if uses_v10
@@ -871,7 +929,9 @@ def build_application_description(
         ),
         "canonical_profile": "schuss-canonical-json-v1",
         "description_version": (
-            APPLICATION_DESCRIPTION_VERSION_V11
+            APPLICATION_DESCRIPTION_VERSION_V12
+            if uses_v12
+            else APPLICATION_DESCRIPTION_VERSION_V11
             if uses_v11
             else APPLICATION_DESCRIPTION_VERSION_V10
             if uses_v10

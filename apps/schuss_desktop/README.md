@@ -1,15 +1,11 @@
 # Schuss desktop
 
-Status: one consolidated local desktop application with exact catalog browsing,
-project-backed node patching, process-local build jobs, explicit Ksoloti Core
-discovery, and a read-back-verified volatile-RAM upload path. Device acceptance
-uses fakes. Accepted project-local objects remain separate from the permanent
-catalog and appear in the patcher through read-only shared operations;
-firmware flash, DFU, reset, SD writes, packaging, and automatic hardware access
-are not implemented.
-The app opens directly onto the patcher canvas. Objects and Patches are drawer
-tabs rather than separate pages, and a versioned local setting remembers one
-projects root and the last accepted project.
+Status: one consolidated local desktop application that opens on an exact
+library of noncanonical Instrument Lab prototypes. A separate Workshop retains
+catalog browsing, project-backed node patching, process-local build jobs,
+explicit Ksoloti Core discovery, and a fake-tested read-back-verified
+volatile-RAM upload path. Firmware flash, DFU, reset, SD writes, packaging, and
+automatic hardware access are not implemented.
 
 The app is a Tauri 2 shell around React, TypeScript, and React Flow. Schuss
 core remains the semantic authority: the renderer submits versioned operations
@@ -27,14 +23,13 @@ npm install
 npm run dev
 ```
 
-The first core load validates exact additive record set
-`schuss-record-set-000028@1`; new desktop projects pin that additive
-workspace-shell base while the allowlist retains the two project-object reads
-and adds only the shared workspace list/create operations. The persistent
-bridge reuses the validated context and a bounded process-local semantic
-augmentation cache. Existing projects retain and load their exact immutable
-base, and each project load rereads and validates all governed workspace bytes
-before any cache hit.
+The first core load validates exact additive application record set
+`schuss-record-set-000033@1`. The instrument library binds five exact prototype
+revisions and checks only declared native build artifacts. Workshop project
+creation deliberately remains pinned to its established workspace-shell base,
+`schuss-record-set-000028@1`; existing projects continue to load their exact
+immutable base. The contexts are separate rather than silently rebasing old
+patch-authoring behavior onto the audition library.
 Renderer-only verification uses the same Python adapter:
 
 ```bash
@@ -43,8 +38,11 @@ npm run dev:web
 
 ## Product surfaces
 
-- **Patcher** is the always-present application home and renders exact graph
-  nodes, contract-owned ports, and connections;
+- **Instruments** is the default home. It lists five exact prototype revisions,
+  shows verified-build or unavailable state, and launches only a declared JUCE
+  standalone executable whose current SHA-256 matches retained evidence.
+- **Workshop** retains the complete patcher, project, build, and Ksoloti
+  workflow. Its patcher renders exact graph nodes, contract-owned ports, and connections;
   node movement and viewport state remain non-semantic.
 - **Patches drawer** lists only core-validated direct children of the remembered
   projects root. New asks only for a name; core allocates the path and ID and
@@ -73,17 +71,21 @@ closed without changing the graph otherwise.
 
 ## Runtime boundary
 
-One Tauri command, `dispatch_desktop_operation`, carries a closed twenty-four
-operation allowlist covering catalog/object inspection, graph inspection and
-proposal, project authoring/history and project-object reads, build sessions,
-device discovery, and verified volatile upload.
+One Tauri command, `dispatch_desktop_operation`, carries a closed twenty-seven
+operation allowlist. It adds only `instrument.library.list`,
+`instrument.session.start`, and `instrument.session.inspect` to the retained
+catalog, graph, project, build, and device operations.
 Rust and Python independently enforce request/result versions, size limits,
 canonical metadata, and absolute workspace paths.
 
-The main window grants only `core:default`. No filesystem, shell, HTTP, USB, or
-hardware plugin is installed or granted to the renderer. Build outputs and
-libusb handles remain private to the persistent core process. React Flow
-`12.11.3` is a presentation dependency, not a semantic graph model.
+The renderer supplies only exact prototype identity plus the literal
+`explicit-native-juce-audition` intent. It never receives an executable path or
+command. The core revalidates a repository-controlled regular executable and
+starts it through direct argv without a shell. The main window grants only
+`core:default`; no filesystem, shell, HTTP, USB, or hardware plug-in is granted
+to the renderer. An audition session is process-local observation and does not
+establish application-launch, controller-receipt, listening, real-time, device,
+or production evidence.
 
 ## Validation
 
@@ -101,6 +103,7 @@ python3 -m unittest \
   tools.contracts.tests.test_desktop_authoring_performance \
   tools.contracts.tests.test_desktop_build_device_sessions \
   tools.contracts.tests.test_desktop_patcher_bridge \
+  tools.contracts.tests.test_task039_instrument_library \
   tools.contracts.tests.test_desktop_patcher_operations \
   tools.contracts.tests.test_desktop_workspace_shell \
   tools.contracts.tests.test_desktop_ui_structure
@@ -111,5 +114,6 @@ The patcher, performance, build/device, and project-object contracts are
 `../../docs/tasks/ui-desktop-authoring-performance.md`, and
 `../../docs/tasks/ui-desktop-build-device-workflow.md`, and
 `../../docs/tasks/ui-desktop-project-object-handoff.md`, and
-`../../docs/tasks/ui-desktop-workspace-shell.md`; ownership and the
+`../../docs/tasks/ui-desktop-workspace-shell.md`, with the Instruments-first
+slice in `../../docs/tasks/039-desktop-instrument-library.md`; ownership and the
 remaining gated seams are in `../../docs/DESKTOP_UI_BOUNDARY.md`.

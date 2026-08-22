@@ -1,6 +1,6 @@
 # Schuss status
 
-<!-- schuss-governance-routing: active=none; next=033-phase-3@not-activated -->
+<!-- schuss-governance-routing: active=039@review-ready; next=033-phase-3@not-activated -->
 
 The machine-readable current routing source is
 `docs/governance/current-state.json`. This file explains that state in plain
@@ -10,10 +10,14 @@ schemas, records, record sets, fixtures, and evidence packets.
 
 ## Current work
 
-There is no active task. Task 035 completed locally at `88788c5` and was merged
-into local `main`; it remains unpushed. Task 033 Phase 3 is the next candidate,
-but it is not activated. No later work, publication, package installation,
-hardware action, or audio/MIDI device action is implied by this status.
+Task 039 is the only active task and is review-ready. It adds a noncanonical
+five-entry Instrument Lab audition library, exact fake-tested native JUCE
+launch sessions, and an Instruments-first desktop surface while preserving the
+existing Workshop and Ksoloti workflow. Three retained builds match exact
+executable evidence; Cinderwheel remains build-required and Wirefall 0.1 is
+research-only. No JUCE app, audio/MIDI endpoint, or hardware was opened during
+validation. Task 033 Phase 3 remains the next candidate but is not activated.
+No commit, publication, or package installation is authorized.
 
 ## Recent completed milestones
 
