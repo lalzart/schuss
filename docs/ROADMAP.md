@@ -1,17 +1,16 @@
 # Schuss roadmap
 
-<!-- schuss-governance-routing: active=033-phase-4@review-ready; next=040@not-activated -->
+<!-- schuss-governance-routing: active=none; next=040@not-activated -->
 
 Current routing is defined by `docs/governance/current-state.json`; this roadmap
 describes sequencing rather than silently activating work.
 
 ## Active maintenance
 
-Task 033 Phase 4 is review-ready from published baseline `d7578e0`. Phase 3 has
-replaced the duplicated registry identity authority with one reviewed canonical
-native manifest while preserving the exact seven factories and every Task
-031/032 package/runtime behavior. Phase 4 closes the evidence-ranked tranche,
-later-UI, documentation, and final aggregate handoffs.
+There is no active task. Task 033 Phases 3 and 4 completed at published commit
+`0bf22b6`, closing the generated native-registry authority, final integration,
+next-tranche selection, and later-UI handoffs without promoting new DSP,
+device, real-time, listening, or release evidence.
 
 ## Next candidate
 
@@ -41,7 +40,8 @@ These are candidates, not promises or active tasks.
 
 ## Completed backbone
 
-Tasks 001-035 form the completed canonical backbone. Completed noncanonical
+Tasks 001-035, including all four phases of Task 033, form the completed
+canonical backbone. Completed noncanonical
 source/lab work in Tasks 036-038 and the Task 039 desktop audition product slice
 are also indexed in `HISTORY.md`, with their evidence limits retained. The
 important durable choices remain in ADRs:
@@ -53,4 +53,4 @@ important durable choices remain in ADRs:
 - ADR 0018 adopts proportional validation profiles.
 
 Tasks 019 and 020 remain deferred. Task 012B remains retired. Completion of Task
-039 did not automatically activate Task 033 Phase 3 or any later candidate.
+033 did not automatically activate Task 040 or any later candidate.

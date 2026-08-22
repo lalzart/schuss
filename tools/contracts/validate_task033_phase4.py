@@ -114,11 +114,18 @@ def validate(repository_root: Path = ROOT) -> dict[str, Any]:
     )
 
     task040 = _text(root, TASK040)
+    if not any(
+        status in task040
+        for status in (
+            "Status: proposed and not activated.",
+            "Status: explicitly authorized",
+        )
+    ):
+        raise ValueError("TASK040_STATUS_INVALID")
     _require(
         task040,
         TASK040,
         (
-            "Status: proposed and not activated.",
             "The lane is **new-design**.",
             "## Working artifact and evidence ceiling",
             "## In scope after activation",
@@ -141,9 +148,8 @@ def validate(repository_root: Path = ROOT) -> dict[str, Any]:
         _text(root, RESULTS),
         RESULTS,
         (
-            "Status: implementation and evidence are review-ready",
+            "Status: complete and published at commit `0bf22b6`.",
             "runtime_v1.cpp` byte-for-byte",
-            "The result is not committed or pushed.",
         ),
     )
     _require(
@@ -174,13 +180,20 @@ def validate(repository_root: Path = ROOT) -> dict[str, Any]:
     state = _json(root, STATE)
     active = state.get("active_task")
     next_candidate = state.get("next_candidate")
-    if not (
-        isinstance(active, dict)
-        and active.get("task_id") == "033"
-        and active.get("phase") == 4
-        and active.get("status") in {"in-progress", "review-ready"}
-    ):
-        raise ValueError("TASK033_PHASE4_GOVERNANCE_ACTIVE_STATE_INVALID")
+    milestones = state.get("recent_completed_milestones")
+    completed = {
+        (item.get("task_id"), item.get("phase"), item.get("status"), item.get("commit"))
+        for item in milestones
+        if isinstance(item, dict)
+    } if isinstance(milestones, list) else set()
+    required_completion = {
+        ("033", 3, "complete-published", "0bf22b6"),
+        ("033", 4, "complete-published", "0bf22b6"),
+    }
+    if not required_completion.issubset(completed):
+        raise ValueError("TASK033_PHASE4_GOVERNANCE_COMPLETION_INVALID")
+    if isinstance(active, dict) and active.get("task_id") == "033":
+        raise ValueError("TASK033_PHASE4_GOVERNANCE_STILL_ACTIVE")
     if next_candidate not in (
         None,
         {"task_id": "040", "phase": None, "status": "not-activated"},
@@ -197,6 +210,7 @@ def validate(repository_root: Path = ROOT) -> dict[str, Any]:
         "selected_tranche_count": 1,
         "selected_next_task": "040",
         "selected_lane": "new-design",
+        "completion_commit": "0bf22b6",
         "ui_implemented": False,
         "semantic_record_provider_or_operation_allocated_in_phase4": False,
         "device_realtime_listening_or_publication_performed": False,

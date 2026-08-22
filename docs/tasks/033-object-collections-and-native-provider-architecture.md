@@ -1,14 +1,10 @@
 # Task 033: Source-neutral object collections and native implementation providers
 
-Status: Phase 1 and Phase 2 are complete locally. Phase 1 is retained at commit
-`5dccfd2`; Phase 2 is retained at commit `ccafc1d` with exact successor record
-set `schuss-record-set-000031@1`. Phase 3 was explicitly activated on
-2026-08-22 from clean published baseline `d7578e0` and has passed its focused,
-adjacent native, and copied-root reproduction gates in this worktree. Phase 4
-is explicitly authorized and review-ready as its serialized successor. This
-status authorizes no source import, dependency change, device action,
-package/distribution work, or UI
-implementation.
+Status: complete through Phase 4. Phase 1 is retained at commit `5dccfd2`;
+Phase 2 is retained at commit `ccafc1d` with exact successor record set
+`schuss-record-set-000031@1`; and Phases 3 and 4 completed at published commit
+`0bf22b6`. The closeout authorizes no source import, dependency change, device
+action, package/distribution work, UI implementation, or successor task.
 
 Task 034 owns the accepted parent semantic record set and shared operation/
 governance versions. Its integrated result is
@@ -315,8 +311,8 @@ operation/result v17, application capability v10, instrument v1, performance
 schemas, and shared semantic/governance integration. The reviewed result was
 committed as `6010f29` and fast-forwarded into local `main` on 2026-08-20.
 At that point Phases 2-4 were no longer blocked by Task 034 ownership. Phase 2
-subsequently froze the allocation below and completed at `ccafc1d`; Phase 3
-has now passed its worktree completion gate and Phase 4 is active.
+subsequently froze the allocation below and completed at `ccafc1d`; Phases 3
+and 4 completed at `0bf22b6`.
 
 Phase 1 produced and focused-validated:
 

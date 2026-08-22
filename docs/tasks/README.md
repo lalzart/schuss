@@ -1,6 +1,6 @@
 # Task contracts
 
-<!-- schuss-governance-routing: active=033-phase-4@review-ready; next=040@not-activated -->
+<!-- schuss-governance-routing: active=none; next=040@not-activated -->
 
 Current scheduling authority is `../governance/current-state.json`. Task files
 define frozen boundaries; their presence in this directory does not make them
@@ -11,14 +11,14 @@ activation and completion state.
 
 ## Active
 
-- Task 033 Phase 4, review-ready from clean published baseline `d7578e0`, owns
-  the final integration and follow-up packets after Phase 3 passed its gate.
+There is no active task. Task 033 Phases 3 and 4 completed at published commit
+`0bf22b6`; Task 040 remains only the next candidate.
 
 ## Next candidate
 
 - Task 040 is the proposed Cinderwheel canonical vertical slice. It is not
   activated and must pass its live allocation and implementation-bundle gate
-  after the Task 033 Phase 4 handoff is accepted.
+  before shared implementation.
 
 ## Completed source, lab, and desktop follow-ups
 
@@ -43,8 +43,10 @@ activation and completion state.
   record-set validation, and structured current-work governance.
 - Task 034 is complete and owns the controller-independent performance graph
   contracts and exact Gills/MIDI configurations.
-- Task 033 owns the source-neutral collection/provider architecture. Phase 1
-  and Phase 2 are complete locally.
+- Task 033 completed all four phases at published commit `0bf22b6`. Its retained
+  authority includes the source-neutral collection/provider architecture,
+  audits, exact Phase 2 records, generated seven-entry registry, and follow-up
+  packets.
 - Task 032 is the complete bounded variable-graph desktop-host successor over
   the seven existing native factory types.
 - The Task 031 parent contract is retained at

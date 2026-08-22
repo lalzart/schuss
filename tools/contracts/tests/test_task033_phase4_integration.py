@@ -22,6 +22,7 @@ class Task033Phase4IntegrationTest(unittest.TestCase):
     def test_complete_phase4_handoff_is_valid(self) -> None:
         result = self.result
         self.assertEqual("valid", result["status"])
+        self.assertEqual("0bf22b6", result["completion_commit"])
         self.assertEqual(1, result["selected_tranche_count"])
         self.assertEqual("040", result["selected_next_task"])
         self.assertEqual("new-design", result["selected_lane"])

@@ -1,7 +1,6 @@
 # Task 033 Phase 3 and Phase 4 results
 
-Status: implementation and evidence are review-ready in the working tree. The
-result is not committed or pushed.
+Status: complete and published at commit `0bf22b6`.
 
 ## Phase 3 result
 

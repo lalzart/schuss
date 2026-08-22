@@ -1,13 +1,6 @@
 {
   "schema_version": "schuss-governance-state-v1",
-  "active_task": {
-    "task_id": "033",
-    "phase": 4,
-    "kind": "runtime-maintenance",
-    "status": "review-ready",
-    "contract": "docs/tasks/033-object-collections-and-native-provider-architecture.md",
-    "baseline_commit": "d7578e0"
-  },
+  "active_task": null,
   "next_candidate": {
     "task_id": "040",
     "phase": null,
@@ -61,6 +54,18 @@
       "phase": null,
       "status": "complete-local",
       "commit": "b9a742e"
+    },
+    {
+      "task_id": "033",
+      "phase": 3,
+      "status": "complete-published",
+      "commit": "0bf22b6"
+    },
+    {
+      "task_id": "033",
+      "phase": 4,
+      "status": "complete-published",
+      "commit": "0bf22b6"
     }
   ],
   "deferred_tasks": ["019", "020"],
