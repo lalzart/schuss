@@ -1,0 +1,94 @@
+{
+  "acceptance_tests": [
+    "The ready-bundle validator passes before any DSP source is written.",
+    "Core focused tests pass for defaults, controls, event timing, fixed capacity, Reset, Panic, pulse phase, exact interruption, tick endpoints, allocation behavior, and partition equivalence.",
+    "The frozen four-condition objective render passes every tolerance at block partitions 1, 16, 64, 257, and 512 and on a repeat render.",
+    "Only after host-signal acceptance, the authenticated JUCE 8.0.15 standalone target configures, compiles, and links without being launched."
+  ],
+  "decision_rights": {
+    "may": [
+      "Tune original internal DSP constants inside the frozen public control semantics and objective tolerance envelope before implementation freeze.",
+      "Choose internal C++ data structures, UI layout, and test decomposition within the declared fixed capacities."
+    ],
+    "must_not": [
+      "Weaken an acceptance threshold after observing a failure.",
+      "Reintroduce the Wirefall 0.1 Shadow voice or error-accumulator scheduler.",
+      "Promote build evidence to launch, real-time, listening, connected-device, production, or canonical Schuss evidence.",
+      "Modify unrelated generative-drum-machine work or stage, commit, push, publish, fetch, install, launch, or access audio or physical devices."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Portable allocation-free C++17 Wirefall revision 0.2 Core.",
+    "Deterministic event renderer, focused test executable, and frozen host-signal report.",
+    "Mouse-operable authenticated JUCE 8.0.15 standalone source and target-build evidence, contingent on Core acceptance.",
+    "Completed results, gap register, README, and proposal implementation record."
+  ],
+  "dependency_contracts": [
+    {
+      "allowed_modules": [
+        "juce_core",
+        "juce_events",
+        "juce_graphics",
+        "juce_gui_basics",
+        "juce_audio_basics",
+        "juce_audio_devices"
+      ],
+      "archive_sha256": "04f8d5055382582c757be9da069ea98338005f98248facd9c2804435ac853e70",
+      "commit": "91ad83ae34a81e0833b1a2b0866f54846370ae53",
+      "distribution_gate": "JUCE license and notices must be reviewed before any later distribution; distribution is outside this contract.",
+      "download_policy": "Existing authenticated local source only; no fetch, download, or package installation.",
+      "id": "juce-8.0.15",
+      "purpose": "Standalone host shell only",
+      "version": "8.0.15"
+    }
+  ],
+  "goal": {
+    "primary_claim": "One continuous ENERGY macro can provide a broad monotone high-wire rise while BREAK, PULSE, and TICK create a deterministic rhythmic interruption that reaches exact silence or a compact marker.",
+    "why": "The first prototype was difficult to judge; the user clarified that the musical identity should concentrate on one sensitive main gesture and a simpler silence-or-tick interrupt."
+  },
+  "inputs": [
+    "User design feedback and uninterrupted implementation authorization recorded on 2026-08-21.",
+    "Wirefall revision 0.1 proposal, source, retained deterministic evidence, failed host-signal observations, and unscored listening packet.",
+    "Instrument Lab v1 workflow and local Schuss architecture boundaries.",
+    "Authenticated local JUCE 8.0.15 source authority for a contingent standalone build."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "User message on 2026-08-21: go ahead and give it a full implementation, followed under the already stated no-launch, no-device, no-git-publication boundary.",
+      "state": "approved"
+    },
+    "path": "research/proposals/wirefall-r02.md",
+    "revision": "0.2",
+    "sha256": "1862683de17018a0d6802cd2eee40a1cd273a3033d493713f6272cc3549744ee"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "Create a separate Wirefall revision 0.2 prototype while preserving revision 0.1 bytes and evidence.",
+      "Implement the frozen ENERGY, BREAK, PULSE, TICK, supporting settings, buttons, tempo, reset, and panic semantics.",
+      "Produce deterministic portable Core structural and host-signal evidence.",
+      "After host-signal acceptance only, create and build a mouse-operable authenticated JUCE standalone shell."
+    ],
+    "out": [
+      "Application launch, audio-device access, listening, MIDI, controller or hardware access, plugins, packaging, and publication.",
+      "Catalog, graph, provider, compiler, runtime, firmware, Gills target, or canonical Schuss integration.",
+      "Staging, committing, pushing, fetching, package installation, or modification of unrelated work.",
+      "Claims above target-build evidence."
+    ]
+  },
+  "status": "ready",
+  "target": "Instrument Lab v1 portable C++17 Core, deterministic renderer, and authenticated JUCE 8.0.15 standalone target built but not launched",
+  "title": "Wirefall revision 0.2",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "wirefall_r02_core_tests, wirefall_r02_render, and wirefall-r02-instrument",
+    "evidence_level": "target-build",
+    "success_observation": "All frozen Core structural and host-signal checks pass, after which the exact authenticated standalone target configures, compiles, and links without any process launch or audio-device access."
+  }
+}

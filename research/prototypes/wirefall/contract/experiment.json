@@ -1,0 +1,145 @@
+{
+  "artifact_retention": {
+    "location": "Check canonical condition fixtures, schemas, CSV ledgers, JSON metrics, manifest, and source results into research/prototypes/wirefall/results; keep WAVs and build trees ignored under build/wirefall-renders and retain their SHA-256 values in the checked-in manifest.",
+    "policy": "checked-in"
+  },
+  "comparator_condition_id": "CMP01_SQUARE",
+  "conditions": [
+    {
+      "duration_frames": 1536000,
+      "events": [
+        {"action": "set", "control": "CUT", "ingress_sequence": 0, "sample_index": 0, "value": "OPEN"},
+        {"action": "set", "control": "TENSION", "ingress_sequence": 1, "sample_index": 0, "value": 0.1},
+        {"action": "set", "control": "TENSION", "ingress_sequence": 2, "sample_index": 96000, "value": 0.3},
+        {"action": "set", "control": "TENSION", "ingress_sequence": 3, "sample_index": 192000, "value": 0.5},
+        {"action": "set", "control": "TENSION", "ingress_sequence": 4, "sample_index": 288000, "value": 0.7},
+        {"action": "set", "control": "TENSION", "ingress_sequence": 5, "sample_index": 384000, "value": 0.9},
+        {"action": "linear-ramp", "control": "TENSION", "end_sample_index": 1056000, "end_value": 0.9, "ingress_sequence": 6, "sample_index": 480000, "start_value": 0.1},
+        {"action": "set", "control": "TENSION", "ingress_sequence": 7, "sample_index": 1056000, "value": 0.9}
+      ],
+      "id": "WF01_TENSION_OPEN",
+      "mechanism": "approved-wirefall",
+      "purpose": "Measure TENSION pitch and spectral escalation, gain compensation, smoothing, ceiling behavior, and the aligned 4x-versus-8x residual with CUT open."
+    },
+    {
+      "duration_frames": 1536000,
+      "events": [
+        {"action": "set", "control": "TENSION", "ingress_sequence": 0, "sample_index": 0, "value": 0.72},
+        {"action": "set", "control": "SHADOW", "ingress_sequence": 1, "sample_index": 0, "value": 0.0},
+        {"action": "set", "control": "HOLES", "ingress_sequence": 2, "sample_index": 0, "value": 3},
+        {"action": "set", "control": "CUT", "ingress_sequence": 3, "sample_index": 0, "value": "OPEN"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 4, "sample_index": 192000, "value": "x0.5"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 5, "sample_index": 384000, "value": "x1"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 6, "sample_index": 576000, "value": "x1.5"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 7, "sample_index": 768000, "value": "x2"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 8, "sample_index": 960000, "value": "x3"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 9, "sample_index": 1152000, "value": "x4"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 10, "sample_index": 1344000, "value": "x8"}
+      ],
+      "id": "WF02_VOID",
+      "mechanism": "approved-wirefall",
+      "purpose": "Measure true cut interiors, beat-boundary CUT commits, deterministic cut distribution, rate-zone schedule, and boundary spacing with Shadow absent."
+    },
+    {
+      "duration_frames": 1536000,
+      "events": [
+        {"action": "set", "control": "TENSION", "ingress_sequence": 0, "sample_index": 0, "value": 0.72},
+        {"action": "set", "control": "SHADOW", "ingress_sequence": 1, "sample_index": 0, "value": 0.8},
+        {"action": "set", "control": "UNDER", "ingress_sequence": 2, "sample_index": 0, "value": "1/2"},
+        {"action": "set", "control": "HOLES", "ingress_sequence": 3, "sample_index": 0, "value": 3},
+        {"action": "set", "control": "CUT", "ingress_sequence": 4, "sample_index": 0, "value": "OPEN"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 5, "sample_index": 192000, "value": "x0.5"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 6, "sample_index": 384000, "value": "x1"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 7, "sample_index": 576000, "value": "x1.5"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 8, "sample_index": 768000, "value": "x2"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 9, "sample_index": 960000, "value": "x3"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 10, "sample_index": 1152000, "value": "x4"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 11, "sample_index": 1344000, "value": "x8"}
+      ],
+      "id": "WF03_SHADOW",
+      "mechanism": "approved-wirefall",
+      "purpose": "Measure complementary lower-voice occupation and upper-band rejection using the exact WF02 Wire schedule."
+    },
+    {
+      "comparator_rule": "Replace the error accumulator with a phase-locked square LFO at the active CUT rate, reset phase on Downbeat, use duty 3/8, and preserve the WF02 beat-boundary rate commits and Wire controls.",
+      "duration_frames": 1536000,
+      "events": [
+        {"action": "set", "control": "TENSION", "ingress_sequence": 0, "sample_index": 0, "value": 0.72},
+        {"action": "set", "control": "SHADOW", "ingress_sequence": 1, "sample_index": 0, "value": 0.0},
+        {"action": "set", "control": "HOLES", "ingress_sequence": 2, "sample_index": 0, "value": 3},
+        {"action": "set", "control": "CUT", "ingress_sequence": 3, "sample_index": 0, "value": "OPEN"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 4, "sample_index": 192000, "value": "x0.5"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 5, "sample_index": 384000, "value": "x1"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 6, "sample_index": 576000, "value": "x1.5"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 7, "sample_index": 768000, "value": "x2"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 8, "sample_index": 960000, "value": "x3"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 9, "sample_index": 1152000, "value": "x4"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 10, "sample_index": 1344000, "value": "x8"}
+      ],
+      "id": "CMP01_SQUARE",
+      "mechanism": "phase-locked-square-comparator",
+      "purpose": "Falsify the special cut-distribution scheduler at matched active rate and 3/8 duty; prefer the square gate if listening later finds no meaningful benefit."
+    },
+    {
+      "comparator_rule": "Use the WF03 Wire and Shadow stems, mix Shadow continuously rather than with the complementary envelope, and choose one gain by 32 fixed bisection iterations on [0,1.5] so whole-condition post-ceiling RMS is within 0.1 dB of WF03; ties choose the lower gain.",
+      "duration_frames": 1536000,
+      "events": [
+        {"action": "set", "control": "TENSION", "ingress_sequence": 0, "sample_index": 0, "value": 0.72},
+        {"action": "set", "control": "SHADOW", "ingress_sequence": 1, "sample_index": 0, "value": 0.8},
+        {"action": "set", "control": "UNDER", "ingress_sequence": 2, "sample_index": 0, "value": "1/2"},
+        {"action": "set", "control": "HOLES", "ingress_sequence": 3, "sample_index": 0, "value": 3},
+        {"action": "set", "control": "CUT", "ingress_sequence": 4, "sample_index": 0, "value": "OPEN"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 5, "sample_index": 192000, "value": "x0.5"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 6, "sample_index": 384000, "value": "x1"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 7, "sample_index": 576000, "value": "x1.5"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 8, "sample_index": 768000, "value": "x2"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 9, "sample_index": 960000, "value": "x3"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 10, "sample_index": 1152000, "value": "x4"},
+        {"action": "set", "control": "CUT", "ingress_sequence": 11, "sample_index": 1344000, "value": "x8"}
+      ],
+      "id": "CMP02_PARALLEL_LOW",
+      "mechanism": "continuous-low-comparator",
+      "purpose": "Falsify the complementary negative-space claim independently of low timbre and whole-condition level."
+    }
+  ],
+  "outputs": [
+    {"kind": "24-bit stereo PCM WAV at 48 kHz", "name": "<condition-id>.wav"},
+    {"kind": "UTF-8 CSV with LF endings and canonical event/commit/cut ledger fields", "name": "<condition-id>.events.csv"},
+    {"kind": "Canonical UTF-8 JSON with objective metrics, diagnostics, comparator parameters, and artifact hashes", "name": "<condition-id>.metrics.json"},
+    {"kind": "Canonical UTF-8 JSON enumerating five conditions, fixture hashes, partition hashes, repeat hashes, toolchain identity, and seed disposition", "name": "wirefall-observation-manifest.json"}
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 1464422981,
+  "seed_disposition": "The hexadecimal seed is 0x57495245. No v0 algorithm consumes randomness; every metrics file and the manifest must report seed_used=false.",
+  "status": "ready",
+  "supported_block_frames": [1, 16, 64, 257, 512],
+  "timeline_convention": "Events are sorted by (sample_index, ingress_sequence), applied before rendering sample_index, and owned by the condition fixture rather than compiled renderer code; each condition is exactly 1,536,000 frames at 120 BPM.",
+  "title": "Wirefall five-condition host-signal experiment",
+  "tolerances": {
+    "alias_component_below_18khz_max_dbfs": -50.0,
+    "block_and_repeat_event_ledger_relation": "byte-identical",
+    "block_and_repeat_wav_relation": "byte-identical",
+    "channel_abs_dc_mean_max": 0.0001,
+    "comparator_schedule_relation": "WF02, WF03, and CMP02 must have byte-identical accepted Wire control events and Wire scheduler boundary ledger fields.",
+    "denormal_runaway_allowed": false,
+    "event_capacity_normal_fixture_max": 128,
+    "event_overrun_normal_fixture_allowed": false,
+    "final_to_first_hold_rms_db_max": 4.0,
+    "final_to_first_hold_rms_db_min_exclusive": 0.0,
+    "minimum_scheduler_boundary_spacing_frames": 32,
+    "narrow_alias_search_upper_hz": 18000,
+    "nonfinite_sample_allowed": false,
+    "process_allocation_allowed": false,
+    "reset_replay_relation": "Normalized Core state is byte-identical after excluding absolute event sample indices and monotonic diagnostic counters; subsequent accepted events and audio are byte-identical.",
+    "sample_abs_peak_max": 0.8912,
+    "shadow_cut_interior_lowband_gain_over_void_db_min": 12.0,
+    "shadow_cut_interior_lowband_hz": [55, 500],
+    "shadow_wire_band_rejection_vs_open_db_min": 20.0,
+    "tension_adjacent_centroid_positive_count_min": 4,
+    "tension_final_to_first_centroid_ratio_min": 1.8,
+    "tension_fundamental_error_cents_max_abs": 25.0,
+    "void_cut_interior_abs_peak_max": 0.00001,
+    "wire_4x_vs_8x_rms_null_dbfs_max": -55.0
+  }
+}

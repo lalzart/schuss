@@ -1,0 +1,17 @@
+schema_version=wirefall-condition-v1
+id=CMP02_PARALLEL_LOW
+mechanism=continuous-low-comparator
+duration_frames=1536000
+events=sample_index|ingress_sequence|action|control|value|end_sample_index|end_value
+0|0|set|TENSION|0.71999999999999997||
+0|1|set|SHADOW|0.80000000000000004||
+0|2|set|UNDER|1/2||
+0|3|set|HOLES|3||
+0|4|set|CUT|OPEN||
+192000|5|set|CUT|x0.5||
+384000|6|set|CUT|x1||
+576000|7|set|CUT|x1.5||
+768000|8|set|CUT|x2||
+960000|9|set|CUT|x3||
+1152000|10|set|CUT|x4||
+1344000|11|set|CUT|x8||

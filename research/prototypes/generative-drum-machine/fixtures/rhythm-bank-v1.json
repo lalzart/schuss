@@ -1,0 +1,157 @@
+{
+  "schema_version": "schuss-generative-rhythm-bank-extension-prototype-v1",
+  "rhythms": [
+    {
+      "id": "three-turn",
+      "name": "Three Turn",
+      "meter": {"note_value_denominator": 4, "numerator": 3},
+      "phrase_bars": 4,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32767},
+        {"articulation": 0, "bars": [0, 2], "lane": "kick", "position": [2, 1], "threshold": 22000, "velocity": 28000},
+        {"articulation": 0, "bars": [1, 3], "lane": "kick", "position": [3, 2], "threshold": 39000, "velocity": 24500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [1, 1], "threshold": 0, "velocity": 31500},
+        {"articulation": 1, "bars": [1, 3], "lane": "snare", "position": [5, 2], "threshold": 36000, "velocity": 16500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [0, 1], "threshold": 5000, "velocity": 20500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 2], "threshold": 15000, "velocity": 16500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 1], "threshold": 5000, "velocity": 19500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 2], "threshold": 15000, "velocity": 16500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [2, 1], "threshold": 5000, "velocity": 20500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [5, 2], "threshold": 15000, "velocity": 17000},
+        {"articulation": 0, "bars": [0, 2], "lane": "percussion_1", "position": [2, 3], "threshold": 24000, "velocity": 21500},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [5, 3], "threshold": 28000, "velocity": 21000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "percussion_3", "position": [7, 3], "threshold": 41000, "velocity": 18500}
+      ],
+      "variation_groups": [
+        {
+          "id": 1,
+          "minimum_enthusiasm": 9000,
+          "events": [
+            {"articulation": 0, "bars": [1, 3], "lane": "kick", "position": [7, 3], "threshold": 30000, "velocity": 23000},
+            {"articulation": 2, "bars": [0, 2], "lane": "hat", "position": [1, 3], "threshold": 26000, "velocity": 14000}
+          ]
+        },
+        {
+          "id": 2,
+          "minimum_enthusiasm": 15000,
+          "events": [
+            {"articulation": 1, "bars": [0, 2], "lane": "snare", "position": [8, 3], "threshold": 33000, "velocity": 17000},
+            {"articulation": 0, "bars": [1, 3], "lane": "percussion_1", "position": [4, 3], "threshold": 30000, "velocity": 19000}
+          ]
+        }
+      ],
+      "fill_group": {
+        "id": 100,
+        "events": [
+          {"articulation": 0, "bars": [3], "lane": "percussion_1", "position": [2, 1], "threshold": 0, "velocity": 22000},
+          {"articulation": 0, "bars": [3], "lane": "percussion_2", "position": [13, 6], "threshold": 0, "velocity": 22500},
+          {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [7, 3], "threshold": 0, "velocity": 23000},
+          {"articulation": 1, "bars": [3], "lane": "snare", "position": [5, 2], "threshold": 0, "velocity": 28500},
+          {"articulation": 2, "bars": [3], "lane": "hat", "position": [8, 3], "threshold": 0, "velocity": 19000}
+        ]
+      }
+    },
+    {
+      "id": "rolling-six",
+      "name": "Rolling Six",
+      "meter": {"note_value_denominator": 8, "numerator": 6},
+      "phrase_bars": 4,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32767},
+        {"articulation": 0, "bars": [0, 2], "lane": "kick", "position": [2, 1], "threshold": 25000, "velocity": 27500},
+        {"articulation": 0, "bars": [1, 3], "lane": "kick", "position": [1, 1], "threshold": 42000, "velocity": 23500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [3, 2], "threshold": 0, "velocity": 32000},
+        {"articulation": 1, "bars": [0, 2], "lane": "snare", "position": [5, 2], "threshold": 39000, "velocity": 16000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [0, 1], "threshold": 4000, "velocity": 21000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 2], "threshold": 9000, "velocity": 16500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 1], "threshold": 9000, "velocity": 17500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 2], "threshold": 4000, "velocity": 20500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [2, 1], "threshold": 9000, "velocity": 17000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [5, 2], "threshold": 9000, "velocity": 17500},
+        {"articulation": 0, "bars": [0, 2], "lane": "percussion_1", "position": [1, 1], "threshold": 22000, "velocity": 21000},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [2, 1], "threshold": 27000, "velocity": 20500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "percussion_3", "position": [7, 3], "threshold": 43000, "velocity": 18500}
+      ],
+      "variation_groups": [
+        {
+          "id": 1,
+          "minimum_enthusiasm": 8000,
+          "events": [
+            {"articulation": 0, "bars": [0, 2], "lane": "kick", "position": [5, 2], "threshold": 30000, "velocity": 23500},
+            {"articulation": 2, "bars": [1, 3], "lane": "hat", "position": [1, 3], "threshold": 26000, "velocity": 14000}
+          ]
+        },
+        {
+          "id": 2,
+          "minimum_enthusiasm": 14500,
+          "events": [
+            {"articulation": 1, "bars": [1, 3], "lane": "snare", "position": [8, 3], "threshold": 32000, "velocity": 17000},
+            {"articulation": 0, "bars": [0, 2], "lane": "percussion_2", "position": [4, 3], "threshold": 29000, "velocity": 19000}
+          ]
+        }
+      ],
+      "fill_group": {
+        "id": 100,
+        "events": [
+          {"articulation": 0, "bars": [3], "lane": "percussion_1", "position": [2, 1], "threshold": 0, "velocity": 22000},
+          {"articulation": 0, "bars": [3], "lane": "percussion_2", "position": [13, 6], "threshold": 0, "velocity": 22500},
+          {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [7, 3], "threshold": 0, "velocity": 23000},
+          {"articulation": 1, "bars": [3], "lane": "snare", "position": [5, 2], "threshold": 0, "velocity": 29000},
+          {"articulation": 2, "bars": [3], "lane": "hat", "position": [8, 3], "threshold": 0, "velocity": 19000}
+        ]
+      }
+    },
+    {
+      "id": "five-across",
+      "name": "Five Across",
+      "meter": {"note_value_denominator": 4, "numerator": 5},
+      "phrase_bars": 2,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32767},
+        {"articulation": 0, "bars": [0, 1], "lane": "kick", "position": [3, 1], "threshold": 10000, "velocity": 29500},
+        {"articulation": 0, "bars": [1], "lane": "kick", "position": [1, 1], "threshold": 36000, "velocity": 24500},
+        {"articulation": 0, "bars": [0, 1], "lane": "snare", "position": [2, 1], "threshold": 0, "velocity": 31500},
+        {"articulation": 0, "bars": [0, 1], "lane": "snare", "position": [4, 1], "threshold": 12000, "velocity": 32500},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [0, 1], "threshold": 5000, "velocity": 20500},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [1, 2], "threshold": 17000, "velocity": 16000},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [1, 1], "threshold": 5000, "velocity": 19500},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [3, 2], "threshold": 17000, "velocity": 16000},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [2, 1], "threshold": 5000, "velocity": 20500},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [3, 1], "threshold": 5000, "velocity": 20500},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [7, 2], "threshold": 17000, "velocity": 16000},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [4, 1], "threshold": 5000, "velocity": 20000},
+        {"articulation": 0, "bars": [0], "lane": "percussion_1", "position": [3, 2], "threshold": 24000, "velocity": 21500},
+        {"articulation": 0, "bars": [1], "lane": "percussion_2", "position": [7, 2], "threshold": 27000, "velocity": 21000},
+        {"articulation": 0, "bars": [0, 1], "lane": "percussion_3", "position": [23, 5], "threshold": 43000, "velocity": 18500}
+      ],
+      "variation_groups": [
+        {
+          "id": 1,
+          "minimum_enthusiasm": 9000,
+          "events": [
+            {"articulation": 0, "bars": [0], "lane": "kick", "position": [9, 2], "threshold": 30000, "velocity": 23500},
+            {"articulation": 2, "bars": [1], "lane": "hat", "position": [21, 5], "threshold": 26000, "velocity": 14000}
+          ]
+        },
+        {
+          "id": 2,
+          "minimum_enthusiasm": 15000,
+          "events": [
+            {"articulation": 1, "bars": [1], "lane": "snare", "position": [24, 5], "threshold": 32000, "velocity": 17000},
+            {"articulation": 0, "bars": [0], "lane": "percussion_2", "position": [11, 3], "threshold": 29000, "velocity": 19000}
+          ]
+        }
+      ],
+      "fill_group": {
+        "id": 100,
+        "events": [
+          {"articulation": 0, "bars": [1], "lane": "percussion_1", "position": [4, 1], "threshold": 0, "velocity": 22000},
+          {"articulation": 0, "bars": [1], "lane": "percussion_2", "position": [21, 5], "threshold": 0, "velocity": 22500},
+          {"articulation": 0, "bars": [1], "lane": "percussion_3", "position": [22, 5], "threshold": 0, "velocity": 23000},
+          {"articulation": 1, "bars": [1], "lane": "snare", "position": [23, 5], "threshold": 0, "velocity": 29000},
+          {"articulation": 2, "bars": [1], "lane": "hat", "position": [24, 5], "threshold": 0, "velocity": 19000}
+        ]
+      }
+    }
+  ]
+}

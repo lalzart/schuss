@@ -1,0 +1,208 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "tools/instrument_lab/validate_task038_reuse.py"
+      ],
+      "cost": "fast",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "contracts/task038",
+        "packages/dsp_adapters/mutable_braids_v1",
+        "packages/dsp_sources/mutable_eurorack_braids_v1",
+        "packages/dsp_sources/mutable_stmlib_v1",
+        "research/prototypes/generative-drum-machine/contract/source-dependencies.json",
+        "tools/contracts/generate_task038_source_records.py",
+        "tools/contracts/validate_task038_source_records.py",
+        "tools/instrument_lab/generate_task038_source_dependencies.py",
+        "tools/source_packages/generate_mutable_direct_v1.py",
+        "tools/source_packages/validate_source_package.py"
+      ],
+      "id": "source-review"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/generative-drum-machine/tests/run_structural.py",
+        "--check"
+      ],
+      "cost": "native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/generative-drum-machine/CMakeLists.txt",
+        "research/prototypes/generative-drum-machine/include",
+        "research/prototypes/generative-drum-machine/src",
+        "research/prototypes/generative-drum-machine/tests",
+        "research/prototypes/generative-drum-machine/fixtures",
+        "research/prototypes/generative-drum-machine/generated",
+        "research/prototypes/generative-drum-machine/contract/control-map.json",
+        "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json"
+      ],
+      "id": "focused-structural"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/generative-drum-machine/tests/benchmark_realtime.py",
+        "--reproduce",
+        "--output",
+        "build/generative-drum-machine-realtime-benchmark.json"
+      ],
+      "cost": "native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/generative-drum-machine/CMakeLists.txt",
+        "research/prototypes/generative-drum-machine/include",
+        "research/prototypes/generative-drum-machine/src",
+        "research/prototypes/generative-drum-machine/tests/realtime_benchmark.cpp",
+        "research/prototypes/generative-drum-machine/tests/benchmark_realtime.py",
+        "research/prototypes/generative-drum-machine/generated"
+      ],
+      "id": "synthetic-callback-kernel"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/generative-drum-machine/tests/render_evidence.py",
+        "--reproduce",
+        "--output",
+        "build/generative-drum-machine-evidence"
+      ],
+      "cost": "native",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/generative-drum-machine/contract/experiment.json",
+        "research/prototypes/generative-drum-machine/fixtures/expected-render-manifest.json",
+        "research/prototypes/generative-drum-machine/generated",
+        "research/prototypes/generative-drum-machine/src",
+        "packages/dsp_adapters/mutable_braids_v1",
+        "packages/dsp_sources/mutable_eurorack_braids_v1",
+        "packages/dsp_sources/mutable_stmlib_v1"
+      ],
+      "id": "objective-render"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "research/prototypes/generative-drum-machine",
+        "-B",
+        "build/generative-drum-machine-juce",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DGDM_ENABLE_JUCE=ON",
+        "-DGDM_JUCE_SOURCE_DIR=operator-supplied-authenticated-juce-8.0.15-root"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/generative-drum-machine/CMakeLists.txt",
+        "research/prototypes/generative-drum-machine/include",
+        "research/prototypes/generative-drum-machine/src",
+        "research/prototypes/generative-drum-machine/tests",
+        "research/prototypes/generative-drum-machine/generated",
+        "research/prototypes/generative-drum-machine/contract/control-map.json"
+      ],
+      "id": "pinned-juce-configure",
+      "prerequisites": [
+        "Operator supplies the exact authenticated JUCE 8.0.15 tree bound by the implementation contract"
+      ]
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build/generative-drum-machine-juce",
+        "--parallel"
+      ],
+      "cost": "native",
+      "depends_on": [
+        "pinned-juce-configure"
+      ],
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/generative-drum-machine/CMakeLists.txt",
+        "research/prototypes/generative-drum-machine/include",
+        "research/prototypes/generative-drum-machine/src",
+        "research/prototypes/generative-drum-machine/tests",
+        "research/prototypes/generative-drum-machine/generated",
+        "research/prototypes/generative-drum-machine/contract/control-map.json"
+      ],
+      "id": "pinned-juce-build"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "The proposal's cited public and source evidence supports the selected mechanism and license boundary.",
+      "status": "available"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The approved proposal fingerprint matches the implementation contract.",
+      "status": "available"
+    },
+    {
+      "check_ids": [
+        "source-review"
+      ],
+      "level": "source",
+      "promotion_rule": "The source-release successor, exact reusable physical closures, notices, adapter, generated consumer handoff, and complete diff are present and their fail-closed checks pass.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "focused-structural",
+        "synthetic-callback-kernel"
+      ],
+      "level": "host-structural",
+      "promotion_rule": "Focused timing across all fifteen studies, attribution metadata, monotonicity, coherent enthusiasm, six-parameter active/future voice-shape resolution, fixed-capacity streaming, allocation, reset, bounds, trace, topology, generated LC3 descriptor freshness, exhaustive selector/state-machine mapping, accepted-state UI projection, atomic snapshot, and public-control isolation checks pass; the synthetic 64/128/512 callback kernel reports timing separately from live real-time evidence.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "objective-render"
+      ],
+      "level": "host-signal",
+      "promotion_rule": "All supported outer block sizes produce byte-identical artifacts for the retained representative conditions plus a samba study, while the focused streaming fixture covers realtime-control timelines, all fifteen descriptors receive structural event coverage, and the frozen event, allocation, peak, DC, clipping, and overflow tolerances pass.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "pinned-juce-configure",
+        "pinned-juce-build"
+      ],
+      "level": "target-build",
+      "promotion_rule": "The operator-authenticated JUCE 8.0.15 standalone application and focused host adapters compile and link without launching the application.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "A later authorized live host measures worst-case and p99 callback time, allocation, xruns, and control latency against the actual audio-device deadline; synthetic callback-kernel measurements do not satisfy this level.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "Authorized physical endpoint and target tests prove controls, feedback, lifecycle, and audio on the named device.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "A documented listening protocol compares the authored engine and independent-probability comparator and records the result separately from objective evidence.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "Canonical identities, schemas, runtime events, providers, packaging, controller mappings, and release gates are reviewed and accepted separately.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

@@ -1,0 +1,23 @@
+{
+  "claims": {
+    "canonical_schuss_record": false,
+    "catalog_implementation": false,
+    "graph_identity": false,
+    "provider_identity": false,
+    "runtime_factory": false
+  },
+  "dependencies": [
+    {
+      "manifest_path": "packages/dsp_sources/mutable_eurorack_braids_v1/SOURCE_PACKAGE.json",
+      "package_id": "mutable-eurorack-braids-v1",
+      "package_revision": "1"
+    },
+    {
+      "manifest_path": "packages/dsp_sources/mutable_stmlib_v1/SOURCE_PACKAGE.json",
+      "package_id": "mutable-stmlib-v1",
+      "package_revision": "1"
+    }
+  ],
+  "interface": "SchussMutableBraidsV1::Core",
+  "schema_version": "schuss-internal-dsp-adapter-v1"
+}

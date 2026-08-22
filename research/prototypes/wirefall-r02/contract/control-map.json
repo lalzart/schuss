@@ -1,0 +1,67 @@
+{
+  "application_feedback": [
+    {"control": "ENERGY", "feedback": "Large primary dial and value label display accepted Core state."},
+    {"control": "BREAK", "feedback": "Dial and value label display accepted Core state."},
+    {"control": "PULSE", "feedback": "Eight-position selector text displays the accepted rate name."},
+    {"control": "TICK", "feedback": "Dial and value label display accepted Core state."},
+    {"control": "OPEN", "feedback": "Button illumination follows the accepted held state."},
+    {"control": "PANIC", "feedback": "Button illumination follows the accepted panic latch, not raw mouse state."},
+    {"control": "TEMPO", "feedback": "BPM label displays accepted clamped Core state."},
+    {"control": "RESET", "feedback": "Status label reports the accepted reset fade phase."}
+  ],
+  "endpoint_device_evidence": {
+    "notes": "This revision has a mouse-operable standalone surface only. No MIDI endpoint, physical controller, audio device, or hardware receipt evidence is authorized or claimed.",
+    "state": "deferred"
+  },
+  "gesture_state_machines": [
+    {"control": "OPEN", "states": ["released", "held"], "transition": "Mouse/button press sends accepted held=true; release sends held=false; pulse phase continues in both states."},
+    {"control": "PANIC", "states": ["running", "fading-down", "latched", "fading-up"], "transition": "Press begins a 480-frame fade and latches; a later release clears the latch and begins a 240-frame fade-up."},
+    {"control": "TAP", "states": ["no-history", "one-or-more-valid-taps"], "transition": "Intervals from 250 through 1500 ms update accepted tempo; other gaps are ignored."},
+    {"control": "RESET", "states": ["idle", "fade-down", "clear", "fade-up"], "transition": "Encoder hold requests Reset; a second request restarts the 240-frame fade-down."}
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {"id": "ENERGY", "accepted_range": [0.0, 1.0], "default": 0.32, "mapping": "36*E^1.15 semitones plus monotone harmonic slope, tracked squeal, filter, and 3 dB gain trajectories."},
+    {"id": "BREAK", "accepted_range": [0.0, 1.0], "default": 0.0, "mapping": "Interruption depth gMain=1-BREAK*p."},
+    {"id": "PULSE", "accepted_values": ["OFF", "x1/2", "x1", "x2", "x3", "x4", "x6", "x8"], "default": "OFF", "mapping": "Phase-continuous selector over rates per beat {0,0.5,1,2,3,4,6,8}."},
+    {"id": "TICK", "accepted_range": [0.0, 1.0], "default": 0.0, "mapping": "Amplitude of the 384-frame four-cycle interruption marker."},
+    {"id": "ROOT", "accepted_range": [-12.0, 12.0], "default": 0.0, "mapping": "Base pitch in semitones."},
+    {"id": "COLOR", "accepted_range": [0.0, 1.0], "default": 0.55, "mapping": "Harmonic slope, tracked squeal mix, filter cutoff, and resonance bias."},
+    {"id": "WIDTH", "accepted_range": [0.0, 1.0], "default": 0.35, "mapping": "Closed-pulse duty d=.08+.34*WIDTH."},
+    {"id": "EDGE", "accepted_range": [0.0, 1.0], "default": 0.34, "mapping": "Raised-cosine interruption edge from 1.5 through 12 ms, bounded by the closed interval."},
+    {"id": "SPACE", "accepted_range": [0.0, 1.0], "default": 0.10, "mapping": "Pre-gate stereo cross-delay wet and feedback."},
+    {"id": "OUTPUT", "accepted_range": [0.0, 1.0], "default": 0.82, "mapping": "Final output gain before finite safety clamp."},
+    {"id": "TEMPO", "accepted_range": [40.0, 240.0], "default": 120.0, "mapping": "Pulse beat clock in BPM."},
+    {"id": "OPEN", "accepted_values": [false, true], "default": false, "mapping": "Momentarily force main gate open while pulse phase continues."},
+    {"id": "TICK_PREVIEW", "accepted_values": ["trigger"], "mapping": "Start one marker without changing pulse phase."},
+    {"id": "DOWNBEAT", "accepted_values": ["trigger"], "mapping": "Set pulse phase to zero before the current frame."},
+    {"id": "PANIC", "accepted_values": ["press", "release"], "mapping": "Sample-exact safety fade and latch."},
+    {"id": "RESET", "accepted_values": ["trigger"], "mapping": "Restart the 240-down, clear, 240-up reset sequence."}
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/wirefall-r02/core/WirefallR02Controls.h, exhaustively compared by wirefall_r02_core_tests to this map",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {"surface": "pot-1", "semantic": "ENERGY", "presentation": "visually primary large knob"},
+    {"surface": "pot-2", "semantic": "BREAK"},
+    {"surface": "pot-3", "semantic": "PULSE"},
+    {"surface": "pot-4", "semantic": "TICK"},
+    {"surface": "pot-5", "semantic": "ROOT"},
+    {"surface": "pot-6", "semantic": "COLOR"},
+    {"surface": "pot-7", "semantic": "WIDTH"},
+    {"surface": "pot-8", "semantic": "EDGE"},
+    {"surface": "pot-9", "semantic": "SPACE"},
+    {"surface": "pot-10", "semantic": "OUTPUT"},
+    {"surface": "button-1", "semantic": "OPEN"},
+    {"surface": "button-2", "semantic": "TICK_PREVIEW"},
+    {"surface": "button-3", "semantic": "DOWNBEAT"},
+    {"surface": "button-4", "semantic": "PANIC"},
+    {"surface": "encoder-turn", "semantic": "TEMPO"},
+    {"surface": "encoder-tap", "semantic": "TAP"},
+    {"surface": "encoder-hold", "semantic": "RESET"}
+  ],
+  "title": "Wirefall revision 0.2"
+}

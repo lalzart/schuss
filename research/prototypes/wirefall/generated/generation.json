@@ -1,0 +1,18 @@
+{
+  "condition_ids": [
+    "WF01_TENSION_OPEN",
+    "WF02_VOID",
+    "WF03_SHADOW",
+    "CMP01_SQUARE",
+    "CMP02_PARALLEL_LOW"
+  ],
+  "control_map": {
+    "path": "research/prototypes/wirefall/contract/control-map.json",
+    "sha256": "f97dde2a8d2d8d52e29249466b8325afbc703fad847aa9ef337649bae11e2ccd"
+  },
+  "experiment": {
+    "path": "research/prototypes/wirefall/contract/experiment.json",
+    "sha256": "aeee17bb3b0ad296824a6cfc559a0aff6ebeb0ca85372d2e9f9105e021a6662c"
+  },
+  "schema_version": "wirefall-generated-fixtures-v1"
+}

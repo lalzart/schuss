@@ -15,7 +15,12 @@ if str(HERE) not in sys.path:
 from common import ContractError, canonical_json, load_json  # noqa: E402
 from new_prototype import render_tree, validate_spec  # noqa: E402
 from validate_prototype import validate_consumer, validate_topology  # noqa: E402
-from validate_repository import validate_repository  # noqa: E402
+from validate_repository import (  # noqa: E402
+    SMOKE_CONSUMER,
+    discover_consumers,
+    shared_implementation_duplicates,
+    validate_repository,
+)
 
 CINDER = ROOT / "research/prototypes/cinderwheel"
 SMOKE_SPEC = ROOT / "research/prototype_support/instrument_lab/fixtures/smoke-spec.json"
@@ -26,6 +31,34 @@ NEGATIVE = ROOT / "research/prototype_support/instrument_lab/fixtures/contracts/
 class InstrumentLabContractTest(unittest.TestCase):
     def test_live_repository_and_derived_artifacts_are_current(self) -> None:
         validate_repository(ROOT)
+
+    def test_repository_discovers_recent_consumers_without_a_registry(self) -> None:
+        consumers = discover_consumers(ROOT)
+        self.assertEqual(tuple(sorted(consumers[:-1])), consumers[:-1])
+        self.assertEqual(consumers[-1], SMOKE_CONSUMER)
+        self.assertTrue({
+            "research/prototypes/generative-drum-machine",
+            "research/prototypes/wirefall",
+            "research/prototypes/wirefall-r02",
+        } <= set(consumers))
+        self.assertEqual(shared_implementation_duplicates(ROOT, consumers), [])
+
+    def test_discovery_and_duplicate_scan_include_a_future_consumer(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            future = root / "research/prototypes/future"
+            smoke = root / SMOKE_CONSUMER
+            future.mkdir(parents=True)
+            smoke.mkdir(parents=True)
+            (future / "prototype-index.json").write_text("{}\n", encoding="utf-8")
+            (future / "bounded_midi.hpp").write_text("copied\n", encoding="utf-8")
+            (smoke / "prototype-index.json").write_text("{}\n", encoding="utf-8")
+            consumers = discover_consumers(root)
+            self.assertIn("research/prototypes/future", consumers)
+            self.assertEqual(
+                shared_implementation_duplicates(root, consumers),
+                ["research/prototypes/future/bounded_midi.hpp"],
+            )
 
     def test_generation_is_byte_deterministic(self) -> None:
         spec = validate_spec(load_json(SMOKE_SPEC))

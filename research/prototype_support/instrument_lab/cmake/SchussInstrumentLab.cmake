@@ -2,11 +2,6 @@ include_guard(GLOBAL)
 
 include(CMakeParseArguments)
 
-set(SCHUSS_INSTRUMENT_LAB_JUCE_COMMIT
-    "91ad83ae34a81e0833b1a2b0866f54846370ae53")
-set(SCHUSS_INSTRUMENT_LAB_JUCE_ARCHIVE_SHA256
-    "04f8d5055382582c757be9da069ea98338005f98248facd9c2804435ac853e70")
-
 function(schuss_instrument_lab_enable_warnings target)
     target_compile_options(${target} PRIVATE
         $<$<CXX_COMPILER_ID:AppleClang,Clang,GNU>:-Wall;-Wextra;-Wpedantic;-Werror>)
@@ -26,6 +21,28 @@ function(schuss_instrument_lab_add_authenticated_juce)
         message(FATAL_ERROR
             "schuss_instrument_lab_add_authenticated_juce requires BINARY_DIR")
     endif()
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+    set(_schuss_instrument_lab_repo_root
+        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../../../..")
+    cmake_path(ABSOLUTE_PATH _schuss_instrument_lab_repo_root NORMALIZE)
+    set(_schuss_instrument_lab_juce_validator
+        "${_schuss_instrument_lab_repo_root}/tools/source_packages/validate_juce_source_tree.py")
+
+    foreach(_field archive_url archive_sha256)
+        execute_process(
+            COMMAND "${Python3_EXECUTABLE}" "${_schuss_instrument_lab_juce_validator}"
+                --repo-root "${_schuss_instrument_lab_repo_root}"
+                --print-field "${_field}"
+            RESULT_VARIABLE _authority_result
+            OUTPUT_VARIABLE _authority_value
+            ERROR_VARIABLE _authority_error
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+        if(NOT _authority_result EQUAL 0)
+            message(FATAL_ERROR
+                "Instrument Lab JUCE source-release authority failed: ${_authority_error}")
+        endif()
+        set("_instrument_lab_juce_${_field}" "${_authority_value}")
+    endforeach()
 
     if(ARG_SOURCE_DIR)
         cmake_path(ABSOLUTE_PATH ARG_SOURCE_DIR NORMALIZE
@@ -35,27 +52,25 @@ function(schuss_instrument_lab_add_authenticated_juce)
               "${instrument_lab_juce_source}/modules/juce_core/juce_core.h")
             message(FATAL_ERROR "Instrument Lab JUCE source is not a JUCE tree")
         endif()
-        file(READ
-            "${instrument_lab_juce_source}/modules/juce_core/system/juce_StandardHeader.h"
-            instrument_lab_juce_version_header)
-        if(NOT instrument_lab_juce_version_header MATCHES
-                "JUCE_MAJOR_VERSION[ \t]+8"
-           OR NOT instrument_lab_juce_version_header MATCHES
-                "JUCE_MINOR_VERSION[ \t]+0"
-           OR NOT instrument_lab_juce_version_header MATCHES
-                "JUCE_BUILDNUMBER[ \t]+15")
+        execute_process(
+            COMMAND "${Python3_EXECUTABLE}" "${_schuss_instrument_lab_juce_validator}"
+                --repo-root "${_schuss_instrument_lab_repo_root}"
+                --source-tree "${instrument_lab_juce_source}"
+                --check
+            RESULT_VARIABLE _tree_result
+            OUTPUT_VARIABLE _tree_output
+            ERROR_VARIABLE _tree_error)
+        if(NOT _tree_result EQUAL 0)
             message(FATAL_ERROR
-                "Instrument Lab requires operator-authenticated JUCE 8.0.15")
+                "Instrument Lab JUCE tree authentication failed: ${_tree_output}${_tree_error}")
         endif()
         add_subdirectory("${instrument_lab_juce_source}" "${ARG_BINARY_DIR}"
             EXCLUDE_FROM_ALL)
     elseif(ARG_ALLOW_FETCH)
         include(FetchContent)
         FetchContent_Declare(JUCE
-            URL
-              "https://github.com/juce-framework/JUCE/archive/${SCHUSS_INSTRUMENT_LAB_JUCE_COMMIT}.tar.gz"
-            URL_HASH
-              "SHA256=${SCHUSS_INSTRUMENT_LAB_JUCE_ARCHIVE_SHA256}"
+            URL "${_instrument_lab_juce_archive_url}"
+            URL_HASH "SHA256=${_instrument_lab_juce_archive_sha256}"
             DOWNLOAD_EXTRACT_TIMESTAMP FALSE)
         FetchContent_MakeAvailable(JUCE)
     else()

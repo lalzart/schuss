@@ -1,0 +1,109 @@
+{
+  "failures": [
+    "WF01_TENSION_OPEN: safety/DC/diagnostic tolerance failed",
+    "WF02_VOID: safety/DC/diagnostic tolerance failed",
+    "WF03_SHADOW: safety/DC/diagnostic tolerance failed",
+    "CMP01_SQUARE: safety/DC/diagnostic tolerance failed",
+    "CMP02_PARALLEL_LOW: safety/DC/diagnostic tolerance failed",
+    "WF01: TENSION pitch/centroid/RMS escalation tolerance failed",
+    "WF01: alias or aligned 4x-versus-8x residual tolerance failed",
+    "WF02: true-void cut-interior tolerance failed",
+    "WF03: complementary Shadow low-band/rejection tolerance failed"
+  ],
+  "host_signal_passed": false,
+  "observations": {
+    "alias_and_reference": {
+      "aligned_4x_vs_8x_rms_null_dbfs": -26.914532848416187,
+      "highest_nonharmonic_component_below_18khz_dbfs": -46.33888614941113,
+      "passed": false
+    },
+    "safety": {
+      "CMP01_SQUARE": {
+        "abs_peak": 0.6378242373466492,
+        "channel_abs_dc_mean": [
+          0.007225292433274368,
+          0.00722427269091573
+        ],
+        "minimum_scheduler_boundary_spacing_frames": 1125,
+        "passed": false
+      },
+      "CMP02_PARALLEL_LOW": {
+        "abs_peak": 0.8050993084907532,
+        "channel_abs_dc_mean": [
+          0.005564624726907258,
+          0.005358965199085709
+        ],
+        "minimum_scheduler_boundary_spacing_frames": 3000,
+        "passed": false
+      },
+      "WF01_TENSION_OPEN": {
+        "abs_peak": 0.672150731086731,
+        "channel_abs_dc_mean": [
+          0.0014974856510181478,
+          0.0017460321888753472
+        ],
+        "passed": false
+      },
+      "WF02_VOID": {
+        "abs_peak": 0.6378242373466492,
+        "channel_abs_dc_mean": [
+          0.008077888856915317,
+          0.008059831574523184
+        ],
+        "minimum_scheduler_boundary_spacing_frames": 3000,
+        "passed": false
+      },
+      "WF03_SHADOW": {
+        "abs_peak": 0.7329996824264526,
+        "channel_abs_dc_mean": [
+          0.008705806731236512,
+          0.008515365305455361
+        ],
+        "minimum_scheduler_boundary_spacing_frames": 3000,
+        "passed": false
+      }
+    },
+    "schedule_parity": {
+      "normalized_row_count": 242,
+      "passed": true
+    },
+    "shadow": {
+      "cut_lowband_gain_over_void_db": 66.06017694175543,
+      "cut_wire_band_rejection_vs_open_db": 7.19796841300883,
+      "passed": false
+    },
+    "tension": {
+      "adjacent_centroid_positive_count": 4,
+      "centroid_hz": [
+        185.4816890901751,
+        461.3963763274126,
+        1256.9408235781186,
+        3296.4696568779095,
+        6559.316396916901
+      ],
+      "final_to_first_centroid_ratio": 35.36368699838601,
+      "final_to_first_hold_rms_db": -0.5955378594837636,
+      "fundamental_cents_error": [
+        0.15240687863867122,
+        -0.006817583234833105,
+        -0.0851422413906561,
+        -0.1378625507982569,
+        -0.21730352622358187
+      ],
+      "fundamental_hz": [
+        122.60091844063717,
+        177.33021527656632,
+        284.89982652378507,
+        492.41003651874433,
+        902.0942364265096
+      ],
+      "passed": false
+    },
+    "void": {
+      "cut_interior_abs_peak": 0.06618834286928177,
+      "cut_interior_count": 60,
+      "passed": false
+    }
+  },
+  "schema_version": "wirefall-objective-summary-v1"
+}

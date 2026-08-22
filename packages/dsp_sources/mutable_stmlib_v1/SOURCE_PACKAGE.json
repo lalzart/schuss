@@ -1,0 +1,81 @@
+{
+  "authority": {
+    "source_release": {
+      "content_hash": "sha256:f6bcc4d88986ff587078f305007700d03aa441f9ff0bc7015c074a8351f3da20",
+      "path": "contracts/task038/source-release-02.json",
+      "revision": 1,
+      "source_release_id": "schuss-source-release-000009"
+    },
+    "source_release_schema_path": "schemas/source-release-v0.schema.json"
+  },
+  "claims": {
+    "does_not_provide": [
+      "audible-evidence",
+      "catalog-membership",
+      "collection-membership",
+      "device-evidence",
+      "distribution-approval",
+      "graph-identity",
+      "implementation-identity",
+      "license-authority",
+      "provenance-authority",
+      "provider-identity",
+      "real-time-evidence",
+      "runtime-support",
+      "source-release-identity"
+    ],
+    "provides": [
+      "physical-build-closure"
+    ]
+  },
+  "closure": {
+    "files": [
+      {
+        "path": "stmlib/LICENSE",
+        "sha256": "6fde7600ac71ff9e4bdc28b642063d1a65e195f28bb07fb52a9b476efb5aa791"
+      },
+      {
+        "path": "stmlib/stmlib.h",
+        "sha256": "3afc8589a951e882d9eea16b3eda8623dd6fb0079dd11dfbce817e65be6cfba9"
+      },
+      {
+        "path": "stmlib/utils/dsp.h",
+        "sha256": "c0fad7f6b5b20f053d184614a35baf595e41f1394db53f80ac742d7467dbbe1b"
+      },
+      {
+        "path": "stmlib/utils/random.cc",
+        "sha256": "145c4d7a30e373d001fd664ce6f97a475458f7dc8286252d24ca6f592e0cdb93"
+      },
+      {
+        "path": "stmlib/utils/random.h",
+        "sha256": "423f01e905fa279864878f34e42136ad1eb37a33dad58739affaaab06b793e5d"
+      }
+    ],
+    "immutable_root": "upstream",
+    "manifest_algorithm": "SHA-256 lines with digest, two spaces, repository-relative path, LF; LC_ALL=C complete-line sort; SHA-256 of sorted bytes",
+    "manifest_sha256": "ee35268d95d661a9be2ff5f3e8ff0c6d89f06c4b0337ceaacbb7ec8ba51426bb",
+    "retained_notice_path": "THIRD_PARTY_NOTICES.md"
+  },
+  "component_groups": [
+    {
+      "name": "stmlib-headers",
+      "paths": [
+        "stmlib/stmlib.h",
+        "stmlib/utils/dsp.h",
+        "stmlib/utils/random.h"
+      ]
+    },
+    {
+      "name": "stmlib-random-source",
+      "paths": [
+        "stmlib/utils/random.cc"
+      ]
+    }
+  ],
+  "package_id": "mutable-stmlib-v1",
+  "package_revision": "1",
+  "schema_version": "physical-source-closure-manifest-v1",
+  "transitive_support": [
+    "stmlib/LICENSE"
+  ]
+}

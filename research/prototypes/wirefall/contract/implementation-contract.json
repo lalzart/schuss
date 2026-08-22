@@ -1,0 +1,109 @@
+{
+  "acceptance_tests": [
+    "The approved proposal SHA-256 remains exact and this bundle passes the Sonic Research Lab structure and readiness validators.",
+    "The portable Core performs no processing-path allocation, accepts at most 128 events per block, contains non-finite state, and never emits a sample whose absolute value exceeds 0.8912.",
+    "Accepted events are ordered by (sample_index, ingress_sequence), applied before the named sample, and produce byte-identical event ledgers and WAVs for block partitions 1, 16, 64, 257, and 512 plus a fresh repeated block-64 run.",
+    "CUT uses the frozen nine-zone table, hysteresis, beat-boundary commit, fixed-denominator cut distribution, swing bounds, and deterministic Downbeat behavior.",
+    "Reset, Panic, VOID, OPEN, FLIP, ratio changes, event overflow, and non-finite recovery match state-matrix.md and normalized Reset replay equality.",
+    "The frozen 63-tap coefficient bytes authenticate and the 4x Wire output meets the 8x reference residual and alias thresholds in experiment.json.",
+    "WF01 fundamental, spectral-centroid, RMS-compensation, peak, and DC observations meet the frozen tolerances.",
+    "WF02 produces true interior silence after the clamped edge; WF03 produces the required low-band occupation and Wire-band suppression with exact schedule parity.",
+    "CMP01_SQUARE and CMP02_PARALLEL_LOW are rendered from the literal frozen fixtures and remain capable of falsifying the scheduler and complementary-voice hypotheses.",
+    "Instrument Lab repository and Wirefall consumer checks pass without modifying Cinderwheel, Tide Pit, canonical Schuss records, providers, runtimes, targets, or backends."
+  ],
+  "decision_rights": {
+    "may": [
+      "Implement the approved original Wire and Shadow DSP, fixed-capacity state, scheduler, controls, deterministic fixtures, comparators, tests, and renderer inside research/prototypes/wirefall.",
+      "Choose internal C++ types, file boundaries, and test decomposition when they preserve the frozen equations, bytes, timings, mappings, outputs, tolerances, and evidence ceiling.",
+      "Correct an implementation defect revealed by focused validation and record the correction in RESULTS.md without changing the approved musical contract.",
+      "Stop or pivot exactly as directed by the comparator and resource thresholds; any changed musical architecture requires a revised proposal and approval."
+    ],
+    "must_not": [
+      "Change the approved proposal bytes, its central architecture, experiment conditions, comparator rules, tolerances, or host-signal evidence ceiling without renewed approval.",
+      "Allocate canonical Schuss identities or alter schemas, catalogs, records, providers, runtime factories, compute targets, backends, governance routing, Cinderwheel, or Tide Pit.",
+      "Infer target-build, real-time, connected-device, listening, distribution, or production-integration evidence from source, tests, or offline renders.",
+      "Add JUCE, fetch or install dependencies, launch an app, open audio or MIDI endpoints, configure a controller, compile ARM code, access hardware, listen, stage, commit, push, or publish."
+    ]
+  },
+  "deferred_evidence": [
+    "target-build",
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "A Wirefall prototype index, noncanonical complete DSP topology, generated instrument-owned control descriptor, promotion-needs report, and implementation handoff required by Instrument Lab v1.",
+    "A JUCE-independent C++17 fixed-capacity Wirefall Core and the wirefall_core_tests executable.",
+    "The wirefall_render executable with the five exact 32-second conditions, 4x and 8x reference paths, comparators, ledgers, metrics, manifest, and hashes.",
+    "Focused source, state, control, safety, partition, repeatability, renderer-freshness, and objective host-signal results backfilled into RESULTS.md and GAPS.md."
+  ],
+  "dependency_contracts": [
+    {
+      "path": "docs/workflows/instrument-development.md",
+      "role": "Instrument Lab workflow and evidence boundary",
+      "sha256": "05e4468495f8a7c2f9fda2c3a4a90e523bafe67bc18a2d79a21fadaa2df33689"
+    },
+    {
+      "path": "research/prototype_support/instrument_lab/README.md",
+      "role": "Shared non-production mechanics and ownership boundary",
+      "sha256": "145dae6a835c427b9f739225389790d49a0290f0df91b4d67711c273b41181f1"
+    },
+    {
+      "path": "contracts/task018/gills-device-profile-r2.json",
+      "role": "Provisional physical selector inventory only",
+      "sha256": "52fdbc3e671068851e85a4a8dcd6237b85fb81f71c63395634e697ab3e23f189"
+    },
+    {
+      "path": "research/prototypes/wirefall/contract/dsp-specification.md",
+      "role": "Frozen numeric, SVF, oversampling, timing, and failure details",
+      "sha256": "6fc41daa0807a17d239c6b69a1ad24b2548ffd11caa6bd355b2ed6503ec7e0cf"
+    },
+    {
+      "path": "research/prototypes/wirefall/contract/wirefall-fir-63.json",
+      "role": "Immutable 63-tap binary32 coefficient authority",
+      "sha256": "c8dcee975d70775f73435e1974e73eee814b4d21cc334b5ab46a9c9132741fb0"
+    }
+  ],
+  "goal": {
+    "primary_claim": "A coupled TENSION Wire voice and beat-committed CUT scheduler can produce independently measurable spectral escalation and rhythmic negative space, while complementary Shadow occupies only the removed spans and remains distinguishable from a continuously mixed low voice.",
+    "why": "Turn the approved performative knob-driven gated-drone idea into the smallest deterministic experiment that can reject its special scheduler, complementary lower voice, or coupled energy macro before any UI, device, embedded, or production investment."
+  },
+  "inputs": [
+    "Approved Wirefall proposal revision 0.1 at research/proposals/wirefall.md with SHA-256 cf9b5f58e50856a9d38d754ee476ced58c52473bb9f9ff1216c75e7ca28707b8.",
+    "The user's explicit message Approve immediately following presentation of that exact proposal fingerprint.",
+    "Instrument Lab v1 workflow and repository-owned shared mechanics bound in dependency_contracts.",
+    "The exact five-condition experiment, state matrix, control map, validation plan, DSP specification, and binary32 FIR authority in this contract directory."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "User message \"Approve\" in this Codex task after presentation of Wirefall revision 0.1 and SHA-256 cf9b5f58e50856a9d38d754ee476ced58c52473bb9f9ff1216c75e7ca28707b8.",
+      "state": "approved"
+    },
+    "path": "research/proposals/wirefall.md",
+    "revision": "0.1",
+    "sha256": "cf9b5f58e50856a9d38d754ee476ced58c52473bb9f9ff1216c75e7ca28707b8"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "Prototype-local original C++17 Wire and Shadow DSP, complementary VCA, fixed-capacity space, internal tempo, deterministic scheduler, safety, diagnostics, controls, and state operations.",
+      "Instrument Lab v1 Core-only integration, noncanonical topology and descriptor artifacts, focused tests, deterministic renderer, five frozen conditions, objective metrics, comparator outputs, and reproduction evidence.",
+      "Provisional Gills surface descriptions terminating at public Wirefall controls, with no device execution claim."
+    ],
+    "out": [
+      "JUCE, app or plugin shells, external clock, audio or MIDI endpoints, controller configuration, device lifecycle, physical Gills evidence, listening, packaging, or publication.",
+      "Ksoloti, ARM, fixed-point, embedded resource, target-build, callback-deadline, or real-time claims.",
+      "Canonical Schuss graph, component, instrument, performance configuration, provider, backend, project, record-set, machine, governance, or production integration changes."
+    ]
+  },
+  "status": "ready",
+  "target": "Instrument Lab v1 portable C++17 Core and deterministic renderer",
+  "title": "Wirefall",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "wirefall_core_tests and wirefall_render",
+    "evidence_level": "host-signal",
+    "success_observation": "wirefall_core_tests passes the frozen fixed-capacity, state, control, scheduler, safety, partition, and negative contracts, and wirefall_render produces the five 32-second WAV/ledger/metrics conditions whose hashes, objective thresholds, comparator parity, and fresh repeatability all pass experiment.json."
+  }
+}

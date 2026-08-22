@@ -1,0 +1,111 @@
+{
+  "claims": {
+    "canonical_schuss_record": false,
+    "executable_graph": false
+  },
+  "connections": [
+    {"from": "role.parameter.tempo", "kind": "beat-rate", "to": "role.node.beat-clock"},
+    {"from": "role.parameter.cut", "kind": "opportunity-rate", "to": "role.node.cut-scheduler"},
+    {"from": "role.parameter.holes", "kind": "cut-density", "to": "role.node.cut-scheduler"},
+    {"from": "role.parameter.swing", "kind": "boundary-displacement", "to": "role.node.cut-scheduler"},
+    {"from": "role.node.beat-clock", "kind": "beat-boundary", "to": "role.node.cut-scheduler"},
+    {"from": "role.parameter.root", "kind": "base-frequency", "to": "role.node.wire-oscillator"},
+    {"from": "role.parameter.tension", "kind": "pitch-and-energy", "to": "role.node.wire-oscillator"},
+    {"from": "role.node.wire-oscillator", "kind": "oversampled-signal", "to": "role.node.wire-fold"},
+    {"from": "role.node.wire-fold", "kind": "oversampled-signal", "to": "role.node.wire-filter"},
+    {"from": "role.parameter.bite", "kind": "spectral-emphasis", "to": "role.node.wire-filter"},
+    {"from": "role.node.wire-filter", "kind": "oversampled-band-signal", "to": "role.node.wire-drive"},
+    {"from": "role.node.wire-drive", "kind": "oversampled-signal", "to": "role.node.wire-decimator"},
+    {"from": "role.node.wire-decimator", "kind": "base-rate-signal", "to": "role.node.wire-space"},
+    {"from": "role.parameter.root", "kind": "base-frequency", "to": "role.node.shadow-oscillator"},
+    {"from": "role.parameter.tension", "kind": "related-frequency", "to": "role.node.shadow-oscillator"},
+    {"from": "role.parameter.under", "kind": "ratio-selection", "to": "role.node.shadow-oscillator"},
+    {"from": "role.node.shadow-oscillator", "kind": "base-rate-signal", "to": "role.node.shadow-tone"},
+    {"from": "role.node.shadow-tone", "kind": "base-rate-signal", "to": "role.node.shadow-space"},
+    {"from": "role.parameter.space", "kind": "bounded-wet-feedback", "to": "role.node.wire-space"},
+    {"from": "role.parameter.space", "kind": "bounded-wet-feedback", "to": "role.node.shadow-space"},
+    {"from": "role.node.cut-scheduler", "kind": "cut-state", "to": "role.node.complement"},
+    {"from": "role.parameter.edge", "kind": "edge-duration", "to": "role.node.complement"},
+    {"from": "role.parameter.shadow", "kind": "negative-space-level", "to": "role.node.complement"},
+    {"from": "role.node.wire-space", "kind": "stereo-signal", "to": "role.node.complement"},
+    {"from": "role.node.shadow-space", "kind": "stereo-signal", "to": "role.node.complement"},
+    {"from": "role.node.complement", "kind": "stereo-signal", "to": "role.node.output-guard"},
+    {"from": "role.node.output-guard", "kind": "float32-signal", "to": "role.port.audio-out-left"},
+    {"from": "role.node.output-guard", "kind": "float32-signal", "to": "role.port.audio-out-right"}
+  ],
+  "feedback_edges": [
+    {"from": "role.node.cut-scheduler", "kind": "bounded-error-state", "to": "role.node.cut-scheduler"},
+    {"from": "role.node.wire-filter", "kind": "two-integrator-state", "to": "role.node.wire-filter"},
+    {"from": "role.node.wire-decimator", "kind": "fixed-fir-history", "to": "role.node.wire-decimator"},
+    {"from": "role.node.wire-space", "kind": "bounded-cross-delay", "to": "role.node.wire-space"},
+    {"from": "role.node.shadow-space", "kind": "bounded-cross-delay", "to": "role.node.shadow-space"},
+    {"from": "role.node.output-guard", "kind": "dc-blocker-state", "to": "role.node.output-guard"}
+  ],
+  "fusion_boundary": {
+    "implementation_note": "One portable instrument-owned Core fuses the complete inspectable Wirefall signal and control roles.",
+    "includes": [
+      "role.node.beat-clock",
+      "role.node.cut-scheduler",
+      "role.node.wire-oscillator",
+      "role.node.wire-fold",
+      "role.node.wire-filter",
+      "role.node.wire-drive",
+      "role.node.wire-decimator",
+      "role.node.wire-space",
+      "role.node.shadow-oscillator",
+      "role.node.shadow-tone",
+      "role.node.shadow-space",
+      "role.node.complement",
+      "role.node.output-guard"
+    ],
+    "local_role": "role.fusion.core"
+  },
+  "nodes": [
+    {"internals": ["beat position", "tempo smoothing", "downbeat transition"], "local_role": "role.node.beat-clock", "name": "internal beat clock", "origin": "newly-designed", "responsibility": "advance deterministic beat phase", "state_owner": true, "unresolved_component_contract": ["phase-preserving beat clock"]},
+    {"internals": ["active and pending rate", "active and pending density", "opportunity position", "error accumulator", "swing pair"], "local_role": "role.node.cut-scheduler", "name": "cut opportunity scheduler", "origin": "newly-designed", "responsibility": "distribute bounded cut decisions and commit rhythm changes", "state_owner": true, "unresolved_component_contract": ["beat-committed cut scheduler"]},
+    {"internals": ["phase", "fundamental", "second harmonic"], "local_role": "role.node.wire-oscillator", "name": "Wire oscillator", "origin": "newly-designed", "responsibility": "produce the rising upper source", "state_owner": true, "unresolved_component_contract": ["coupled energy oscillator"]},
+    {"internals": ["fold input gain", "analytic triangle fold"], "local_role": "role.node.wire-fold", "name": "Wire analytic fold", "origin": "newly-designed", "responsibility": "create bounded upper spectral energy", "state_owner": false, "unresolved_component_contract": ["antialiased analytic fold"]},
+    {"internals": ["held coefficients", "equivalent integrator states", "band output"], "local_role": "role.node.wire-filter", "name": "Wire resonant emphasis", "origin": "newly-designed", "responsibility": "move finite resonant emphasis with TENSION and BITE", "state_owner": true, "unresolved_component_contract": ["finite resonant emphasis"]},
+    {"internals": ["drive", "energy compensation", "soft saturation"], "local_role": "role.node.wire-drive", "name": "Wire compensated drive", "origin": "newly-designed", "responsibility": "bound nonlinear energy while preserving spectral escalation", "state_owner": false, "unresolved_component_contract": ["gain-compensated drive"]},
+    {"internals": ["fixed coefficient words", "finite ring", "decimation phase"], "local_role": "role.node.wire-decimator", "name": "Wire fixed decimator", "origin": "newly-designed", "responsibility": "return the four-times Wire path to base rate", "state_owner": true, "unresolved_component_contract": ["fixed oversampling decimator"]},
+    {"internals": ["left history", "right history", "write heads", "bounded cross feedback"], "local_role": "role.node.wire-space", "name": "Wire voice-local space", "origin": "newly-designed", "responsibility": "add bounded stereo width before gating", "state_owner": true, "unresolved_component_contract": ["voice-local stereo space"]},
+    {"internals": ["two phases", "two ratios", "ratio crossfade"], "local_role": "role.node.shadow-oscillator", "name": "Shadow related oscillator", "origin": "newly-designed", "responsibility": "produce the lower rationally related voice", "state_owner": true, "unresolved_component_contract": ["crossfaded rational oscillator"]},
+    {"internals": ["one-pole low pass", "soft saturation"], "local_role": "role.node.shadow-tone", "name": "Shadow tone shaper", "origin": "newly-designed", "responsibility": "keep the lower answer cleaner than Wire", "state_owner": true, "unresolved_component_contract": ["bounded lower tone"]},
+    {"internals": ["left history", "right history", "write heads", "bounded cross feedback"], "local_role": "role.node.shadow-space", "name": "Shadow voice-local space", "origin": "newly-designed", "responsibility": "add bounded stereo width before complementary routing", "state_owner": true, "unresolved_component_contract": ["voice-local stereo space"]},
+    {"internals": ["raised-cosine edge", "equal-power gains", "momentary overrides", "flip transition"], "local_role": "role.node.complement", "name": "Wire Shadow complement", "origin": "newly-designed", "responsibility": "route Wire, silence, or Shadow from one cut coordinate", "state_owner": true, "unresolved_component_contract": ["complementary voice router"]},
+    {"internals": ["stereo dc blockers", "finite guard", "soft ceiling", "panic transition"], "local_role": "role.node.output-guard", "name": "bounded stereo output", "origin": "fused-implementation", "responsibility": "remove dc, contain non-finite output, and enforce the ceiling", "state_owner": true, "unresolved_component_contract": ["bounded stereo output"]}
+  ],
+  "prototype_id": "wirefall",
+  "public_facets": {
+    "actions": [
+      {"data_type": "momentary action", "direction": "input", "local_role": "role.action.void", "name": "force true void"},
+      {"data_type": "momentary action", "direction": "input", "local_role": "role.action.open", "name": "force Wire open"},
+      {"data_type": "mode action", "direction": "input", "local_role": "role.action.flip", "name": "flip or cancel voice ownership"},
+      {"data_type": "transport action", "direction": "input", "local_role": "role.action.downbeat", "name": "reset beat phase"},
+      {"data_type": "safety action", "direction": "input", "local_role": "role.action.panic-reset", "name": "panic release or reset"},
+      {"data_type": "tempo action", "direction": "input", "local_role": "role.action.tap-tempo", "name": "tap internal tempo"}
+    ],
+    "displays": [
+      {"data_type": "accepted state snapshot", "direction": "output", "local_role": "role.display.state", "name": "effective musical state"},
+      {"data_type": "bounded diagnostics", "direction": "output", "local_role": "role.display.diagnostics", "name": "processing diagnostics"}
+    ],
+    "parameters": [
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.tension", "name": "TENSION"},
+      {"data_type": "nine-state rate", "direction": "input", "local_role": "role.parameter.cut", "name": "CUT"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.shadow", "name": "SHADOW"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.root", "name": "ROOT"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.bite", "name": "BITE"},
+      {"data_type": "integer one through six", "direction": "input", "local_role": "role.parameter.holes", "name": "HOLES"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.edge", "name": "EDGE"},
+      {"data_type": "five-state ratio", "direction": "input", "local_role": "role.parameter.under", "name": "UNDER"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.swing", "name": "SWING"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.space", "name": "SPACE"},
+      {"data_type": "beats per minute", "direction": "input", "local_role": "role.parameter.tempo", "name": "internal tempo"}
+    ],
+    "ports": [
+      {"data_type": "float32 audio", "direction": "output", "local_role": "role.port.audio-out-left", "name": "audio out left"},
+      {"data_type": "float32 audio", "direction": "output", "local_role": "role.port.audio-out-right", "name": "audio out right"}
+    ]
+  },
+  "schema_version": "schuss-instrument-lab-dsp-topology-v1"
+}

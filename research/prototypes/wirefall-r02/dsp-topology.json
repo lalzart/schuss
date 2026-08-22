@@ -1,0 +1,156 @@
+{
+  "claims": {
+    "canonical_schuss_record": false,
+    "executable_graph": false
+  },
+  "connections": [
+    {"from": "role.parameter.root", "kind": "base-pitch", "to": "role.node.energy-trajectory"},
+    {"from": "role.parameter.energy", "kind": "pitch-and-density", "to": "role.node.energy-trajectory"},
+    {"from": "role.node.energy-trajectory", "kind": "frequency-and-slope", "to": "role.node.harmonic-wire"},
+    {"from": "role.parameter.color", "kind": "spectral-bias", "to": "role.node.harmonic-wire"},
+    {"from": "role.node.harmonic-wire", "kind": "bounded-signal", "to": "role.node.color-filter"},
+    {"from": "role.parameter.color", "kind": "cutoff-and-resonance", "to": "role.node.color-filter"},
+    {"from": "role.node.color-filter", "kind": "colored-signal", "to": "role.node.dc-space"},
+    {"from": "role.parameter.space", "kind": "wet-and-feedback", "to": "role.node.dc-space"},
+    {"from": "role.parameter.tempo", "kind": "beat-rate", "to": "role.node.pulse-clock"},
+    {"from": "role.parameter.pulse", "kind": "division", "to": "role.node.pulse-clock"},
+    {"from": "role.node.pulse-clock", "kind": "normalized-phase", "to": "role.node.interruption"},
+    {"from": "role.parameter.break", "kind": "depth", "to": "role.node.interruption"},
+    {"from": "role.parameter.width", "kind": "duty", "to": "role.node.interruption"},
+    {"from": "role.parameter.edge", "kind": "edge-time", "to": "role.node.interruption"},
+    {"from": "role.node.dc-space", "kind": "stereo-signal", "to": "role.node.interruption"},
+    {"from": "role.node.pulse-clock", "kind": "onset", "to": "role.node.tick-marker"},
+    {"from": "role.parameter.tick", "kind": "marker-level", "to": "role.node.tick-marker"},
+    {"from": "role.node.interruption", "kind": "interrupted-stereo", "to": "role.node.output-guard"},
+    {"from": "role.node.tick-marker", "kind": "marker-signal", "to": "role.node.output-guard"},
+    {"from": "role.parameter.output", "kind": "final-gain", "to": "role.node.output-guard"},
+    {"from": "role.node.output-guard", "kind": "float32-signal", "to": "role.port.audio-out-left"},
+    {"from": "role.node.output-guard", "kind": "float32-signal", "to": "role.port.audio-out-right"}
+  ],
+  "feedback_edges": [
+    {"from": "role.node.color-filter", "kind": "two-integrator-state", "to": "role.node.color-filter"},
+    {"from": "role.node.dc-space", "kind": "bounded-cross-delay", "to": "role.node.dc-space"},
+    {"from": "role.node.pulse-clock", "kind": "wrapped-phase-state", "to": "role.node.pulse-clock"},
+    {"from": "role.node.output-guard", "kind": "fault-window-state", "to": "role.node.output-guard"}
+  ],
+  "fusion_boundary": {
+    "implementation_note": "One portable instrument-owned Core fuses the complete inspectable Wirefall revision 0.2 signal and semantic-event roles.",
+    "includes": [
+      "role.node.energy-trajectory",
+      "role.node.harmonic-wire",
+      "role.node.color-filter",
+      "role.node.dc-space",
+      "role.node.pulse-clock",
+      "role.node.interruption",
+      "role.node.tick-marker",
+      "role.node.output-guard"
+    ],
+    "local_role": "role.fusion.core"
+  },
+  "nodes": [
+    {
+      "internals": ["smoothed energy", "root semitones", "frequency ceiling", "harmonic slope"],
+      "local_role": "role.node.energy-trajectory",
+      "name": "ENERGY trajectory",
+      "origin": "newly-designed",
+      "responsibility": "derive a continuous monotone pitch and spectral-energy course",
+      "state_owner": true,
+      "unresolved_component_contract": ["sensitive musical macro"]
+    },
+    {
+      "internals": ["phase", "twenty-four bounded partials", "analytic normalization", "tracked harmonic pair"],
+      "local_role": "role.node.harmonic-wire",
+      "name": "harmonic Wire source",
+      "origin": "newly-designed",
+      "responsibility": "produce the bright rising foreground without a normal-path nonlinear shaper",
+      "state_owner": true,
+      "unresolved_component_contract": ["bounded harmonic drone source"]
+    },
+    {
+      "internals": ["held coefficients", "equivalent integrator states", "band contribution"],
+      "local_role": "role.node.color-filter",
+      "name": "COLOR resonant emphasis",
+      "origin": "newly-designed",
+      "responsibility": "bias brightness and resonance while keeping finite bounded state",
+      "state_owner": true,
+      "unresolved_component_contract": ["finite resonant color stage"]
+    },
+    {
+      "internals": ["stereo dc state", "left history", "right history", "write heads", "bounded cross feedback"],
+      "local_role": "role.node.dc-space",
+      "name": "pre-interruption stereo space",
+      "origin": "newly-designed",
+      "responsibility": "remove dc and add bounded stereo breadth before rhythmic removal",
+      "state_owner": true,
+      "unresolved_component_contract": ["pre-interruption stereo space"]
+    },
+    {
+      "internals": ["tempo", "division table", "normalized phase", "onset flag"],
+      "local_role": "role.node.pulse-clock",
+      "name": "phase-preserving pulse clock",
+      "origin": "newly-designed",
+      "responsibility": "advance direct musical divisions without phase reset on rate change",
+      "state_owner": true,
+      "unresolved_component_contract": ["phase-preserving pulse clock"]
+    },
+    {
+      "internals": ["closed duty", "raised-cosine edges", "depth", "open override"],
+      "local_role": "role.node.interruption",
+      "name": "negative-space interruption",
+      "origin": "newly-designed",
+      "responsibility": "remove the complete preprocessed Wire signal by a playable depth and shape",
+      "state_owner": true,
+      "unresolved_component_contract": ["exact-zero rhythmic interruption"]
+    },
+    {
+      "internals": ["384-frame position", "four-cycle waveform", "squared-sine window"],
+      "local_role": "role.node.tick-marker",
+      "name": "optional tick marker",
+      "origin": "newly-designed",
+      "responsibility": "mark an interruption with an exact-endpoint short sound",
+      "state_owner": true,
+      "unresolved_component_contract": ["bounded interruption marker"]
+    },
+    {
+      "internals": ["output gain", "finite replacement", "safety ceiling", "reset envelope", "panic envelope", "fault window"],
+      "local_role": "role.node.output-guard",
+      "name": "bounded stereo output",
+      "origin": "fused-implementation",
+      "responsibility": "combine main and marker signals and enforce deterministic recovery",
+      "state_owner": true,
+      "unresolved_component_contract": ["bounded stereo output"]
+    }
+  ],
+  "prototype_id": "wirefall-r02",
+  "public_facets": {
+    "actions": [
+      {"data_type": "momentary state", "direction": "input", "local_role": "role.action.open", "name": "force main signal open"},
+      {"data_type": "momentary action", "direction": "input", "local_role": "role.action.tick-preview", "name": "preview tick marker"},
+      {"data_type": "transport action", "direction": "input", "local_role": "role.action.downbeat", "name": "align pulse phase"},
+      {"data_type": "safety action", "direction": "input", "local_role": "role.action.panic", "name": "panic press or release"},
+      {"data_type": "state action", "direction": "input", "local_role": "role.action.reset", "name": "reset signal state"}
+    ],
+    "displays": [
+      {"data_type": "accepted state snapshot", "direction": "output", "local_role": "role.display.state", "name": "effective musical state"},
+      {"data_type": "bounded diagnostics", "direction": "output", "local_role": "role.display.diagnostics", "name": "processing diagnostics"}
+    ],
+    "parameters": [
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.energy", "name": "ENERGY"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.break", "name": "BREAK"},
+      {"data_type": "eight-state division", "direction": "input", "local_role": "role.parameter.pulse", "name": "PULSE"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.tick", "name": "TICK"},
+      {"data_type": "semitones", "direction": "input", "local_role": "role.parameter.root", "name": "ROOT"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.color", "name": "COLOR"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.width", "name": "WIDTH"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.edge", "name": "EDGE"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.space", "name": "SPACE"},
+      {"data_type": "normalized continuous value", "direction": "input", "local_role": "role.parameter.output", "name": "OUTPUT"},
+      {"data_type": "beats per minute", "direction": "input", "local_role": "role.parameter.tempo", "name": "TEMPO"}
+    ],
+    "ports": [
+      {"data_type": "float32 audio", "direction": "output", "local_role": "role.port.audio-out-left", "name": "audio out left"},
+      {"data_type": "float32 audio", "direction": "output", "local_role": "role.port.audio-out-right", "name": "audio out right"}
+    ]
+  },
+  "schema_version": "schuss-instrument-lab-dsp-topology-v1"
+}

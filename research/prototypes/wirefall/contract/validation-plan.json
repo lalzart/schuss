@@ -1,0 +1,259 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "research/prototypes/wirefall/tests/validate_contract_fixtures.py",
+        "--repo-root",
+        "."
+      ],
+      "cost": "fast",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/proposals/wirefall.md",
+        "research/prototypes/wirefall/contract/implementation-contract.json",
+        "research/prototypes/wirefall/contract/dsp-specification.md",
+        "research/prototypes/wirefall/contract/wirefall-fir-63.json",
+        "research/prototypes/wirefall/contract/experiment.json",
+        "research/prototypes/wirefall/contract/control-map.json",
+        "research/prototypes/wirefall/contract/state-matrix.md"
+      ],
+      "id": "source-contract-and-fixtures"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "research/prototypes/wirefall",
+        "-B",
+        "build/wirefall-release",
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "cost": "native",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/prototypes/wirefall/CMakeLists.txt",
+        "research/prototypes/wirefall/include/wirefall/core.hpp",
+        "research/prototypes/wirefall/src/core.cpp",
+        "research/prototype_support/instrument_lab/CMakeLists.txt"
+      ],
+      "id": "source-configure"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build/wirefall-release",
+        "--parallel"
+      ],
+      "cost": "native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/wirefall/CMakeLists.txt",
+        "research/prototypes/wirefall/include/wirefall/core.hpp",
+        "research/prototypes/wirefall/src/core.cpp",
+        "research/prototypes/wirefall/src/render.cpp",
+        "research/prototypes/wirefall/tests/core_tests.cpp"
+      ],
+      "id": "focused-build"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/wirefall-release",
+        "--output-on-failure",
+        "-R",
+        "^wirefall_(core_tests|contract_fixtures)$"
+      ],
+      "cost": "native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/wirefall/include/wirefall/core.hpp",
+        "research/prototypes/wirefall/src/core.cpp",
+        "research/prototypes/wirefall/tests/core_tests.cpp",
+        "research/prototypes/wirefall/tests/validate_contract_fixtures.py"
+      ],
+      "id": "focused-structural"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/instrument_lab/validate_prototype.py",
+        "--repo-root",
+        ".",
+        "--consumer-root",
+        "research/prototypes/wirefall",
+        "--check"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/wirefall/prototype-index.json",
+        "research/prototypes/wirefall/dsp-topology.json",
+        "research/prototypes/wirefall/PROMOTION_NEEDS.json",
+        "research/prototypes/wirefall/IMPLEMENTATION_HANDOFF.md"
+      ],
+      "id": "instrument-lab-consumer"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/wirefall/tests/validate_render_matrix.py",
+        "--renderer",
+        "build/wirefall-release/wirefall_render",
+        "--contract",
+        "research/prototypes/wirefall/contract/experiment.json",
+        "--output",
+        "build/wirefall-renders"
+      ],
+      "cost": "native",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/wirefall/contract/experiment.json",
+        "research/prototypes/wirefall/contract/dsp-specification.md",
+        "research/prototypes/wirefall/contract/wirefall-fir-63.json",
+        "research/prototypes/wirefall/src/core.cpp",
+        "research/prototypes/wirefall/src/render.cpp",
+        "research/prototypes/wirefall/tests/validate_render_matrix.py"
+      ],
+      "id": "objective-render"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/wirefall/tests/validate_render_matrix.py",
+        "--renderer",
+        "build/wirefall-release/wirefall_render",
+        "--contract",
+        "research/prototypes/wirefall/contract/experiment.json",
+        "--output",
+        "build/wirefall-renders-repeat",
+        "--repeat-block-frames",
+        "64"
+      ],
+      "cost": "native",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/wirefall/contract/experiment.json",
+        "research/prototypes/wirefall/src/core.cpp",
+        "research/prototypes/wirefall/src/render.cpp",
+        "research/prototypes/wirefall/tests/validate_render_matrix.py"
+      ],
+      "id": "block-repeat-determinism"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/instrument_lab/validate_repository.py",
+        "--repo-root",
+        "."
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/wirefall/prototype-index.json",
+        "research/prototypes/wirefall/dsp-topology.json",
+        "research/prototypes/wirefall/CMakeLists.txt",
+        "tools/instrument_lab/validate_repository.py"
+      ],
+      "id": "instrument-lab-repository"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/instrument_lab/reproduce.py",
+        "--repo-root",
+        ".",
+        "--reproduce"
+      ],
+      "cost": "reproduction",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/wirefall/prototype-index.json",
+        "research/prototypes/wirefall/dsp-topology.json",
+        "research/prototypes/wirefall/contract/experiment.json",
+        "research/prototypes/wirefall/src/core.cpp",
+        "research/prototypes/wirefall/src/render.cpp",
+        "tools/instrument_lab/reproduce.py"
+      ],
+      "id": "fresh-root-reproduction"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "The bounded source ledger in proposal revision 0.1 supports the selected mechanisms and explicitly does not establish global novelty, implementation behavior, or sound quality.",
+      "status": "available"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The user approved exact proposal revision 0.1, its SHA-256 matches implementation-contract.json, and the Sonic Research Lab readiness validator accepts this bundle.",
+      "status": "available"
+    },
+    {
+      "check_ids": [
+        "source-contract-and-fixtures",
+        "source-configure"
+      ],
+      "level": "source",
+      "promotion_rule": "Original C++17 source exists with the frozen bytes and provenance, fixture and coefficient authentication passes, configuration succeeds without added dependencies, and the complete prototype diff is reviewed.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "focused-build",
+        "focused-structural",
+        "instrument-lab-consumer",
+        "instrument-lab-repository"
+      ],
+      "level": "host-structural",
+      "promotion_rule": "Fixed-capacity Core, state, control, event, reset, panic, recovery, bounds, negative, topology, descriptor, freshness, and Instrument Lab checks pass without JUCE or device I/O.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "objective-render",
+        "block-repeat-determinism",
+        "fresh-root-reproduction"
+      ],
+      "level": "host-signal",
+      "promotion_rule": "All five frozen conditions meet every numeric tolerance, comparator and schedule rules remain literal, partition and fresh-repeat artifacts are byte-identical, and retained hashes reproduce.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "target-build",
+      "promotion_rule": "A separately named and authorized target compiler and linker accept exact Wirefall inputs under an explicit resource contract.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "Worst-case and p99 callback measurements meet a declared deadline and lifecycle budget in a separately authorized host.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "Authorized endpoint discovery, receipt, controls, feedback, I/O, and reconnect checks pass on the exact declared physical device.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "The separately authorized level-matched blinded comparisons and ten-minute knob session meet the proposal's literal personal acceptance thresholds.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "A separately activated task accepts canonical identities, graph/provider/runtime integration, packaging, distribution, and release evidence.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

@@ -99,7 +99,33 @@
       "argv": ["{python}", "tools/instrument_lab/validate_repository.py", "--repo-root", "."],
       "validation_profile": "current",
       "cost_class": "fast",
-      "inputs": ["tools/instrument_lab/**", "research/prototype_support/instrument_lab/**", "research/prototypes/cinderwheel/prototype-index.json", "research/prototypes/cinderwheel/dsp-topology.json", "research/prototypes/cinderwheel/IMPLEMENTATION_HANDOFF.md", "research/prototypes/cinderwheel/PROMOTION_NEEDS.json", "research/prototypes/tide-pit-gills/prototype-index.json", "research/prototypes/tide-pit-gills/dsp-topology.json", "research/prototypes/tide-pit-gills/IMPLEMENTATION_HANDOFF.md", "research/prototypes/tide-pit-gills/PROMOTION_NEEDS.json", "docs/tasks/036-INSTRUMENT-LAB-HANDOFF.json"]
+      "inputs": ["tools/instrument_lab/**", "tools/source_packages/validate_source_package.py", "research/prototype_support/instrument_lab/**", "research/prototypes/*/prototype-index.json", "research/prototypes/*/dsp-topology.json", "research/prototypes/*/IMPLEMENTATION_HANDOFF.md", "research/prototypes/*/PROMOTION_NEEDS.json", "docs/tasks/036-INSTRUMENT-LAB-HANDOFF.json", "contracts/task038/**", "packages/dsp_adapters/mutable_braids_v1/**", "packages/dsp_sources/mutable_eurorack_braids_v1/**", "packages/dsp_sources/mutable_stmlib_v1/**"]
+    },
+    {
+      "id": "instrument-lab.unit",
+      "kind": "unittest-discover",
+      "start_dir": "tools/instrument_lab/tests",
+      "pattern": "test_*.py",
+      "validation_profile": "current",
+      "cost_class": "fast",
+      "inputs": ["tools/instrument_lab/**", "research/prototype_support/instrument_lab/**", "research/prototypes/*/prototype-index.json"]
+    },
+    {
+      "id": "source-packages.unit",
+      "kind": "unittest-discover",
+      "start_dir": "tools/source_packages/tests",
+      "pattern": "test_*.py",
+      "validation_profile": "current",
+      "cost_class": "fast",
+      "inputs": ["tools/source_packages/**", "packages/dsp_sources/**", "contracts/task033/phase2/source-release-*.json", "contracts/task038/source-release-*.json", "schemas/source-release-v0.schema.json"]
+    },
+    {
+      "id": "task038.source-reuse",
+      "kind": "command",
+      "argv": ["{python}", "tools/instrument_lab/validate_task038_reuse.py"],
+      "validation_profile": "current",
+      "cost_class": "fast",
+      "inputs": ["tools/instrument_lab/validate_task038_reuse.py", "tools/instrument_lab/generate_task038_source_dependencies.py", "tools/contracts/generate_task038_source_records.py", "tools/contracts/validate_task038_source_records.py", "tools/source_packages/generate_mutable_direct_v1.py", "contracts/record-sets/task038-instrument-source-dependencies-v1.json", "contracts/task038/**", "packages/dsp_adapters/mutable_braids_v1/**", "packages/dsp_sources/mutable_eurorack_braids_v1/**", "packages/dsp_sources/mutable_stmlib_v1/**", "research/prototypes/generative-drum-machine/contract/source-dependencies.json"]
     },
     {
       "id": "configured.sources",
@@ -249,6 +275,26 @@
       "cost_class": "native",
       "tool_prerequisites": ["cmake", "ctest", "clang++"],
       "inputs": ["tools/instrument_lab/**", "research/prototype_support/instrument_lab/**", "research/prototypes/cinderwheel/**", "research/prototypes/tide-pit-gills/**", "packages/dsp_sources/mutable_ksoloti_v1/**"]
+    },
+    {
+      "id": "native.instrument-lab-task038-core",
+      "kind": "command",
+      "argv": ["{python}", "tools/instrument_lab/run_native.py", "--mode", "task038-core"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "tool_prerequisites": ["cmake", "ctest", "clang++"],
+      "inputs": ["tools/instrument_lab/**", "tools/source_packages/**", "research/prototype_support/instrument_lab/**", "research/prototypes/generative-drum-machine/**", "research/prototypes/wirefall/**", "packages/dsp_adapters/mutable_braids_v1/**", "packages/dsp_sources/mutable_eurorack_braids_v1/**", "packages/dsp_sources/mutable_stmlib_v1/**"]
+    },
+    {
+      "id": "native.instrument-lab-task038-juce",
+      "kind": "command",
+      "argv": ["{python}", "tools/instrument_lab/run_native.py", "--mode", "task038-juce", "--juce-source-dir", "build/cinderwheel-juce-trial/_deps/juce-src"],
+      "validation_profile": "native",
+      "cost_class": "native",
+      "explicit_only": true,
+      "prerequisites": ["build/cinderwheel-juce-trial/_deps/juce-src/CMakeLists.txt"],
+      "tool_prerequisites": ["cmake", "ctest", "clang++"],
+      "inputs": ["build/cinderwheel-juce-trial/_deps/juce-src/CMakeLists.txt", "tools/instrument_lab/run_native.py", "tools/source_packages/validate_juce_source_tree.py", "research/prototype_support/instrument_lab/**", "research/prototypes/generative-drum-machine/**", "packages/dsp_adapters/mutable_braids_v1/**", "packages/dsp_sources/mutable_eurorack_braids_v1/**", "packages/dsp_sources/mutable_stmlib_v1/**"]
     },
     {
       "id": "reproduction.component-graph-process",
@@ -425,6 +471,24 @@
       "cost_class": "reproduction",
       "tool_prerequisites": ["cmake", "ctest", "clang++"],
       "inputs": ["tools/instrument_lab/**", "research/prototype_support/instrument_lab/**"]
+    },
+    {
+      "id": "reproduction.instrument-lab-generative-drums",
+      "kind": "command",
+      "argv": ["{python}", "tools/instrument_lab/reproduce.py", "--repo-root", ".", "--consumer-root", "research/prototypes/generative-drum-machine", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "tool_prerequisites": ["cmake", "ctest", "clang++"],
+      "inputs": ["tools/instrument_lab/**", "tools/source_packages/**", "contracts/**", "packages/dsp_adapters/mutable_braids_v1/**", "packages/dsp_sources/mutable_eurorack_braids_v1/**", "packages/dsp_sources/mutable_stmlib_v1/**", "research/prototype_support/instrument_lab/**", "research/prototypes/generative-drum-machine/**", "schemas/**"]
+    },
+    {
+      "id": "reproduction.instrument-lab-wirefall",
+      "kind": "command",
+      "argv": ["{python}", "tools/instrument_lab/reproduce.py", "--repo-root", ".", "--consumer-root", "research/prototypes/wirefall", "--ctest-regex", "^wirefall_(core_tests|contract_fixtures)$", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "tool_prerequisites": ["cmake", "ctest", "clang++"],
+      "inputs": ["tools/instrument_lab/**", "contracts/**", "docs/workflows/instrument-development.md", "research/prototype_support/instrument_lab/**", "research/prototypes/wirefall/**", "research/proposals/wirefall.md", "schemas/**"]
     }
   ],
   "profiles": {
@@ -433,7 +497,10 @@
       "catalog.discovery",
       "contracts.current-closure",
       "contracts.current-tests",
-      "instrument-lab.contracts"
+      "instrument-lab.contracts",
+      "instrument-lab.unit",
+      "source-packages.unit",
+      "task038.source-reuse"
     ],
     "compatibility": ["contracts.compatibility-history"],
     "configured-sources": ["configured.sources"],
@@ -451,7 +518,8 @@
       "native.engine-cmake",
       "native.runtime-asan-ubsan",
       "native.runtime-tsan",
-      "native.instrument-lab-core"
+      "native.instrument-lab-core",
+      "native.instrument-lab-task038-core"
     ],
     "reproduction": [
       "reproduction.component-graph-process",
@@ -469,7 +537,9 @@
       "reproduction.task030",
       "reproduction.task032",
       "reproduction.task033-phase2",
-      "reproduction.instrument-lab"
+      "reproduction.instrument-lab",
+      "reproduction.instrument-lab-generative-drums",
+      "reproduction.instrument-lab-wirefall"
     ],
     "release": [
       "@current",

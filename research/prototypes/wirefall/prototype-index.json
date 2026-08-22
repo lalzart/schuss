@@ -1,0 +1,42 @@
+{
+  "authorities": {
+    "control_map": {"path": "research/prototypes/wirefall/contract/control-map.json", "sha256": "f97dde2a8d2d8d52e29249466b8325afbc703fad847aa9ef337649bae11e2ccd"},
+    "controller_topology": {"path": "contracts/task018/gills-device-profile-r2.json", "sha256": "52fdbc3e671068851e85a4a8dcd6237b85fb81f71c63395634e697ab3e23f189"},
+    "dsp_topology": {"path": "research/prototypes/wirefall/dsp-topology.json", "sha256": "45021920055f13cd11f8ca6a3e9be82d5fb95cd8343489aaf3869c50ac051457"},
+    "experiment": {"path": "research/prototypes/wirefall/contract/experiment.json", "sha256": "aeee17bb3b0ad296824a6cfc559a0aff6ebeb0ca85372d2e9f9105e021a6662c"},
+    "gaps": {"path": "research/prototypes/wirefall/contract/GAPS.md", "sha256": "775cb84d8e75a36dc682f55535a55ddb5b1e3f8c58ed0409c4a8c717bf523806"},
+    "implementation_contract": {"path": "research/prototypes/wirefall/contract/implementation-contract.json", "sha256": "8c130286deec12b95a44c84674542677a46f009eaaf414a5c2326953016c2058"},
+    "proposal": {"path": "research/proposals/wirefall.md", "sha256": "cf9b5f58e50856a9d38d754ee476ced58c52473bb9f9ff1216c75e7ca28707b8"},
+    "results": {"path": "research/prototypes/wirefall/contract/RESULTS.md", "sha256": "20c28dd8b81bfff8eac907e989aa5155a1efaf9ddc1990f175477b490abe87a3"},
+    "source_package_handoff": null,
+    "state_matrix": {"path": "research/prototypes/wirefall/contract/state-matrix.md", "sha256": "9899e868b58cfed4f8f52a37f7b0caa25856d83ac3f363935c0e240544dcad50"},
+    "validation_plan": {"path": "research/prototypes/wirefall/contract/validation-plan.json", "sha256": "d214d48e82a780d78e08280bbbbca02b54c14ffe1fccb27d5bd9c20fa8fd0b98"}
+  },
+  "claims": {"canonical_schuss_record": false, "production_ready": false},
+  "core_adapter": {
+    "conversion_owner": "Core emits float32 directly",
+    "internal_quantum": 0,
+    "maximum_host_block": 512,
+    "output_clearing": "Core overwrites every requested output frame",
+    "sample_rate_hz": 48000,
+    "sample_representation": "float32",
+    "semantic_event_capacity": 128,
+    "target": "wirefall_core"
+  },
+  "evidence": {
+    "deferred": ["host-signal acceptance after an approved revision", "callback deadline", "audio and MIDI device lifecycle", "physical control surface", "application launch", "target build", "listening", "distribution", "production integration"],
+    "requested": ["structural", "host signal"]
+  },
+  "handoff": {
+    "allowed_edits": ["prototype-local validation corrections that do not weaken frozen tolerances", "instrument-owned DSP revision only after a newly approved proposal fingerprint", "noncanonical topology and evidence annotations"],
+    "open_decisions": ["DC and true-void processing order for revision 0.2", "Wire antialias strategy for revision 0.2", "TENSION energy compensation for revision 0.2", "Shadow harmonic rejection for revision 0.2"],
+    "required_commands": ["python3 research/prototypes/wirefall/tests/validate_contract_fixtures.py --repo-root .", "cmake -S research/prototypes/wirefall -B BUILD -DCMAKE_BUILD_TYPE=Release", "cmake --build BUILD --parallel", "ctest --test-dir BUILD --output-on-failure -R ^wirefall_(core_tests|contract_fixtures)$", "python3 research/prototypes/wirefall/tests/validate_render_matrix.py --renderer BUILD/wirefall_render --contract research/prototypes/wirefall/contract/experiment.json --output RENDER_OUTPUT"],
+    "reusable_entry_points": ["SchussInstrumentLab::Core", "wirefall_core", "wirefall_render"],
+    "stop_conditions": ["approved proposal or frozen ready-bundle bytes change", "a failed host-signal tolerance is weakened or relabeled without approval", "work expands to JUCE, real-time, target, device, listening, or production scope"],
+    "working_artifact": "portable float Core, deterministic renderer, and retained failed host-signal evidence"
+  },
+  "lane": "new-design",
+  "prototype_id": "wirefall",
+  "revision": "0.1",
+  "schema_version": "schuss-instrument-lab-prototype-index-v1"
+}

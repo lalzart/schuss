@@ -1,0 +1,211 @@
+{
+  "artifact_retention": {
+    "location": "build/generative-drum-machine-evidence",
+    "policy": "reproducible-only"
+  },
+  "comparator_condition_id": "independent-probability-comparator",
+  "conditions": [
+    {
+      "events": [
+        {
+          "frame": 0,
+          "type": "set-controls",
+          "values": {
+            "complexity": [42000, 36000, 34000, 30000, 26000, 22000],
+            "enthusiasm": 0,
+            "fill": false,
+            "swing_u15": 0,
+            "tempo_milli_bpm": 120000
+          }
+        }
+      ],
+      "id": "authored-static",
+      "purpose": "Prove monotone threshold reveal, exact phrase repetition at zero enthusiasm, and the primary pooled-synthesis render."
+    },
+    {
+      "events": [
+        {
+          "frame": 0,
+          "type": "set-controls",
+          "values": {
+            "complexity": [50000, 44000, 48000, 39000, 35000, 32000],
+            "enthusiasm": 22000,
+            "fill": false,
+            "swing_u15": 4096,
+            "tempo_milli_bpm": 120000
+          }
+        },
+        {
+          "at_cycle": 2,
+          "type": "queue-fill"
+        }
+      ],
+      "id": "authored-phrase-variation",
+      "purpose": "Prove deterministic cycle-level bundle selection, bounded swing, and one authored one-bar fill without independent per-hit probability."
+    },
+    {
+      "events": [
+        {
+          "frame": 0,
+          "type": "set-controls",
+          "values": {
+            "complexity": [42000, 36000, 34000, 30000, 26000, 22000],
+            "enthusiasm": 22000,
+            "fill": false,
+            "swing_u15": 0,
+            "tempo_milli_bpm": 120000
+          }
+        }
+      ],
+      "id": "independent-probability-comparator",
+      "purpose": "Render a deterministic per-candidate independent-hit comparator for objective event statistics only; no listening or musical-superiority claim is made."
+    },
+    {
+      "events": [
+        {
+          "frame": 0,
+          "type": "inject-fixture",
+          "values": {
+            "fixture": "same-frame-six-lane-overload-and-hat-choke"
+          }
+        }
+      ],
+      "id": "allocator-stress",
+      "purpose": "Prove stable same-frame ordering, four-slot overload behavior, priority protection, deterministic drop selection, and choke-group victim choice."
+    },
+    {
+      "events": [
+        {
+          "frame": 0,
+          "type": "select-rhythm-and-set-controls",
+          "values": {
+            "complexity": [44000, 38000, 36000, 30000, 28000, 26000],
+            "enthusiasm": 0,
+            "rhythm_preset": 1,
+            "swing_u15": 0,
+            "tempo_milli_bpm": 120000
+          }
+        }
+      ],
+      "id": "three-turn-static",
+      "purpose": "Prove the independently authored four-bar 3/4 definition, exact 288000-frame cycle, and zero-enthusiasm repetition."
+    },
+    {
+      "events": [
+        {
+          "frame": 0,
+          "type": "select-rhythm-and-set-controls",
+          "values": {
+            "complexity": [44000, 38000, 39000, 30000, 28000, 26000],
+            "enthusiasm": 0,
+            "rhythm_preset": 2,
+            "swing_u15": 0,
+            "tempo_milli_bpm": 120000
+          }
+        }
+      ],
+      "id": "rolling-six-static",
+      "purpose": "Prove the independently authored compound-duple four-bar 6/8 definition and exact 288000-frame cycle."
+    },
+    {
+      "events": [
+        {
+          "frame": 0,
+          "type": "select-rhythm-shape-voices-and-set-controls",
+          "values": {
+            "complexity": [48000, 43000, 50000, 39000, 36000, 43000],
+            "enthusiasm": 18000,
+            "rhythm_preset": 3,
+            "shapes": {
+              "color_hat": 78,
+              "decay_snare": 86,
+              "level_percussion_3": 76,
+              "pitch_env_percussion_2": 80,
+              "timbre_percussion_1": 91,
+              "tune_kick": 52
+            },
+            "swing_u15": 0,
+            "tempo_milli_bpm": 120000
+          }
+        },
+        {
+          "at_cycle": 1,
+          "type": "queue-fill"
+        }
+      ],
+      "id": "five-across-shaped",
+      "purpose": "Prove the independently authored two-bar 5/4 definition, quintuplet fill, coherent variation, and non-neutral per-lane voice-shape resolution."
+    },
+    {
+      "events": [
+        {
+          "frame": 0,
+          "type": "select-rhythm-and-set-controls",
+          "values": {
+            "complexity": [42000, 40000, 46000, 36000, 34000, 32000],
+            "enthusiasm": 12000,
+            "rhythm_preset": 4,
+            "swing_u15": 0,
+            "tempo_milli_bpm": 104000
+          }
+        }
+      ],
+      "id": "samba-enredo-study",
+      "purpose": "Render one independently authored 2/4 samba-enredo structural study with explicit attribution metadata, without an authenticity or copied-pattern claim."
+    }
+  ],
+  "streaming_control_fixture": {
+    "complexity_changes": [[12007, 3, 52000]],
+    "fill_frames": [23333],
+    "purpose": "Focused Core tests prove next-block acceptance, no retroactive hits, phase-continuous tempo, downbeat rhythm restart, one-bar fill, active-voice shaping, and block-partition equality for this exact accepted timeline; it is not routed through the phrase-oriented offline evidence renderer.",
+    "rhythm_changes": [[0, 10], [19073, 12], [48191, 14]],
+    "shape_changes": [[701, 0, "tune", 91], [4133, 0, "decay", 22], [17011, 2, "color", 99]],
+    "tempo_changes": [[8191, 137000]]
+  },
+  "outputs": [
+    {
+      "kind": "canonical-json",
+      "name": "event-trace.json"
+    },
+    {
+      "kind": "canonical-json",
+      "name": "allocator-trace.json"
+    },
+    {
+      "kind": "signed-32-bit-stereo-pcm-wav",
+      "name": "audio.wav"
+    },
+    {
+      "kind": "canonical-json",
+      "name": "metrics.json"
+    },
+    {
+      "kind": "canonical-json",
+      "name": "manifest.json"
+    },
+    {
+      "kind": "canonical-json",
+      "name": "callback-kernel-benchmark.json"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 1396918357,
+  "status": "ready",
+  "supported_block_frames": [1, 16, 64, 128, 511, 512],
+  "timeline_convention": "Half-open [absolute_frame, absolute_frame + frame_count) host intervals at 48 kHz; the persistent scheduler carries Q32 quarter-note phase and integer remainder across blocks; each selected meter defines one bar as numerator*4/note-value-denominator quarter-note units; authored reduced rational positions are crossed exactly once; same-frame events order by descending lane priority, ascending lane index, then source ordinal; accepted snapshots apply at block start; internal Braids rendering remains at 96 kHz and decimates to 48 kHz.",
+  "title": "Schuss Generative Drum Machine",
+  "tolerances": {
+    "allocator_trace_across_block_sizes": "byte-identical",
+    "audio_across_block_sizes": "byte-identical signed PCM",
+    "dc_mean_absolute_q27_max": 2684355,
+    "event_trace_across_block_sizes": "byte-identical",
+    "integer_overflow_count": 0,
+    "peak_absolute_q27_max": 127506841,
+    "cycle_repetition_at_zero_enthusiasm": "normalized event equality",
+    "continuous_control_latency_frames_max": 512,
+    "shape_slew_frames": 128,
+    "synthetic_callback_benchmark": "report median, p99, maximum, callback deadline ratio, compiler, CPU, and block sizes 64/128/512; measurement is not live-device real-time evidence",
+    "source_manifest_mismatch_count": 0
+  }
+}

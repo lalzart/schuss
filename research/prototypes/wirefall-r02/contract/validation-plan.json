@@ -1,0 +1,194 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "/Users/lanceship/.codex/plugins/cache/personal/sonic-research-lab/0.3.0+codex.20260820115751/skills/develop-dsp-instrument-ideas/scripts/validate_implementation_bundle.py",
+        "research/prototypes/wirefall-r02/contract",
+        "--workspace-root",
+        ".",
+        "--phase",
+        "ready"
+      ],
+      "cost": "fast",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/proposals/wirefall-r02.md",
+        "research/prototypes/wirefall-r02/contract"
+      ],
+      "id": "ready-contract"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "research/proposals/wirefall-r02.md",
+        "research/prototypes/wirefall-r02"
+      ],
+      "cost": "fast",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/proposals/wirefall-r02.md",
+        "research/prototypes/wirefall-r02"
+      ],
+      "id": "source-review"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "research/prototypes/wirefall-r02",
+        "-B",
+        "build/wirefall-r02-core",
+        "-DWIREFALL_R02_ENABLE_JUCE=OFF"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/wirefall-r02/CMakeLists.txt",
+        "research/prototypes/wirefall-r02/core",
+        "research/prototypes/wirefall-r02/tests"
+      ],
+      "id": "core-configure"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/wirefall-r02-core",
+        "--output-on-failure",
+        "-R",
+        "wirefall_r02_core_tests"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/wirefall-r02/core",
+        "research/prototypes/wirefall-r02/tests/core_tests.cpp"
+      ],
+      "id": "focused-structural"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/wirefall-r02/tests/validate_render_matrix.py",
+        "build/wirefall-r02-core/wirefall_r02_render",
+        "--output",
+        "build/wirefall-r02-results"
+      ],
+      "cost": "native",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/wirefall-r02/contract/experiment.json",
+        "research/prototypes/wirefall-r02/core",
+        "research/prototypes/wirefall-r02/render",
+        "research/prototypes/wirefall-r02/tests/validate_render_matrix.py"
+      ],
+      "id": "objective-render"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "research/prototypes/wirefall-r02",
+        "-B",
+        "build/wirefall-r02-juce",
+        "-DWIREFALL_R02_ENABLE_JUCE=ON",
+        "-DWIREFALL_R02_JUCE_SOURCE_DIR=OPERATOR_AUTHENTICATED_JUCE_8_0_15"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/wirefall-r02/CMakeLists.txt",
+        "research/prototypes/wirefall-r02/core",
+        "research/prototypes/wirefall-r02/standalone",
+        "research/prototype_support/instrument_lab/cmake/SchussInstrumentLab.cmake"
+      ],
+      "id": "juce-authenticated-configure"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build/wirefall-r02-juce",
+        "--target",
+        "wirefall-r02-instrument",
+        "-j4"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "build/wirefall-r02-juce/CMakeCache.txt",
+        "research/prototypes/wirefall-r02/core",
+        "research/prototypes/wirefall-r02/standalone"
+      ],
+      "id": "juce-target-build"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "The bounded Wirefall 0.1 sources and current user feedback support the selected mechanisms without a universal novelty claim.",
+      "status": "available"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The approved revision 0.2 proposal fingerprint exactly matches the implementation contract.",
+      "status": "available"
+    },
+    {
+      "check_ids": ["ready-contract", "source-review"],
+      "level": "source",
+      "promotion_rule": "The ready contract remains hash-valid and the complete prototype-local diff has no whitespace or contract-completeness errors.",
+      "status": "planned"
+    },
+    {
+      "check_ids": ["core-configure", "focused-structural"],
+      "level": "host-structural",
+      "promotion_rule": "The focused Core state, bounds, negative, allocation, event, Reset, Panic, and partition tests pass.",
+      "status": "planned"
+    },
+    {
+      "check_ids": ["objective-render"],
+      "level": "host-signal",
+      "promotion_rule": "All four frozen renders meet the proposal tolerances and exact partition/repeat requirements without metric weakening.",
+      "status": "planned"
+    },
+    {
+      "check_ids": ["juce-authenticated-configure", "juce-target-build"],
+      "level": "target-build",
+      "promotion_rule": "After host-signal passes, exact authenticated JUCE source configures and the named standalone target compiles and links without launch.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "A separately authorized launched process must meet declared callback timing and audio-device lifecycle budgets.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "A separately authorized physical endpoint must prove control receipt, feedback, and lifecycle behavior.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "A separately authorized level-matched blinded audition must support the main-knob and interrupt preference claims.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "Canonical identities, graphs, providers, packaging, licensing, and release gates must be accepted under a separate task.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

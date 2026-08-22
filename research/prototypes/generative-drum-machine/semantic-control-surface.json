@@ -1,0 +1,38 @@
+{
+  "bindings": [
+    {"cc": 20, "control": "complexity[0]", "domain": [0, 65535], "kind": "continuous", "owner": "rhythm-generator", "timing": "next-block-future-events"},
+    {"cc": 21, "control": "complexity[1]", "domain": [0, 65535], "kind": "continuous", "owner": "rhythm-generator", "timing": "next-block-future-events"},
+    {"cc": 22, "control": "complexity[2]", "domain": [0, 65535], "kind": "continuous", "owner": "rhythm-generator", "timing": "next-block-future-events"},
+    {"cc": 23, "control": "complexity[3]", "domain": [0, 65535], "kind": "continuous", "owner": "rhythm-generator", "timing": "next-block-future-events"},
+    {"cc": 24, "control": "complexity[4]", "domain": [0, 65535], "kind": "continuous", "owner": "rhythm-generator", "timing": "next-block-future-events"},
+    {"cc": 25, "control": "complexity[5]", "domain": [0, 65535], "kind": "continuous", "owner": "rhythm-generator", "timing": "next-block-future-events"},
+    {"cc": 26, "control": "enthusiasm", "domain": [0, 65535], "kind": "continuous", "owner": "rhythm-generator", "timing": "next-block-future-events"},
+    {"cc": 27, "control": "tempo_milli_bpm", "domain": [30000, 240000], "kind": "continuous", "owner": "timeline", "timing": "next-block-phase-continuous"},
+    {"cc": 28, "control": "voice_shape[selected].tune_u7", "domain": [0, 127], "kind": "selected-lane-continuous", "owner": "lane-recipes", "timing": "next-block-128-sample-slew"},
+    {"cc": 29, "control": "voice_shape[selected].timbre_u7", "domain": [0, 127], "kind": "selected-lane-continuous", "owner": "lane-recipes", "timing": "next-block-128-sample-slew"},
+    {"cc": 30, "control": "voice_shape[selected].color_u7", "domain": [0, 127], "kind": "selected-lane-continuous", "owner": "lane-recipes", "timing": "next-block-128-sample-slew"},
+    {"cc": 31, "control": "voice_shape[selected].decay_u7", "domain": [0, 127], "kind": "selected-lane-continuous", "owner": "lane-recipes", "timing": "next-block-128-sample-slew"},
+    {"cc": 32, "control": "voice_shape[selected].pitch_env_u7", "domain": [0, 127], "kind": "selected-lane-continuous", "owner": "lane-recipes", "timing": "next-block-128-sample-slew"},
+    {"cc": 33, "control": "voice_shape[selected].level_u7", "domain": [0, 127], "kind": "selected-lane-continuous", "owner": "lane-recipes", "timing": "next-block-128-sample-slew"},
+    {"cc": 34, "control": "swing_u15", "domain": [0, 32767], "kind": "continuous", "owner": "timeline", "timing": "next-block-future-events"},
+    {"cc": 35, "control": "rhythm_preset", "domain": [0, 14], "kind": "continuous-index", "owner": "rhythm-generator", "timing": "next-block-restart-downbeat"},
+    {"cc": 40, "control": "shape_select[0]", "domain": [0, 1], "kind": "rising-edge-select-toggle", "owner": "performance-state"},
+    {"cc": 41, "control": "shape_select[1]", "domain": [0, 1], "kind": "rising-edge-select-toggle", "owner": "performance-state"},
+    {"cc": 42, "control": "shape_select[2]", "domain": [0, 1], "kind": "rising-edge-select-toggle", "owner": "performance-state"},
+    {"cc": 43, "control": "shape_select[3]", "domain": [0, 1], "kind": "rising-edge-select-toggle", "owner": "performance-state"},
+    {"cc": 44, "control": "shape_select[4]", "domain": [0, 1], "kind": "rising-edge-select-toggle", "owner": "performance-state"},
+    {"cc": 45, "control": "shape_select[5]", "domain": [0, 1], "kind": "rising-edge-select-toggle", "owner": "performance-state"},
+    {"cc": 46, "control": "fill", "domain": [0, 1], "kind": "rising-edge-action", "owner": "rhythm-generator", "timing": "next-block-one-bar-overlay"},
+    {"cc": 47, "control": "rhythm_preset", "domain": [0, 14], "kind": "rising-edge-cycle-action", "owner": "rhythm-generator", "timing": "next-block-restart-downbeat"}
+  ],
+  "claims": {
+    "endpoint_mapping": false,
+    "physical_surface": true
+  },
+  "controller_topology": {
+    "artifact": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+    "channel": 16,
+    "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
+  },
+  "schema_version": "schuss-prototype-semantic-control-surface-v0"
+}

@@ -1,0 +1,13 @@
+schema_version=wirefall-condition-v1
+id=WF01_TENSION_OPEN
+mechanism=approved-wirefall
+duration_frames=1536000
+events=sample_index|ingress_sequence|action|control|value|end_sample_index|end_value
+0|0|set|CUT|OPEN||
+0|1|set|TENSION|0.10000000000000001||
+96000|2|set|TENSION|0.29999999999999999||
+192000|3|set|TENSION|0.5||
+288000|4|set|TENSION|0.69999999999999996||
+384000|5|set|TENSION|0.90000000000000002||
+480000|6|linear-ramp|TENSION|0.10000000000000001|1056000|0.90000000000000002
+1056000|7|set|TENSION|0.90000000000000002||

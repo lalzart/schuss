@@ -1,0 +1,16 @@
+{
+  "artifact_hashes": {"events_csv_sha256": "7310473a7ec43eea7fcf37b746f8c618cdb445aed132d304538d3956f7a84fa5", "fixture_sha256": "59df58a02f63428272ecbdfebd837a8979fcba7b2d5a99aefefc6b013241e7ed", "wav_sha256": "4dcd5a22c33f8235de3ce63f74e310462ccc4dded31cdb958b3900cba8a056ba"},
+  "audio": {"abs_peak": 0.63782423734664917, "channel_dc_mean": [-0.0072252924332743681, -0.0072242726909157303], "rms": 0.37563070432942791},
+  "block_frames": 64,
+  "condition_id": "CMP01_SQUARE",
+  "core": {"fir_byte_sha256": "a99f4e674be713a0b0f2405711cff20b6a0676a13f4af63380165c4984e70b1a", "full_state_sha256": "8e165d47e60cde79591e957c1aea9209382d5443a21d93dc29086b54931b1f08", "normalized_state_sha256": "3ea76532ea1e5f91782051f290cfc49db6f398c9e4fcfc2a174cd3ed09e93847", "state_bytes": 70128},
+  "diagnostics": {"accepted_events": 11, "beat_boundaries": 64, "cut_boundaries": 160, "dropped_events": 0, "invalid_events": 0, "ledger_overflows": 0, "non_finite_containments": 0, "non_finite_targets": 0, "opportunity_boundaries": 320, "output_non_finite_clears": 0, "processed_frames": 1536000, "rhythm_commits": 8},
+  "duration_frames": 1536000,
+  "mechanism": "phase-locked-square-comparator",
+  "oversample_factor": 4,
+  "parallel_shadow_gain": 1,
+  "sample_rate_hz": 48000,
+  "schema_version": "wirefall-condition-metrics-v1",
+  "seed": 1464422981,
+  "seed_used": false
+}

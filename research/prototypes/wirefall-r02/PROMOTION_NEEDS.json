@@ -1,0 +1,42 @@
+{
+  "claims": {
+    "allocates_canonical_records": false,
+    "executable_graph": false
+  },
+  "needs": [
+    {
+      "local_role": "role.node.color-filter",
+      "required_contract": "finite resonant color stage"
+    },
+    {
+      "local_role": "role.node.dc-space",
+      "required_contract": "pre-interruption stereo space"
+    },
+    {
+      "local_role": "role.node.energy-trajectory",
+      "required_contract": "sensitive musical macro"
+    },
+    {
+      "local_role": "role.node.harmonic-wire",
+      "required_contract": "bounded harmonic drone source"
+    },
+    {
+      "local_role": "role.node.interruption",
+      "required_contract": "exact-zero rhythmic interruption"
+    },
+    {
+      "local_role": "role.node.output-guard",
+      "required_contract": "bounded stereo output"
+    },
+    {
+      "local_role": "role.node.pulse-clock",
+      "required_contract": "phase-preserving pulse clock"
+    },
+    {
+      "local_role": "role.node.tick-marker",
+      "required_contract": "bounded interruption marker"
+    }
+  ],
+  "prototype_id": "wirefall-r02",
+  "schema_version": "schuss-instrument-lab-promotion-needs-v1"
+}

@@ -1,0 +1,17 @@
+{
+  "abs_peak": 0.45557722449302673,
+  "block_frames": 64,
+  "channel_dc_mean": [2.804773342055533e-07, 2.7417031145896924e-07],
+  "condition": "R02_ENERGY",
+  "diagnostics": {
+    "accepted_events": 8,
+    "dropped_events": 0,
+    "invalid_events": 0,
+    "ledger_overflows": 0,
+    "non_finite_samples": 0,
+    "pulse_onsets": 0,
+    "safety_clamps": 0
+  },
+  "maximum_adjacent_delta": 0.35130694508552551,
+  "rms": 0.11732190743668777
+}

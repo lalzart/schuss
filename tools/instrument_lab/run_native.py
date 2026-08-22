@@ -19,18 +19,28 @@ def run(command: list[str]) -> None:
         raise RuntimeError("command failed: " + " ".join(command))
 
 
-def configure_build_test(source: Path, build: Path, extra: list[str]) -> None:
+def configure_build_test(
+    source: Path,
+    build: Path,
+    extra: list[str],
+    ctest_regex: str | None = None,
+) -> None:
     run(["cmake", "-S", str(source), "-B", str(build), "-DCMAKE_BUILD_TYPE=Release", *extra])
     run(["cmake", "--build", str(build), "--parallel"])
-    run(["ctest", "--test-dir", str(build), "--output-on-failure"])
+    command = ["ctest", "--test-dir", str(build), "--output-on-failure"]
+    if ctest_regex is not None:
+        command.extend(["-R", ctest_regex])
+    run(command)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=("core", "juce"), required=True)
+    parser.add_argument(
+        "--mode", choices=("core", "juce", "task038-core", "task038-juce"), required=True
+    )
     parser.add_argument("--juce-source-dir", type=Path)
     args = parser.parse_args()
-    if args.mode == "juce" and args.juce_source_dir is None:
+    if args.mode in {"juce", "task038-juce"} and args.juce_source_dir is None:
         print("MISSING_AUTHENTICATED_JUCE_PREREQUISITE", file=sys.stderr)
         return 2
     try:
@@ -46,7 +56,7 @@ def main() -> int:
                     ROOT / "research/prototypes/tide-pit-gills", base / "tide-sanitize",
                     ["-DTIDE_PIT_ENABLE_SANITIZERS=ON"],
                 )
-            else:
+            elif args.mode == "juce":
                 juce = args.juce_source_dir.resolve()
                 configure_build_test(smoke, base / "smoke-juce", [
                     f"-DSCHUSS_INSTRUMENT_LAB_ROOT={lab}",
@@ -59,6 +69,28 @@ def main() -> int:
                 configure_build_test(ROOT / "research/prototypes/tide-pit-gills", base / "tide-juce", [
                     "-DTIDE_PIT_ENABLE_JUCE=ON", f"-DTIDE_PIT_JUCE_SOURCE_DIR={juce}",
                 ])
+            elif args.mode == "task038-core":
+                configure_build_test(
+                    ROOT / "research/prototypes/generative-drum-machine",
+                    base / "generative-drum-machine",
+                    ["-DGDM_ENABLE_JUCE=OFF"],
+                )
+                configure_build_test(
+                    ROOT / "research/prototypes/wirefall",
+                    base / "wirefall",
+                    [],
+                    "^wirefall_(core_tests|contract_fixtures)$",
+                )
+            else:
+                juce = args.juce_source_dir.resolve()
+                configure_build_test(
+                    ROOT / "research/prototypes/generative-drum-machine",
+                    base / "generative-drum-machine-juce",
+                    [
+                        "-DGDM_ENABLE_JUCE=ON",
+                        f"-DGDM_JUCE_SOURCE_DIR={juce}",
+                    ],
+                )
     except (OSError, RuntimeError) as exc:
         print(str(exc), file=sys.stderr)
         return 2

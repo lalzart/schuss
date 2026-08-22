@@ -1,0 +1,62 @@
+{
+  "claims": {
+    "allocates_canonical_records": false,
+    "executable_graph": false
+  },
+  "needs": [
+    {
+      "local_role": "role.node.beat-clock",
+      "required_contract": "phase-preserving beat clock"
+    },
+    {
+      "local_role": "role.node.complement",
+      "required_contract": "complementary voice router"
+    },
+    {
+      "local_role": "role.node.cut-scheduler",
+      "required_contract": "beat-committed cut scheduler"
+    },
+    {
+      "local_role": "role.node.output-guard",
+      "required_contract": "bounded stereo output"
+    },
+    {
+      "local_role": "role.node.shadow-oscillator",
+      "required_contract": "crossfaded rational oscillator"
+    },
+    {
+      "local_role": "role.node.shadow-space",
+      "required_contract": "voice-local stereo space"
+    },
+    {
+      "local_role": "role.node.shadow-tone",
+      "required_contract": "bounded lower tone"
+    },
+    {
+      "local_role": "role.node.wire-decimator",
+      "required_contract": "fixed oversampling decimator"
+    },
+    {
+      "local_role": "role.node.wire-drive",
+      "required_contract": "gain-compensated drive"
+    },
+    {
+      "local_role": "role.node.wire-filter",
+      "required_contract": "finite resonant emphasis"
+    },
+    {
+      "local_role": "role.node.wire-fold",
+      "required_contract": "antialiased analytic fold"
+    },
+    {
+      "local_role": "role.node.wire-oscillator",
+      "required_contract": "coupled energy oscillator"
+    },
+    {
+      "local_role": "role.node.wire-space",
+      "required_contract": "voice-local stereo space"
+    }
+  ],
+  "prototype_id": "wirefall",
+  "schema_version": "schuss-instrument-lab-promotion-needs-v1"
+}

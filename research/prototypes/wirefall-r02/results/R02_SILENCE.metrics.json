@@ -1,0 +1,17 @@
+{
+  "abs_peak": 0.32741665840148926,
+  "block_frames": 64,
+  "channel_dc_mean": [2.1850006875975778e-06, 2.123120376536414e-06],
+  "condition": "R02_SILENCE",
+  "diagnostics": {
+    "accepted_events": 23,
+    "dropped_events": 0,
+    "invalid_events": 0,
+    "ledger_overflows": 0,
+    "non_finite_samples": 0,
+    "pulse_onsets": 180,
+    "safety_clamps": 0
+  },
+  "maximum_adjacent_delta": 0.10604751855134964,
+  "rms": 0.11009100420141887
+}

@@ -1,0 +1,112 @@
+{
+  "application_feedback": [
+    {
+      "content": "Line 1 is '<tempo> BPM  CUT <active-rate>'; line 2 is 'E <tension>  SH <ratio>'; a pending CUT or HOLES value is rendered as pending -> active without changing Core state.",
+      "source_state": "accepted Core snapshot plus pending rhythm-control snapshot",
+      "target_slots": ["device-display-000001", "device-display-000002"]
+    },
+    {
+      "content": "Pulse on each beat; feedback is presentation only and cannot drive the scheduler.",
+      "source_state": "beat boundary observation",
+      "target_slots": ["device-feedback-000001"]
+    },
+    {
+      "content": "Pulse on each cut boundary; feedback is presentation only.",
+      "source_state": "cut boundary observation",
+      "target_slots": ["device-feedback-000002"]
+    },
+    {
+      "content": "Color A means Shadow is audible; red means FLIP is active.",
+      "source_state": "effective Shadow gain and FLIP mode",
+      "target_slots": ["device-feedback-000003", "device-feedback-000004"]
+    },
+    {
+      "content": "Color A means a rhythm commit is pending; red means Panic or repeated containment is latched.",
+      "source_state": "pending CUT/HOLES state and diagnostics",
+      "target_slots": ["device-feedback-000005", "device-feedback-000006"]
+    }
+  ],
+  "endpoint_device_evidence": {
+    "notes": "The exact reviewed Gills v0.6 slots are descriptive selectors only. No protocol binding, physical endpoint, receipt, display refresh, LED color, pickup, controller configuration, device lifecycle, audio I/O, or connected-device behavior is authorized or proved.",
+    "state": "deferred"
+  },
+  "gesture_state_machines": [
+    {
+      "gestures": ["device-gesture-000001", "device-gesture-000002", "device-gesture-000003"],
+      "id": "void-momentary",
+      "states": "released -> pressed on press; pressed -> released on release; hold does not emit a second action",
+      "timing": "VOID effective Shadow override uses a 3 ms ramp and retains the SHADOW target"
+    },
+    {
+      "gestures": ["device-gesture-000004", "device-gesture-000005", "device-gesture-000006"],
+      "id": "open-momentary",
+      "states": "released -> pressed on press; pressed -> released on release; hold does not emit a second action",
+      "timing": "OPEN Wire override uses a 3 ms ramp while scheduler phase continues"
+    },
+    {
+      "gestures": ["device-gesture-000007", "device-gesture-000008", "device-gesture-000009"],
+      "id": "flip-tap-hold",
+      "states": "press begins duration measurement; release before 600 ms emits FLIP; hold at or after 1200 ms emits FLIP_CANCEL once; 600-1199 ms release emits no action",
+      "timing": "FLIP uses a 10 ms complementary transition; FLIP_CANCEL commits normal mode at the next beat; hold never also fires FLIP"
+    },
+    {
+      "gestures": ["device-gesture-000010", "device-gesture-000011", "device-gesture-000012"],
+      "id": "downbeat-panic",
+      "states": "press begins duration measurement; release before 600 ms emits DOWNBEAT; hold at or after 1200 ms emits PANIC once; release after that hold emits PANIC_RELEASE; 600-1199 ms release emits no action",
+      "timing": "DOWNBEAT uses the frozen 5 ms edge-safe transition; Panic remains latched until PANIC_RELEASE or RESET and the hold never also fires Downbeat"
+    },
+    {
+      "gestures": ["device-gesture-000014", "device-gesture-000015", "device-gesture-000016"],
+      "id": "tap-tempo-reset",
+      "states": "press begins duration measurement; release before 600 ms contributes a tap; hold at or after 1200 ms emits RESET once; 600-1199 ms release emits no action",
+      "timing": "TAP_TEMPO uses the median of the last three accepted 250-2000 ms intervals and never changes tempo from one tap; hold taps are excluded"
+    }
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {"default": 0.38, "public_control": "TENSION", "range": [0, 1], "semantic_transform": "25 ms smoothing; raises Wire pitch by 42*TENSION^1.35 semitones and couples approved fold, Q, drive, and compensation curves"},
+    {"default": "OPEN", "public_control": "CUT", "range": ["OPEN", "x0.5", "x1", "x1.5", "x2", "x3", "x4", "x6", "x8"], "semantic_transform": "nine equal zones with 0.015 normalized hysteresis; commit on next beat while retaining beat phase"},
+    {"default": 0.0, "public_control": "SHADOW", "range": [0, 1], "semantic_transform": "8 ms smoothing; complementary gain sqrt(SHADOW)*sin(pi*q/2); zero is true cut silence"},
+    {"default": 0.5, "public_control": "ROOT", "range_hz": [55, 220], "semantic_transform": "15 ms smoothing; fRoot=55*2^(2*normalized) shared by Wire and Shadow"},
+    {"default": 0.55, "public_control": "BITE", "range": [0, 1], "semantic_transform": "10 ms smoothing; controls approved SVF center and Q contribution with finite clamps"},
+    {"default": 3, "public_control": "HOLES", "range": [1, 6], "semantic_transform": "integer numerator k over denominator 8; commit on next beat and reset scheduler err to zero"},
+    {"default_ms": 4.0, "public_control": "EDGE", "range_ms": [1.5, 30.0], "semantic_transform": "tau=1.5+28.5*normalized^2 ms, clamped to 45 percent of current slot"},
+    {"default": "1/2", "public_control": "UNDER", "range": ["1/4", "1/3", "1/2", "2/3", "3/4"], "semantic_transform": "five detented zones with hysteresis and 20 ms equal-power crossfade between two preallocated Shadow oscillators"},
+    {"default_percent": 50, "public_control": "SWING", "range_percent": [50, 68], "semantic_transform": "alternating opportunity displacement with strictly increasing boundaries and at least 32 frames separation"},
+    {"default": 0.12, "public_control": "SPACE", "range": [0, 1], "semantic_transform": "10 ms smoothing; voice-local 67/89 ms cross delays, wet 0.28*SPACE, feedback 0.32*SPACE, before complementary VCA"},
+    {"default": false, "public_control": "VOID", "range": [false, true], "semantic_transform": "momentary effective Shadow-zero override with 3 ms ramp; SHADOW target retained"},
+    {"default": false, "public_control": "OPEN", "range": [false, true], "semantic_transform": "momentary open-Wire override with 3 ms ramp; scheduler remains running"},
+    {"default": "normal", "public_control": "FLIP", "range": ["normal", "flipped"], "semantic_transform": "swap voice ownership of cut state with 10 ms complementary transition from current q"},
+    {"public_control": "FLIP_CANCEL", "semantic_transform": "action returning to normal on next beat"},
+    {"public_control": "DOWNBEAT", "semantic_transform": "action resetting beat phase and scheduler err without resetting oscillators, filters, delays, or parameters"},
+    {"public_control": "PANIC", "semantic_transform": "hold action latches Panic following state-matrix.md; release after the recognized hold emits PANIC_RELEASE, while RESET uses the full Reset transition"},
+    {"default_bpm": 120, "public_control": "TEMPO", "range_bpm": [30, 240], "semantic_transform": "relative encoder steps by 1 BPM below 160 and 2 BPM at or above 160; preserves normalized beat phase"},
+    {"public_control": "TAP_TEMPO", "semantic_transform": "action using median of last three valid 250-2000 ms intervals; invalid intervals and single taps do not change tempo"},
+    {"public_control": "RESET", "semantic_transform": "full musical reset with the exact down/clear/up timing in state-matrix.md"}
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/wirefall/contract/control-map.json",
+    "strategy": "generate"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {"public_control": "TENSION", "selector": "device-input-000001", "surface": "Gills v0.6 Performance Pot 1"},
+    {"public_control": "CUT", "selector": "device-input-000002", "surface": "Gills v0.6 Performance Pot 2"},
+    {"public_control": "SHADOW", "selector": "device-input-000003", "surface": "Gills v0.6 Performance Pot 3"},
+    {"public_control": "ROOT", "selector": "device-input-000004", "surface": "Gills v0.6 Performance Pot 4"},
+    {"public_control": "BITE", "selector": "device-input-000005", "surface": "Gills v0.6 Performance Pot 5"},
+    {"public_control": "HOLES", "selector": "device-input-000006", "surface": "Gills v0.6 Performance Pot 6"},
+    {"public_control": "EDGE", "selector": "device-input-000007", "surface": "Gills v0.6 Performance Pot 7"},
+    {"public_control": "UNDER", "selector": "device-input-000008", "surface": "Gills v0.6 Performance Pot 8"},
+    {"public_control": "SWING", "selector": "device-input-000009", "surface": "Gills v0.6 Performance Pot 9"},
+    {"public_control": "SPACE", "selector": "device-input-000010", "surface": "Gills v0.6 Performance Pot 10"},
+    {"public_control": "VOID", "selector": "device-input-000011", "surface": "Gills v0.6 Button 1"},
+    {"public_control": "OPEN", "selector": "device-input-000012", "surface": "Gills v0.6 Button 2"},
+    {"public_control": "FLIP and FLIP_CANCEL", "selector": "device-input-000013", "surface": "Gills v0.6 Button 3"},
+    {"public_control": "DOWNBEAT and PANIC", "selector": "device-input-000014", "surface": "Gills v0.6 Button 4"},
+    {"public_control": "TEMPO", "selector": "device-input-000015", "surface": "Gills v0.6 Encoder Turn"},
+    {"public_control": "TAP_TEMPO and RESET", "selector": "device-input-000016", "surface": "Gills v0.6 Encoder Push"}
+  ],
+  "title": "Wirefall controller-independent controls and provisional Gills presentation"
+}

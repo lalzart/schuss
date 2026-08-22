@@ -1,0 +1,123 @@
+{
+  "adapter_owned_desktop_audition_preset": {
+    "canonical_source_default": false,
+    "controls": {
+      "complexity": [42000, 36000, 34000, 30000, 26000, 22000],
+      "enthusiasm": 22000,
+      "rhythm_preset": 0,
+      "swing_u15": 4096,
+      "tempo_milli_bpm": 120000
+    },
+    "owner": "standalone-adapter",
+      "source": "approved proposal revision 0.6",
+    "startup_contract": "The standalone audition shell initializes accepted public controls from this map-owned preset without injecting synthetic MIDI; the portable Core Controls default remains unchanged."
+  },
+  "application_feedback": [
+    {
+      "destination": "standalone accepted-state controls",
+      "semantics": "The six lane controls, rhythm preset, Enthusiasm, Tempo, Swing, Fill, selected shaping lane/mode, and six lane-shape values are refreshed from accepted public state and streaming-cycle status; raw GUI or MIDI input is never displayed as authoritative state."
+    },
+    {
+      "destination": "standalone diagnostics",
+      "semantics": "Show selected host MIDI input name, receive count, last channel/CC/value, current rhythm cycle/progress, lane-hit activity, and callback-kernel load diagnostics. Endpoint identity remains presentation-only."
+    }
+  ],
+  "compiled_surface": {
+    "buttons": [
+      {"assigned": true, "cc": 40, "control": "shape-select-kick", "gesture": "direct-rising-edge", "label": "SHAPE KICK", "physical_control": "button-1", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 41, "control": "shape-select-snare", "gesture": "direct-rising-edge", "label": "SHAPE SNARE", "physical_control": "button-2", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 42, "control": "shape-select-hat", "gesture": "direct-rising-edge", "label": "SHAPE HAT", "physical_control": "button-3", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 43, "control": "shape-select-perc-1", "gesture": "direct-rising-edge", "label": "SHAPE PERC 1", "physical_control": "button-4", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 44, "control": "shape-select-perc-2", "gesture": "direct-rising-edge", "label": "SHAPE PERC 2", "physical_control": "button-5", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 45, "control": "shape-select-perc-3", "gesture": "direct-rising-edge", "label": "SHAPE PERC 3", "physical_control": "button-6", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 46, "control": "fill", "gesture": "direct-rising-edge", "label": "FILL", "physical_control": "button-7", "press_value": 127, "release_value": 0, "type": "action"},
+      {"assigned": true, "cc": 47, "control": "rhythm-next", "gesture": "direct-rising-edge", "label": "NEXT RHYTHM", "physical_control": "button-8", "press_value": 127, "release_value": 0, "type": "action"}
+    ],
+    "channel": 16,
+    "encoders": [
+      {"assigned": true, "cc": 20, "control": "complexity-kick", "domain": [0, 65535], "label": "KICK COMPLEXITY", "mapping": "round-half-up-65535-value-over-127", "physical_control": "top-1", "timing": "next-audio-block-future-events", "type": "continuous"},
+      {"assigned": true, "cc": 21, "control": "complexity-snare", "domain": [0, 65535], "label": "SNARE COMPLEXITY", "mapping": "round-half-up-65535-value-over-127", "physical_control": "top-2", "timing": "next-audio-block-future-events", "type": "continuous"},
+      {"assigned": true, "cc": 22, "control": "complexity-hat", "domain": [0, 65535], "label": "HAT COMPLEXITY", "mapping": "round-half-up-65535-value-over-127", "physical_control": "top-3", "timing": "next-audio-block-future-events", "type": "continuous"},
+      {"assigned": true, "cc": 23, "control": "complexity-perc-1", "domain": [0, 65535], "label": "PERC 1 COMPLEXITY", "mapping": "round-half-up-65535-value-over-127", "physical_control": "top-4", "timing": "next-audio-block-future-events", "type": "continuous"},
+      {"assigned": true, "cc": 24, "control": "complexity-perc-2", "domain": [0, 65535], "label": "PERC 2 COMPLEXITY", "mapping": "round-half-up-65535-value-over-127", "physical_control": "top-5", "timing": "next-audio-block-future-events", "type": "continuous"},
+      {"assigned": true, "cc": 25, "control": "complexity-perc-3", "domain": [0, 65535], "label": "PERC 3 COMPLEXITY", "mapping": "round-half-up-65535-value-over-127", "physical_control": "top-6", "timing": "next-audio-block-future-events", "type": "continuous"},
+      {"assigned": true, "cc": 26, "control": "enthusiasm", "domain": [0, 65535], "label": "ENTHUSIASM", "mapping": "round-half-up-65535-value-over-127", "physical_control": "top-7", "timing": "next-audio-block-future-events", "type": "continuous"},
+      {"assigned": true, "cc": 27, "control": "tempo-milli-bpm", "domain": [30000, 240000], "label": "TEMPO", "mapping": "round-half-up-30000-plus-210000-value-over-127", "physical_control": "top-8", "timing": "next-audio-block-phase-continuous", "type": "continuous"},
+      {"assigned": true, "cc": 28, "control": "shape-tune", "domain": [0, 127], "label": "TUNE", "mapping": "identity-7-bit", "physical_control": "bottom-1", "timing": "next-audio-block-128-sample-slew-if-selected", "type": "continuous"},
+      {"assigned": true, "cc": 29, "control": "shape-timbre", "domain": [0, 127], "label": "TIMBRE", "mapping": "identity-7-bit", "physical_control": "bottom-2", "timing": "next-audio-block-128-sample-slew-if-selected", "type": "continuous"},
+      {"assigned": true, "cc": 30, "control": "shape-color", "domain": [0, 127], "label": "COLOR", "mapping": "identity-7-bit", "physical_control": "bottom-3", "timing": "next-audio-block-128-sample-slew-if-selected", "type": "continuous"},
+      {"assigned": true, "cc": 31, "control": "shape-decay", "domain": [0, 127], "label": "DECAY", "mapping": "identity-7-bit", "physical_control": "bottom-4", "timing": "next-audio-block-128-sample-slew-if-selected", "type": "continuous"},
+      {"assigned": true, "cc": 32, "control": "shape-pitch-env", "domain": [0, 127], "label": "PUNCH", "mapping": "identity-7-bit", "physical_control": "bottom-5", "timing": "next-audio-block-128-sample-slew-if-selected", "type": "continuous"},
+      {"assigned": true, "cc": 33, "control": "shape-level", "domain": [0, 127], "label": "LEVEL", "mapping": "identity-7-bit", "physical_control": "bottom-6", "timing": "next-audio-block-128-sample-slew-if-selected", "type": "continuous"},
+      {"assigned": true, "cc": 34, "control": "swing-u15", "domain": [0, 32767], "label": "SWING", "mapping": "round-half-up-32767-value-over-127", "physical_control": "bottom-7", "timing": "next-audio-block-future-events", "type": "continuous"},
+      {"assigned": true, "cc": 35, "control": "rhythm-select", "domain": [0, 14], "label": "RHYTHM", "mapping": "round-half-up-14-value-over-127", "physical_control": "bottom-8", "timing": "next-audio-block-restart-downbeat", "type": "continuous"}
+    ],
+    "topology": {
+      "artifact": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+      "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
+    }
+  },
+  "endpoint_device_evidence": {
+    "notes": "The same physical channel and CC surface was user-confirmed through prior Cinderwheel/Tide Pit work. The user reported testing the prior drum-machine app and then clarified the literal bottom-row relationship. Revision 0.6 still does not prove the remapped selectors, feedback, reconnect, or endpoint identity on a named physical device session.",
+    "state": "prior-app-user-audition-reported-expanded-map-device-session-deferred"
+  },
+  "gesture_state_machines": [
+    {
+      "control": "shape-select-lane",
+      "semantics": "CC40-45 value 127 selects the corresponding logical lane one through six and enters shaping. Pressing the already selected lane exits shaping; selecting another lane moves focus directly. Release 0 is accepted without a second transition; intermediate values fail closed."
+    },
+    {
+      "control": "fill",
+      "semantics": "CC46 value 127 dispatches one immediate one-bar fill overlay. Value 0 is an accepted release and does not dispatch a second action; all intermediate values fail closed."
+    },
+    {
+      "control": "rhythm-next",
+      "semantics": "CC47 value 127 advances the accepted rhythm index modulo the fifteen-item bank exactly once. Value 0 is accepted without a second advance; intermediate values fail closed."
+    }
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {"cc": 20, "control": "complexity[0]", "mapping": "round-half-up(value*65535/127)", "timing": "next-audio-block-future-events", "type": "continuous"},
+    {"cc": 21, "control": "complexity[1]", "mapping": "round-half-up(value*65535/127)", "timing": "next-audio-block-future-events", "type": "continuous"},
+    {"cc": 22, "control": "complexity[2]", "mapping": "round-half-up(value*65535/127)", "timing": "next-audio-block-future-events", "type": "continuous"},
+    {"cc": 23, "control": "complexity[3]", "mapping": "round-half-up(value*65535/127)", "timing": "next-audio-block-future-events", "type": "continuous"},
+    {"cc": 24, "control": "complexity[4]", "mapping": "round-half-up(value*65535/127)", "timing": "next-audio-block-future-events", "type": "continuous"},
+    {"cc": 25, "control": "complexity[5]", "mapping": "round-half-up(value*65535/127)", "timing": "next-audio-block-future-events", "type": "continuous"},
+    {"cc": 26, "control": "enthusiasm", "mapping": "round-half-up(value*65535/127)", "timing": "next-audio-block-future-events", "type": "continuous"},
+    {"cc": 27, "control": "tempo_milli_bpm", "mapping": "30000 + round-half-up(value*210000/127)", "timing": "next-audio-block-phase-continuous", "type": "continuous"},
+    {"cc": 28, "control": "voice_shape[selected_lane].tune_u7", "mapping": "identity(value)", "timing": "next-audio-block-128-sample-slew-if-shaping", "type": "continuous"},
+    {"cc": 29, "control": "voice_shape[selected_lane].timbre_u7", "mapping": "identity(value)", "timing": "next-audio-block-128-sample-slew-if-shaping", "type": "continuous"},
+    {"cc": 30, "control": "voice_shape[selected_lane].color_u7", "mapping": "identity(value)", "timing": "next-audio-block-128-sample-slew-if-shaping", "type": "continuous"},
+    {"cc": 31, "control": "voice_shape[selected_lane].decay_u7", "mapping": "identity(value)", "timing": "next-audio-block-128-sample-slew-if-shaping", "type": "continuous"},
+    {"cc": 32, "control": "voice_shape[selected_lane].pitch_env_u7", "mapping": "identity(value)", "timing": "next-audio-block-128-sample-slew-if-shaping", "type": "continuous"},
+    {"cc": 33, "control": "voice_shape[selected_lane].level_u7", "mapping": "identity(value)", "timing": "next-audio-block-128-sample-slew-if-shaping", "type": "continuous"},
+    {"cc": 34, "control": "swing_u15", "mapping": "round-half-up(value*32767/127)", "timing": "next-audio-block-future-events", "type": "continuous"},
+    {"cc": 35, "control": "rhythm_preset", "mapping": "round-half-up(value*14/127)", "timing": "next-audio-block-restart-downbeat", "type": "continuous"},
+    {"cc": 40, "control": "shape_lane[0]", "edge": "press-127-select-or-toggle", "type": "action"},
+    {"cc": 41, "control": "shape_lane[1]", "edge": "press-127-select-or-toggle", "type": "action"},
+    {"cc": 42, "control": "shape_lane[2]", "edge": "press-127-select-or-toggle", "type": "action"},
+    {"cc": 43, "control": "shape_lane[3]", "edge": "press-127-select-or-toggle", "type": "action"},
+    {"cc": 44, "control": "shape_lane[4]", "edge": "press-127-select-or-toggle", "type": "action"},
+    {"cc": 45, "control": "shape_lane[5]", "edge": "press-127-select-or-toggle", "type": "action"},
+    {"cc": 46, "control": "fill", "edge": "press-127", "type": "action"},
+    {"cc": 47, "control": "rhythm_preset", "edge": "press-127-advance-modulo-fifteen", "type": "action"}
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/generative-drum-machine/contract/control-map.json compiled_surface",
+    "freshness": "generated header records SHA-256 of the current control-map.json and controller topology bytes",
+    "generated_artifact": "research/prototypes/generative-drum-machine/generated/control_descriptors.hpp",
+    "strategy": "generate"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "artifact": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+      "buttons": "CC40-45 lane shape select/toggle, CC46 fill, CC47 next rhythm; all momentary 127/0",
+      "channel": 16,
+      "encoders": "CC20-27 top-row complexity/Enthusiasm/Tempo; CC28-33 bottom-row selected-lane Tune, Timbre, Color, Decay, Pitch Env, Level; CC34 Swing; CC35 direct rhythm select",
+      "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
+    }
+  ],
+  "title": "Schuss Generative Drum Machine"
+}

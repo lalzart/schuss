@@ -1,0 +1,491 @@
+{
+  "schema_version": "schuss-generative-rhythm-bank-extension-prototype-v2",
+  "authorship_note": "All entries are independently authored structural studies. Names situate the research relationship; they are not authenticity claims and no source notation, audio, or ceremonial toque is copied.",
+  "rhythms": [
+    {
+      "id": "samba-enredo-study",
+      "name": "Samba Enredo Study",
+      "family": "Brazilian samba study",
+      "grouping": "2/4, four subdivisions per beat",
+      "source_relationship": "Independent study informed by documented surdo counterpulse, caixa conduction, and teleco-teco timeline roles.",
+      "source_urls": ["https://portal.iphan.gov.br/uploads/ckfinder/arquivos/Dossi-%20Matrizes%20do%20Samba.pdf", "https://ii.umich.edu/lacs/about-us/brazil-initiative/arts-and-culture-network/samba-residency.html"],
+      "authenticity_claim": false,
+      "meter": {"note_value_denominator": 4, "numerator": 2},
+      "phrase_bars": 4,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32767},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "kick", "position": [3, 2], "threshold": 9000, "velocity": 28500},
+        {"articulation": 0, "bars": [1, 3], "lane": "kick", "position": [1, 1], "threshold": 38000, "velocity": 23500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [1, 1], "threshold": 4000, "velocity": 29200},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "snare", "position": [1, 2], "threshold": 26000, "velocity": 15500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [0, 1], "threshold": 5000, "velocity": 19000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 2], "threshold": 12000, "velocity": 15500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 1], "threshold": 5000, "velocity": 20000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 2], "threshold": 12000, "velocity": 16000},
+        {"articulation": 0, "bars": [0, 2], "lane": "percussion_1", "position": [1, 4], "threshold": 21000, "velocity": 22000},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_1", "position": [5, 4], "threshold": 21000, "velocity": 21500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "percussion_2", "position": [3, 4], "threshold": 30000, "velocity": 20500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [7, 4], "threshold": 42000, "velocity": 24000}
+      ],
+      "variation_groups": [
+        {"id": 1, "minimum_enthusiasm": 9000, "events": [
+          {"articulation": 1, "bars": [0, 2], "lane": "snare", "position": [7, 4], "threshold": 33000, "velocity": 17000},
+          {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [1, 4], "threshold": 28000, "velocity": 19000}
+        ]},
+        {"id": 2, "minimum_enthusiasm": 15500, "events": [
+          {"articulation": 2, "bars": [0, 2], "lane": "hat", "position": [7, 4], "threshold": 30000, "velocity": 14500},
+          {"articulation": 0, "bars": [1, 3], "lane": "percussion_3", "position": [3, 4], "threshold": 36000, "velocity": 21000}
+        ]}
+      ],
+      "fill_group": {"id": 100, "events": [
+        {"articulation": 0, "bars": [3], "lane": "percussion_1", "position": [1, 1], "threshold": 0, "velocity": 22000},
+        {"articulation": 0, "bars": [3], "lane": "percussion_2", "position": [5, 4], "threshold": 0, "velocity": 22500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [3, 2], "threshold": 0, "velocity": 23500},
+        {"articulation": 1, "bars": [3], "lane": "snare", "position": [7, 4], "threshold": 0, "velocity": 29000}
+      ]}
+    },
+    {
+      "id": "partido-alto-study",
+      "name": "Partido Alto Study",
+      "family": "Brazilian samba study",
+      "grouping": "2/4, syncopated 3-3-2 relationship",
+      "source_relationship": "Independent syncopation study informed by IPHAN's account of partido-alto relationships; it is not a transcription.",
+      "source_urls": ["https://portal.iphan.gov.br/uploads/ckfinder/arquivos/Dossi-%20Matrizes%20do%20Samba.pdf"],
+      "authenticity_claim": false,
+      "meter": {"note_value_denominator": 4, "numerator": 2},
+      "phrase_bars": 4,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "kick", "position": [3, 2], "threshold": 12000, "velocity": 27000},
+        {"articulation": 0, "bars": [0, 2], "lane": "snare", "position": [3, 4], "threshold": 3000, "velocity": 30500},
+        {"articulation": 0, "bars": [1, 3], "lane": "snare", "position": [7, 4], "threshold": 3000, "velocity": 30500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "snare", "position": [5, 4], "threshold": 28000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [0, 1], "threshold": 7000, "velocity": 19000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 2], "threshold": 15000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 1], "threshold": 7000, "velocity": 19500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 2], "threshold": 15000, "velocity": 15500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "percussion_1", "position": [0, 1], "threshold": 22000, "velocity": 21500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "percussion_1", "position": [3, 4], "threshold": 22000, "velocity": 22000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "percussion_1", "position": [3, 2], "threshold": 22000, "velocity": 22500},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [1, 4], "threshold": 35000, "velocity": 19500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [7, 4], "threshold": 44000, "velocity": 23000}
+      ],
+      "variation_groups": [
+        {"id": 1, "minimum_enthusiasm": 8500, "events": [
+          {"articulation": 0, "bars": [0, 2], "lane": "kick", "position": [7, 4], "threshold": 32000, "velocity": 22500},
+          {"articulation": 1, "bars": [1, 3], "lane": "snare", "position": [1, 4], "threshold": 26000, "velocity": 16000}
+        ]},
+        {"id": 2, "minimum_enthusiasm": 15000, "events": [
+          {"articulation": 2, "bars": [0, 2], "lane": "hat", "position": [5, 4], "threshold": 28000, "velocity": 14000},
+          {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [7, 4], "threshold": 33000, "velocity": 20500}
+        ]}
+      ],
+      "fill_group": {"id": 100, "events": [
+        {"articulation": 0, "bars": [3], "lane": "percussion_1", "position": [3, 4], "threshold": 0, "velocity": 22000},
+        {"articulation": 0, "bars": [3], "lane": "percussion_2", "position": [1, 1], "threshold": 0, "velocity": 22500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [5, 4], "threshold": 0, "velocity": 23500},
+        {"articulation": 1, "bars": [3], "lane": "snare", "position": [3, 2], "threshold": 0, "velocity": 29000}
+      ]}
+    },
+    {
+      "id": "samba-de-roda-study",
+      "name": "Samba de Roda Study",
+      "family": "Recôncavo samba study",
+      "grouping": "2/4, alternating call-response bars",
+      "source_relationship": "Independent call-and-response study situated by UNESCO's account of Samba de Roda as a living Recôncavo practice.",
+      "source_urls": ["https://ich.unesco.org/en/RL/samba-de-roda-of-the-reconcavo-of-bahia-00101"],
+      "authenticity_claim": false,
+      "meter": {"note_value_denominator": 4, "numerator": 2},
+      "phrase_bars": 4,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32200},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "kick", "position": [3, 2], "threshold": 14000, "velocity": 26500},
+        {"articulation": 0, "bars": [0, 2], "lane": "snare", "position": [1, 1], "threshold": 5000, "velocity": 30000},
+        {"articulation": 0, "bars": [1, 3], "lane": "snare", "position": [3, 2], "threshold": 5000, "velocity": 30000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [0, 1], "threshold": 8000, "velocity": 18000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 2], "threshold": 16000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 1], "threshold": 8000, "velocity": 19000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 2], "threshold": 16000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 2], "lane": "percussion_1", "position": [1, 4], "threshold": 21000, "velocity": 22000},
+        {"articulation": 0, "bars": [0, 2], "lane": "percussion_1", "position": [5, 4], "threshold": 21000, "velocity": 22500},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [3, 4], "threshold": 24000, "velocity": 22000},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [7, 4], "threshold": 24000, "velocity": 22500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [1, 2], "threshold": 40000, "velocity": 23000}
+      ],
+      "variation_groups": [
+        {"id": 1, "minimum_enthusiasm": 8500, "events": [
+          {"articulation": 1, "bars": [0, 2], "lane": "snare", "position": [7, 4], "threshold": 30000, "velocity": 16000},
+          {"articulation": 0, "bars": [1, 3], "lane": "percussion_1", "position": [1, 4], "threshold": 29000, "velocity": 20000}
+        ]},
+        {"id": 2, "minimum_enthusiasm": 14500, "events": [
+          {"articulation": 2, "bars": [0, 2], "lane": "hat", "position": [7, 4], "threshold": 29000, "velocity": 14000},
+          {"articulation": 0, "bars": [1, 3], "lane": "percussion_3", "position": [5, 4], "threshold": 35000, "velocity": 21000}
+        ]}
+      ],
+      "fill_group": {"id": 100, "events": [
+        {"articulation": 0, "bars": [3], "lane": "percussion_1", "position": [1, 1], "threshold": 0, "velocity": 22000},
+        {"articulation": 0, "bars": [3], "lane": "percussion_2", "position": [5, 4], "threshold": 0, "velocity": 22500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [3, 2], "threshold": 0, "velocity": 23500},
+        {"articulation": 1, "bars": [3], "lane": "snare", "position": [7, 4], "threshold": 0, "velocity": 29000}
+      ]}
+    },
+    {
+      "id": "samba-reggae-study",
+      "name": "Samba-Reggae Study",
+      "family": "Bahian samba-reggae study",
+      "grouping": "4/4, layered two-beat cells",
+      "source_relationship": "Independent layered groove study crediting the samba-reggae context developed by Neguinho do Samba and Olodum.",
+      "source_urls": ["https://olodum.com.br/banda-olodum/"],
+      "authenticity_claim": false,
+      "meter": {"note_value_denominator": 4, "numerator": 4},
+      "phrase_bars": 4,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32767},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "kick", "position": [3, 2], "threshold": 9000, "velocity": 27000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [3, 1], "threshold": 18000, "velocity": 28500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [1, 1], "threshold": 0, "velocity": 30500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [3, 1], "threshold": 0, "velocity": 31500},
+        {"articulation": 1, "bars": [1, 3], "lane": "snare", "position": [7, 2], "threshold": 33000, "velocity": 16000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [0, 1], "threshold": 6000, "velocity": 19000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 2], "threshold": 13000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 1], "threshold": 6000, "velocity": 18500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 2], "threshold": 13000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [2, 1], "threshold": 6000, "velocity": 19000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [5, 2], "threshold": 13000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 1], "threshold": 6000, "velocity": 19500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [7, 2], "threshold": 13000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 2], "lane": "percussion_1", "position": [3, 4], "threshold": 22000, "velocity": 22500},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [11, 4], "threshold": 25000, "velocity": 22000},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [15, 4], "threshold": 42000, "velocity": 23500}
+      ],
+      "variation_groups": [
+        {"id": 1, "minimum_enthusiasm": 9000, "events": [
+          {"articulation": 0, "bars": [0, 2], "lane": "kick", "position": [7, 2], "threshold": 30000, "velocity": 23000},
+          {"articulation": 0, "bars": [1, 3], "lane": "percussion_1", "position": [9, 4], "threshold": 28000, "velocity": 20500}
+        ]},
+        {"id": 2, "minimum_enthusiasm": 16000, "events": [
+          {"articulation": 1, "bars": [0, 2], "lane": "snare", "position": [15, 4], "threshold": 31000, "velocity": 16500},
+          {"articulation": 2, "bars": [1, 3], "lane": "hat", "position": [13, 4], "threshold": 30000, "velocity": 14000}
+        ]}
+      ],
+      "fill_group": {"id": 100, "events": [
+        {"articulation": 0, "bars": [3], "lane": "percussion_1", "position": [3, 1], "threshold": 0, "velocity": 22000},
+        {"articulation": 0, "bars": [3], "lane": "percussion_2", "position": [13, 4], "threshold": 0, "velocity": 22500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [7, 2], "threshold": 0, "velocity": 23500},
+        {"articulation": 1, "bars": [3], "lane": "snare", "position": [15, 4], "threshold": 0, "velocity": 29500}
+      ]}
+    },
+    {
+      "id": "maracatu-pulse-study",
+      "name": "Maracatu Pulse Study",
+      "family": "Pernambuco maracatu study",
+      "grouping": "4/4, layered low-drum response",
+      "source_relationship": "Independent non-ceremonial pulse study; IPHAN is used only to situate maracatu as living Afro-Brazilian cultural heritage.",
+      "source_urls": ["https://www.gov.br/iphan/pt-br/superintendencias/pernambuco/patrimonio-imaterial"],
+      "authenticity_claim": false,
+      "meter": {"note_value_denominator": 4, "numerator": 4},
+      "phrase_bars": 4,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32767},
+        {"articulation": 1, "bars": [0, 2], "lane": "kick", "position": [5, 2], "threshold": 12000, "velocity": 28500},
+        {"articulation": 1, "bars": [1, 3], "lane": "kick", "position": [7, 2], "threshold": 12000, "velocity": 28500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [1, 1], "threshold": 4000, "velocity": 30500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [3, 1], "threshold": 4000, "velocity": 31000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [0, 1], "threshold": 8000, "velocity": 18500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 1], "threshold": 8000, "velocity": 18500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [2, 1], "threshold": 8000, "velocity": 19000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [5, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 1], "threshold": 8000, "velocity": 19000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [7, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 2], "lane": "percussion_1", "position": [3, 2], "threshold": 22000, "velocity": 23000},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [5, 2], "threshold": 25000, "velocity": 22500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [15, 4], "threshold": 42000, "velocity": 23500}
+      ],
+      "variation_groups": [
+        {"id": 1, "minimum_enthusiasm": 9000, "events": [
+          {"articulation": 0, "bars": [0, 2], "lane": "percussion_2", "position": [1, 2], "threshold": 29000, "velocity": 20500},
+          {"articulation": 1, "bars": [1, 3], "lane": "snare", "position": [7, 2], "threshold": 32000, "velocity": 16500}
+        ]},
+        {"id": 2, "minimum_enthusiasm": 15500, "events": [
+          {"articulation": 0, "bars": [0, 2], "lane": "kick", "position": [15, 4], "threshold": 31000, "velocity": 22500},
+          {"articulation": 2, "bars": [1, 3], "lane": "hat", "position": [11, 4], "threshold": 30000, "velocity": 14000}
+        ]}
+      ],
+      "fill_group": {"id": 100, "events": [
+        {"articulation": 0, "bars": [3], "lane": "percussion_1", "position": [3, 1], "threshold": 0, "velocity": 22500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_2", "position": [13, 4], "threshold": 0, "velocity": 23000},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [7, 2], "threshold": 0, "velocity": 24000},
+        {"articulation": 1, "bars": [3], "lane": "snare", "position": [15, 4], "threshold": 0, "velocity": 29500}
+      ]}
+    },
+    {
+      "id": "candombe-conversation",
+      "name": "Candombe Conversation",
+      "family": "Uruguayan candombe study",
+      "grouping": "4/4, stable chico/piano base with variable repique layer",
+      "source_relationship": "Independent role-based conversation study informed by UNESCO and Montevideo descriptions; it is not a traditional llamada transcription.",
+      "source_urls": ["https://ich.unesco.org/en/RL/candombe-and-its-socio-cultural-space-a-community-practice-00182", "https://municipioch.montevideo.gub.uy/comunicacion/noticias/percusion"],
+      "authenticity_claim": false,
+      "meter": {"note_value_denominator": 4, "numerator": 4},
+      "phrase_bars": 2,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32000},
+        {"articulation": 1, "bars": [0, 1], "lane": "kick", "position": [5, 2], "threshold": 12000, "velocity": 27500},
+        {"articulation": 0, "bars": [0, 1], "lane": "snare", "position": [1, 1], "threshold": 5000, "velocity": 30000},
+        {"articulation": 0, "bars": [0, 1], "lane": "snare", "position": [3, 1], "threshold": 5000, "velocity": 30500},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [0, 1], "threshold": 10000, "velocity": 17500},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [1, 2], "threshold": 13000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [1, 1], "threshold": 10000, "velocity": 17500},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [3, 2], "threshold": 13000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [2, 1], "threshold": 10000, "velocity": 17500},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [5, 2], "threshold": 13000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [3, 1], "threshold": 10000, "velocity": 17500},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [7, 2], "threshold": 13000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1], "lane": "percussion_1", "position": [1, 2], "threshold": 18000, "velocity": 22500},
+        {"articulation": 0, "bars": [0, 1], "lane": "percussion_1", "position": [3, 2], "threshold": 18000, "velocity": 22500},
+        {"articulation": 0, "bars": [0, 1], "lane": "percussion_1", "position": [5, 2], "threshold": 18000, "velocity": 22500},
+        {"articulation": 0, "bars": [0, 1], "lane": "percussion_1", "position": [7, 2], "threshold": 18000, "velocity": 22500},
+        {"articulation": 0, "bars": [0], "lane": "percussion_2", "position": [3, 4], "threshold": 24000, "velocity": 23500},
+        {"articulation": 0, "bars": [1], "lane": "percussion_2", "position": [11, 4], "threshold": 24000, "velocity": 23500},
+        {"articulation": 0, "bars": [0, 1], "lane": "percussion_3", "position": [7, 4], "threshold": 36000, "velocity": 22000}
+      ],
+      "variation_groups": [
+        {"id": 1, "minimum_enthusiasm": 8000, "events": [
+          {"articulation": 0, "bars": [0], "lane": "percussion_3", "position": [9, 4], "threshold": 29000, "velocity": 20500},
+          {"articulation": 0, "bars": [1], "lane": "percussion_3", "position": [13, 4], "threshold": 29000, "velocity": 20500}
+        ]},
+        {"id": 2, "minimum_enthusiasm": 14500, "events": [
+          {"articulation": 1, "bars": [0], "lane": "snare", "position": [15, 4], "threshold": 31000, "velocity": 16000},
+          {"articulation": 0, "bars": [1], "lane": "percussion_2", "position": [1, 4], "threshold": 30000, "velocity": 21000}
+        ]}
+      ],
+      "fill_group": {"id": 100, "events": [
+        {"articulation": 0, "bars": [1], "lane": "percussion_1", "position": [3, 1], "threshold": 0, "velocity": 22500},
+        {"articulation": 0, "bars": [1], "lane": "percussion_2", "position": [13, 4], "threshold": 0, "velocity": 23000},
+        {"articulation": 0, "bars": [1], "lane": "percussion_3", "position": [7, 2], "threshold": 0, "velocity": 24000},
+        {"articulation": 1, "bars": [1], "lane": "snare", "position": [15, 4], "threshold": 0, "velocity": 29500}
+      ]}
+    },
+    {
+      "id": "chacarera-cross-meter",
+      "name": "Chacarera Cross-Meter",
+      "family": "Argentine chacarera study",
+      "grouping": "6/8 surface against 3/4 low accents",
+      "source_relationship": "Independent cross-meter study informed by Argentine heritage context and UNLP rhythmic analysis; it is not a dance accompaniment transcription.",
+      "source_urls": ["https://www.argentina.gob.ar/cultura/manifestaciones-del-patrimonio-cultural-inmaterial/santiago-del-estero/chacarera", "https://sedici.unlp.edu.ar/bitstream/handle/10915/56443/Documento_completo.pdf?sequence=1"],
+      "authenticity_claim": false,
+      "meter": {"note_value_denominator": 8, "numerator": 6},
+      "phrase_bars": 4,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [1, 1], "threshold": 0, "velocity": 31500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [2, 1], "threshold": 0, "velocity": 32500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [0, 1], "threshold": 4000, "velocity": 30500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [3, 2], "threshold": 4000, "velocity": 31000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [0, 1], "threshold": 8000, "velocity": 18500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 2], "threshold": 13000, "velocity": 15000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 1], "threshold": 13000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 2], "threshold": 8000, "velocity": 19000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [2, 1], "threshold": 13000, "velocity": 15000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [5, 2], "threshold": 13000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 2], "lane": "percussion_1", "position": [1, 3], "threshold": 23000, "velocity": 22000},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [5, 3], "threshold": 26000, "velocity": 22000},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [8, 3], "threshold": 42000, "velocity": 23000}
+      ],
+      "variation_groups": [
+        {"id": 1, "minimum_enthusiasm": 8500, "events": [
+          {"articulation": 1, "bars": [0, 2], "lane": "snare", "position": [7, 3], "threshold": 30000, "velocity": 16000},
+          {"articulation": 0, "bars": [1, 3], "lane": "percussion_1", "position": [4, 3], "threshold": 29000, "velocity": 20000}
+        ]},
+        {"id": 2, "minimum_enthusiasm": 15000, "events": [
+          {"articulation": 0, "bars": [0, 2], "lane": "kick", "position": [5, 2], "threshold": 32000, "velocity": 22500},
+          {"articulation": 2, "bars": [1, 3], "lane": "hat", "position": [8, 3], "threshold": 30000, "velocity": 14000}
+        ]}
+      ],
+      "fill_group": {"id": 100, "events": [
+        {"articulation": 0, "bars": [3], "lane": "percussion_1", "position": [2, 1], "threshold": 0, "velocity": 22000},
+        {"articulation": 0, "bars": [3], "lane": "percussion_2", "position": [13, 6], "threshold": 0, "velocity": 22500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [7, 3], "threshold": 0, "velocity": 23500},
+        {"articulation": 1, "bars": [3], "lane": "snare", "position": [8, 3], "threshold": 0, "velocity": 29500}
+      ]}
+    },
+    {
+      "id": "aksak-five-study",
+      "name": "Aksak Five Study",
+      "family": "Asymmetrical aksak study",
+      "grouping": "5/8 = 2+3",
+      "source_relationship": "Independent additive-meter study using the documented 2+3 five-pulse grouping.",
+      "source_urls": ["https://academicjournals.org/journal/ERR/article-full-text/C20BC0B67144"],
+      "authenticity_claim": false,
+      "meter": {"note_value_denominator": 8, "numerator": 5},
+      "phrase_bars": 4,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32767},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [1, 1], "threshold": 5000, "velocity": 30000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [2, 1], "threshold": 8000, "velocity": 30500},
+        {"articulation": 1, "bars": [1, 3], "lane": "snare", "position": [3, 2], "threshold": 32000, "velocity": 16000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [0, 1], "threshold": 9000, "velocity": 18500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 2], "threshold": 14000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 1], "threshold": 9000, "velocity": 19000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 2], "threshold": 14000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [2, 1], "threshold": 9000, "velocity": 19000},
+        {"articulation": 0, "bars": [0, 2], "lane": "percussion_1", "position": [1, 2], "threshold": 23000, "velocity": 22000},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [3, 2], "threshold": 26000, "velocity": 21500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [9, 4], "threshold": 42000, "velocity": 23000}
+      ],
+      "variation_groups": [
+        {"id": 1, "minimum_enthusiasm": 8500, "events": [
+          {"articulation": 0, "bars": [0, 2], "lane": "kick", "position": [2, 1], "threshold": 31000, "velocity": 22500},
+          {"articulation": 1, "bars": [1, 3], "lane": "snare", "position": [9, 4], "threshold": 30000, "velocity": 16000}
+        ]},
+        {"id": 2, "minimum_enthusiasm": 15000, "events": [
+          {"articulation": 2, "bars": [0, 2], "lane": "hat", "position": [7, 4], "threshold": 29000, "velocity": 14000},
+          {"articulation": 0, "bars": [1, 3], "lane": "percussion_3", "position": [5, 4], "threshold": 34000, "velocity": 20500}
+        ]}
+      ],
+      "fill_group": {"id": 100, "events": [
+        {"articulation": 0, "bars": [3], "lane": "percussion_1", "position": [3, 2], "threshold": 0, "velocity": 22000},
+        {"articulation": 0, "bars": [3], "lane": "percussion_2", "position": [7, 4], "threshold": 0, "velocity": 22500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [2, 1], "threshold": 0, "velocity": 23500},
+        {"articulation": 1, "bars": [3], "lane": "snare", "position": [9, 4], "threshold": 0, "velocity": 29000}
+      ]}
+    },
+    {
+      "id": "aksak-seven-study",
+      "name": "Aksak Seven Study",
+      "family": "Asymmetrical aksak study",
+      "grouping": "7/8 = 2+2+3",
+      "source_relationship": "Independent additive-meter study using the documented 2+2+3 seven-pulse grouping.",
+      "source_urls": ["https://academicjournals.org/journal/ERR/article-full-text/C20BC0B67144"],
+      "authenticity_claim": false,
+      "meter": {"note_value_denominator": 8, "numerator": 7},
+      "phrase_bars": 4,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32767},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [1, 1], "threshold": 6000, "velocity": 29500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [2, 1], "threshold": 11000, "velocity": 28500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [3, 1], "threshold": 7000, "velocity": 31000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [0, 1], "threshold": 9000, "velocity": 18500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 2], "threshold": 15000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 1], "threshold": 9000, "velocity": 18500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 2], "threshold": 15000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [2, 1], "threshold": 9000, "velocity": 19000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [5, 2], "threshold": 15000, "velocity": 15000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 1], "threshold": 9000, "velocity": 19000},
+        {"articulation": 0, "bars": [0, 2], "lane": "percussion_1", "position": [1, 2], "threshold": 23000, "velocity": 22000},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [5, 2], "threshold": 26000, "velocity": 21500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [13, 4], "threshold": 42000, "velocity": 23000}
+      ],
+      "variation_groups": [
+        {"id": 1, "minimum_enthusiasm": 8500, "events": [
+          {"articulation": 0, "bars": [0, 2], "lane": "kick", "position": [5, 2], "threshold": 31000, "velocity": 22500},
+          {"articulation": 1, "bars": [1, 3], "lane": "snare", "position": [13, 4], "threshold": 30000, "velocity": 16000}
+        ]},
+        {"id": 2, "minimum_enthusiasm": 15000, "events": [
+          {"articulation": 2, "bars": [0, 2], "lane": "hat", "position": [11, 4], "threshold": 29000, "velocity": 14000},
+          {"articulation": 0, "bars": [1, 3], "lane": "percussion_3", "position": [7, 4], "threshold": 34000, "velocity": 20500}
+        ]}
+      ],
+      "fill_group": {"id": 100, "events": [
+        {"articulation": 0, "bars": [3], "lane": "percussion_1", "position": [5, 2], "threshold": 0, "velocity": 22000},
+        {"articulation": 0, "bars": [3], "lane": "percussion_2", "position": [11, 4], "threshold": 0, "velocity": 22500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [3, 1], "threshold": 0, "velocity": 23500},
+        {"articulation": 1, "bars": [3], "lane": "snare", "position": [13, 4], "threshold": 0, "velocity": 29000}
+      ]}
+    },
+    {
+      "id": "aksak-nine-study",
+      "name": "Aksak Nine Study",
+      "family": "Asymmetrical aksak study",
+      "grouping": "9/8 = 2+2+2+3",
+      "source_relationship": "Independent additive-meter study using the documented 2+2+2+3 nine-pulse grouping.",
+      "source_urls": ["https://academicjournals.org/journal/ERR/article-full-text/C20BC0B67144"],
+      "authenticity_claim": false,
+      "meter": {"note_value_denominator": 8, "numerator": 9},
+      "phrase_bars": 4,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32767},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [1, 1], "threshold": 6000, "velocity": 29500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [2, 1], "threshold": 9000, "velocity": 29000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "kick", "position": [3, 1], "threshold": 12000, "velocity": 28500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "snare", "position": [4, 1], "threshold": 7000, "velocity": 31000},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [0, 1], "threshold": 10000, "velocity": 18000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [1, 1], "threshold": 10000, "velocity": 18000},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [2, 1], "threshold": 10000, "velocity": 18500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [5, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [3, 1], "threshold": 10000, "velocity": 18500},
+        {"articulation": 1, "bars": [0, 1, 2, 3], "lane": "hat", "position": [7, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1, 2, 3], "lane": "hat", "position": [4, 1], "threshold": 10000, "velocity": 19000},
+        {"articulation": 0, "bars": [0, 2], "lane": "percussion_1", "position": [1, 2], "threshold": 23000, "velocity": 22000},
+        {"articulation": 0, "bars": [1, 3], "lane": "percussion_2", "position": [7, 2], "threshold": 26000, "velocity": 21500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [17, 4], "threshold": 42000, "velocity": 23000}
+      ],
+      "variation_groups": [
+        {"id": 1, "minimum_enthusiasm": 8500, "events": [
+          {"articulation": 0, "bars": [0, 2], "lane": "kick", "position": [7, 2], "threshold": 31000, "velocity": 22500},
+          {"articulation": 1, "bars": [1, 3], "lane": "snare", "position": [17, 4], "threshold": 30000, "velocity": 16000}
+        ]},
+        {"id": 2, "minimum_enthusiasm": 15000, "events": [
+          {"articulation": 2, "bars": [0, 2], "lane": "hat", "position": [15, 4], "threshold": 29000, "velocity": 14000},
+          {"articulation": 0, "bars": [1, 3], "lane": "percussion_3", "position": [9, 4], "threshold": 34000, "velocity": 20500}
+        ]}
+      ],
+      "fill_group": {"id": 100, "events": [
+        {"articulation": 0, "bars": [3], "lane": "percussion_1", "position": [7, 2], "threshold": 0, "velocity": 22000},
+        {"articulation": 0, "bars": [3], "lane": "percussion_2", "position": [15, 4], "threshold": 0, "velocity": 22500},
+        {"articulation": 0, "bars": [3], "lane": "percussion_3", "position": [4, 1], "threshold": 0, "velocity": 23500},
+        {"articulation": 1, "bars": [3], "lane": "snare", "position": [17, 4], "threshold": 0, "velocity": 29000}
+      ]}
+    },
+    {
+      "id": "jhaptal-cycle-study",
+      "name": "Jhaptal Cycle Study",
+      "family": "Hindustani tala structural study",
+      "grouping": "10/8 adaptation = 2+3+2+3",
+      "source_relationship": "Independent ten-pulse machine adaptation informed by the documented unequal vibhag, sam, tali, and khali structure; it is not a tabla theka transcription.",
+      "source_urls": ["https://compmusic.upf.edu/examples-taal-hindustani"],
+      "authenticity_claim": false,
+      "meter": {"note_value_denominator": 8, "numerator": 10},
+      "phrase_bars": 2,
+      "event_templates": [
+        {"articulation": 0, "bars": [0, 1], "lane": "kick", "position": [0, 1], "threshold": 0, "velocity": 32767},
+        {"articulation": 0, "bars": [0, 1], "lane": "kick", "position": [1, 1], "threshold": 8000, "velocity": 29500},
+        {"articulation": 0, "bars": [0, 1], "lane": "kick", "position": [7, 2], "threshold": 12000, "velocity": 28500},
+        {"articulation": 0, "bars": [0, 1], "lane": "snare", "position": [5, 2], "threshold": 5000, "velocity": 30500},
+        {"articulation": 0, "bars": [0, 1], "lane": "snare", "position": [4, 1], "threshold": 5000, "velocity": 31000},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [0, 1], "threshold": 10000, "velocity": 18000},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [1, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [1, 1], "threshold": 10000, "velocity": 18000},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [3, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [2, 1], "threshold": 10000, "velocity": 18000},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [5, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [3, 1], "threshold": 10000, "velocity": 18500},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [7, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1], "lane": "hat", "position": [4, 1], "threshold": 10000, "velocity": 19000},
+        {"articulation": 1, "bars": [0, 1], "lane": "hat", "position": [9, 2], "threshold": 15000, "velocity": 14500},
+        {"articulation": 0, "bars": [0, 1], "lane": "percussion_1", "position": [2, 1], "threshold": 22000, "velocity": 22500},
+        {"articulation": 0, "bars": [0, 1], "lane": "percussion_2", "position": [5, 2], "threshold": 24000, "velocity": 22000},
+        {"articulation": 0, "bars": [0, 1], "lane": "percussion_3", "position": [9, 2], "threshold": 34000, "velocity": 22500}
+      ],
+      "variation_groups": [
+        {"id": 1, "minimum_enthusiasm": 8500, "events": [
+          {"articulation": 0, "bars": [0], "lane": "percussion_1", "position": [3, 1], "threshold": 29000, "velocity": 20500},
+          {"articulation": 1, "bars": [1], "lane": "snare", "position": [9, 2], "threshold": 30000, "velocity": 16000}
+        ]},
+        {"id": 2, "minimum_enthusiasm": 15000, "events": [
+          {"articulation": 2, "bars": [0], "lane": "hat", "position": [17, 4], "threshold": 29000, "velocity": 14000},
+          {"articulation": 0, "bars": [1], "lane": "percussion_2", "position": [1, 2], "threshold": 33000, "velocity": 20500}
+        ]}
+      ],
+      "fill_group": {"id": 100, "events": [
+        {"articulation": 0, "bars": [1], "lane": "percussion_1", "position": [4, 1], "threshold": 0, "velocity": 22000},
+        {"articulation": 0, "bars": [1], "lane": "percussion_2", "position": [17, 4], "threshold": 0, "velocity": 22500},
+        {"articulation": 0, "bars": [1], "lane": "percussion_3", "position": [9, 2], "threshold": 0, "velocity": 23500},
+        {"articulation": 1, "bars": [1], "lane": "snare", "position": [19, 4], "threshold": 0, "velocity": 29000}
+      ]}
+    }
+  ]
+}

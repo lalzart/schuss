@@ -33,6 +33,14 @@ source catalog in a prototype. Tide Pit is the regression example. Its Task
 
 ## Common flow
 
+An approved proposal file may still contain a `proposed` header because its
+bytes are the frozen pre-approval artifact. For Sonic Research Lab v2 bundles,
+the implementation contract is the post-proposal approval authority: it must
+be `ready`, record a nonempty approval reference, and bind the exact proposal
+path, SHA-256, and work lane. The repository validator enforces that binding.
+Do not rewrite a frozen proposal merely to make its historical header say
+`approved`.
+
 1. Read the active task, approved proposal, implementation bundle, state
    matrix, control map, experiment, validation plan, results, and gaps.
 2. Create a repository-relative `prototype-index.json`. Bind every authority by
@@ -95,6 +103,22 @@ Fresh work is explicit:
 ```sh
 python3 tools/instrument_lab/reproduce.py --repo-root . --reproduce
 ```
+
+The command above reproduces the generated smoke scaffold. Reproduce a musical
+consumer from a fresh relocated repository root explicitly:
+
+```sh
+python3 tools/instrument_lab/reproduce.py \
+  --repo-root . \
+  --consumer-root research/prototypes/CONSUMER \
+  --reproduce
+```
+
+Use `--ctest-regex` only when the consumer intentionally retains a failing or
+separately gated render test, and repeat `--cmake-arg=VALUE` for explicit
+Core-only options. This mode copies only repository-owned contract, source,
+package, research, schema, and tool roots; it never copies `build/`, fetches a
+dependency, enables JUCE, launches an app, or opens a device by default.
 
 The generator refuses a non-empty output directory. The validator rejects
 unknown fields, canonical-looking identities, nonportable or mutable paths,

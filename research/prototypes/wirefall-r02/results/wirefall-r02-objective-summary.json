@@ -1,0 +1,228 @@
+{
+  "artifact_hashes": {
+    "R02_CMP_TREMOLO": {
+      "canonical_events_sha256": "0641ceb801db6b09f6f4111c90f7ed68ff5b017355c23590e07d6fd66c961998",
+      "canonical_wav_sha256": "d212f42663436c19fa8c9455fa844e02dddb37332c0b84d4de0624a93c58e8a1",
+      "partitions": {
+        "1": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "16": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "257": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "512": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "64": {
+          "events_exact": true,
+          "wav_exact": true
+        }
+      },
+      "repeat_exact": true
+    },
+    "R02_ENERGY": {
+      "canonical_events_sha256": "84274f21b3fc0d5a0147387f59f24b75932f274fd70a9bd9d0bb109f102ed4e8",
+      "canonical_wav_sha256": "241f4dc90916900836e2ea02a782d5d12b51424d96172180fe2dd4fc9863365f",
+      "partitions": {
+        "1": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "16": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "257": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "512": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "64": {
+          "events_exact": true,
+          "wav_exact": true
+        }
+      },
+      "repeat_exact": true
+    },
+    "R02_SILENCE": {
+      "canonical_events_sha256": "890a129310ade9bf288f58a82a4bb4ffff8d10272cea3a541c010517a1b31976",
+      "canonical_wav_sha256": "d59f017c91b34948f5d2cec0898eeab017a0e39d3eb66b148b1945791e2f9b68",
+      "partitions": {
+        "1": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "16": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "257": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "512": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "64": {
+          "events_exact": true,
+          "wav_exact": true
+        }
+      },
+      "repeat_exact": true
+    },
+    "R02_TICK": {
+      "canonical_events_sha256": "0f45af410108679dfa066d0115cb432b7832f1975d0d6880e038fd22f50948ce",
+      "canonical_wav_sha256": "3e94c4e34bfa3e7e26e43027d0a6a9154b3819d9a3d27f5c580312794fd2e4d4",
+      "partitions": {
+        "1": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "16": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "257": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "512": {
+          "events_exact": true,
+          "wav_exact": true
+        },
+        "64": {
+          "events_exact": true,
+          "wav_exact": true
+        }
+      },
+      "repeat_exact": true
+    }
+  },
+  "energy": {
+    "centroid_hz": [
+      233.09786872793958,
+      471.9703288260258,
+      986.5415889157,
+      2005.1432461618415,
+      4101.48043218313
+    ],
+    "centroid_positive_steps": 4,
+    "centroid_ratio": 17.59552952828658,
+    "fundamental_cents_error": [
+      0.1944680698233426,
+      0.11541192970775023,
+      0.07852297145460455,
+      0.038273879365090344,
+      -0.006309642591696355
+    ],
+    "fundamental_hz": [
+      95.48743687310838,
+      138.72507343668593,
+      210.34801085348036,
+      327.49410664670637,
+      519.9944399996544
+    ],
+    "highest_nonharmonic_below_20khz_dbfs": -85.84345854737307,
+    "passed": true,
+    "rms_gain_db": 2.8775598498520933,
+    "step_pitch_cents": [
+      646.6148748023274,
+      720.659530420509,
+      766.4289237233523,
+      800.4327027254698
+    ]
+  },
+  "failures": [],
+  "interrupt": {
+    "boundary_excess_max": 0.008145403116941452,
+    "full_break_interior_peak": 0.0,
+    "main_suppression_db": 581.13173373072,
+    "passed": true,
+    "schedule_exact": true,
+    "tick_interrupt_rms_dbfs": -21.57515709740936,
+    "tick_peak_dbfs": -9.874077329311609
+  },
+  "passed": true,
+  "safety": {
+    "R02_CMP_TREMOLO": {
+      "abs_peak": 0.32741665840148926,
+      "channel_dc_mean": [
+        1.2123124887258069e-06,
+        1.1497949040575111e-06
+      ],
+      "diagnostics": {
+        "accepted_events": 23,
+        "dropped_events": 0,
+        "invalid_events": 0,
+        "ledger_overflows": 0,
+        "non_finite_samples": 0,
+        "pulse_onsets": 180,
+        "safety_clamps": 0
+      },
+      "passed": true
+    },
+    "R02_ENERGY": {
+      "abs_peak": 0.45557722449302673,
+      "channel_dc_mean": [
+        2.804773342055533e-07,
+        2.7417031145896924e-07
+      ],
+      "diagnostics": {
+        "accepted_events": 8,
+        "dropped_events": 0,
+        "invalid_events": 0,
+        "ledger_overflows": 0,
+        "non_finite_samples": 0,
+        "pulse_onsets": 0,
+        "safety_clamps": 0
+      },
+      "passed": true
+    },
+    "R02_SILENCE": {
+      "abs_peak": 0.32741665840148926,
+      "channel_dc_mean": [
+        2.185000687597578e-06,
+        2.123120376536414e-06
+      ],
+      "diagnostics": {
+        "accepted_events": 23,
+        "dropped_events": 0,
+        "invalid_events": 0,
+        "ledger_overflows": 0,
+        "non_finite_samples": 0,
+        "pulse_onsets": 180,
+        "safety_clamps": 0
+      },
+      "passed": true
+    },
+    "R02_TICK": {
+      "abs_peak": 0.32741665840148926,
+      "channel_dc_mean": [
+        2.2512734462367177e-06,
+        2.189393167561303e-06
+      ],
+      "diagnostics": {
+        "accepted_events": 23,
+        "dropped_events": 0,
+        "invalid_events": 0,
+        "ledger_overflows": 0,
+        "non_finite_samples": 0,
+        "pulse_onsets": 180,
+        "safety_clamps": 0
+      },
+      "passed": true
+    }
+  },
+  "schema_version": "wirefall-r02-objective-summary-v1"
+}

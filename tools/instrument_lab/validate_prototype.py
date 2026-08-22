@@ -9,6 +9,10 @@ import sys
 from pathlib import Path
 from typing import Any
 
+REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
+if str(REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPOSITORY_ROOT))
+
 from common import (
     ContractError,
     canonical_json,
@@ -18,6 +22,7 @@ from common import (
     sha256_file,
     string_list,
 )
+from tools.source_packages.validate_source_package import validate_package
 
 INDEX_KEYS = {
     "schema_version", "prototype_id", "revision", "lane", "claims",
@@ -62,6 +67,111 @@ FORBIDDEN_TOPOLOGY = re.compile(
 )
 
 
+def _validate_source_release_reference(repo_root: Path, value: Any, where: str) -> None:
+    fields = {"content_hash", "path", "revision", "source_release_id"}
+    reference = exact_keys(value, fields, where)
+    relative = relative_authority_path(reference["path"])
+    record = load_json(repo_root / relative)
+    if not isinstance(record, dict):
+        raise ContractError("INVALID_SOURCE_RELEASE_REFERENCE", where)
+    actual = {key: record.get(key) for key in fields - {"path"}}
+    expected = {key: reference[key] for key in fields - {"path"}}
+    if actual != expected:
+        raise ContractError("SOURCE_RELEASE_REFERENCE_DRIFT", where)
+
+
+def _validate_source_dependencies(
+    repo_root: Path,
+    handoff_path: Path,
+    expected_prototype_id: str,
+) -> None:
+    document = load_json(handoff_path)
+    if not isinstance(document, dict) or document.get("schema_version") != "instrument-lab-source-dependencies-v1":
+        return
+    exact_keys(
+        document,
+        {
+            "adapter", "authenticated_extracted_sources", "claims", "consumer_id",
+            "physical_packages", "schema_version",
+        },
+        "source-dependencies",
+    )
+    if document["consumer_id"] != expected_prototype_id:
+        raise ContractError("PROTOTYPE_ID_MISMATCH", "source-dependencies")
+    claims = exact_keys(
+        document["claims"],
+        {
+            "catalog_membership", "graph_identity", "implementation_identity",
+            "provider_identity", "runtime_support",
+        },
+        "source-dependencies.claims",
+    )
+    if any(claims.values()):
+        raise ContractError("FALSE_CLAIM_REQUIRED", "source-dependencies.claims")
+
+    packages = document["physical_packages"]
+    if not isinstance(packages, list) or not packages:
+        raise ContractError("MISSING_PHYSICAL_PACKAGES", "source-dependencies")
+    package_ids: set[str] = set()
+    for index, item in enumerate(packages):
+        entry = exact_keys(
+            item,
+            {
+                "manifest", "package_id", "package_revision", "required_components",
+                "source_release",
+            },
+            f"source-dependencies.physical_packages[{index}]",
+        )
+        manifest_path, _ = _validate_ref(
+            repo_root, entry["manifest"], f"physical_packages[{index}].manifest"
+        )
+        _validate_source_release_reference(
+            repo_root, entry["source_release"], f"physical_packages[{index}].source_release"
+        )
+        components = string_list(
+            entry["required_components"], f"physical_packages[{index}].required_components"
+        )
+        package_root = (repo_root / manifest_path).parent
+        manifest, errors = validate_package(
+            package_root,
+            expected_package_id=entry["package_id"],
+            expected_package_revision=entry["package_revision"],
+            expected_source_release_id=entry["source_release"]["source_release_id"],
+            expected_source_release_revision=entry["source_release"]["revision"],
+            expected_source_release_content_hash=entry["source_release"]["content_hash"],
+            requested_components=components,
+        )
+        if errors:
+            raise ContractError("INVALID_PHYSICAL_PACKAGE", errors[0].line())
+        if manifest is None or entry["package_id"] in package_ids:
+            raise ContractError("DUPLICATE_PHYSICAL_PACKAGE", str(entry["package_id"]))
+        package_ids.add(entry["package_id"])
+
+    adapter = exact_keys(document["adapter"], {"interface", "manifest"}, "source-dependencies.adapter")
+    adapter_path, _ = _validate_ref(repo_root, adapter["manifest"], "source-dependencies.adapter.manifest")
+    adapter_document = load_json(repo_root / adapter_path)
+    if not isinstance(adapter_document, dict) or adapter_document.get("interface") != adapter["interface"]:
+        raise ContractError("ADAPTER_INTERFACE_DRIFT", str(adapter["interface"]))
+    adapter_claims = adapter_document.get("claims")
+    if not isinstance(adapter_claims, dict) or any(adapter_claims.values()):
+        raise ContractError("FALSE_CLAIM_REQUIRED", "adapter.claims")
+
+    extracted = document["authenticated_extracted_sources"]
+    if not isinstance(extracted, list):
+        raise ContractError("INVALID_EXTRACTED_SOURCE_LIST", "source-dependencies")
+    for index, item in enumerate(extracted):
+        entry = exact_keys(
+            item, {"manifest", "prerequisite", "source_release"},
+            f"authenticated_extracted_sources[{index}]",
+        )
+        _validate_ref(repo_root, entry["manifest"], f"extracted_sources[{index}].manifest")
+        _validate_source_release_reference(
+            repo_root, entry["source_release"], f"extracted_sources[{index}].source_release"
+        )
+        if not isinstance(entry["prerequisite"], str) or not entry["prerequisite"]:
+            raise ContractError("INVALID_EXTRACTED_SOURCE_PREREQUISITE", str(index))
+
+
 def _prototype_id(value: Any, where: str) -> str:
     if not isinstance(value, str) or not ID_RE.fullmatch(value):
         raise ContractError("INVALID_PROTOTYPE_ID", where)
@@ -93,6 +203,39 @@ def _validate_ref(repo_root: Path, value: Any, where: str) -> tuple[str, str]:
     if actual != digest:
         raise ContractError("AUTHORITY_HASH_MISMATCH", f"{rel}: {digest} != {actual}")
     return str(rel), digest
+
+
+def _validate_v2_approval_binding(
+    repo_root: Path,
+    index: dict[str, Any],
+    authority_paths: dict[str, str],
+) -> None:
+    contract_path = repo_root / authority_paths["implementation_contract"]
+    if contract_path.suffix != ".json":
+        return
+    contract = load_json(contract_path)
+    if not isinstance(contract, dict):
+        raise ContractError("INVALID_IMPLEMENTATION_CONTRACT", str(contract_path))
+    if contract.get("schema_version") != "sonic-research-lab-implementation-contract-v2":
+        return
+    if contract.get("status") != "ready":
+        raise ContractError("IMPLEMENTATION_CONTRACT_NOT_READY", authority_paths["implementation_contract"])
+    proposal = contract.get("proposal")
+    if not isinstance(proposal, dict):
+        raise ContractError("INVALID_APPROVAL_BINDING", "implementation-contract.proposal")
+    approval = proposal.get("approval")
+    if (
+        not isinstance(approval, dict)
+        or approval.get("state") != "approved"
+        or not isinstance(approval.get("reference"), str)
+        or not approval["reference"]
+    ):
+        raise ContractError("PROPOSAL_NOT_APPROVED", authority_paths["implementation_contract"])
+    proposal_ref = index["authorities"]["proposal"]
+    if proposal.get("path") != proposal_ref["path"] or proposal.get("sha256") != proposal_ref["sha256"]:
+        raise ContractError("APPROVAL_PROPOSAL_MISMATCH", authority_paths["implementation_contract"])
+    if contract.get("work_type") != index["lane"]:
+        raise ContractError("APPROVAL_LANE_MISMATCH", authority_paths["implementation_contract"])
 
 
 def validate_topology(path: Path, expected_id: str) -> dict[str, Any]:
@@ -232,11 +375,19 @@ def validate_consumer(repo_root: Path, consumer_root: Path, *, write: bool, chec
         raise ContractError("UNKNOWN_FIELD", "authorities: " + ", ".join(unknown))
     if missing:
         raise ContractError("MISSING_AUTHORITY", ", ".join(missing))
+    authority_paths: dict[str, str] = {}
     for name in sorted(authorities):
         ref = authorities[name]
         if name == "source_package_handoff" and ref is None:
             continue
-        _validate_ref(repo_root, ref, f"authorities.{name}")
+        authority_paths[name] = _validate_ref(repo_root, ref, f"authorities.{name}")[0]
+    _validate_v2_approval_binding(repo_root, index, authority_paths)
+    if "source_package_handoff" in authority_paths:
+        _validate_source_dependencies(
+            repo_root,
+            repo_root / authority_paths["source_package_handoff"],
+            prototype_id,
+        )
 
     core = exact_keys(index["core_adapter"], CORE_KEYS, "core_adapter")
     if core["sample_representation"] not in {"float32", "q27"}:

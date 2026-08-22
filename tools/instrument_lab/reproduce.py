@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Two-fresh-root and relocated-root Instrument Lab smoke reproduction."""
+"""Fresh/relocated Instrument Lab smoke and consumer reproduction."""
 
 from __future__ import annotations
 
@@ -18,6 +18,16 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 from common import ContractError  # noqa: E402
+
+
+RELOCATED_ROOTS = (
+    "contracts",
+    "docs",
+    "packages",
+    "research",
+    "schemas",
+    "tools",
+)
 
 
 def tree_hash(root: Path) -> str:
@@ -76,12 +86,81 @@ def reproduce(repo_root: Path) -> tuple[str, str]:
         return first
 
 
+def copy_relocated_repository(repo_root: Path, destination: Path) -> None:
+    destination.mkdir(parents=True)
+    for relative in RELOCATED_ROOTS:
+        source = repo_root / relative
+        if source.is_dir():
+            shutil.copytree(
+                source,
+                destination / relative,
+                ignore=shutil.ignore_patterns(
+                    "__pycache__", "*.pyc", ".DS_Store", "node_modules"
+                ),
+            )
+    for relative in ("AGENTS.md", "CMakeLists.txt"):
+        source = repo_root / relative
+        if source.is_file():
+            shutil.copy2(source, destination / relative)
+
+
+def reproduce_consumer(
+    repo_root: Path,
+    consumer_relative: Path,
+    *,
+    cmake_args: list[str],
+    ctest_regex: str | None,
+) -> str:
+    if consumer_relative.is_absolute() or ".." in consumer_relative.parts:
+        raise ContractError("INVALID_CONSUMER_PATH", consumer_relative.as_posix())
+    source_consumer = repo_root / consumer_relative
+    if not (source_consumer / "prototype-index.json").is_file():
+        raise ContractError("MISSING_CONSUMER", consumer_relative.as_posix())
+    expected_tree_hash = tree_hash(source_consumer)
+    with tempfile.TemporaryDirectory(prefix="schuss-instrument-consumer-reproduction-") as temporary:
+        relocated = Path(temporary) / "repository"
+        copy_relocated_repository(repo_root, relocated)
+        consumer = relocated / consumer_relative
+        if tree_hash(consumer) != expected_tree_hash:
+            raise ContractError("RELOCATED_CONSUMER_DRIFT", consumer_relative.as_posix())
+        run([
+            sys.executable,
+            str(relocated / "tools/instrument_lab/validate_prototype.py"),
+            "--repo-root", str(relocated),
+            "--consumer-root", str(consumer),
+            "--check",
+        ], relocated)
+        build = Path(temporary) / "build"
+        run([
+            "cmake", "-S", str(consumer), "-B", str(build),
+            "-DCMAKE_BUILD_TYPE=Release", *cmake_args,
+        ], relocated)
+        run(["cmake", "--build", str(build), "--parallel"], relocated)
+        ctest = ["ctest", "--test-dir", str(build), "--output-on-failure"]
+        if ctest_regex is not None:
+            ctest.extend(["-R", ctest_regex])
+        run(ctest, relocated)
+    return expected_tree_hash
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo-root", type=Path, default=ROOT)
+    parser.add_argument("--consumer-root", type=Path)
+    parser.add_argument("--cmake-arg", action="append", default=[])
+    parser.add_argument("--ctest-regex")
     parser.add_argument("--reproduce", action="store_true", required=True)
     args = parser.parse_args()
     try:
+        if args.consumer_root is not None:
+            consumer_hash = reproduce_consumer(
+                args.repo_root.resolve(),
+                args.consumer_root,
+                cmake_args=args.cmake_arg,
+                ctest_regex=args.ctest_regex,
+            )
+            print(f"relocated consumer tree sha256: {consumer_hash}")
+            return 0
         generated, binary = reproduce(args.repo_root.resolve())
     except (ContractError, OSError) as exc:
         print(str(exc), file=sys.stderr)

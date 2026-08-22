@@ -1,0 +1,115 @@
+{
+  "acceptance_tests": [
+    "The same preset, seed, control history, and render duration produce byte-identical DrumHit and allocator traces across supported outer block sizes.",
+    "At enthusiasm zero, repeated phrases contain the same normalized authored events; increasing a lane complexity never removes one of that lane's base-layer events.",
+    "Rational timing fixtures place ordinary, triplet, quintuplet, and odd-meter events at deterministic integer sample offsets without a fixed sixteen-step representation.",
+    "Four pooled Braids cores render the six logical lanes through the specified deterministic choke, idle, tail, steal, and drop ordering, including same-sample overload fixtures.",
+    "The frozen stereo 48 kHz renders contain no integer overflow or hard clipping, remain within the declared peak and DC bounds, and match across supported outer block sizes.",
+    "The authoritative Mutable source-release references, exact shared 12-file Braids and 5-file stmlib physical closures, and reusable non-provider adapter validate before the instrument configures.",
+    "The exact Tide Pit regular Launch Control 3 topology fingerprint is reused, all 16 encoder and eight button selectors are generated, and every MIDI value, wrong-channel, unknown, inactive-mode, press, release, and invalid-value case is exhaustively checked.",
+    "Accepted LC3 mappings update only the public Controls or one-shot fill semantic; raw MIDI bytes never enter the rhythm generator, DrumHit stream, allocator, or synthesis pool.",
+    "The pure UI projection and streaming-control snapshot have focused tests; on-screen controls and MIDI controller messages traverse the same generated LC3 mapping and UI feedback reflects accepted public state.",
+    "The audio callback advances a persistent fixed-capacity rational-time scheduler and four-voice Braids pool without locks, allocation, file I/O, JSON, or UI work; accepted continuous controls affect the next callback block, with shape targets slewed over exactly 128 samples.",
+    "Complexity and enthusiasm changes affect only future un-crossed events, tempo preserves musical phase, swing affects only future eligible off-eighth events, rhythm selection restarts the selected study at its downbeat at the next block while preserving synthesis tails, and Fill starts one normalized one-bar overlay at the next block.",
+    "The optional standalone JUCE application target builds and links from an operator-supplied tree whose complete fingerprint matches the accepted JUCE source-release extraction manifest, with network fetching disabled.",
+    "The frozen offline render manifest remains byte-identical after the UI/host addition.",
+    "Fifteen independently authored rhythm-study descriptors span 2/4, 3/4, 4/4, 5/4, 5/8, 6/8, 7/8, 9/8, and 10/8, validate meter-local rational bounds, and produce deterministic cycle lengths, event traces, coherent variations, and fills without claiming cultural authenticity.",
+    "Buttons CC40-45 select or toggle exactly one corresponding logical lane, CC46 dispatches Fill, CC47 advances the fifteen-item rhythm bank once per press, and bottom encoders CC28-33 mutate only the selected lane's six bounded voice-shape values.",
+    "A neutral six-parameter shape bank is audio-equivalent to the authored lane recipes; non-neutral Tune, Timbre, Color, Decay, Pitch Env/Punch, and Level resolve within declared bounds, update sounding matching-lane voices plus future hits, and do not change DrumHit timing or provenance.",
+    "The fixed-capacity streaming engine produces byte-identical semantic hit and allocation traces and signed PCM for an identical control timeline across supported outer block partitions, and a synthetic callback-kernel benchmark reports measurements without promoting them to live real-time or device evidence.",
+    "Instrument Lab index, topology, authority hashes, promotion-needs, and implementation handoff validations pass without claiming accepted-runtime, target, device, listening, or production evidence."
+  ],
+  "decision_rights": {
+    "may": [
+      "Freeze the prototype-local C++ interfaces, authored preset fixture, fixed-point envelope equations, two-to-one decimator coefficients, and deterministic trace formats required by this proof.",
+      "Select the initial Braids model and recipe values for each of six logical lanes within the proposal's eligible model set.",
+      "Bind the already-approved Tide Pit regular Launch Control 3 physical topology to the drum machine's public controls through a pure generated adapter.",
+      "Add a prototype-local UI projection, fixed-capacity streaming host, selectable JUCE MIDI-input presentation, and optional standalone JUCE 8.0.15 target.",
+      "Expand the proof bank to fifteen independently authored rhythm studies and bind the regular LC3 bottom six buttons and encoders to direct selected-lane shaping under the frozen revision 0.6 laws.",
+      "Correct implementation defects and adjust non-product fixture values when the corrections are recorded in RESULTS.md and do not change the approved musical semantics."
+    ],
+    "must_not": [
+      "Allocate a numbered Schuss task, stable object ID, accepted schema, source release, provider, factory, record set, or governance state.",
+      "Launch the JUCE presentation during automated evidence, access a live audio or MIDI endpoint, rewrite a controller Custom Mode, add external clock, or add physical MIDI output scheduling.",
+      "Claim Ksoloti compatibility, real-time headroom, connected-device operation, listening quality, production readiness, or publication status.",
+      "Copy Grids code or rhythm tables, copy Beat Friend patterns, or change the semantic authority from DrumHit events to raw MIDI bytes.",
+      "Add pattern editing, preset persistence, Braids model selection, per-preset synthesis recipes, controller feedback transmission, or reinterpret selection focus as DSP voice ownership.",
+      "Stage, commit, push, publish, flash, access hardware, or modify inherited Wirefall work."
+    ]
+  },
+  "deferred_evidence": [
+    "live-real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "A noncanonical Instrument Lab prototype with controller-independent public controls and explicit rhythm, event, allocation, synthesis, and stereo-mix roles.",
+    "References to the authoritative Braids and stmlib source releases, exact reusable physical closures, retained notices, and a narrow repository-internal adapter.",
+    "A rational-time bank of fifteen independently authored rhythm studies and generated C++ descriptors whose freshness, attribution metadata, and meter bounds are checked exhaustively.",
+    "A portable C++17 rhythm generator, semantic DrumHit stream, fixed-capacity streaming scheduler, four-voice allocator, Braids wrapper, fixed-point envelopes, decimator, and offline renderer.",
+    "A generated regular Launch Control 3 descriptor set plus a pure channel/CC/value-to-public-control adapter with exhaustive mapping and application tests.",
+    "A pure accepted-state UI projection and lock-free atomic control-snapshot boundary with focused tests.",
+    "An optional JUCE 8.0.15 standalone audition app with six lane cards, fifteen-way rhythm selection, selected-lane six-parameter voice shaping, global performance controls, fill, activity/cycle/callback feedback, streaming stereo playback, and MIDI input selection/diagnostics.",
+    "Canonical event and allocator traces, objective metrics, deterministic stereo WAV renders, and a block-partition reproduction matrix.",
+    "Updated RESULTS.md, GAPS.md, prototype index, topology, promotion-needs, and implementation handoff artifacts."
+  ],
+  "dependency_contracts": [
+    "schuss-source-release-000008@1 remains authoritative for Eurorack identity, revision, hashes, provenance, and licensing; mutable-eurorack-braids-v1 owns only the exact reusable 12-file physical build closure.",
+    "schuss-source-release-000009@1 remains authoritative for stmlib identity, revision, hashes, provenance, and licensing; mutable-stmlib-v1 owns only the exact reusable 5-file physical build closure.",
+    "The shared Schuss Instrument Lab Core target supplies non-production host scaffolding only; it does not confer accepted runtime or target status.",
+    "The reusable regular Launch Control 3 physical topology is research/prototype_support/controllers/novation-launch-control-3-regular-v1.json at SHA-256 d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b; the topology contains no instrument semantics.",
+    "schuss-source-release-000007@1 remains the sole JUCE upstream authority; Instrument Lab derives fetch inputs from it and accepts a local tree only when its complete extracted-tree fingerprint matches research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json. Fetching remains disabled unless separately authorized.",
+    "Python 3, CMake, the local C++17 compiler, and CTest are validation prerequisites; no package installation is authorized."
+  ],
+  "goal": {
+    "primary_claim": "A six-lane authored rational-time rhythm engine can select among independently authored meters and apply persistent per-lane voice shaping while deterministically driving four dynamically reassigned Braids voices without making MIDI, edit focus, or a fixed sixteen-step grid authoritative.",
+    "why": "The advancement must preserve the proven complexity/event/allocator seams while testing meter-dependent phrase timing and reusable logical-lane synthesis recipes through the remaining LC3 surface."
+  },
+  "inputs": [
+    "Approved proposal revision 0.6 at research/proposals/schuss-generative-drum-machine.md.",
+    "Current Schuss governance, Instrument Lab v1 workflow and schemas, Task 034 performance-control contract, schuss_rt event model, and desktop MIDI ingress implementation inspected by the proposal.",
+    "Authenticated upstream Mutable Instruments eurorack commit 08460a69a7e1f7a81c5a2abcc7189c9a6b7208d4 with stmlib commit e3bd7c9cc00e4364166f9905c0509b6ffd0535ec.",
+    "The exact regular Launch Control 3 prototype topology reused by Tide Pit, with channel 16, encoders CC20-35, buttons CC40-47, and no faders.",
+    "The frozen deterministic experiment, control map, state matrix, source-equivalence disposition, and validation plan in this bundle."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "User instructions in the current Codex thread on 2026-08-21 approving implementation and the Tide Pit LC3/UI, followed after audition by the explicit request for buttons one through six to select the six voices, the bottom six encoders to shape the selected voice, next-block realtime response, samba and less-common researched rhythms, about fifteen patterns, and about five time signatures.",
+      "state": "approved"
+    },
+    "path": "research/proposals/schuss-generative-drum-machine.md",
+    "revision": "0.6",
+    "sha256": "e64c62891f34cbe085bace71c4ea4536ec0665340ae566aa24734885da4728f7"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "Fifteen independently authored six-lane rhythm studies spanning at least five meters, including situated samba-family, maracatu, candombe, chacarera, aksak, and jhaptal studies, with reduced rational positions, 16-bit monotone base thresholds, explicit variation groups, meter-local fills, source relationships, and no authenticity claim.",
+      "Deterministic bar/cycle-level enthusiasm keyed by preset fingerprint, seed, cycle index, control epoch, and group key; zero enthusiasm is static and control changes affect future un-crossed events only.",
+      "Semantic absolute-frame DrumHit events with lane, U15 velocity, U8 articulation, source ordinal, and stable same-frame ordering.",
+      "Four fully pooled Braids cores, full-storage reset on reassignment, per-hit fixed-point amplitude and parameter envelopes, deterministic choking, stealing, dropping, tail bridge, gain, and pan.",
+      "The Tide Pit regular Launch Control 3 Custom Mode topology and an instrument-owned pure mapping: CC20-25 lane complexities, CC26 enthusiasm, CC27 tempo, CC28-33 selected-lane Tune/Timbre/Color/Decay/Pitch Env/Level, CC34 swing, CC35 direct rhythm select, CC40-45 corresponding lane selection/toggle, CC46 Fill, and CC47 rhythm advance.",
+      "One persistent six-U7 VoiceShape record per logical lane. Neutral values resolve to authored recipes; editable fields are Tune, Timbre, Color, Decay, Pitch Env/Punch, and Level only.",
+      "Core-only Instrument Lab integration and deterministic offline 48 kHz stereo host-signal evidence.",
+      "A prototype-local state-driven JUCE standalone audition UI whose callback consumes coherent atomic public-control snapshots and advances a persistent fixed-capacity scheduler/synthesis pool with no callback locks or allocation.",
+      "Selectable host MIDI input and receive diagnostics in the optional app, with every accepted message terminating at the generated LC3-to-public-control/state reducer.",
+      "A fifteen-item rhythm selector, six numbered lane-shaping buttons, and a disabled-when-unselected six-knob shaping panel whose feedback is projected from accepted state."
+    ],
+    "out": [
+      "Accepted Schuss schemas, records, packages, runtime providers, factory registrations, task activation, governance changes, and generalized sequencer architecture.",
+      "Application launch during this implementation, connected-device execution, MIDI note or clock input/output, controller programming, and feedback transmission.",
+      "Ksoloti builds or hardware, live audio-device deadline certification, subjective listening conclusions, release packaging, and publication.",
+      "Grids source or data reuse, Beat Friend proprietary material, copied traditional notation/audio/ceremonial patterns, cultural-authenticity claims, user-authored pattern UI, user preset save/recall, Braids model selection, and per-rhythm recipe banks."
+    ]
+  },
+  "status": "ready",
+  "target": "portable C++17 Instrument Lab Core with fixed-capacity streaming scheduler, deterministic 48 kHz offline renderer, and optional authenticated JUCE 8.0.15 macOS standalone audition app; Braids cores at 96 kHz",
+  "title": "Schuss Generative Drum Machine",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "built Schuss Generative Drums standalone application target plus canonical offline DrumHit trace, allocator trace, metrics, and stereo 48 kHz WAV",
+    "evidence_level": "target-build",
+    "success_observation": "All focused Core, mapping, UI projection, atomic-control, streaming-scheduler, and callback-kernel checks pass; supported outer block sizes preserve identical traces and PCM for the same timeline; the generated LC3 map terminates at public drum controls; and the authenticated JUCE 8.0.15 standalone target compiles and links without launching the application or promoting synthetic timing measurements to live real-time, device, listening, or production claims."
+  }
+}

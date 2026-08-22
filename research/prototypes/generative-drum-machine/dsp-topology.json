@@ -1,0 +1,138 @@
+{
+  "claims": {
+    "canonical_schuss_record": false,
+    "executable_graph": false
+  },
+  "connections": [
+    {"from": "role.parameter.performance", "kind": "bounded-semantic-values", "to": "role.node.rhythm"},
+    {"from": "role.parameter.performance", "kind": "selected-lane-six-u7-shape-bank-with-128-sample-slew", "to": "role.node.recipes"},
+    {"from": "role.action.fill", "kind": "next-block-one-bar-overlay", "to": "role.node.rhythm"},
+    {"from": "role.action.rhythm-next", "kind": "rhythm-bank-selection", "to": "role.node.rhythm"},
+    {"from": "role.action.shape-select", "kind": "logical-lane-edit-focus", "to": "role.node.recipes"},
+    {"from": "role.node.timeline", "kind": "absolute-frame-conversion", "to": "role.node.rhythm"},
+    {"from": "role.node.rhythm", "kind": "timed-drum-hit", "to": "role.node.allocator"},
+    {"from": "role.node.recipes", "kind": "lane-synthesis-recipe", "to": "role.node.allocator"},
+    {"from": "role.node.allocator", "kind": "voice-assignment", "to": "role.node.braids-pool"},
+    {"from": "role.node.recipes", "kind": "per-hit-parameter-shape", "to": "role.node.envelopes"},
+    {"from": "role.node.braids-pool", "kind": "ninety-six-khz-mono-voices", "to": "role.node.envelopes"},
+    {"from": "role.node.envelopes", "kind": "shaped-mono-voices", "to": "role.node.decimator"},
+    {"from": "role.node.decimator", "kind": "forty-eight-khz-mono-voices", "to": "role.node.mixer"},
+    {"from": "role.node.mixer", "kind": "q27-stereo", "to": "role.port.audio-out-left"},
+    {"from": "role.node.mixer", "kind": "q27-stereo", "to": "role.port.audio-out-right"},
+    {"from": "role.node.rhythm", "kind": "canonical-observation", "to": "role.display.event-trace"},
+    {"from": "role.node.allocator", "kind": "canonical-observation", "to": "role.display.allocation-trace"}
+  ],
+  "feedback_edges": [
+    {"from": "role.node.braids-pool", "kind": "oscillator-and-delay-state", "to": "role.node.braids-pool"},
+    {"from": "role.node.envelopes", "kind": "decaying-per-hit-state", "to": "role.node.envelopes"},
+    {"from": "role.node.allocator", "kind": "active-voice-metadata", "to": "role.node.allocator"}
+  ],
+  "fusion_boundary": {
+    "implementation_note": "One portable instrument-owned Core fuses these inspectable local roles for the bounded proof.",
+    "includes": [
+      "role.node.timeline",
+      "role.node.rhythm",
+      "role.node.recipes",
+      "role.node.allocator",
+      "role.node.braids-pool",
+      "role.node.envelopes",
+      "role.node.decimator",
+      "role.node.mixer"
+    ],
+    "local_role": "role.fusion.core"
+  },
+  "nodes": [
+    {
+      "internals": ["reduced rational quarter positions", "persistent q32 quarter-note phase with carried remainder", "bounded second-eighth swing"],
+      "local_role": "role.node.timeline",
+      "name": "rational musical timeline",
+      "origin": "newly-designed",
+      "responsibility": "advance persistent musical phase and cross meter-local authored positions at deterministic host frames",
+      "state_owner": true,
+      "unresolved_component_contract": ["meter-aware rational event timeline"]
+    },
+    {
+      "internals": ["fifteen independently authored rhythm studies across nine notated meters", "six monotone complexity thresholds", "two coherent variation groups per rhythm", "seeded cycle decisions", "next-block normalized one-bar fill overlay"],
+      "local_role": "role.node.rhythm",
+      "name": "authored rhythm generator",
+      "origin": "newly-designed",
+      "responsibility": "emit semantic timed drum hits from authored intensity and phrase choices",
+      "state_owner": true,
+      "unresolved_component_contract": ["authored rhythm definition", "time-aware rhythm generator", "semantic timed drum hit"]
+    },
+    {
+      "internals": ["model", "authored recipe", "six persistent neutral-centered shape banks", "resolved pitch", "timbre", "color", "fixed-point decay", "pitch-envelope punch", "gain", "pan", "priority", "choke group"],
+      "local_role": "role.node.recipes",
+      "name": "logical lane recipes",
+      "origin": "newly-designed",
+      "responsibility": "bind each musical lane to synthesis and allocation metadata without owning a permanent oscillator",
+      "state_owner": true,
+      "unresolved_component_contract": ["drum lane synthesis recipe"]
+    },
+    {
+      "internals": ["same-frame priority order", "choke victim", "idle slot", "quiet tail reuse", "bounded steal", "drop accounting"],
+      "local_role": "role.node.allocator",
+      "name": "deterministic four-voice allocator",
+      "origin": "newly-designed",
+      "responsibility": "map six logical lanes onto four physical synthesis slots",
+      "state_owner": true,
+      "unresolved_component_contract": ["voice pool policy", "allocation observation"]
+    },
+    {
+      "internals": ["four zero-reconstructable source cores", "per-slot model state", "explicit excitation"],
+      "local_role": "role.node.braids-pool",
+      "name": "four-source synthesis pool",
+      "origin": "source-derived",
+      "responsibility": "render the selected synthesis model for each allocated physical slot",
+      "state_owner": true,
+      "unresolved_component_contract": ["licensed macro-oscillator host primitive"]
+    },
+    {
+      "internals": ["amplitude decay", "pitch transient", "timbre transient", "color transient", "forty-eight-frame attack and tail bridge"],
+      "local_role": "role.node.envelopes",
+      "name": "per-hit transient wrapper",
+      "origin": "newly-designed",
+      "responsibility": "shape continuous and struck source models into bounded drum voices and bridge reassignment discontinuities",
+      "state_owner": true,
+      "unresolved_component_contract": ["fixed-point multi-parameter transient"]
+    },
+    {
+      "internals": ["two-to-one conversion", "five-tap binomial finite impulse response", "per-slot history"],
+      "local_role": "role.node.decimator",
+      "name": "deterministic source-rate converter",
+      "origin": "newly-designed",
+      "responsibility": "convert each source core from ninety-six to forty-eight kilohertz",
+      "state_owner": true,
+      "unresolved_component_contract": ["deterministic integer rate converter"]
+    },
+    {
+      "internals": ["per-lane gain", "linear balance pan", "wide accumulation", "single q27 saturation boundary"],
+      "local_role": "role.node.mixer",
+      "name": "bounded stereo mixer",
+      "origin": "fused-implementation",
+      "responsibility": "sum four physical voices into deterministic stereo output and objective metrics",
+      "state_owner": false,
+      "unresolved_component_contract": ["bounded stereo drum mixer"]
+    }
+  ],
+  "prototype_id": "generative-drum-machine",
+  "public_facets": {
+    "actions": [
+      {"data_type": "rising-edge semantic action", "direction": "input", "local_role": "role.action.fill", "name": "start one authored one-bar fill overlay"},
+      {"data_type": "rising-edge semantic action", "direction": "input", "local_role": "role.action.rhythm-next", "name": "advance authored rhythm bank"},
+      {"data_type": "six rising-edge semantic actions", "direction": "input", "local_role": "role.action.shape-select", "name": "select or toggle logical-lane shaping focus"}
+    ],
+    "displays": [
+      {"data_type": "canonical timed event observation", "direction": "output", "local_role": "role.display.event-trace", "name": "drum hit trace"},
+      {"data_type": "canonical voice decision observation", "direction": "output", "local_role": "role.display.allocation-trace", "name": "allocation trace"}
+    ],
+    "parameters": [
+      {"data_type": "six U16 complexities, fifteen-way rhythm index, U16 enthusiasm, tempo, swing, six six-U7 shape banks, and shaping focus", "direction": "input", "local_role": "role.parameter.performance", "name": "surface-independent performance and logical-lane shape controls"}
+    ],
+    "ports": [
+      {"data_type": "q27 audio", "direction": "output", "local_role": "role.port.audio-out-left", "name": "audio out left"},
+      {"data_type": "q27 audio", "direction": "output", "local_role": "role.port.audio-out-right", "name": "audio out right"}
+    ]
+  },
+  "schema_version": "schuss-instrument-lab-dsp-topology-v1"
+}

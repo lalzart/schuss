@@ -1,0 +1,54 @@
+{
+  "claims": {
+    "allocates_canonical_records": false,
+    "executable_graph": false
+  },
+  "needs": [
+    {
+      "local_role": "role.node.allocator",
+      "required_contract": "allocation observation"
+    },
+    {
+      "local_role": "role.node.allocator",
+      "required_contract": "voice pool policy"
+    },
+    {
+      "local_role": "role.node.braids-pool",
+      "required_contract": "licensed macro-oscillator host primitive"
+    },
+    {
+      "local_role": "role.node.decimator",
+      "required_contract": "deterministic integer rate converter"
+    },
+    {
+      "local_role": "role.node.envelopes",
+      "required_contract": "fixed-point multi-parameter transient"
+    },
+    {
+      "local_role": "role.node.mixer",
+      "required_contract": "bounded stereo drum mixer"
+    },
+    {
+      "local_role": "role.node.recipes",
+      "required_contract": "drum lane synthesis recipe"
+    },
+    {
+      "local_role": "role.node.rhythm",
+      "required_contract": "authored rhythm definition"
+    },
+    {
+      "local_role": "role.node.rhythm",
+      "required_contract": "semantic timed drum hit"
+    },
+    {
+      "local_role": "role.node.rhythm",
+      "required_contract": "time-aware rhythm generator"
+    },
+    {
+      "local_role": "role.node.timeline",
+      "required_contract": "meter-aware rational event timeline"
+    }
+  ],
+  "prototype_id": "generative-drum-machine",
+  "schema_version": "schuss-instrument-lab-promotion-needs-v1"
+}

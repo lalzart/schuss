@@ -1,0 +1,23 @@
+{
+  "evidence_ceiling": "host-signal",
+  "frozen_inputs": [
+    {"path": "research/proposals/wirefall.md", "sha256": "cf9b5f58e50856a9d38d754ee476ced58c52473bb9f9ff1216c75e7ca28707b8"},
+    {"path": "research/prototypes/wirefall/contract/implementation-contract.json", "sha256": "8c130286deec12b95a44c84674542677a46f009eaaf414a5c2326953016c2058"},
+    {"path": "research/prototypes/wirefall/contract/source-equivalence.json", "sha256": "1bb6d4406f7ed4ee4470a4a122565274a83c97f79488eeaf4a6d4e469b298dd7"},
+    {"path": "research/prototypes/wirefall/contract/experiment.json", "sha256": "aeee17bb3b0ad296824a6cfc559a0aff6ebeb0ca85372d2e9f9105e021a6662c"},
+    {"path": "research/prototypes/wirefall/contract/state-matrix.md", "sha256": "9899e868b58cfed4f8f52a37f7b0caa25856d83ac3f363935c0e240544dcad50"},
+    {"path": "research/prototypes/wirefall/contract/control-map.json", "sha256": "f97dde2a8d2d8d52e29249466b8325afbc703fad847aa9ef337649bae11e2ccd"},
+    {"path": "research/prototypes/wirefall/contract/validation-plan.json", "sha256": "d214d48e82a780d78e08280bbbbca02b54c14ffe1fccb27d5bd9c20fa8fd0b98"},
+    {"path": "research/prototypes/wirefall/contract/dsp-specification.md", "sha256": "6fc41daa0807a17d239c6b69a1ad24b2548ffd11caa6bd355b2ed6503ec7e0cf"},
+    {"path": "research/prototypes/wirefall/contract/wirefall-fir-63.json", "sha256": "c8dcee975d70775f73435e1974e73eee814b4d21cc334b5ab46a9c9132741fb0"}
+  ],
+  "mutable_backfill_baseline": [
+    {"path": "research/prototypes/wirefall/contract/RESULTS.md", "sha256": "4119924988f6a4702dc1050f4d911dde7311f00a295db89fa0b73c8200dc9edd"},
+    {"path": "research/prototypes/wirefall/contract/GAPS.md", "sha256": "5919617d567e0056252435c38b7d6fa2e287aed12b7749e4be59340ce692d0a2"}
+  ],
+  "schema_version": "wirefall-ready-bundle-v1",
+  "status": "ready",
+  "title": "Wirefall revision 0.1 implementation-ready bundle",
+  "validator": "sonic-research-lab develop-dsp-instrument-ideas 0.3.0+codex.20260820115751 readiness phase",
+  "work_type": "new-design"
+}
