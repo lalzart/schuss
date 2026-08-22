@@ -1,8 +1,10 @@
 # Task 039: Desktop instrument library and bounded JUCE audition launch
 
-Status: explicitly authorized; review-ready.
+Status: explicitly authorized; completed locally and user-accepted on
+2026-08-22.
 
 - Baseline commit: `74d87cf544e6e23423a2d4be03d07c33b1f13eb8`
+- Completion commit: `b9a742efe8ebb832bdf5858404301a51066abeea`
 - Kind: product-ui
 - Activation: the user's 2026-08-22 instruction to start the approved
   Instruments-first desktop slice
@@ -174,7 +176,7 @@ This task must not decide:
    native instrument build, reproduction, release, audio/MIDI, or hardware
    profile is required.
 
-## Review-ready results
+## Completion results
 
 - The generated exact library contains five noncanonical prototype revisions.
   Generative Drum Machine 0.6, Tide Pit Gills 0.1, and Wirefall 0.2 match their
@@ -195,4 +197,16 @@ This task must not decide:
   because the installed Rust toolchain has no `rustfmt` component; no component
   was installed.
 - No real JUCE application, audio/MIDI endpoint, USB/device path, build,
-  package, commit, push, or publication action was performed.
+  package, commit, push, or publication action was performed during automated
+  implementation and validation. The completed package was later committed
+  locally as `b9a742e`; it has not been pushed or published.
+
+## User acceptance closeout
+
+On 2026-08-22 the user reported operating the Launch Control and instruments
+and finding that everything was working fairly well. That report accepts the
+Task 039 product slice and closes the task locally. It is user-operated
+acceptance, not a structured callback-deadline, resource, controller-timing,
+production, or listening evidence packet, and it does not promote the
+noncanonical prototypes into Schuss catalog, graph, provider, or runtime
+identity.

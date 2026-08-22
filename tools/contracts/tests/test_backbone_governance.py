@@ -55,6 +55,9 @@ class BackboneGovernanceTest(unittest.TestCase):
             "contract": contract,
             "baseline_commit": "88788c5ed9b7acd5f1c19b675b2aa7afcdce0a81",
         }
+        state["evidence_boundary"] = {
+            key: False for key in state["evidence_boundary"]
+        }
         new_marker = governance.routing_marker(state)
         documents[governance.STATE] = json.dumps(state, indent=2) + "\n"
         for path in (governance.STATUS, governance.ROADMAP, governance.TASKS_INDEX):

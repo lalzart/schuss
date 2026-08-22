@@ -4,7 +4,7 @@
     {
       "name": "hardware-evidence-promotion",
       "path": "docs/governance/current-state.json",
-      "old": "\"hardware_action_performed\": false",
+      "old": "\"hardware_action_performed\": true",
       "new": "\"hardware_action_performed\": \"unknown\"",
       "expected_code": "EVIDENCE_BOUNDARY_INVALID"
     },

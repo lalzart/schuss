@@ -1,6 +1,6 @@
 # Schuss status
 
-<!-- schuss-governance-routing: active=039@review-ready; next=033-phase-3@not-activated -->
+<!-- schuss-governance-routing: active=none; next=033-phase-3@not-activated -->
 
 The machine-readable current routing source is
 `docs/governance/current-state.json`. This file explains that state in plain
@@ -10,17 +10,24 @@ schemas, records, record sets, fixtures, and evidence packets.
 
 ## Current work
 
-Task 039 is the only active task and is review-ready. It adds a noncanonical
-five-entry Instrument Lab audition library, exact fake-tested native JUCE
-launch sessions, and an Instruments-first desktop surface while preserving the
-existing Workshop and Ksoloti workflow. Three retained builds match exact
-executable evidence; Cinderwheel remains build-required and Wirefall 0.1 is
-research-only. No JUCE app, audio/MIDI endpoint, or hardware was opened during
-validation. Task 033 Phase 3 remains the next candidate but is not activated.
-No commit, publication, or package installation is authorized.
+There is no active task. Task 039 completed locally at `b9a742e` and was
+accepted by the user after a user-operated Launch Control and instrument check
+reported that the instruments were working fairly well. Its automated evidence
+remains the exact fake-process, bridge, React, Rust, current, and compatibility
+results recorded in the task; the user check is not a formal callback-deadline,
+production, or structured listening promotion. Task 033 Phase 3 remains the
+next candidate but is not activated. No push, publication, package installation,
+or further implementation task is authorized by this closeout.
 
 ## Recent completed milestones
 
+- Task 039 completed the five-entry noncanonical desktop audition library at
+  `b9a742e`, with three exact verified local builds, one build-required entry,
+  and one research-only entry.
+- Task 038 completed reusable Mutable source/consumer hardening at `74d87cf`
+  without allocating catalog, provider, graph, or runtime identity.
+- Tasks 036 and 037 completed the authenticated Mutable/Ksoloti physical source
+  package and non-production Instrument Lab at `c6fad1f`.
 - Task 035 completed proportional validation and governance consolidation at
   `88788c5`, with all 33 final release checks passing.
 - Task 034 completed the structural performance-control layer at `6010f29`.
@@ -33,9 +40,9 @@ No commit, publication, or package installation is authorized.
   and read-only operation contracts in
   `schuss-record-set-000031@1`.
 
-Task 033 Phases 3 and 4 have not started. Task 033 Phase 3 is the next candidate
-after Task 035, but it is not activated. Task numbers never override exact
-record-set ancestry or explicit user activation.
+Task 033 Phases 3 and 4 have not started. Task 033 Phase 3 is the next candidate,
+but it is not activated. Task numbers never override exact record-set ancestry
+or explicit user activation.
 
 ## Current product boundary
 
@@ -50,6 +57,8 @@ Schuss currently has:
   Task 031/032 factory types;
 - deterministic offline rendering and a headless JUCE audio/MIDI session
   adapter;
+- a noncanonical five-entry Instrument Lab audition library with bounded local
+  JUCE process launch and an Instruments-first desktop surface;
 - device-independent performance-control contracts and Gills/MIDI
   configurations; and
 - source-neutral object collections and explicit implementation providers.
@@ -61,9 +70,14 @@ instrument facets rather than DSP node IDs.
 
 ## Evidence boundary
 
+After automated validation, the user operated the Launch Control and instruments
+and reported that they were working fairly well. That closes product acceptance
+for Task 039, but it is not a structured connected-device, callback-deadline,
+resource, or listening evidence packet. Codex did not open the application,
+audio/MIDI endpoints, USB, or hardware during implementation or this closeout.
+
 Current work has not promoted:
 
-- physical hardware execution for Task 035;
 - firmware or SD-card mutation;
 - general real-time level 7;
 - audible level 8;
@@ -94,10 +108,10 @@ mapping is never reported as passed.
 
 ## Deferred and external gates
 
-Tasks 019 and 020 remain deferred. Task 012B remains retired by ADR 0010. A UI,
-MIDI execution, controller mapping runtime, new DSP palette tranche, JUCE DSP
-provider, connected-device action, packaging, or distribution task requires a
-separate explicit contract and activation.
+Tasks 019 and 020 remain deferred. Task 012B remains retired by ADR 0010. Any
+further UI, MIDI execution, controller mapping runtime, new DSP palette tranche,
+JUCE DSP provider, structured connected-device evidence, packaging, or
+distribution work requires a separate explicit contract and activation.
 
-Local completion and publication are separate. Consult Git directly before
-claiming that any local commit is present on `origin/main`.
+Local completion and publication are separate. Task 039 commit `b9a742e` is
+local and has not been pushed to `origin/main`.

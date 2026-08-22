@@ -1,41 +1,40 @@
 # Task contracts
 
-<!-- schuss-governance-routing: active=039@review-ready; next=033-phase-3@not-activated -->
+<!-- schuss-governance-routing: active=none; next=033-phase-3@not-activated -->
 
 Current scheduling authority is `../governance/current-state.json`. Task files
 define frozen boundaries; their presence in this directory does not make them
 active. Completed detail is indexed in `../HISTORY.md` and remains recoverable
-from Git.
+from Git. A task contract may retain its proposal-time status when exact result
+records bind the contract bytes; the index and result file carry later
+activation and completion state.
 
 ## Active
 
-- Task 039, desktop instrument library and bounded JUCE audition launch, is review-ready.
-  Its contract is `039-desktop-instrument-library.md`; it owns the
-  noncanonical audition manifest, exact list/start/inspect operations, closed
-  desktop bridge additions, and Instruments-first presentation only.
+There is no active task. Task 039 is complete locally and user-accepted. Task
+033 Phase 3 remains only the next candidate.
 
 ## Next candidate, not activated
 
-- Task 033 Phase 3 may begin only after Task 035 completes and the user
-  explicitly activates it. Task 033 Phase 2 is complete locally at `ccafc1d`;
-  Phases 3 and 4 remain unstarted.
+- Task 033 Phase 3 may begin only when the user explicitly activates it. Task
+  033 Phase 2 is complete locally at `ccafc1d`; Phases 3 and 4 remain unstarted.
 
-## Documented sequential follow-ups, not activated
+## Completed source, lab, and desktop follow-ups
 
-- Task 036 specifies an isolated shared authenticated Mutable source-package
-  pilot with Tide Pit as its first exact consumer. Its documentation records
-  the user's intent to implement it in a new chat, but it does not alter the
-  current routing above, activate Task 033, or allocate product/provider
-  semantics. Completion must emit the exact Instrument Lab handoff defined by
-  the task.
-- Task 037 specifies Instrument Lab v1: a two-prototype differential extraction
-  of reusable JUCE, MIDI, control, UI, renderer, build, and validation mechanics
-  plus a prototype-only DSP-topology artifact. It is hard-blocked on a complete
-  Task 036 handoff. It allocates no canonical graph/provider identity and does
-  not execute Task 034 performance-control graphs.
-
-The required order is Task 036 followed by Task 037. Neither documentation
-entry is an activation or a change to `docs/governance/current-state.json`.
+- Task 036 completed the shared authenticated Mutable/Ksoloti physical source
+  package and exact Tide Pit migration at `c6fad1f`. Its frozen contract retains
+  proposal-time wording; `036-RESULTS.md`, `036-GAPS.md`, and the exact handoff
+  record completion.
+- Task 037 completed Instrument Lab v1 at `c6fad1f`, after the complete Task 036
+  handoff. It extracted reusable non-production JUCE, MIDI, UI, renderer, build,
+  and validation mechanics without allocating canonical graph/provider identity.
+- Task 038 completed source/consumer reuse hardening at `74d87cf`, adding only
+  the source-only record-set successor and reusable physical source/adapter
+  closures.
+- Task 039 completed the noncanonical desktop audition library and bounded local
+  JUCE launch surface at `b9a742e`. The user later accepted it after operating
+  the Launch Control and instruments; no formal real-time or listening evidence
+  was promoted.
 
 ## Recent retained contracts
 

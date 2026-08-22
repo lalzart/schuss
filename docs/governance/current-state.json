@@ -1,13 +1,6 @@
 {
   "schema_version": "schuss-governance-state-v1",
-  "active_task": {
-    "task_id": "039",
-    "phase": null,
-    "kind": "product-ui",
-    "status": "review-ready",
-    "contract": "docs/tasks/039-desktop-instrument-library.md",
-    "baseline_commit": "74d87cf544e6e23423a2d4be03d07c33b1f13eb8"
-  },
+  "active_task": null,
   "next_candidate": {
     "task_id": "033",
     "phase": 3,
@@ -37,6 +30,30 @@
       "phase": null,
       "status": "complete-local",
       "commit": "88788c5"
+    },
+    {
+      "task_id": "036",
+      "phase": null,
+      "status": "complete-local",
+      "commit": "c6fad1f"
+    },
+    {
+      "task_id": "037",
+      "phase": null,
+      "status": "complete-local",
+      "commit": "c6fad1f"
+    },
+    {
+      "task_id": "038",
+      "phase": null,
+      "status": "complete-local",
+      "commit": "74d87cf"
+    },
+    {
+      "task_id": "039",
+      "phase": null,
+      "status": "complete-local",
+      "commit": "b9a742e"
     }
   ],
   "deferred_tasks": ["019", "020"],
@@ -60,7 +77,7 @@
     "release"
   ],
   "evidence_boundary": {
-    "hardware_action_performed": false,
+    "hardware_action_performed": true,
     "firmware_or_sd_mutation_performed": false,
     "real_time_level_7_promoted": false,
     "audible_level_8_promoted": false,
