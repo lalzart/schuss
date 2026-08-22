@@ -1,12 +1,14 @@
 # Task 033: Source-neutral object collections and native implementation providers
 
-Status: explicitly activated by the user on 2026-08-20. Phase 1 and Phase 2
-implementation are complete locally. Phase 1 is retained at commit `5dccfd2`;
-Phase 2 is retained at commit `ccafc1d` with exact successor record set
-`schuss-record-set-000031@1`. Phases 3 and 4 have not started and are not
-activated. Task 035 temporarily owns validation/governance consolidation before
-any Phase 3 work. This status authorizes no source import, dependency change,
-device action, Git publication, or UI change.
+Status: Phase 1 and Phase 2 are complete locally. Phase 1 is retained at commit
+`5dccfd2`; Phase 2 is retained at commit `ccafc1d` with exact successor record
+set `schuss-record-set-000031@1`. Phase 3 was explicitly activated on
+2026-08-22 from clean published baseline `d7578e0` and has passed its focused,
+adjacent native, and copied-root reproduction gates in this worktree. Phase 4
+is explicitly authorized and review-ready as its serialized successor. This
+status authorizes no source import, dependency change, device action,
+package/distribution work, or UI
+implementation.
 
 Task 034 owns the accepted parent semantic record set and shared operation/
 governance versions. Its integrated result is
@@ -313,8 +315,8 @@ operation/result v17, application capability v10, instrument v1, performance
 schemas, and shared semantic/governance integration. The reviewed result was
 committed as `6010f29` and fast-forwarded into local `main` on 2026-08-20.
 At that point Phases 2-4 were no longer blocked by Task 034 ownership. Phase 2
-subsequently froze the allocation below and completed at `ccafc1d`; Phases 3
-and 4 remain unimplemented and unactivated.
+subsequently froze the allocation below and completed at `ccafc1d`; Phase 3
+has now passed its worktree completion gate and Phase 4 is active.
 
 Phase 1 produced and focused-validated:
 
@@ -554,6 +556,39 @@ Owns the canonical provider/factory manifest and narrow Task 032 Python/C++/
 schema refactor. The existing seven factories and all v0/v1 package/runtime
 behavior remain exact. It adds no DSP node, provider, source dependency, or
 runtime capability.
+
+The 2026-08-22 activation freezes this exact allocation before implementation:
+
+- no semantic record, stable ID, public operation, capability, record set, or
+  provider successor is allocated; Phase 3 consumes
+  `schuss-implementation-provider-000001@1` and
+  `schuss-record-set-000031@1` unchanged;
+- canonical manifest schema and artifact:
+  `schemas/native-provider-registry-v1.schema.json` and
+  `contracts/task033/phase3/native-provider-registry-v1.json`;
+- deterministic generator, validator, unit/negative test, and copied-root
+  reproduction runner:
+  `generate_task033_phase3_registry.py`, `validate_task033_phase3.py`,
+  `test_task033_phase3_generated_registry.py`, and
+  `run_task033_phase3_reproduction.py` under `tools/contracts/`;
+- generated language artifacts:
+  `packages/schuss_core/generated_native_registry.py` and
+  the descriptor-table region of `packages/schuss_rt/src/runtime_v1.cpp`;
+- the two accepted v1 host schema files remain byte-compatible except that
+  their factory-ID enumerations become generator-owned from the canonical
+  manifest; and
+- the existing role enum, function implementations, runtime ABI, registry
+  version, factory IDs, exact contract/binding references, facet shapes,
+  fractional bits, state size/alignment, lifecycle symbols, diagnostics, and
+  output bytes are immutable Phase 3 inputs.
+
+The activation audit found that Phase 2 source release
+`schuss-source-release-000006@1` authenticates every `packages/schuss_rt` file
+and its exact membership. Phase 3 therefore generates the C++ descriptor table
+in place while retaining `runtime_v1.cpp` byte-for-byte and adds no file below
+that authenticated source root. This preserves the frozen no-successor
+allocation and lets the existing source-release stale-evidence check guard all
+non-descriptor runtime code.
 
 ### Phase 4: Integration and follow-up packets
 

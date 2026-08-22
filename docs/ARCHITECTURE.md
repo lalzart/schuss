@@ -371,6 +371,25 @@ Exact current status and proof gaps live only in `docs/STATUS.md`. UI remains a
 future client and cannot move catalog, graph, project, build, compiler, or
 device semantics into a GUI or the legacy Java bridge.
 
+## Source collections and native provider authority
+
+ADR 0017 and Task 033 keep source releases, discovery collections, catalog
+implementations, component contracts, target-specific bindings, eligibility,
+implementation providers, and runtime factory descriptors as distinct layers.
+A graph references only an exact component contract. Collection enablement,
+source paths, provider names, target/backend pairs, and runtime factory IDs
+never become graph identity or implementation-selection priority.
+
+The first JUCE-independent native provider contains exactly the seven accepted
+Task 031/032 bindings. Task 033 Phase 3 makes
+`contracts/task033/phase3/native-provider-registry-v1.json` the reviewed
+descriptor authority for generated Python lowering metadata, the existing C++
+descriptor-table bytes, and v1 host-schema factory enumerations. Generation
+does not make the descriptor browseable, add a provider, change the portable
+runtime ABI, or alter the accepted `runtime_v1.cpp` bytes. A later instrument
+may fuse execution internally only when its complete authoritative compound
+graph remains inspectable.
+
 The projection reference direction remains one way:
 
 ```text

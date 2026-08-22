@@ -1,28 +1,26 @@
 # Schuss roadmap
 
-<!-- schuss-governance-routing: active=none; next=033-phase-3@not-activated -->
+<!-- schuss-governance-routing: active=033-phase-4@review-ready; next=040@not-activated -->
 
 Current routing is defined by `docs/governance/current-state.json`; this roadmap
 describes sequencing rather than silently activating work.
 
 ## Active maintenance
 
-There is no active task. Task 039 is complete locally and user-accepted after a
-user-operated Launch Control and instrument check. Its formal evidence remains
-the retained fake-process, bridge, UI, Rust, current, and compatibility results;
-no callback-deadline, production, or structured listening claim was promoted.
+Task 033 Phase 4 is review-ready from published baseline `d7578e0`. Phase 3 has
+replaced the duplicated registry identity authority with one reviewed canonical
+native manifest while preserving the exact seven factories and every Task
+031/032 package/runtime behavior. Phase 4 closes the evidence-ranked tranche,
+later-UI, documentation, and final aggregate handoffs.
 
 ## Next candidate
 
-Task 033 Phase 3 is the next candidate, not an active task. It may replace the
-three hand-maintained Python/C++/schema factory tables with one reviewed
-generated native registry while preserving the exact seven factories and all
-Task 031/032 package/runtime behavior.
-
-Task 033 Phase 4 remains after Phase 3. It owns final cross-layer integration,
-follow-up packets, and any full Task 033 integration validation. Neither phase
-adds a DSP algorithm, source dependency, JUCE provider, UI, hardware claim, or
-audible claim without a separately accepted allocation.
+Task 040 is the next candidate and is not activated. Its contract defines the
+Cinderwheel canonical vertical slice at model and deterministic native
+host-signal evidence only. It must consume Task 033's exact handoff and pass a
+live allocation/readiness gate before shared implementation. Phase 4 adds no
+DSP algorithm, source dependency, JUCE provider, UI, hardware claim, or audible
+claim.
 
 ## Likely later work
 
@@ -55,4 +53,4 @@ important durable choices remain in ADRs:
 - ADR 0018 adopts proportional validation profiles.
 
 Tasks 019 and 020 remain deferred. Task 012B remains retired. Completion of Task
-039 does not automatically activate Task 033 Phase 3 or any later candidate.
+039 did not automatically activate Task 033 Phase 3 or any later candidate.

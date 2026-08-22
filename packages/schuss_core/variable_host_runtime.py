@@ -15,6 +15,10 @@ from typing import Any, Iterable, Mapping
 
 from .compiler_front_half import CompilationContext, plan_build
 from .control_plane import OperationContext, core
+from .generated_native_registry import (
+    FACTORY_DESCRIPTORS,
+    FACTORY_REGISTRY_VERSION,
+)
 from .host_runtime import HostRuntimeError
 
 
@@ -26,7 +30,6 @@ HOST_PACKAGE_SCHEMA = "host-runtime-package-v1"
 HOST_OBSERVATION_SCHEMA = "host-runtime-observation-v1"
 HOST_PROTOCOL_SCHEMA = "host-engine-protocol-v1"
 HOST_NUMERIC_PROFILE = "schuss-host-q27-reference-v0"
-FACTORY_REGISTRY_VERSION = "schuss-rt-factory-registry-v1"
 
 MAX_NODES = 64
 MAX_CONNECTIONS = 192
@@ -50,88 +53,8 @@ class FactorySpec:
     state_alignment: int
 
 
-FACTORY_SPECS = (
-    FactorySpec(
-        "saw",
-        "schuss-component-contract-000012",
-        "schuss-implementation-000162",
-        "schuss.rt.saw-q27-v0",
-        ("component-port-000001",),
-        ("component-port-000002",),
-        ("component-parameter-000001",),
-        16,
-        16,
-    ),
-    FactorySpec(
-        "pwm",
-        "schuss-component-contract-000013",
-        "schuss-implementation-000163",
-        "schuss.rt.pwm-q27-v0",
-        ("component-port-000001", "component-port-000002"),
-        ("component-port-000003",),
-        ("component-parameter-000001",),
-        16,
-        16,
-    ),
-    FactorySpec(
-        "soft",
-        "schuss-component-contract-000016",
-        "schuss-implementation-000164",
-        "schuss.rt.soft-q27-v0",
-        ("component-port-000001",),
-        ("component-port-000002",),
-        (),
-        0,
-        1,
-    ),
-    FactorySpec(
-        "smooth",
-        "schuss-component-contract-000015",
-        "schuss-implementation-000165",
-        "schuss.rt.smooth-q27-v0",
-        ("component-port-000001",),
-        ("component-port-000002",),
-        ("component-parameter-000001",),
-        8,
-        8,
-    ),
-    FactorySpec(
-        "crossfade",
-        "schuss-component-contract-000003",
-        "schuss-implementation-000166",
-        "schuss.rt.crossfade-q27-v0",
-        (
-            "component-port-000001",
-            "component-port-000002",
-            "component-port-000003",
-        ),
-        ("component-port-000004",),
-        (),
-        0,
-        1,
-    ),
-    FactorySpec(
-        "vca",
-        "schuss-component-contract-000020",
-        "schuss-implementation-000167",
-        "schuss.rt.vca-q27-v0",
-        ("component-port-000001", "component-port-000002"),
-        ("component-port-000003",),
-        (),
-        8,
-        8,
-    ),
-    FactorySpec(
-        "output",
-        "schuss-component-contract-000009",
-        "schuss-implementation-000168",
-        "schuss.rt.output-q27-v0",
-        ("component-port-000001", "component-port-000002"),
-        (),
-        (),
-        0,
-        1,
-    ),
+FACTORY_SPECS = tuple(
+    FactorySpec(**descriptor) for descriptor in FACTORY_DESCRIPTORS
 )
 
 _SPEC_BY_CONTRACT = {spec.contract_id: spec for spec in FACTORY_SPECS}

@@ -294,3 +294,20 @@ retains artifact descriptors `000022` through `000028`, build result `000002`,
 resource report `000002`, and independent evidence claims `000013` through
 `000017`. Static link-map observations fit the declared regions. These are
 compile/link facts only: evidence levels 6-8 are explicitly `not-run`.
+
+## Implementation-provider and runtime-descriptor boundary
+
+Task 033 adds source-neutral provider records without changing the target or
+backend identity model. A provider may supply exact bindings only for named
+target/backend pairs under one explicit ABI and source-release closure. A
+runtime factory descriptor is derived provider metadata; it is not a target,
+backend, binding, graph node, collection member, or build-selection shortcut.
+
+The first desktop-host provider remains
+`schuss-implementation-provider-000001@1` with registry version
+`schuss-rt-factory-registry-v1` and exactly seven Task 031/032 bindings. Its
+Phase 3 canonical manifest generates or validates descriptor identity across
+Python, C++, and the v1 host schemas while preserving the existing runtime
+source bytes. Adding a descriptor alone can never establish eligibility,
+compile, device, real-time, or audible evidence; a successor must close the
+component/binding/target/backend/provider chain first.

@@ -1,9 +1,16 @@
 {
   "schema_version": "schuss-governance-state-v1",
-  "active_task": null,
-  "next_candidate": {
+  "active_task": {
     "task_id": "033",
-    "phase": 3,
+    "phase": 4,
+    "kind": "runtime-maintenance",
+    "status": "review-ready",
+    "contract": "docs/tasks/033-object-collections-and-native-provider-architecture.md",
+    "baseline_commit": "d7578e0"
+  },
+  "next_candidate": {
+    "task_id": "040",
+    "phase": null,
     "status": "not-activated"
   },
   "recent_completed_milestones": [

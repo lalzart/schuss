@@ -154,3 +154,17 @@ The projection is a client-neutral read model, regenerated in memory from the
 exact corpus, overlay, contract/binding, target/backend, and evidence closure.
 It does not own source facts or readiness truth. See
 `docs/CATALOG_OPERATIONS.md`.
+
+## Source-neutral collections and target availability
+
+Task 033 catalog corpus revision 6 adds browseable companions for exactly the
+seven already allocated desktop-host implementations without rewriting the
+Task 030 members. An object collection is a curated set of exact catalog
+implementation locators used for discovery. It is never a primary category,
+graph namespace, provider, target promise, or selection input.
+
+Availability is resolved per exact implementation and explicit target/backend
+pair. Catalogued, contracted, bound, eligible, compile-proven, device-tested,
+real-time-tested, audible-tested, and unresolved remain independent facts.
+Provenance such as Factory, Mutable, JUCE, user, or community remains a facet;
+no source or collection presence manufactures compatibility.

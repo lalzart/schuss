@@ -1,6 +1,6 @@
 # Task contracts
 
-<!-- schuss-governance-routing: active=none; next=033-phase-3@not-activated -->
+<!-- schuss-governance-routing: active=033-phase-4@review-ready; next=040@not-activated -->
 
 Current scheduling authority is `../governance/current-state.json`. Task files
 define frozen boundaries; their presence in this directory does not make them
@@ -11,13 +11,14 @@ activation and completion state.
 
 ## Active
 
-There is no active task. Task 039 is complete locally and user-accepted. Task
-033 Phase 3 remains only the next candidate.
+- Task 033 Phase 4, review-ready from clean published baseline `d7578e0`, owns
+  the final integration and follow-up packets after Phase 3 passed its gate.
 
-## Next candidate, not activated
+## Next candidate
 
-- Task 033 Phase 3 may begin only when the user explicitly activates it. Task
-  033 Phase 2 is complete locally at `ccafc1d`; Phases 3 and 4 remain unstarted.
+- Task 040 is the proposed Cinderwheel canonical vertical slice. It is not
+  activated and must pass its live allocation and implementation-bundle gate
+  after the Task 033 Phase 4 handoff is accepted.
 
 ## Completed source, lab, and desktop follow-ups
 

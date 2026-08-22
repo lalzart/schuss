@@ -11,12 +11,12 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT), str(ROOT / "tools/contracts")]
 
-import validate_task033_phase2  # noqa: E402
+import validate_task033_phase4  # noqa: E402
 
 
 def main() -> int:
     try:
-        result = validate_task033_phase2.validate()
+        result = validate_task033_phase4.validate()
     except (OSError, ValueError) as exc:
         print(f"current closure invalid: {exc}", file=sys.stderr)
         return 1

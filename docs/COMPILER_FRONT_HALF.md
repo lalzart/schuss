@@ -75,6 +75,15 @@ provider cycles, exclusive-service conflicts, unresolved facts, and
 nonportable input separately. The resulting order is deterministic and places
 required dependencies before consumers when the provider graph is acyclic.
 
+Task 033 Phase 3 does not change compiler selection or provider ordering. It
+replaces duplicated seven-factory identity tables with the canonical native
+provider manifest at
+`contracts/task033/phase3/native-provider-registry-v1.json`. The Python lowerer
+consumes generated descriptors; the C++ runtime and host package schemas are
+generated or freshness-validated from the same authority. Factory-table order,
+collection order, source path, and display name remain prohibited selection
+inputs, and missing or ambiguous binding/provider closure still fails closed.
+
 Resource planning keeps these facts distinct:
 
 - target-region declarations;

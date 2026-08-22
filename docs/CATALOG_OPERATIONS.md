@@ -192,3 +192,10 @@ claims connected-device, real-time, or audible behavior. Later accepted
 component, graph, and backend records remain separate inputs to the projection;
 they do not change this operation boundary. Current readiness and proof gaps
 are maintained in `docs/STATUS.md`.
+
+Task 033's `collections.inspect` and
+`implementation.availability.inspect` operations are adjacent read models, not
+replacements for family/object search. They apply one explicit local discovery
+profile and one explicit target/backend pair to exact catalog implementation
+locators. Function-first navigation remains authoritative; collection,
+provenance, provider, and target readiness are filters and inspection facts.

@@ -1,6 +1,6 @@
 # Schuss status
 
-<!-- schuss-governance-routing: active=none; next=033-phase-3@not-activated -->
+<!-- schuss-governance-routing: active=033-phase-4@review-ready; next=040@not-activated -->
 
 The machine-readable current routing source is
 `docs/governance/current-state.json`. This file explains that state in plain
@@ -10,14 +10,15 @@ schemas, records, record sets, fixtures, and evidence packets.
 
 ## Current work
 
-There is no active task. Task 039 completed locally at `b9a742e` and was
-accepted by the user after a user-operated Launch Control and instrument check
-reported that the instruments were working fairly well. Its automated evidence
-remains the exact fake-process, bridge, React, Rust, current, and compatibility
-results recorded in the task; the user check is not a formal callback-deadline,
-production, or structured listening promotion. Task 033 Phase 3 remains the
-next candidate but is not activated. No push, publication, package installation,
-or further implementation task is authorized by this closeout.
+Task 033 Phase 4 is the only active task and is review-ready from clean
+published baseline `d7578e0`. Phase 3 passed its focused, adjacent native, and
+copied-root reproduction gates with the accepted seven factory identities and
+`runtime_v1.cpp` bytes unchanged. Phase 4 owns only the evidence-ranked next
+tranche, the later-UI requirements, documentation integration, and final
+cross-layer validation. It does not implement a new DSP algorithm, source
+dependency, provider, public operation, UI behavior, device action, package,
+or distribution action. Task 040 is the next contracted candidate and remains
+not activated.
 
 ## Recent completed milestones
 
@@ -40,9 +41,11 @@ or further implementation task is authorized by this closeout.
   and read-only operation contracts in
   `schuss-record-set-000031@1`.
 
-Task 033 Phases 3 and 4 have not started. Task 033 Phase 3 is the next candidate,
-but it is not activated. Task numbers never override exact record-set ancestry
-or explicit user activation.
+Task 033 Phase 3 was explicitly activated by the user on 2026-08-22 and passed
+its completion gate in this worktree. Task 033 Phase 4 is now the serialized
+review-ready phase; task numbers never override exact record-set ancestry or
+the completion gate. Task 040 remains a proposed canonical Cinderwheel slice,
+not an active implementation.
 
 ## Current product boundary
 
@@ -113,5 +116,6 @@ further UI, MIDI execution, controller mapping runtime, new DSP palette tranche,
 JUCE DSP provider, structured connected-device evidence, packaging, or
 distribution work requires a separate explicit contract and activation.
 
-Local completion and publication are separate. Task 039 commit `b9a742e` is
-local and has not been pushed to `origin/main`.
+Local completion and publication are separate. The clean baseline through
+Task 039 is published at `d7578e0`; current Task 033 Phase 3/4 work is not yet
+committed or pushed.

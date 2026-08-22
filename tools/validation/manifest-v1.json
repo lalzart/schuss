@@ -464,6 +464,15 @@
       "inputs": ["tools/contracts/run_task033_phase2_reproduction.py", "tools/contracts/compiler_determinism_matrix.py", "tools/contracts/generate_task033_phase2_records.py", "tools/contracts/validate_task033_phase2.py", "contracts/**", "schemas/**", "packages/schuss_core/**"]
     },
     {
+      "id": "reproduction.task033-phase3",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/run_task033_phase3_reproduction.py", "--reproduce"],
+      "validation_profile": "reproduction",
+      "cost_class": "reproduction",
+      "tool_prerequisites": ["git"],
+      "inputs": ["tools/contracts/run_task033_phase3_reproduction.py", "tools/contracts/compiler_determinism_matrix.py", "tools/contracts/generate_task033_phase3_registry.py", "tools/contracts/validate_task033_phase3.py", "contracts/task033/phase3/**", "schemas/native-provider-registry-v1.schema.json", "schemas/host-runtime-package-v1.schema.json", "schemas/host-runtime-observation-v1.schema.json", "packages/schuss_core/generated_native_registry.py", "packages/schuss_core/variable_host_runtime.py", "packages/schuss_rt/src/runtime_v1.cpp"]
+    },
+    {
       "id": "reproduction.instrument-lab",
       "kind": "command",
       "argv": ["{python}", "tools/instrument_lab/reproduce.py", "--repo-root", ".", "--reproduce"],
@@ -537,6 +546,7 @@
       "reproduction.task030",
       "reproduction.task032",
       "reproduction.task033-phase2",
+      "reproduction.task033-phase3",
       "reproduction.instrument-lab",
       "reproduction.instrument-lab-generative-drums",
       "reproduction.instrument-lab-wirefall"

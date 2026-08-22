@@ -1,0 +1,221 @@
+{
+  "$id": "native-provider-registry-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "backendReference": {
+      "additionalProperties": false,
+      "properties": {
+        "backend_id": {"pattern": "^schuss-backend-[0-9]{6}$", "type": "string"},
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "revision": {"minimum": 1, "type": "integer"}
+      },
+      "required": ["backend_id", "revision", "content_hash"],
+      "type": "object"
+    },
+    "bindingReference": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "implementation_id": {"pattern": "^schuss-implementation-[0-9]{6}$", "type": "string"},
+        "revision": {"minimum": 1, "type": "integer"}
+      },
+      "required": ["implementation_id", "revision", "content_hash"],
+      "type": "object"
+    },
+    "contentHash": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "contractReference": {
+      "additionalProperties": false,
+      "properties": {
+        "component_contract_id": {"pattern": "^schuss-component-contract-[0-9]{6}$", "type": "string"},
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "revision": {"minimum": 1, "type": "integer"}
+      },
+      "required": ["component_contract_id", "revision", "content_hash"],
+      "type": "object"
+    },
+    "facet": {
+      "additionalProperties": false,
+      "properties": {
+        "facet_id": {"pattern": "^component-port-[0-9]{6}$", "type": "string"},
+        "fractional_bits": {"maximum": 31, "minimum": 0, "type": "integer"}
+      },
+      "required": ["facet_id", "fractional_bits"],
+      "type": "object"
+    },
+    "factory": {
+      "additionalProperties": false,
+      "properties": {
+        "backend_reference": {"$ref": "#/$defs/backendReference"},
+        "contract_reference": {"$ref": "#/$defs/contractReference"},
+        "factory_id": {"pattern": "^schuss\\.rt\\.[a-z0-9-]+-v[0-9]+$", "type": "string"},
+        "implementation_binding_reference": {"$ref": "#/$defs/bindingReference"},
+        "inputs": {
+          "items": {"$ref": "#/$defs/facet"},
+          "maxItems": 3,
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true,
+          "x-schuss-array-kind": "sequence"
+        },
+        "lifecycle": {
+          "additionalProperties": false,
+          "properties": {
+            "event_symbol": {"pattern": "^[a-z][a-z0-9_]*$", "type": "string"},
+            "prepare_symbol": {"pattern": "^[a-z][a-z0-9_]*$", "type": "string"},
+            "process_symbol": {"pattern": "^[a-z][a-z0-9_]*$", "type": "string"},
+            "reset_symbol": {"pattern": "^[a-z][a-z0-9_]*$", "type": "string"}
+          },
+          "required": ["prepare_symbol", "reset_symbol", "event_symbol", "process_symbol"],
+          "type": "object"
+        },
+        "outputs": {
+          "items": {"$ref": "#/$defs/facet"},
+          "maxItems": 2,
+          "type": "array",
+          "uniqueItems": true,
+          "x-schuss-array-kind": "sequence"
+        },
+        "parameter_facets": {
+          "items": {"pattern": "^component-parameter-[0-9]{6}$", "type": "string"},
+          "maxItems": 4,
+          "type": "array",
+          "uniqueItems": true,
+          "x-schuss-array-kind": "sequence"
+        },
+        "provider_binding_id": {"pattern": "^provider-binding-[0-9]{6}$", "type": "string"},
+        "role": {"pattern": "^[a-z][a-z0-9-]*$", "type": "string"},
+        "state": {
+          "additionalProperties": false,
+          "properties": {
+            "alignment_bytes": {"enum": [1, 2, 4, 8, 16]},
+            "size_bytes": {"minimum": 0, "type": "integer"}
+          },
+          "required": ["size_bytes", "alignment_bytes"],
+          "type": "object"
+        },
+        "target_reference": {"$ref": "#/$defs/targetReference"}
+      },
+      "required": [
+        "role",
+        "provider_binding_id",
+        "contract_reference",
+        "implementation_binding_reference",
+        "target_reference",
+        "backend_reference",
+        "factory_id",
+        "inputs",
+        "outputs",
+        "parameter_facets",
+        "state",
+        "lifecycle"
+      ],
+      "type": "object"
+    },
+    "providerReference": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "implementation_provider_id": {"pattern": "^schuss-implementation-provider-[0-9]{6}$", "type": "string"},
+        "revision": {"minimum": 1, "type": "integer"}
+      },
+      "required": ["implementation_provider_id", "revision", "content_hash"],
+      "type": "object"
+    },
+    "targetReference": {
+      "additionalProperties": false,
+      "properties": {
+        "compute_target_id": {"pattern": "^schuss-compute-target-[0-9]{6}$", "type": "string"},
+        "content_hash": {"$ref": "#/$defs/contentHash"},
+        "revision": {"minimum": 1, "type": "integer"}
+      },
+      "required": ["compute_target_id", "revision", "content_hash"],
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "authority_boundary": {
+      "additionalProperties": false,
+      "properties": {
+        "allocates_catalog_or_graph_identity": {"const": false},
+        "allocates_provider_or_runtime_capability": {"const": false},
+        "changes_runtime_behavior": {"const": false},
+        "source_of_runtime_descriptor_shape": {"const": true}
+      },
+      "required": [
+        "source_of_runtime_descriptor_shape",
+        "allocates_catalog_or_graph_identity",
+        "allocates_provider_or_runtime_capability",
+        "changes_runtime_behavior"
+      ],
+      "type": "object"
+    },
+    "callback_constraints": {
+      "items": {"pattern": "^[a-z][a-z0-9-]*$", "type": "string"},
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true,
+      "x-schuss-array-kind": "set"
+    },
+    "canonical_profile": {"const": "schuss-canonical-json-v1"},
+    "factories": {
+      "items": {"$ref": "#/$defs/factory"},
+      "maxItems": 7,
+      "minItems": 7,
+      "type": "array",
+      "uniqueItems": true,
+      "x-schuss-array-kind": "sequence"
+    },
+    "factory_count": {"const": 7},
+    "generated_outputs": {
+      "const": [
+        "packages/schuss_core/generated_native_registry.py",
+        "packages/schuss_rt/src/runtime_v1.cpp",
+        "schemas/host-runtime-observation-v1.schema.json",
+        "schemas/host-runtime-package-v1.schema.json"
+      ]
+    },
+    "numeric_profile": {"const": "schuss-host-q27-reference-v0"},
+    "preserved_tree_hashes": {
+      "additionalProperties": false,
+      "properties": {
+        "contracts/task031": {"const": "0a7e40cd9dc7a33cfad3287d26ddab710c1a762ec02755d92a02ba8af9ad94c4"},
+        "contracts/task032": {"const": "62ecd0b44326d64ecff5cb4a82b90fb16c0d5486c5281d9a48cd04633a455152"},
+        "evidence/task032-completion-v1": {"const": "642f6495dc3b81a53373b123fe3a62a7310ac98366ea1f7b7ffc8239364c436c"},
+        "fixtures/task031": {"const": "90efe89a1458561703532d0aa1c447023ffdc7418e44e7cb7509fbac016011c7"},
+        "fixtures/task032": {"const": "8bb01690b71d1b743527fd216e96ac0b1a14883d81b14a6d128a693e4aaf6a45"}
+      },
+      "required": [
+        "contracts/task031",
+        "contracts/task032",
+        "evidence/task032-completion-v1",
+        "fixtures/task031",
+        "fixtures/task032"
+      ],
+      "type": "object"
+    },
+    "provider_reference": {"$ref": "#/$defs/providerReference"},
+    "registry_version": {"const": "schuss-rt-factory-registry-v1"},
+    "runtime_abi": {"const": "schuss-rt-abi-v1"},
+    "schema_version": {"const": "native-provider-registry-v1"}
+  },
+  "required": [
+    "schema_version",
+    "canonical_profile",
+    "registry_version",
+    "runtime_abi",
+    "numeric_profile",
+    "provider_reference",
+    "factory_count",
+    "callback_constraints",
+    "generated_outputs",
+    "preserved_tree_hashes",
+    "factories",
+    "authority_boundary"
+  ],
+  "title": "Schuss generated native provider registry v1 authority",
+  "type": "object"
+}

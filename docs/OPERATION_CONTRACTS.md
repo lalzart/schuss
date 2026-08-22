@@ -457,3 +457,24 @@ or ambiguous reference fails with a stable diagnostic. The new operation is
 available only through the shared core dispatcher in Task 034; CLI, desktop,
 AI, and MCP allowlists remain closed until a later client task explicitly
 adopts the same operation.
+
+## Collection and implementation-availability inspection
+
+Task 033 Phase 2 additively supplies operation request/result v18 and
+application capability description v11 in exact record set
+`schuss-record-set-000031@1`. It adds two read-only operations:
+
+- `collections.inspect` accepts one explicit `collection-profile-v0` and
+  reports exact collections, installation/discovery state, source/provider
+  references, and diagnostics; and
+- `implementation.availability.inspect` additionally accepts one exact catalog
+  implementation locator plus explicit target/backend references and reports
+  that exact pair's binding, eligibility, provider, and evidence state.
+
+The collection profile is non-semantic request context. It cannot rewrite a
+project, graph, record set, implementation priority, or target selection.
+Missing, disabled, stale, ambiguous, unsupported, and license-unreviewed states
+remain distinct and fail closed where execution is requested. Task 033 opens
+no mutation operation and no CLI, desktop, AI, or MCP allowlist; a later UI
+must consume these same canonical results rather than create renderer-owned
+availability truth.
