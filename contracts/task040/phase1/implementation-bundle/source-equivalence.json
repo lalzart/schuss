@@ -1,0 +1,76 @@
+{
+  "schema_version": "sonic-research-lab-source-equivalence-v1",
+  "status": "not-applicable",
+  "work_type": "new-design",
+  "source_authority": {
+    "source_id": "not-applicable-new-design",
+    "repository_id": "schuss-original-task040",
+    "revision": "task040-phase1",
+    "observed_branch": "main",
+    "dirty_state": "phase1-owned-uncommitted-artifacts",
+    "source_root_id": "repository-owned-original-source-only"
+  },
+  "files": [],
+  "dependencies": [],
+  "fidelity": {
+    "preserve": [
+      "approved musical thesis",
+      "bounded event semantics",
+      "public control intent"
+    ],
+    "allowed_changes": [
+      "numeric realization from prototype float to measured fixed-Q27",
+      "canonical graph decomposition",
+      "client-neutral control execution"
+    ],
+    "excluded": [
+      "Tide Pit source fidelity",
+      "Mutable compatibility",
+      "VCV compatibility",
+      "JUCE DSP dependency"
+    ]
+  },
+  "oracle": {
+    "kind": "prototype-behavior-comparator-not-source-equivalence",
+    "fixtures": [
+      "research/prototypes/cinderwheel/dsp-topology.json",
+      "research/prototypes/cinderwheel/fixtures/launch-control-3-test-map-v0.json",
+      "research/prototypes/cinderwheel/src/render.cpp"
+    ],
+    "commands": [
+      "python3 research/prototypes/cinderwheel/tests/validate_mapping.py",
+      "python3 research/prototypes/cinderwheel/tests/validate_render_matrix.py CINDERWHEEL_RENDERER"
+    ],
+    "metrics": [
+      "event-ledger equality",
+      "block invariance",
+      "pitch ratio",
+      "afterstrike caps",
+      "peak",
+      "DC mean",
+      "finite output"
+    ],
+    "tolerances": {
+      "authority": "implementation-bundle/experiment.json"
+    }
+  },
+  "reuse": {
+    "controller_map": {
+      "strategy": "exhaustive-compare",
+      "artifact": "research/prototypes/cinderwheel/fixtures/launch-control-3-test-map-v0.json",
+      "sha256": "d5df5f569bf37ed0dbd3e356a9c2f42ac01ed8364c2dc2bc6b07da2243e390f8"
+    },
+    "ui_shell": {
+      "strategy": "not-applicable",
+      "artifact": "no-ui-shell-in-task040-ceiling",
+      "sha256": "not-applicable"
+    }
+  },
+  "intentional_deviations": [
+    "The canonical route is fixed-Q27; prototype float behavior is a comparator and every deviation is measured.",
+    "The combined prototype stage-cycle role becomes separate pitch-cycle and bounded-mutation nodes, yielding nine inspectable internal nodes.",
+    "A fixed-round-robin seventh condition is added because the prototype matrix did not execute the proposal's rotor falsification comparator."
+  ],
+  "unresolved_items": [],
+  "not_applicable_rationale": "Task 040 is an original new-design implementation. Prototype and proposal bytes define intent and falsifiable behavior, not an authorized external-source equivalence lane."
+}

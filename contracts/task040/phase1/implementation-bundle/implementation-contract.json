@@ -1,0 +1,106 @@
+{
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "status": "ready",
+  "title": "Cinderwheel canonical vertical slice",
+  "work_type": "new-design",
+  "proposal": {
+    "path": "contracts/task040/phase1/approved-cinderwheel-proposal-r0.2.md",
+    "sha256": "d9b3a50cde3c25a4db6324bd8d20f1a65eaefcbd1ac8e9e7a42adc80713b5e84",
+    "revision": "0.2 approved pre-trial bytes",
+    "approval": {
+      "state": "approved",
+      "reference": "User approval recorded by Task 040 activation on 2026-08-22; frozen Git blob c075035b9c844eedd29f7f172e557cc985ad6d48."
+    }
+  },
+  "target": "schuss-compute-target-000002@1 with schuss-backend-000003@2 and schuss-implementation-provider-000001@2; fixed-Q27 audio/control, 48 kHz, blocks 64/128/512, static fused Cinderwheel factory, no JUCE DSP",
+  "goal": {
+    "why": "Prove that the accepted Schuss backbone can carry one coherent instrument from saved project and inspectable graph through device-independent performance execution and deterministic native host signal.",
+    "primary_claim": "One canonical Cinderwheel project resolves a complete transparent nine-node internal graph and an explicit fixed-Q27 fused provider closure, then produces deterministic accepted-state, ledger, package, and stereo host-signal evidence."
+  },
+  "working_definition": {
+    "artifact": "schuss-project-000035@1 plus canonical Cinderwheel model, performance configuration, deterministic host-runtime package, stereo render, event ledger, and comparator report",
+    "evidence_level": "host-signal",
+    "success_observation": "The exact synthetic event stream reaches authoritative public facets, accepted state and diagnostics match the frozen matrix, the package resolves only the named target/backend/provider/fusion closure, and all seven render conditions satisfy the comparator and numeric tolerances."
+  },
+  "scope": {
+    "in": [
+      "Task 040 Phase 2 canonical family, transparent compound, complete graph, instrument, project, public facets, and device-independent performance execution",
+      "Task 040 Phase 3 fixed-Q27 Cinderwheel Core, explicit graph-fusion metadata, provider/backend/source-release successors, deterministic package and host render",
+      "Two client-neutral operations: performance.events.apply and instrument.state.inspect",
+      "Exact synthetic Launch Control 3 channel-16 CC20-35 and CC40-47 fixture without endpoint access",
+      "Focused, adjacent Task 031-034, native, sanitizer, objective render, and copied-root validation"
+    ],
+    "out": [
+      "JUCE DSP, Mutable, VCV, Tide Pit, or other external source import or equivalence claim",
+      "Application launch, audio or MIDI endpoint access, controller write, controller feedback, or reconnect session",
+      "General graph cycles, arbitrary fusion, MIDI learn, second controller page, faders, or UI redesign",
+      "Callback deadline, physical device, listening, packaging, distribution, publication, or production-release evidence",
+      "Phase 2 implementation before explicit review of this Phase 1 bundle"
+    ]
+  },
+  "inputs": [
+    "docs/tasks/040-cinderwheel-canonical-vertical-slice.md",
+    "contracts/record-sets/ui-desktop-instrument-library-v1.json",
+    "contracts/task040/phase1/allocation.json",
+    "research/prototypes/cinderwheel/prototype-index.json",
+    "research/prototypes/cinderwheel/PROMOTION_NEEDS.json",
+    "research/prototypes/cinderwheel/dsp-topology.json",
+    "research/prototypes/cinderwheel/fixtures/launch-control-3-test-map-v0.json",
+    "contracts/task031/desktop-host-target.json",
+    "contracts/task031/desktop-host-backend.json",
+    "contracts/task033/phase2/implementation-provider-01.json",
+    "contracts/task033/phase3/native-provider-registry-v1.json"
+  ],
+  "deliverables": [
+    "schuss-record-set-000034@1 semantic successor and schuss-record-set-000035@1 native/evidence successor",
+    "schuss-family-000108@1, outer compound contract 000032, nine internal role contracts 000033-000041, root graph 000007, internal graph 000008, and instrument 000006",
+    "schuss-performance-control-contract-000003@1, graph 000002@1, configuration 000003@1, and frozen synthetic event stream",
+    "schuss-implementation-fusion-000001@1 plus backend/provider/source-release successors and registry v2 factory schuss.rt.cinderwheel-q27-v0",
+    "schuss-project-000035@1, build request 000008@1, deterministic package, seven renders, seven ledgers, manifest, and comparator report",
+    "Phase-specific results, gaps, exact hashes, evidence claims 000082-000086, status, roadmap, and task handoff"
+  ],
+  "acceptance_tests": [
+    "Approved proposal and all four prototype authority hashes match exactly.",
+    "All allocated IDs and revisions are conflict-free against record set 000033 and the current catalog/provider closure.",
+    "The root graph elaborates to nine inspectable internal nodes; the fused factory is selected only by exact graph/contract/hash match and never replaces graph identity.",
+    "All 24 controller selectors map exactly once to public instrument facets and exhaustive comparison against the prototype map passes.",
+    "Initialization, Reset, Panic, Freeze, mode change, recall, reconnect deferral, and non-finite recovery match the state matrix.",
+    "Target-independent validation precedes target/backend/provider selection and every missing, stale, ambiguous, disabled, or unsupported closure fails closed.",
+    "The seven-condition experiment is repeatable across fresh processes and block partitions and passes all ledger, event-cap, pitch, peak, DC, finite, and comparator tolerances.",
+    "Task 031/032 seven-factory behavior and historical package bytes remain exact.",
+    "Current, affected native, sanitizer, and copied-root checks pass once after implementation freeze.",
+    "No device, real-time, listening, packaging, distribution, or release evidence is promoted."
+  ],
+  "decision_rights": {
+    "may": [
+      "Implement only the exact allocations, schemas, graph split, fusion match, operations, numeric route, fixed capacities, state model, and corrections frozen by this bundle.",
+      "Reject or narrow the fused Q27 realization if the comparator or safety experiment fails while preserving the transparent semantic graph.",
+      "Record measured float/Q27 deviations without claiming equivalence."
+    ],
+    "must_not": [
+      "Change the lane from new-design or import external DSP source.",
+      "Use provider, target, controller, collection, runtime factory, source path, or display name as graph identity.",
+      "Hide internal graph nodes behind the fused implementation or allow a non-exact fusion match.",
+      "Add a float provider, juce_dsp, arbitrary native extension ABI, application UI, endpoint access, hardware action, commit, push, or publication without separate authority.",
+      "Waive a tolerance, rebaseline historical evidence, or infer a higher evidence level from a lower one."
+    ]
+  },
+  "dependency_contracts": [
+    "ADR 0016 portable desktop host runtime",
+    "ADR 0017 object collections and implementation providers",
+    "ADR 0018 proportional validation profiles",
+    "Task 033 Phase 4 accepted at 0bf22b67b03862b2efecd9fed377118501bf5f8d",
+    "Task 034 device-independent performance-control contracts",
+    "Task 038 source authority separation",
+    "Instrument Lab v1 workflow and retained Cinderwheel prototype evidence"
+  ],
+  "deferred_evidence": [
+    "application-launch",
+    "real-time",
+    "connected-device",
+    "listening",
+    "packaging",
+    "distribution",
+    "production-release"
+  ]
+}

@@ -1,6 +1,6 @@
 # Schuss status
 
-<!-- schuss-governance-routing: active=none; next=040@not-activated -->
+<!-- schuss-governance-routing: active=040-phase-1@review-ready; next=none -->
 
 The machine-readable current routing source is
 `docs/governance/current-state.json`. This file explains that state in plain
@@ -10,11 +10,12 @@ schemas, records, record sets, fixtures, and evidence packets.
 
 ## Current work
 
-There is no active task. Task 033 Phases 3 and 4 completed at published commit
-`0bf22b6`: the seven-entry native registry has one generated identity authority,
-the Task 031/032 runtime bytes remain exact, and the follow-up packets select
-one bounded next tranche without implementing it. Task 040 remains the next
-contracted candidate and is not activated.
+Task 040 Phase 1 is the only active task and is review-ready. Its
+implementation-ready Cinderwheel bundle and exact allocation are frozen under
+`contracts/task040/phase1/` against baseline `b21a0c4`, parent record set
+`schuss-record-set-000033@1`, and the existing fixed-Q27 desktop target.
+Phase 2 is not activated, and no canonical semantic or runtime implementation
+has begun.
 
 ## Recent completed milestones
 
@@ -42,8 +43,9 @@ contracted candidate and is not activated.
   `schuss-record-set-000031@1`.
 
 Task 033 is complete through Phase 4. Task numbers never override exact
-record-set ancestry or the completion gate. Task 040 remains a proposed
-canonical Cinderwheel slice, not an active implementation.
+record-set ancestry or the completion gate. Task 040 Phase 1 is review-ready;
+its ready bundle does not activate Phase 2 or promote Cinderwheel into the
+catalog, graph runtime, provider, application, device, or listening evidence.
 
 ## Current product boundary
 
@@ -115,5 +117,6 @@ JUCE DSP provider, structured connected-device evidence, packaging, or
 distribution work requires a separate explicit contract and activation.
 
 Local completion and publication are separate. Task 033's implementation and
-evidence result is published at `0bf22b6`. Task 040 is not activated by that
-publication.
+evidence result is published at `0bf22b6`. Task 040 Phase 1 was activated
+separately by the user and now stops at review; no Task 040 commit or push is
+authorized by that activation.

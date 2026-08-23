@@ -1,0 +1,1186 @@
+{
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "status": "ready",
+  "title": "Cinderwheel canonical vertical slice",
+  "controller": {
+    "manufacturer": "Novation",
+    "model": "Launch Control 3",
+    "variant": "regular",
+    "midi_protocol": "midi-1.0-channel-voice",
+    "channel_one_based": 16,
+    "faders": 0,
+    "encoder_cc_range": [
+      20,
+      35
+    ],
+    "button_cc_range": [
+      40,
+      47
+    ],
+    "custom_mode_installation": "deferred-not-authorized"
+  },
+  "surface_assignments": [
+    {
+      "surface_kind": "encoder",
+      "cc": 20,
+      "channel": 16,
+      "control_id": "encoder-top-01",
+      "display_name": "WAVE1",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 21,
+      "channel": 16,
+      "control_id": "encoder-top-02",
+      "display_name": "WAVE2",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 22,
+      "channel": 16,
+      "control_id": "encoder-top-03",
+      "display_name": "WAVE3",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 23,
+      "channel": 16,
+      "control_id": "encoder-top-04",
+      "display_name": "WAVE4",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 24,
+      "channel": 16,
+      "control_id": "encoder-top-05",
+      "display_name": "RATE",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 25,
+      "channel": 16,
+      "control_id": "encoder-top-06",
+      "display_name": "MEMORY",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 26,
+      "channel": 16,
+      "control_id": "encoder-top-07",
+      "display_name": "BODY",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 27,
+      "channel": 16,
+      "control_id": "encoder-top-08",
+      "display_name": "POSITION",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 28,
+      "channel": 16,
+      "control_id": "encoder-bottom-01",
+      "display_name": "FX-A",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 29,
+      "channel": 16,
+      "control_id": "encoder-bottom-02",
+      "display_name": "FX-B",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 30,
+      "channel": 16,
+      "control_id": "encoder-bottom-03",
+      "display_name": "ROOT",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 31,
+      "channel": 16,
+      "control_id": "encoder-bottom-04",
+      "display_name": "UNDERTOW",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 32,
+      "channel": 16,
+      "control_id": "encoder-bottom-05",
+      "display_name": "PULSE DIV",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 33,
+      "channel": 16,
+      "control_id": "encoder-bottom-06",
+      "display_name": "WAKE",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 34,
+      "channel": 16,
+      "control_id": "encoder-bottom-07",
+      "display_name": "STRUCTURE",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "cc": 35,
+      "channel": 16,
+      "control_id": "encoder-bottom-08",
+      "display_name": "EMBER",
+      "message_kind": "control-change",
+      "resolution_bits": 7,
+      "value_mode": "absolute",
+      "value_range": {
+        "maximum": 127,
+        "minimum": 0
+      }
+    },
+    {
+      "surface_kind": "button",
+      "cc": 40,
+      "channel": 16,
+      "control_id": "button-01",
+      "display_name": "SOURCE",
+      "message_kind": "control-change",
+      "off_value": 0,
+      "on_value": 127,
+      "value_mode": "momentary"
+    },
+    {
+      "surface_kind": "button",
+      "cc": 41,
+      "channel": 16,
+      "control_id": "button-02",
+      "display_name": "MUTATE",
+      "message_kind": "control-change",
+      "off_value": 0,
+      "on_value": 127,
+      "value_mode": "momentary"
+    },
+    {
+      "surface_kind": "button",
+      "cc": 42,
+      "channel": 16,
+      "control_id": "button-03",
+      "display_name": "LOCK",
+      "message_kind": "control-change",
+      "off_value": 0,
+      "on_value": 127,
+      "value_mode": "momentary"
+    },
+    {
+      "surface_kind": "button",
+      "cc": 43,
+      "channel": 16,
+      "control_id": "button-04",
+      "display_name": "FREEZE",
+      "message_kind": "control-change",
+      "off_value": 0,
+      "on_value": 127,
+      "value_mode": "momentary"
+    },
+    {
+      "surface_kind": "button",
+      "cc": 44,
+      "channel": 16,
+      "control_id": "button-05",
+      "display_name": "FX MODE",
+      "message_kind": "control-change",
+      "off_value": 0,
+      "on_value": 127,
+      "value_mode": "momentary"
+    },
+    {
+      "surface_kind": "button",
+      "cc": 45,
+      "channel": 16,
+      "control_id": "button-06",
+      "display_name": "TARGET",
+      "message_kind": "control-change",
+      "off_value": 0,
+      "on_value": 127,
+      "value_mode": "momentary"
+    },
+    {
+      "surface_kind": "button",
+      "cc": 46,
+      "channel": 16,
+      "control_id": "button-07",
+      "display_name": "BLOOM",
+      "message_kind": "control-change",
+      "off_value": 0,
+      "on_value": 127,
+      "value_mode": "momentary"
+    },
+    {
+      "surface_kind": "button",
+      "cc": 47,
+      "channel": 16,
+      "control_id": "button-08",
+      "display_name": "RESET",
+      "message_kind": "control-change",
+      "off_value": 0,
+      "on_value": 127,
+      "value_mode": "momentary"
+    }
+  ],
+  "semantic_bindings": [
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate"
+      },
+      "control_id": "encoder-top-01",
+      "default": "0.2",
+      "destination": "wave-1",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate"
+      },
+      "control_id": "encoder-top-02",
+      "default": "0.7",
+      "destination": "wave-2",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate"
+      },
+      "control_id": "encoder-top-03",
+      "default": "0.35",
+      "destination": "wave-3",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate"
+      },
+      "control_id": "encoder-top-04",
+      "default": "0.85",
+      "destination": "wave-4",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate-phase-continuous"
+      },
+      "control_id": "encoder-top-05",
+      "default": "0.8",
+      "destination": "rate",
+      "mapping": {
+        "curve": "exponential",
+        "formula": "0.08 * pow(75, value / 127)",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "6",
+          "minimum": "0.08",
+          "unit": "cycles-per-second"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate"
+      },
+      "control_id": "encoder-top-06",
+      "default": "0.65",
+      "destination": "memory",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate"
+      },
+      "control_id": "encoder-top-07",
+      "default": "0.55",
+      "destination": "body",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate"
+      },
+      "control_id": "encoder-top-08",
+      "default": "0.35",
+      "destination": "position",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate-after-takeover"
+      },
+      "control_id": "encoder-bottom-01",
+      "default": "0.5",
+      "destination": "fx-a",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": {
+        "arming": "fx-mode-change-or-state-recall",
+        "mode": "soft-crossing",
+        "threshold_midi_steps": 2
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate-after-takeover"
+      },
+      "control_id": "encoder-bottom-02",
+      "default": "0.25",
+      "destination": "fx-b",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": {
+        "arming": "fx-mode-change-or-state-recall",
+        "mode": "soft-crossing",
+        "threshold_midi_steps": 2
+      }
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "crossfade_ms": 0,
+        "smoothing_ms": 0,
+        "timing": "next-stage-transition"
+      },
+      "control_id": "encoder-bottom-03",
+      "default": 48,
+      "destination": "root",
+      "mapping": {
+        "curve": "quantized",
+        "formula": "36 + round_half_up(36 * value / 127)",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": 72,
+          "minimum": 36,
+          "unit": "midi-note"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "crossfade_ms": 0,
+        "smoothing_ms": 0,
+        "timing": "next-stage-transition"
+      },
+      "control_id": "encoder-bottom-04",
+      "default": "off",
+      "destination": "undertow",
+      "mapping": {
+        "curve": "quantized",
+        "formula": "value == 0 ? off : 1 + floor((value - 1) * 16 / 127)",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "states": [
+            "off",
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ],
+          "unit": "frequency-divisor"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "crossfade_ms": 0,
+        "smoothing_ms": 0,
+        "timing": "next-stage-transition-phase-preserved"
+      },
+      "control_id": "encoder-bottom-05",
+      "default": 1,
+      "destination": "pulse-divide",
+      "mapping": {
+        "curve": "quantized",
+        "formula": "1 + floor((15 * value + 63) / 127)",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": 16,
+          "minimum": 1,
+          "unit": "stage-transitions"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate-zero-clears-pending-energy"
+      },
+      "control_id": "encoder-bottom-06",
+      "default": "0",
+      "destination": "wake",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate"
+      },
+      "control_id": "encoder-bottom-07",
+      "default": "0.5",
+      "destination": "structure",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "encoder",
+      "application": {
+        "smoothing_ms": 20,
+        "timing": "immediate-zero-disables-afterstrikes"
+      },
+      "control_id": "encoder-bottom-08",
+      "default": "0",
+      "destination": "ember",
+      "mapping": {
+        "curve": "linear",
+        "formula": "value / 127",
+        "input": {
+          "maximum": 127,
+          "minimum": 0,
+          "unit": "midi-7-bit"
+        },
+        "output": {
+          "maximum": "1",
+          "minimum": "0",
+          "unit": "normalized"
+        }
+      },
+      "takeover": "none"
+    },
+    {
+      "surface_kind": "button",
+      "control_id": "button-01",
+      "default": {
+        "scale": "minor-pentatonic",
+        "source": "REED"
+      },
+      "destination": "source-scale",
+      "gesture": {
+        "hold_action": "scale-cycle",
+        "hold_states": [
+          {
+            "name": "minor-pentatonic",
+            "semitones": [
+              0,
+              3,
+              5,
+              7,
+              10,
+              12,
+              15,
+              17
+            ]
+          },
+          {
+            "name": "dorian",
+            "semitones": [
+              0,
+              2,
+              3,
+              5,
+              7,
+              9,
+              10,
+              12
+            ]
+          },
+          {
+            "name": "harmonic-minor",
+            "semitones": [
+              0,
+              2,
+              3,
+              5,
+              7,
+              8,
+              11,
+              12
+            ]
+          },
+          {
+            "name": "fifths",
+            "semitones": [
+              0,
+              7,
+              12,
+              19,
+              24,
+              31,
+              36,
+              43
+            ]
+          }
+        ],
+        "hold_threshold_samples": 28800,
+        "release_after_hold_action": "none",
+        "short_release_action": "source-cycle",
+        "short_release_max_samples": 28799,
+        "short_release_states": [
+          "REED",
+          "RND",
+          "FOLD",
+          "DUST"
+        ],
+        "trigger_rule": "hold-fires-once-at-or-after-threshold-short-fires-on-release-before-threshold"
+      }
+    },
+    {
+      "surface_kind": "button",
+      "control_id": "button-02",
+      "default": "none",
+      "destination": "mutate",
+      "gesture": {
+        "action": "bounded-mutation",
+        "edge": "press",
+        "release_action": "none"
+      }
+    },
+    {
+      "surface_kind": "button",
+      "control_id": "button-03",
+      "default": false,
+      "destination": "lock",
+      "gesture": {
+        "edge": "tap-release",
+        "kind": "toggle",
+        "press_action": "none",
+        "states": [
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "surface_kind": "button",
+      "control_id": "button-04",
+      "default": false,
+      "destination": "freeze",
+      "gesture": {
+        "edge": "tap-release",
+        "kind": "toggle",
+        "press_action": "none",
+        "states": [
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "surface_kind": "button",
+      "control_id": "button-05",
+      "default": "CLEAN",
+      "destination": "fx-mode",
+      "gesture": {
+        "edge": "tap-release",
+        "kind": "cycle",
+        "press_action": "none",
+        "states": [
+          "CLEAN",
+          "FILT",
+          "DRIVE"
+        ]
+      }
+    },
+    {
+      "surface_kind": "button",
+      "control_id": "button-06",
+      "default": "PITCH",
+      "destination": "wave-target",
+      "gesture": {
+        "edge": "tap-release",
+        "kind": "cycle",
+        "press_action": "none",
+        "states": [
+          "PITCH",
+          "BODY",
+          "GRAIN",
+          "ALL"
+        ]
+      }
+    },
+    {
+      "surface_kind": "button",
+      "control_id": "button-07",
+      "default": false,
+      "destination": "bloom",
+      "gesture": {
+        "action": "arm-one-next-transition-token",
+        "edge": "press",
+        "release_action": "none",
+        "retention": "pending-until-next-stage-transition-or-reset-panic"
+      }
+    },
+    {
+      "surface_kind": "button",
+      "control_id": "button-08",
+      "default": "none",
+      "destination": "reset-panic",
+      "gesture": {
+        "hold_action": "panic",
+        "hold_threshold_samples": 57600,
+        "release_after_hold_action": "none",
+        "short_release_action": "reset",
+        "short_release_max_samples": 57599,
+        "trigger_rule": "hold-fires-once-at-or-after-threshold-short-fires-on-release-before-threshold"
+      }
+    }
+  ],
+  "gesture_state_machines": [
+    {
+      "control_id": "button-01",
+      "destination": "source-scale",
+      "initial_state": {
+        "scale": "minor-pentatonic",
+        "source": "REED"
+      },
+      "machine": {
+        "hold_action": "scale-cycle",
+        "hold_states": [
+          {
+            "name": "minor-pentatonic",
+            "semitones": [
+              0,
+              3,
+              5,
+              7,
+              10,
+              12,
+              15,
+              17
+            ]
+          },
+          {
+            "name": "dorian",
+            "semitones": [
+              0,
+              2,
+              3,
+              5,
+              7,
+              9,
+              10,
+              12
+            ]
+          },
+          {
+            "name": "harmonic-minor",
+            "semitones": [
+              0,
+              2,
+              3,
+              5,
+              7,
+              8,
+              11,
+              12
+            ]
+          },
+          {
+            "name": "fifths",
+            "semitones": [
+              0,
+              7,
+              12,
+              19,
+              24,
+              31,
+              36,
+              43
+            ]
+          }
+        ],
+        "hold_threshold_samples": 28800,
+        "release_after_hold_action": "none",
+        "short_release_action": "source-cycle",
+        "short_release_max_samples": 28799,
+        "short_release_states": [
+          "REED",
+          "RND",
+          "FOLD",
+          "DUST"
+        ],
+        "trigger_rule": "hold-fires-once-at-or-after-threshold-short-fires-on-release-before-threshold"
+      },
+      "ordering": "(sample_timestamp, ingress_sequence)",
+      "duplicate_press_policy": "ignore-and-count",
+      "orphan_release_policy": "ignore-and-count"
+    },
+    {
+      "control_id": "button-02",
+      "destination": "mutate",
+      "initial_state": "none",
+      "machine": {
+        "action": "bounded-mutation",
+        "edge": "press",
+        "release_action": "none"
+      },
+      "ordering": "(sample_timestamp, ingress_sequence)",
+      "duplicate_press_policy": "ignore-and-count",
+      "orphan_release_policy": "ignore-and-count"
+    },
+    {
+      "control_id": "button-03",
+      "destination": "lock",
+      "initial_state": false,
+      "machine": {
+        "edge": "tap-release",
+        "kind": "toggle",
+        "press_action": "none",
+        "states": [
+          false,
+          true
+        ]
+      },
+      "ordering": "(sample_timestamp, ingress_sequence)",
+      "duplicate_press_policy": "ignore-and-count",
+      "orphan_release_policy": "ignore-and-count"
+    },
+    {
+      "control_id": "button-04",
+      "destination": "freeze",
+      "initial_state": false,
+      "machine": {
+        "edge": "tap-release",
+        "kind": "toggle",
+        "press_action": "none",
+        "states": [
+          false,
+          true
+        ]
+      },
+      "ordering": "(sample_timestamp, ingress_sequence)",
+      "duplicate_press_policy": "ignore-and-count",
+      "orphan_release_policy": "ignore-and-count"
+    },
+    {
+      "control_id": "button-05",
+      "destination": "fx-mode",
+      "initial_state": "CLEAN",
+      "machine": {
+        "edge": "tap-release",
+        "kind": "cycle",
+        "press_action": "none",
+        "states": [
+          "CLEAN",
+          "FILT",
+          "DRIVE"
+        ]
+      },
+      "ordering": "(sample_timestamp, ingress_sequence)",
+      "duplicate_press_policy": "ignore-and-count",
+      "orphan_release_policy": "ignore-and-count"
+    },
+    {
+      "control_id": "button-06",
+      "destination": "wave-target",
+      "initial_state": "PITCH",
+      "machine": {
+        "edge": "tap-release",
+        "kind": "cycle",
+        "press_action": "none",
+        "states": [
+          "PITCH",
+          "BODY",
+          "GRAIN",
+          "ALL"
+        ]
+      },
+      "ordering": "(sample_timestamp, ingress_sequence)",
+      "duplicate_press_policy": "ignore-and-count",
+      "orphan_release_policy": "ignore-and-count"
+    },
+    {
+      "control_id": "button-07",
+      "destination": "bloom",
+      "initial_state": false,
+      "machine": {
+        "action": "arm-one-next-transition-token",
+        "edge": "press",
+        "release_action": "none",
+        "retention": "pending-until-next-stage-transition-or-reset-panic"
+      },
+      "ordering": "(sample_timestamp, ingress_sequence)",
+      "duplicate_press_policy": "ignore-and-count",
+      "orphan_release_policy": "ignore-and-count"
+    },
+    {
+      "control_id": "button-08",
+      "destination": "reset-panic",
+      "initial_state": "none",
+      "machine": {
+        "hold_action": "panic",
+        "hold_threshold_samples": 57600,
+        "release_after_hold_action": "none",
+        "short_release_action": "reset",
+        "short_release_max_samples": 57599,
+        "trigger_rule": "hold-fires-once-at-or-after-threshold-short-fires-on-release-before-threshold"
+      },
+      "ordering": "(sample_timestamp, ingress_sequence)",
+      "duplicate_press_policy": "ignore-and-count",
+      "orphan_release_policy": "ignore-and-count"
+    }
+  ],
+  "application_feedback": [
+    {
+      "owner": "accepted-instrument-state",
+      "fields": [
+        "source",
+        "scale",
+        "lock",
+        "freeze",
+        "fx-mode",
+        "wave-target",
+        "bloom-pending",
+        "panic-latched",
+        "fx-a-accepted",
+        "fx-b-accepted"
+      ],
+      "rule": "Clients render only values returned by the accepted-state snapshot; raw MIDI values remain receipt diagnostics."
+    },
+    {
+      "owner": "performance-event-diagnostics",
+      "fields": [
+        "received-count",
+        "ignored-count",
+        "dropped-count",
+        "duplicate-edge-count",
+        "orphan-release-count",
+        "last-selector",
+        "last-sample-timestamp",
+        "last-ingress-sequence"
+      ],
+      "rule": "Receipt diagnostics never imply that a selector was applied to instrument state."
+    },
+    {
+      "owner": "physical-controller-feedback",
+      "fields": [],
+      "rule": "No MIDI output, OLED synchronization, encoder synchronization, or device feedback is performed or claimed."
+    }
+  ],
+  "source_of_truth": {
+    "strategy": "exhaustive-compare",
+    "artifact": "research/prototypes/cinderwheel/fixtures/launch-control-3-test-map-v0.json",
+    "sha256": "d5df5f569bf37ed0dbd3e356a9c2f42ac01ed8364c2dc2bc6b07da2243e390f8",
+    "comparison_rule": "All 24 selector assignments, transforms, defaults, gestures, thresholds, takeover rules, rejection vectors, and same-sample ordering must compare equal before canonical generation is accepted."
+  },
+  "endpoint_device_evidence": {
+    "state": "deferred",
+    "notes": "The synthetic event stream proves only device-independent selector and accepted-state semantics; no endpoint is opened and no physical-device claim is made."
+  },
+  "not_applicable_rationale": ""
+}

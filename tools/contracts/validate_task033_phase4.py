@@ -114,13 +114,11 @@ def validate(repository_root: Path = ROOT) -> dict[str, Any]:
     )
 
     task040 = _text(root, TASK040)
-    if not any(
-        status in task040
-        for status in (
-            "Status: proposed and not activated.",
-            "Status: explicitly authorized",
-        )
-    ):
+    task040_proposed = "Status: proposed and not activated." in task040
+    task040_phase1_ready = (
+        "Status: Phase 1 explicitly authorized and review-ready" in task040
+    )
+    if not (task040_proposed or task040_phase1_ready):
         raise ValueError("TASK040_STATUS_INVALID")
     _require(
         task040,
@@ -134,9 +132,26 @@ def validate(repository_root: Path = ROOT) -> dict[str, Any]:
             "## Acceptance tests",
             "## Decisions Task 040 may make after activation",
             "## Decisions Task 040 must not make",
-            "No stable ID, record-set\nsuccessor, provider successor, operation, build, device action, commit, or push",
         ),
     )
+    if task040_proposed:
+        _require(
+            task040,
+            TASK040,
+            (
+                "No stable ID, record-set\nsuccessor, provider successor, operation, build, device action, commit, or push",
+            ),
+        )
+    else:
+        _require(
+            task040,
+            TASK040,
+            (
+                "contracts/task040/phase1/allocation.json",
+                "Phase 2\nis not activated",
+                "schuss-record-set-000033@1",
+            ),
+        )
     for path, expected in PROTOTYPE_AUTHORITIES.items():
         actual = hashlib.sha256((root / path).read_bytes()).hexdigest()
         if actual != expected or expected not in task040:

@@ -1,25 +1,26 @@
 # Schuss roadmap
 
-<!-- schuss-governance-routing: active=none; next=040@not-activated -->
+<!-- schuss-governance-routing: active=040-phase-1@review-ready; next=none -->
 
 Current routing is defined by `docs/governance/current-state.json`; this roadmap
 describes sequencing rather than silently activating work.
 
 ## Active maintenance
 
-There is no active task. Task 033 Phases 3 and 4 completed at published commit
-`0bf22b6`, closing the generated native-registry authority, final integration,
-next-tranche selection, and later-UI handoffs without promoting new DSP,
-device, real-time, listening, or release evidence.
+Task 040 Phase 1 is the only active task and is review-ready. The exact parent,
+stable-ID, schema, operation, provider, numeric, graph/fusion, experiment, and
+validation allocations are frozen. The ready bundle adds no canonical record,
+DSP implementation, provider factory, application launch, device action, or
+higher evidence.
 
-## Next candidate
+## Next gate
 
-Task 040 is the next candidate and is not activated. Its contract defines the
-Cinderwheel canonical vertical slice at model and deterministic native
-host-signal evidence only. It must consume Task 033's exact handoff and pass a
-live allocation/readiness gate before shared implementation. Phase 4 adds no
-DSP algorithm, source dependency, JUCE provider, UI, hardware claim, or audible
-claim.
+Task 040 Phase 2 is not activated. It may begin only after user review of the
+Phase 1 bundle and exact allocation. The later serialized phases remain bounded
+to canonical model, device-independent performance execution, and deterministic
+native host-signal evidence; no DSP algorithm, source dependency, provider,
+runtime, UI, device, real-time, listening, packaging, or release work starts
+from Phase 1 readiness alone.
 
 ## Likely later work
 

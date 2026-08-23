@@ -1,0 +1,586 @@
+{
+  "schema_version": "task040-phase1-allocation-v1",
+  "status": "ready-for-phase-2-review",
+  "task": {
+    "task_id": "040",
+    "phase": 1,
+    "lane": "new-design",
+    "baseline_commit": "b21a0c4aa88488adde04446f35a7fd1d91b06a38",
+    "branch": "main",
+    "remote_ref": "origin/main"
+  },
+  "closeout_prerequisite": {
+    "task_id": "033",
+    "phases": [
+      3,
+      4
+    ],
+    "accepted_commit": "0bf22b67b03862b2efecd9fed377118501bf5f8d",
+    "governance_closeout_commit": "b21a0c4aa88488adde04446f35a7fd1d91b06a38"
+  },
+  "authority_fingerprints": [
+    {
+      "path": "contracts/task040/phase1/approved-cinderwheel-proposal-r0.2.md",
+      "sha256": "d9b3a50cde3c25a4db6324bd8d20f1a65eaefcbd1ac8e9e7a42adc80713b5e84",
+      "git_blob": "c075035b9c844eedd29f7f172e557cc985ad6d48"
+    },
+    {
+      "path": "research/prototypes/cinderwheel/prototype-index.json",
+      "sha256": "a15365efdbd731137a2d4b6d715114b920ecdf787086ba096b60b20dd341ab80"
+    },
+    {
+      "path": "research/prototypes/cinderwheel/PROMOTION_NEEDS.json",
+      "sha256": "9abd9c3464885ab07541dfcdf6c65a5a8c19ee282d3299deb654762bce6e01fc"
+    },
+    {
+      "path": "research/prototypes/cinderwheel/dsp-topology.json",
+      "sha256": "dff93dc5025be7280d2c565f9c388572acbe9707b13d967413cf471f21dc0b78"
+    },
+    {
+      "path": "research/prototypes/cinderwheel/fixtures/launch-control-3-test-map-v0.json",
+      "sha256": "d5df5f569bf37ed0dbd3e356a9c2f42ac01ed8364c2dc2bc6b07da2243e390f8"
+    }
+  ],
+  "parent_closure": {
+    "record_set": {
+      "stable_id": "schuss-record-set-000033",
+      "revision": 1,
+      "content_hash": "sha256:01dc913b0d637573adda283f84985e7196ee7162b6f2eaadf76b1d3a2890b786",
+      "path": "contracts/record-sets/ui-desktop-instrument-library-v1.json"
+    },
+    "catalog": {
+      "stable_id": "schuss-catalog-000001",
+      "revision": 6,
+      "content_hash": "sha256:5340646a89f52fe4909e5399d411c92b774f8177c077196f405f95c1f7153542",
+      "path": "contracts/task033/phase2/catalog-corpus-v6.json"
+    },
+    "catalog_selection": {
+      "stable_id": "schuss-catalog-selection-000001",
+      "revision": 5,
+      "content_hash": "sha256:f86432024ec7519a801ee625a6dd21a867115dd73d55e68bfd7dcde71ea3dd8b",
+      "path": "contracts/task033/phase2/catalog-selection-r5.json"
+    },
+    "compute_target": {
+      "stable_id": "schuss-compute-target-000002",
+      "revision": 1,
+      "content_hash": "sha256:8e66c6e40db0215c69c44852f6838a289342f372379262b87acc4a2bb49bd290",
+      "path": "contracts/task031/desktop-host-target.json"
+    },
+    "backend": {
+      "stable_id": "schuss-backend-000003",
+      "revision": 1,
+      "content_hash": "sha256:c188a702201625cbf32d49976ce54a06194dea89d3815e972e319f4b6199a116",
+      "path": "contracts/task031/desktop-host-backend.json"
+    },
+    "provider": {
+      "stable_id": "schuss-implementation-provider-000001",
+      "revision": 1,
+      "content_hash": "sha256:979084f654699fe87db4dd7f33c12123f25d490d630942df6ca5222ae166344c",
+      "path": "contracts/task033/phase2/implementation-provider-01.json"
+    },
+    "source_release": {
+      "stable_id": "schuss-source-release-000006",
+      "revision": 1,
+      "content_hash": "sha256:34b07c21618d44a4bee29377063f94620dedc1e6d8bf6c2fd47bdb8263dc6699",
+      "path": "contracts/task033/phase2/source-release-06.json"
+    }
+  },
+  "numeric_route": {
+    "sample_rate_hz": 48000,
+    "audio_numeric_profile": "signed-fixed-Q27",
+    "control_numeric_profile": "signed-fixed-Q27",
+    "supported_block_frames": [
+      64,
+      128,
+      512
+    ],
+    "maximum_block_frames": 512,
+    "target": "schuss-compute-target-000002@1",
+    "backend": "schuss-backend-000003@2",
+    "provider": "schuss-implementation-provider-000001@2",
+    "provider_abi": "schuss-rt-abi-v1",
+    "registry": "schuss-rt-factory-registry-v2",
+    "runtime_factory_id": "schuss.rt.cinderwheel-q27-v0",
+    "conversion_policy": "No implicit float/Q27 conversion. The native Core owns explicit saturating Q27 arithmetic and the float prototype is comparison evidence only.",
+    "dependency_policy": "Repository-owned Schuss C++ only; no juce_dsp and no external Tide Pit, Mutable, or VCV source."
+  },
+  "graph_decomposition": {
+    "root_graph": "schuss-graph-000007@1",
+    "internal_graph": "schuss-graph-000008@1",
+    "outer_contract": "schuss-component-contract-000032@1",
+    "transparent_implementation": "schuss-implementation-000169@1",
+    "internal_nodes": [
+      {
+        "node_key": "stage-clock",
+        "contract": "schuss-component-contract-000033@1",
+        "prototype_role": "role.node.clock",
+        "promotion_need": "phase-preserving stage clock"
+      },
+      {
+        "node_key": "pitch-cycle",
+        "contract": "schuss-component-contract-000034@1",
+        "prototype_role": "role.node.stage-cycle",
+        "promotion_need": "four-stage pitch sequencer"
+      },
+      {
+        "node_key": "mutation-state",
+        "contract": "schuss-component-contract-000035@1",
+        "prototype_role": "role.node.stage-cycle",
+        "promotion_need": "bounded mutation state"
+      },
+      {
+        "node_key": "excitation-voice",
+        "contract": "schuss-component-contract-000036@1",
+        "prototype_role": "role.node.voice",
+        "promotion_need": "multi-mode excitation voice"
+      },
+      {
+        "node_key": "resonant-body",
+        "contract": "schuss-component-contract-000037@1",
+        "prototype_role": "role.node.body",
+        "promotion_need": "stereo resonant body"
+      },
+      {
+        "node_key": "grain-memory",
+        "contract": "schuss-component-contract-000038@1",
+        "prototype_role": "role.node.grain-memory",
+        "promotion_need": "bounded grain memory"
+      },
+      {
+        "node_key": "wake-ledger",
+        "contract": "schuss-component-contract-000039@1",
+        "prototype_role": "role.node.wake-ledger",
+        "promotion_need": "event-energy ledger"
+      },
+      {
+        "node_key": "mode-effects",
+        "contract": "schuss-component-contract-000040@1",
+        "prototype_role": "role.node.effects",
+        "promotion_need": "mode-local effect state"
+      },
+      {
+        "node_key": "stereo-output",
+        "contract": "schuss-component-contract-000041@1",
+        "prototype_role": "role.node.output",
+        "promotion_need": "bounded stereo output"
+      }
+    ],
+    "state_feedback_policy": "Body, grain, and wake feedback remain component-owned bounded state, not general DSP graph cycles.",
+    "fusion": {
+      "stable_id": "schuss-implementation-fusion-000001",
+      "revision": 1,
+      "exact_match": [
+        "root graph hash",
+        "internal graph hash",
+        "outer contract hash",
+        "all nine internal contract hashes",
+        "transparent implementation hash",
+        "target hash",
+        "backend hash",
+        "provider hash"
+      ],
+      "runtime_factory_id": "schuss.rt.cinderwheel-q27-v0",
+      "fallback": "none",
+      "inspectability": "The root expands through implementation 000169 to graph 000008 for all inspection clients before the backend may select the exact fusion."
+    }
+  },
+  "schemas": [
+    {
+      "schema_version": "catalog-corpus-v7",
+      "path": "schemas/catalog-corpus-v7.schema.json",
+      "phase": 2
+    },
+    {
+      "schema_version": "catalog-projection-v7",
+      "path": "schemas/catalog-projection-v7.schema.json",
+      "phase": 2
+    },
+    {
+      "schema_version": "performance-control-contract-v1",
+      "path": "schemas/performance-control-contract-v1.schema.json",
+      "phase": 2
+    },
+    {
+      "schema_version": "performance-control-graph-v1",
+      "path": "schemas/performance-control-graph-v1.schema.json",
+      "phase": 2
+    },
+    {
+      "schema_version": "performance-configuration-v1",
+      "path": "schemas/performance-configuration-v1.schema.json",
+      "phase": 2
+    },
+    {
+      "schema_version": "performance-event-stream-v0",
+      "path": "schemas/performance-event-stream-v0.schema.json",
+      "phase": 2
+    },
+    {
+      "schema_version": "schuss-operation-request-v20",
+      "path": "schemas/operation-request-v20.schema.json",
+      "phase": 2
+    },
+    {
+      "schema_version": "schuss-operation-result-v20",
+      "path": "schemas/operation-result-v20.schema.json",
+      "phase": 2
+    },
+    {
+      "schema_version": "application-capability-description-v13",
+      "path": "schemas/application-capability-description-v13.schema.json",
+      "phase": 2
+    },
+    {
+      "schema_version": "implementation-fusion-v0",
+      "path": "schemas/implementation-fusion-v0.schema.json",
+      "phase": 3
+    },
+    {
+      "schema_version": "binding-eligibility-v1",
+      "path": "schemas/binding-eligibility-v1.schema.json",
+      "phase": 3
+    },
+    {
+      "schema_version": "backend-v1",
+      "path": "schemas/backend-v1.schema.json",
+      "phase": 3
+    },
+    {
+      "schema_version": "implementation-provider-v1",
+      "path": "schemas/implementation-provider-v1.schema.json",
+      "phase": 3
+    }
+  ],
+  "records": [
+    {
+      "kind": "catalog-corpus",
+      "stable_id": "schuss-catalog-000001",
+      "revision": 7,
+      "phase": 2,
+      "path": "contracts/task040/phase2/catalog-corpus-v7.json"
+    },
+    {
+      "kind": "catalog-selection",
+      "stable_id": "schuss-catalog-selection-000001",
+      "revision": 6,
+      "phase": 2,
+      "path": "contracts/task040/phase2/catalog-selection-r6.json"
+    },
+    {
+      "kind": "catalog-family",
+      "stable_id": "schuss-family-000108",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/cinderwheel-family.json"
+    },
+    {
+      "kind": "component-contract",
+      "stable_id": "schuss-component-contract-000032",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/component-contract-cinderwheel.json"
+    },
+    {
+      "kind": "component-contract",
+      "stable_id": "schuss-component-contract-000033",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/component-contract-stage-clock.json"
+    },
+    {
+      "kind": "component-contract",
+      "stable_id": "schuss-component-contract-000034",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/component-contract-pitch-cycle.json"
+    },
+    {
+      "kind": "component-contract",
+      "stable_id": "schuss-component-contract-000035",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/component-contract-mutation-state.json"
+    },
+    {
+      "kind": "component-contract",
+      "stable_id": "schuss-component-contract-000036",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/component-contract-excitation-voice.json"
+    },
+    {
+      "kind": "component-contract",
+      "stable_id": "schuss-component-contract-000037",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/component-contract-resonant-body.json"
+    },
+    {
+      "kind": "component-contract",
+      "stable_id": "schuss-component-contract-000038",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/component-contract-grain-memory.json"
+    },
+    {
+      "kind": "component-contract",
+      "stable_id": "schuss-component-contract-000039",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/component-contract-wake-ledger.json"
+    },
+    {
+      "kind": "component-contract",
+      "stable_id": "schuss-component-contract-000040",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/component-contract-mode-effects.json"
+    },
+    {
+      "kind": "component-contract",
+      "stable_id": "schuss-component-contract-000041",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/component-contract-stereo-output.json"
+    },
+    {
+      "kind": "implementation-binding",
+      "stable_id": "schuss-implementation-000169",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/implementation-binding-cinderwheel-transparent.json"
+    },
+    {
+      "kind": "dsp-graph",
+      "stable_id": "schuss-graph-000007",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/cinderwheel-root-graph.json"
+    },
+    {
+      "kind": "dsp-graph",
+      "stable_id": "schuss-graph-000008",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/cinderwheel-internal-graph.json"
+    },
+    {
+      "kind": "instrument",
+      "stable_id": "schuss-instrument-000006",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/cinderwheel-instrument.json"
+    },
+    {
+      "kind": "performance-control-contract",
+      "stable_id": "schuss-performance-control-contract-000003",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/cinderwheel-control-contract.json"
+    },
+    {
+      "kind": "performance-control-graph",
+      "stable_id": "schuss-performance-control-graph-000002",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/cinderwheel-control-graph.json"
+    },
+    {
+      "kind": "performance-configuration",
+      "stable_id": "schuss-performance-configuration-000003",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/cinderwheel-launch-control-3-configuration.json"
+    },
+    {
+      "kind": "project",
+      "stable_id": "schuss-project-000035",
+      "revision": 1,
+      "phase": 2,
+      "path": "fixtures/task040/cinderwheel-project/schuss-project.json"
+    },
+    {
+      "kind": "implementation-fusion",
+      "stable_id": "schuss-implementation-fusion-000001",
+      "revision": 1,
+      "phase": 3,
+      "path": "contracts/task040/phase3/cinderwheel-fusion.json"
+    },
+    {
+      "kind": "binding-eligibility",
+      "stable_id": "schuss-binding-eligibility-000055",
+      "revision": 1,
+      "phase": 3,
+      "path": "contracts/task040/phase3/cinderwheel-host-eligibility.json"
+    },
+    {
+      "kind": "source-release",
+      "stable_id": "schuss-source-release-000006",
+      "revision": 2,
+      "phase": 3,
+      "path": "contracts/task040/phase3/source-release-06-r2.json"
+    },
+    {
+      "kind": "implementation-provider",
+      "stable_id": "schuss-implementation-provider-000001",
+      "revision": 2,
+      "phase": 3,
+      "path": "contracts/task040/phase3/implementation-provider-01-r2.json"
+    },
+    {
+      "kind": "backend",
+      "stable_id": "schuss-backend-000003",
+      "revision": 2,
+      "phase": 3,
+      "path": "contracts/task040/phase3/desktop-host-backend-r2.json"
+    },
+    {
+      "kind": "object-collection",
+      "stable_id": "schuss-object-collection-000001",
+      "revision": 2,
+      "phase": 3,
+      "path": "contracts/task040/phase3/object-collection-01-r2.json"
+    },
+    {
+      "kind": "implementation-availability-policy",
+      "stable_id": "schuss-implementation-availability-policy-000001",
+      "revision": 2,
+      "phase": 3,
+      "path": "contracts/task040/phase3/implementation-availability-policy-01-r2.json"
+    },
+    {
+      "kind": "build-request",
+      "stable_id": "schuss-build-request-000008",
+      "revision": 1,
+      "phase": 3,
+      "path": "contracts/task040/phase3/cinderwheel-host-build-request.json"
+    },
+    {
+      "kind": "evidence-claim",
+      "stable_id": "schuss-evidence-claim-000082",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/evidence-claim-82.json"
+    },
+    {
+      "kind": "evidence-claim",
+      "stable_id": "schuss-evidence-claim-000083",
+      "revision": 1,
+      "phase": 2,
+      "path": "contracts/task040/phase2/evidence-claim-83.json"
+    },
+    {
+      "kind": "evidence-claim",
+      "stable_id": "schuss-evidence-claim-000084",
+      "revision": 1,
+      "phase": 3,
+      "path": "contracts/task040/phase3/evidence-claim-84.json"
+    },
+    {
+      "kind": "evidence-claim",
+      "stable_id": "schuss-evidence-claim-000085",
+      "revision": 1,
+      "phase": 3,
+      "path": "contracts/task040/phase3/evidence-claim-85.json"
+    },
+    {
+      "kind": "evidence-claim",
+      "stable_id": "schuss-evidence-claim-000086",
+      "revision": 1,
+      "phase": 3,
+      "path": "contracts/task040/phase3/evidence-claim-86.json"
+    }
+  ],
+  "non_record_identities": [
+    {
+      "kind": "catalog-implementation",
+      "stable_id": "schuss-implementation-000169",
+      "revision": 1,
+      "phase": 2,
+      "form": "transparent-compound"
+    },
+    {
+      "kind": "provider-binding",
+      "stable_id": "provider-binding-000008",
+      "revision": 1,
+      "phase": 3
+    },
+    {
+      "kind": "native-registry",
+      "stable_id": "schuss-rt-factory-registry-v2",
+      "revision": 1,
+      "phase": 3
+    },
+    {
+      "kind": "synthetic-event-stream",
+      "stable_id": "cinderwheel-event-stream-v1",
+      "revision": 1,
+      "phase": 2
+    }
+  ],
+  "operations": [
+    {
+      "operation": "performance.events.apply",
+      "request_schema": "schuss-operation-request-v20",
+      "result_schema": "schuss-operation-result-v20",
+      "effect_class": "process-local-state-write",
+      "required_gates": [
+        "exact-record-set",
+        "exact-project-snapshot",
+        "exact-session",
+        "execute-intent"
+      ],
+      "phase": 2
+    },
+    {
+      "operation": "instrument.state.inspect",
+      "request_schema": "schuss-operation-request-v20",
+      "result_schema": "schuss-operation-result-v20",
+      "effect_class": "read-only",
+      "required_gates": [
+        "exact-record-set",
+        "exact-project-snapshot",
+        "exact-session"
+      ],
+      "phase": 2
+    }
+  ],
+  "capability_description": {
+    "schema_version": "application-capability-description-v13",
+    "description_version": "schuss-application-capability-description-v13",
+    "operation_count": 52,
+    "phase": 2
+  },
+  "record_sets": [
+    {
+      "stable_id": "schuss-record-set-000034",
+      "revision": 1,
+      "phase": 2,
+      "parent": "schuss-record-set-000033@1",
+      "path": "contracts/record-sets/task040-cinderwheel-semantic-v1.json"
+    },
+    {
+      "stable_id": "schuss-record-set-000035",
+      "revision": 1,
+      "phase": 3,
+      "parent": "schuss-record-set-000034@1",
+      "path": "contracts/record-sets/task040-cinderwheel-native-v1.json"
+    }
+  ],
+  "observed_parent_maxima": {
+    "family": 107,
+    "component_contract": 31,
+    "implementation": 168,
+    "binding_eligibility": 54,
+    "graph": 6,
+    "instrument": 5,
+    "performance_control_contract": 2,
+    "performance_control_graph": 1,
+    "performance_configuration": 2,
+    "build_request": 7,
+    "evidence_claim": 81,
+    "project": 34,
+    "record_set": 33
+  },
+  "stop_gate": "Phase 2 remains blocked until the user reviews this ready allocation and explicitly authorizes continuation."
+}

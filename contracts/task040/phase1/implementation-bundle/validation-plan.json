@@ -1,0 +1,267 @@
+{
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready",
+  "checks": [
+    {
+      "id": "phase1-readiness",
+      "evidence_level": "proposal",
+      "command": [
+        "python3",
+        "tools/contracts/validate_task040_phase1.py",
+        "--repo-root",
+        "."
+      ],
+      "cost": "fast",
+      "freshness_inputs": [
+        "docs/governance/current-state.json",
+        "contracts/task040/phase1/**",
+        "research/prototypes/cinderwheel/prototype-index.json",
+        "research/prototypes/cinderwheel/PROMOTION_NEEDS.json",
+        "research/prototypes/cinderwheel/dsp-topology.json",
+        "research/prototypes/cinderwheel/fixtures/launch-control-3-test-map-v0.json"
+      ]
+    },
+    {
+      "id": "phase2-semantic-structural",
+      "evidence_level": "host-structural",
+      "command": [
+        "python3",
+        "tools/contracts/validate_task040_phase2.py",
+        "--repo-root",
+        "."
+      ],
+      "cost": "fast",
+      "freshness_inputs": [
+        "schemas/performance-*-v1.schema.json",
+        "schemas/performance-event-stream-v0.schema.json",
+        "contracts/task040/phase2/**",
+        "packages/schuss_core/**"
+      ]
+    },
+    {
+      "id": "phase2-performance-executor",
+      "evidence_level": "host-structural",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "tools.contracts.tests.test_task040_performance_execution"
+      ],
+      "cost": "fast",
+      "freshness_inputs": [
+        "contracts/task040/phase2/**",
+        "packages/schuss_core/**",
+        "fixtures/task040/**"
+      ]
+    },
+    {
+      "id": "phase3-source-review",
+      "evidence_level": "source",
+      "command": [
+        "python3",
+        "tools/contracts/validate_task040_phase3.py",
+        "--repo-root",
+        ".",
+        "--source-only"
+      ],
+      "cost": "fast",
+      "freshness_inputs": [
+        "packages/schuss_rt/**",
+        "contracts/task040/phase3/source-release-06-r2.json",
+        "contracts/task040/phase3/implementation-provider-01-r2.json"
+      ]
+    },
+    {
+      "id": "task031-033-adjacent-runtime",
+      "evidence_level": "host-structural",
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "native",
+        "--plan",
+        "--only",
+        "task033-native-runtime"
+      ],
+      "cost": "native",
+      "freshness_inputs": [
+        "packages/schuss_rt/**",
+        "contracts/task031/**",
+        "contracts/task032/**",
+        "contracts/task033/phase3/**",
+        "contracts/task040/phase3/**"
+      ]
+    },
+    {
+      "id": "task040-native-build",
+      "evidence_level": "target-build",
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "native",
+        "--only",
+        "task040-cinderwheel-native"
+      ],
+      "cost": "native",
+      "freshness_inputs": [
+        "packages/schuss_rt/**",
+        "contracts/task040/phase3/**",
+        "fixtures/task040/**"
+      ]
+    },
+    {
+      "id": "objective-render",
+      "evidence_level": "host-signal",
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "native",
+        "--only",
+        "task040-cinderwheel-render"
+      ],
+      "cost": "native",
+      "freshness_inputs": [
+        "contracts/task040/phase1/implementation-bundle/experiment.json",
+        "packages/schuss_rt/**",
+        "contracts/task040/phase2/**",
+        "contracts/task040/phase3/**",
+        "fixtures/task040/**"
+      ]
+    },
+    {
+      "id": "task040-sanitizer",
+      "evidence_level": "host-structural",
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "native",
+        "--only",
+        "task040-cinderwheel-sanitizer"
+      ],
+      "cost": "native",
+      "freshness_inputs": [
+        "packages/schuss_rt/**",
+        "fixtures/task040/**"
+      ]
+    },
+    {
+      "id": "task040-copied-root",
+      "evidence_level": "host-signal",
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "reproduction",
+        "--only",
+        "task040-cinderwheel-fresh-root"
+      ],
+      "cost": "reproduction",
+      "freshness_inputs": [
+        "schemas/**",
+        "contracts/task040/**",
+        "packages/schuss_core/**",
+        "packages/schuss_rt/**",
+        "fixtures/task040/**",
+        "tools/contracts/**"
+      ]
+    },
+    {
+      "id": "current-final",
+      "evidence_level": "host-structural",
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "current"
+      ],
+      "cost": "fast",
+      "freshness_inputs": [
+        "schemas/**",
+        "contracts/**",
+        "packages/schuss_core/**",
+        "tools/contracts/**",
+        "docs/**"
+      ]
+    }
+  ],
+  "evidence_levels": [
+    {
+      "level": "research",
+      "status": "available",
+      "check_ids": [],
+      "promotion_rule": "The approved proposal and retained prototype evidence support the selected mechanism without becoming canonical or source-equivalence proof."
+    },
+    {
+      "level": "proposal",
+      "status": "available",
+      "check_ids": [
+        "phase1-readiness"
+      ],
+      "promotion_rule": "The exact approved proposal fingerprint, lane, parent closure, allocation, experiment, state matrix, and stop gate validate."
+    },
+    {
+      "level": "source",
+      "status": "planned",
+      "check_ids": [
+        "phase3-source-review"
+      ],
+      "promotion_rule": "Only repository-owned Task 040 source and its exact source-release successor pass provenance and complete-diff review."
+    },
+    {
+      "level": "host-structural",
+      "status": "planned",
+      "check_ids": [
+        "phase2-semantic-structural",
+        "phase2-performance-executor",
+        "task031-033-adjacent-runtime",
+        "task040-sanitizer",
+        "current-final"
+      ],
+      "promotion_rule": "Canonical graph, control execution, state transitions, failure closures, historical runtime behavior, and bounded native structure pass independently of signal quality."
+    },
+    {
+      "level": "host-signal",
+      "status": "planned",
+      "check_ids": [
+        "objective-render",
+        "task040-copied-root"
+      ],
+      "promotion_rule": "The seven literal conditions meet frozen signal, ledger, comparator, repeatability, and copied-root tolerances."
+    },
+    {
+      "level": "target-build",
+      "status": "planned",
+      "check_ids": [
+        "task040-native-build"
+      ],
+      "promotion_rule": "The named portable desktop C++17 target and fixed-Q27 backend compile and link the exact package closure."
+    },
+    {
+      "level": "real-time",
+      "status": "deferred",
+      "check_ids": [],
+      "promotion_rule": "A later authorized callback test must name device, buffer, load, interval, deadline, margin, allocation, lock, and underrun criteria."
+    },
+    {
+      "level": "connected-device",
+      "status": "deferred",
+      "check_ids": [],
+      "promotion_rule": "A later authorized regular Launch Control 3 session must prove endpoint identity, exact CC receipt, feedback, takeover, and reconnect behavior."
+    },
+    {
+      "level": "listening",
+      "status": "deferred",
+      "check_ids": [],
+      "promotion_rule": "A later frozen listening protocol must evaluate Tide Pit identity, Undertow relation, Wake causality, and rotor distinctness."
+    },
+    {
+      "level": "production-integration",
+      "status": "deferred",
+      "check_ids": [],
+      "promotion_rule": "General packaging, distribution, release, and production claims require a separate accepted gate beyond this canonical host-signal slice."
+    }
+  ]
+}

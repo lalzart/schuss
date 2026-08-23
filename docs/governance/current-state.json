@@ -1,11 +1,14 @@
 {
   "schema_version": "schuss-governance-state-v1",
-  "active_task": null,
-  "next_candidate": {
+  "active_task": {
     "task_id": "040",
-    "phase": null,
-    "status": "not-activated"
+    "phase": 1,
+    "kind": "canonical-instrument",
+    "status": "review-ready",
+    "contract": "docs/tasks/040-cinderwheel-canonical-vertical-slice.md",
+    "baseline_commit": "b21a0c4aa88488adde04446f35a7fd1d91b06a38"
   },
+  "next_candidate": null,
   "recent_completed_milestones": [
     {
       "task_id": "033",

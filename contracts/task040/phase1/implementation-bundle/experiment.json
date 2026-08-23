@@ -1,0 +1,644 @@
+{
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "status": "ready",
+  "title": "Cinderwheel canonical vertical slice",
+  "sample_rate_hz": 48000,
+  "supported_block_frames": [
+    64,
+    128,
+    512
+  ],
+  "seed": 1128877636,
+  "timeline_convention": "Zero-based sample indices on a 48 kHz timeline; events sort by (sample_timestamp, ingress_sequence), apply before the sample at that index, and the 32-cycle, 0.8-cycle/s gesture ends after frame 1919999.",
+  "conditions": [
+    {
+      "id": "01-baseline",
+      "purpose": "Four-stage body/grain surrogate with Undertow off and Wake zero.",
+      "controls": {
+        "undertow_cc": 0,
+        "pulse_divide_cc": 0,
+        "wake_cc": 0,
+        "ember_cc": 0,
+        "bloom": false,
+        "context": "clean"
+      },
+      "events": [
+        {
+          "sample": 0,
+          "action": "set-condition-controls",
+          "ordering": "controller-number-then-ingress-sequence"
+        },
+        {
+          "sample": 1000,
+          "action": "source-context-event-1"
+        },
+        {
+          "sample": 16000,
+          "action": "source-context-event-2"
+        },
+        {
+          "sample": 31000,
+          "action": "source-context-event-3"
+        },
+        {
+          "sample": 60000,
+          "action": "set-fx-a-b-context"
+        },
+        {
+          "sample": 61000,
+          "action": "select-clean-or-filter-context"
+        },
+        {
+          "sample": 75500,
+          "action": "cross-fx-soft-takeover-thresholds"
+        },
+        {
+          "sample": 76000,
+          "action": "apply-context-controls"
+        },
+        {
+          "sample_formula": "cycle * 60000 + 500",
+          "cycles": [
+            6,
+            14,
+            22,
+            30
+          ],
+          "action": "mutate-tap"
+        },
+        {
+          "sample": 480000,
+          "action": "structure-cc-32"
+        },
+        {
+          "sample": 960000,
+          "action": "structure-cc-104"
+        },
+        {
+          "sample": 1440000,
+          "action": "structure-cc-64"
+        },
+        {
+          "sample": 961000,
+          "action": "select-drive-or-clean-counterpart"
+        },
+        {
+          "sample": 975500,
+          "action": "cross-recalled-fx-a-b"
+        },
+        {
+          "sample": 976000,
+          "action": "apply-final-fx-a-b"
+        }
+      ]
+    },
+    {
+      "id": "02-undertow-f3",
+      "purpose": "Isolate the f/3 Undertow contribution with Wake zero.",
+      "controls": {
+        "undertow_cc": 20,
+        "pulse_divide_cc": 0,
+        "wake_cc": 0,
+        "ember_cc": 0,
+        "bloom": false,
+        "context": "clean"
+      },
+      "events": [
+        {
+          "sample": 0,
+          "action": "set-condition-controls",
+          "ordering": "controller-number-then-ingress-sequence"
+        },
+        {
+          "sample": 1000,
+          "action": "source-context-event-1"
+        },
+        {
+          "sample": 16000,
+          "action": "source-context-event-2"
+        },
+        {
+          "sample": 31000,
+          "action": "source-context-event-3"
+        },
+        {
+          "sample": 60000,
+          "action": "set-fx-a-b-context"
+        },
+        {
+          "sample": 61000,
+          "action": "select-clean-or-filter-context"
+        },
+        {
+          "sample": 75500,
+          "action": "cross-fx-soft-takeover-thresholds"
+        },
+        {
+          "sample": 76000,
+          "action": "apply-context-controls"
+        },
+        {
+          "sample_formula": "cycle * 60000 + 500",
+          "cycles": [
+            6,
+            14,
+            22,
+            30
+          ],
+          "action": "mutate-tap"
+        },
+        {
+          "sample": 480000,
+          "action": "structure-cc-32"
+        },
+        {
+          "sample": 960000,
+          "action": "structure-cc-104"
+        },
+        {
+          "sample": 1440000,
+          "action": "structure-cc-64"
+        },
+        {
+          "sample": 961000,
+          "action": "select-drive-or-clean-counterpart"
+        },
+        {
+          "sample": 975500,
+          "action": "cross-recalled-fx-a-b"
+        },
+        {
+          "sample": 976000,
+          "action": "apply-final-fx-a-b"
+        }
+      ]
+    },
+    {
+      "id": "03-primary-wake-ember-zero",
+      "purpose": "Exercise primary Wake strikes while requiring exactly zero afterstrikes.",
+      "controls": {
+        "undertow_cc": 0,
+        "pulse_divide_cc": 0,
+        "wake_cc": 96,
+        "ember_cc": 0,
+        "bloom": false,
+        "context": "clean"
+      },
+      "events": [
+        {
+          "sample": 0,
+          "action": "set-condition-controls",
+          "ordering": "controller-number-then-ingress-sequence"
+        },
+        {
+          "sample": 1000,
+          "action": "source-context-event-1"
+        },
+        {
+          "sample": 16000,
+          "action": "source-context-event-2"
+        },
+        {
+          "sample": 31000,
+          "action": "source-context-event-3"
+        },
+        {
+          "sample": 60000,
+          "action": "set-fx-a-b-context"
+        },
+        {
+          "sample": 61000,
+          "action": "select-clean-or-filter-context"
+        },
+        {
+          "sample": 75500,
+          "action": "cross-fx-soft-takeover-thresholds"
+        },
+        {
+          "sample": 76000,
+          "action": "apply-context-controls"
+        },
+        {
+          "sample_formula": "cycle * 60000 + 500",
+          "cycles": [
+            6,
+            14,
+            22,
+            30
+          ],
+          "action": "mutate-tap"
+        },
+        {
+          "sample": 480000,
+          "action": "structure-cc-32"
+        },
+        {
+          "sample": 960000,
+          "action": "structure-cc-104"
+        },
+        {
+          "sample": 1440000,
+          "action": "structure-cc-64"
+        },
+        {
+          "sample": 961000,
+          "action": "select-drive-or-clean-counterpart"
+        },
+        {
+          "sample": 975500,
+          "action": "cross-recalled-fx-a-b"
+        },
+        {
+          "sample": 976000,
+          "action": "apply-final-fx-a-b"
+        }
+      ]
+    },
+    {
+      "id": "04-rotor-medium-clean",
+      "purpose": "Measure Pulse Divide 3 with rotor routing and medium Ember in the clean context.",
+      "controls": {
+        "undertow_cc": 0,
+        "pulse_divide_cc": 17,
+        "wake_cc": 96,
+        "ember_cc": 72,
+        "bloom": false,
+        "context": "clean"
+      },
+      "events": [
+        {
+          "sample": 0,
+          "action": "set-condition-controls",
+          "ordering": "controller-number-then-ingress-sequence"
+        },
+        {
+          "sample": 1000,
+          "action": "source-context-event-1"
+        },
+        {
+          "sample": 16000,
+          "action": "source-context-event-2"
+        },
+        {
+          "sample": 31000,
+          "action": "source-context-event-3"
+        },
+        {
+          "sample": 60000,
+          "action": "set-fx-a-b-context"
+        },
+        {
+          "sample": 61000,
+          "action": "select-clean-or-filter-context"
+        },
+        {
+          "sample": 75500,
+          "action": "cross-fx-soft-takeover-thresholds"
+        },
+        {
+          "sample": 76000,
+          "action": "apply-context-controls"
+        },
+        {
+          "sample_formula": "cycle * 60000 + 500",
+          "cycles": [
+            6,
+            14,
+            22,
+            30
+          ],
+          "action": "mutate-tap"
+        },
+        {
+          "sample": 480000,
+          "action": "structure-cc-32"
+        },
+        {
+          "sample": 960000,
+          "action": "structure-cc-104"
+        },
+        {
+          "sample": 1440000,
+          "action": "structure-cc-64"
+        },
+        {
+          "sample": 961000,
+          "action": "select-drive-or-clean-counterpart"
+        },
+        {
+          "sample": 975500,
+          "action": "cross-recalled-fx-a-b"
+        },
+        {
+          "sample": 976000,
+          "action": "apply-final-fx-a-b"
+        }
+      ]
+    },
+    {
+      "id": "05-rotor-high-bloom",
+      "purpose": "Exercise cap saturation with high Ember and a four-cycle Bloom gesture.",
+      "controls": {
+        "undertow_cc": 0,
+        "pulse_divide_cc": 17,
+        "wake_cc": 96,
+        "ember_cc": 112,
+        "bloom": true,
+        "context": "clean"
+      },
+      "events": [
+        {
+          "sample": 0,
+          "action": "set-condition-controls",
+          "ordering": "controller-number-then-ingress-sequence"
+        },
+        {
+          "sample": 1000,
+          "action": "source-context-event-1"
+        },
+        {
+          "sample": 16000,
+          "action": "source-context-event-2"
+        },
+        {
+          "sample": 31000,
+          "action": "source-context-event-3"
+        },
+        {
+          "sample": 60000,
+          "action": "set-fx-a-b-context"
+        },
+        {
+          "sample": 61000,
+          "action": "select-clean-or-filter-context"
+        },
+        {
+          "sample": 75500,
+          "action": "cross-fx-soft-takeover-thresholds"
+        },
+        {
+          "sample": 76000,
+          "action": "apply-context-controls"
+        },
+        {
+          "sample_formula": "cycle * 60000 + 500",
+          "cycles": [
+            6,
+            14,
+            22,
+            30
+          ],
+          "action": "mutate-tap"
+        },
+        {
+          "sample": 480000,
+          "action": "structure-cc-32"
+        },
+        {
+          "sample": 960000,
+          "action": "structure-cc-104"
+        },
+        {
+          "sample": 1440000,
+          "action": "structure-cc-64"
+        },
+        {
+          "sample": 961000,
+          "action": "select-drive-or-clean-counterpart"
+        },
+        {
+          "sample": 975500,
+          "action": "cross-recalled-fx-a-b"
+        },
+        {
+          "sample": 976000,
+          "action": "apply-final-fx-a-b"
+        },
+        {
+          "sample_formula": "cycle * 60000 + 1000",
+          "cycles": [
+            18,
+            19,
+            20,
+            21
+          ],
+          "action": "bloom-tap"
+        }
+      ]
+    },
+    {
+      "id": "06-rotor-medium-corroded",
+      "purpose": "Prove the clean/corroded ledger isolation while changing DUST, grain, filter, and drive context.",
+      "controls": {
+        "undertow_cc": 0,
+        "pulse_divide_cc": 17,
+        "wake_cc": 96,
+        "ember_cc": 72,
+        "bloom": false,
+        "context": "corroded"
+      },
+      "events": [
+        {
+          "sample": 0,
+          "action": "set-condition-controls",
+          "ordering": "controller-number-then-ingress-sequence"
+        },
+        {
+          "sample": 1000,
+          "action": "source-context-event-1"
+        },
+        {
+          "sample": 16000,
+          "action": "source-context-event-2"
+        },
+        {
+          "sample": 31000,
+          "action": "source-context-event-3"
+        },
+        {
+          "sample": 60000,
+          "action": "set-fx-a-b-context"
+        },
+        {
+          "sample": 61000,
+          "action": "select-clean-or-filter-context"
+        },
+        {
+          "sample": 75500,
+          "action": "cross-fx-soft-takeover-thresholds"
+        },
+        {
+          "sample": 76000,
+          "action": "apply-context-controls"
+        },
+        {
+          "sample_formula": "cycle * 60000 + 500",
+          "cycles": [
+            6,
+            14,
+            22,
+            30
+          ],
+          "action": "mutate-tap"
+        },
+        {
+          "sample": 480000,
+          "action": "structure-cc-32"
+        },
+        {
+          "sample": 960000,
+          "action": "structure-cc-104"
+        },
+        {
+          "sample": 1440000,
+          "action": "structure-cc-64"
+        },
+        {
+          "sample": 961000,
+          "action": "select-drive-or-clean-counterpart"
+        },
+        {
+          "sample": 975500,
+          "action": "cross-recalled-fx-a-b"
+        },
+        {
+          "sample": 976000,
+          "action": "apply-final-fx-a-b"
+        }
+      ]
+    },
+    {
+      "id": "07-fixed-round-robin-medium",
+      "purpose": "Falsify the rotor claim against the same medium-Ember gesture with fixed round-robin afterstrike routing.",
+      "controls": {
+        "undertow_cc": 0,
+        "pulse_divide_cc": 17,
+        "wake_cc": 96,
+        "ember_cc": 72,
+        "bloom": false,
+        "context": "clean",
+        "scheduler": "fixed-round-robin"
+      },
+      "events": [
+        {
+          "sample": 0,
+          "action": "set-condition-controls",
+          "ordering": "controller-number-then-ingress-sequence"
+        },
+        {
+          "sample": 1000,
+          "action": "source-context-event-1"
+        },
+        {
+          "sample": 16000,
+          "action": "source-context-event-2"
+        },
+        {
+          "sample": 31000,
+          "action": "source-context-event-3"
+        },
+        {
+          "sample": 60000,
+          "action": "set-fx-a-b-context"
+        },
+        {
+          "sample": 61000,
+          "action": "select-clean-or-filter-context"
+        },
+        {
+          "sample": 75500,
+          "action": "cross-fx-soft-takeover-thresholds"
+        },
+        {
+          "sample": 76000,
+          "action": "apply-context-controls"
+        },
+        {
+          "sample_formula": "cycle * 60000 + 500",
+          "cycles": [
+            6,
+            14,
+            22,
+            30
+          ],
+          "action": "mutate-tap"
+        },
+        {
+          "sample": 480000,
+          "action": "structure-cc-32"
+        },
+        {
+          "sample": 960000,
+          "action": "structure-cc-104"
+        },
+        {
+          "sample": 1440000,
+          "action": "structure-cc-64"
+        },
+        {
+          "sample": 961000,
+          "action": "select-drive-or-clean-counterpart"
+        },
+        {
+          "sample": 975500,
+          "action": "cross-recalled-fx-a-b"
+        },
+        {
+          "sample": 976000,
+          "action": "apply-final-fx-a-b"
+        }
+      ]
+    }
+  ],
+  "comparator_condition_id": "07-fixed-round-robin-medium",
+  "comparator": {
+    "subject_condition_id": "04-rotor-medium-clean",
+    "required_observations": [
+      "event ledgers differ in voice-routing sequence while obeying identical caps and primary-transition timing",
+      "audio fingerprints differ",
+      "all safety and determinism tolerances pass"
+    ],
+    "rejection_rule": "Reject rotor-specific promotion if its ledger is identical to fixed round-robin or if distinctness requires violating the event cap or output-safety limits."
+  },
+  "outputs": [
+    {
+      "name": "01-baseline.wav through 07-fixed-round-robin-medium.wav",
+      "kind": "stereo-float-derived-24-bit-pcm-wav"
+    },
+    {
+      "name": "01-baseline.ledger.csv through 07-fixed-round-robin-medium.ledger.csv",
+      "kind": "canonical-wake-event-ledger"
+    },
+    {
+      "name": "cinderwheel-observation-manifest.json",
+      "kind": "canonical-objective-measurement-manifest"
+    },
+    {
+      "name": "cinderwheel-comparator-report.json",
+      "kind": "rotor-versus-round-robin-comparator"
+    }
+  ],
+  "tolerances": {
+    "repeated_run_ledger": "byte-exact",
+    "repeated_run_audio": "byte-exact",
+    "cross_block_ledger": "byte-exact",
+    "cross_block_audio_max_absolute_sample_delta": 0.000001,
+    "undertow_off_contribution": "exact-zero",
+    "undertow_ratio_pitch_error_cents_maximum": 5,
+    "ember_zero_afterstrike_count": 0,
+    "afterstrikes_per_transition_maximum": 2,
+    "wake_events_per_second_maximum_at_six_cycles_per_second": 72,
+    "panic_ramp_samples": 480,
+    "panic_post_ramp_peak_maximum": 0,
+    "output_peak_maximum": 0.891250938,
+    "absolute_dc_mean_maximum": 0.0001,
+    "non_finite_sample_count": 0,
+    "reference_midi_drop_count": 0,
+    "reference_event_sink_overflow_count": 0
+  },
+  "artifact_retention": {
+    "policy": "checked-in",
+    "location": "contracts/task040/phase3/evidence/cinderwheel-host-signal-v1",
+    "retention_rule": "Retain the canonical manifest, comparator report, seven ledgers, seven WAV files, exact command log, toolchain identity, and SHA-256 inventory; refuse overwrite except in explicit reproduction output."
+  }
+}

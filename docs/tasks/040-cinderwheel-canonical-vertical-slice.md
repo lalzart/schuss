@@ -1,9 +1,9 @@
 # Task 040: Cinderwheel canonical vertical slice
 
-Status: proposed and not activated. The user authorized creation of this
-contract on 2026-08-22, not its implementation. No stable ID, record-set
-successor, provider successor, operation, build, device action, commit, or push
-is allocated or authorized by this file.
+Status: Phase 1 explicitly authorized and review-ready on 2026-08-22. The exact
+allocation and implementation-ready bundle are frozen for user review. Phase 2
+is not activated; no shared semantic/runtime implementation, device action,
+Task 040 commit, or Task 040 push is authorized by this status.
 
 ## Goal and why it exists
 
@@ -127,6 +127,63 @@ are explicit. It may not imply float/Q27 equivalence or add `juce_dsp`.
 - Client-neutral operations needed for this slice, shared by CLI, desktop, and
   AI adapters. Opening a client allowlist remains a separate explicit decision.
 - Documentation and evidence packets that preserve every correction and gap.
+
+## Phase 1 activated allocation
+
+The normative machine-readable freeze is
+`contracts/task040/phase1/allocation.json`; the ready implementation bundle is
+`contracts/task040/phase1/implementation-bundle/`. Both bind baseline
+`b21a0c4aa88488adde04446f35a7fd1d91b06a38`, accepted Task 033 Phase 3/4
+commit `0bf22b67b03862b2efecd9fed377118501bf5f8d`, and parent record set
+`schuss-record-set-000033@1` at
+`sha256:01dc913b0d637573adda283f84985e7196ee7162b6f2eaadf76b1d3a2890b786`.
+
+The exact route reuses `schuss-compute-target-000002@1` and allocates
+`schuss-backend-000003@2`,
+`schuss-implementation-provider-000001@2`, source release
+`schuss-source-release-000006@2`, registry
+`schuss-rt-factory-registry-v2`, and factory
+`schuss.rt.cinderwheel-q27-v0`. Audio and control remain explicit signed Q27
+at 48 kHz with blocks 64, 128, and 512. There is no implicit float conversion,
+float/Q27 equivalence claim, `juce_dsp`, or external DSP source.
+
+The semantic allocation is family `schuss-family-000108@1`, outer contract
+`schuss-component-contract-000032@1`, transparent compound implementation
+`schuss-implementation-000169@1`, root graph
+`schuss-graph-000007@1`, internal graph `schuss-graph-000008@1`, instrument
+`schuss-instrument-000006@1`, project `schuss-project-000035@1`, performance
+contract/graph/configuration `000003@1`/`000002@1`/`000003@1`, and build
+request `schuss-build-request-000008@1`.
+
+The prototype's eight local topology nodes carried nine promotion needs because
+`role.node.stage-cycle` owned both pitch sequencing and bounded mutation. The
+canonical freeze resolves that ambiguity as nine inspectable internal nodes
+using component contracts `000033@1` through `000041@1`. Root inspection
+expands the transparent compound to those nodes. Fusion
+`schuss-implementation-fusion-000001@1` may select one factory only after
+exact graph, contract, target, backend, provider, and implementation hashes
+match; partial, stale, or ambiguous matches have no fallback.
+
+Phase 2 allocates semantic record set `schuss-record-set-000034@1` over
+`000033@1`. Phase 3 allocates native/evidence record set
+`schuss-record-set-000035@1` over `000034@1`, provider binding
+`provider-binding-000008`, eligibility `schuss-binding-eligibility-000055@1`,
+evidence claims `schuss-evidence-claim-000082@1` through `000086@1`, catalog
+`schuss-catalog-000001@7`, and selection
+`schuss-catalog-selection-000001@6`.
+
+Additive schemas are frozen as catalog corpus/projection v7, performance
+control contract/graph/configuration v1, performance event stream v0,
+implementation fusion v0, binding eligibility v1, backend v1, provider v1,
+operation request/result v20, and application capability description v13.
+The only new client-neutral operations are `performance.events.apply` and
+`instrument.state.inspect`; the capability count becomes 52.
+
+The experiment retains the prototype's six exact conditions and adds a seventh
+fixed-round-robin comparator required by the approved proposal. It freezes seed
+`0x43494e44`, 32 cycles at 0.8 cycles/s, literal sample events, output names,
+event/pitch/safety tolerances, and checked-in retention. Readiness does not
+execute that experiment.
 
 ## Out of scope
 
