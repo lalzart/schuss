@@ -1,0 +1,212 @@
+{
+  "application_feedback": [
+    {
+      "authority": "accepted Pamplist Snapshot only",
+      "message": "selected page 1 through 7 or GLOBAL / CLEAR, with exactly one corresponding accepted-state presentation",
+      "purpose": "show Core page ownership rather than raw GUI focus or MIDI input"
+    },
+    {
+      "authority": "accepted Pamplist Snapshot only while a lane page is selected",
+      "message": "selected lane timing/routes plus accepted MODEL index/name, current resolved model index/name, Note, Harmonics, Timbre, Morph, Decay, Colour, and Level",
+      "purpose": "make MODEL and MODEL SWEEP visibly local to one complete lane/voice"
+    },
+    {
+      "authority": "accepted Pamplist Snapshot and EffectSnapshot only while Global is selected",
+      "message": "Drive, Cohere, Root, Spread, Tail, Damping, Width, Duck, BPM, Master, clear generation/count, smoothed effect values, modal frequency/pole maxima, and effect recovery count",
+      "purpose": "present only true shared controls and distinguish an accepted Clear action from raw button state"
+    },
+    {
+      "authority": "accepted Pamplist Snapshot and diagnostics only",
+      "message": "seven lane/voice values, seven-bit trigger/started masks, per-lane resolved states, final saturation, invalid-input, ignored-global, source-non-finite, effect-clear, and effect-recovery indicators",
+      "purpose": "make local ownership and evidence limits visible without physical controller or real-time claims"
+    },
+    {
+      "authority": "accepted Pamplist Snapshot after a synthetic CC dispatch",
+      "message": "canonical controller-trace.json raw input, button-down state, semantic event, selected page, target accepted record, and non-target equality tuple",
+      "purpose": "exhaustively compare compiled contextual mapping with this source-of-truth map"
+    }
+  ],
+  "endpoint_device_evidence": {
+    "connection_policy": "No endpoint is enumerated or opened. A later host may explicitly select an input only after verifying the regular Launch Control 3 Custom Mode 1 port and installed CC topology.",
+    "notes": "Repository topology and synthetic messages prove protocol transforms and edge behavior only. They do not prove endpoint identity, receipt, encoder mode/feel, firmware/custom-mode installation, reconnect, LEDs, or physical usefulness. The regular Launch Control 3 has no faders and none are inferred.",
+    "state": "deferred"
+  },
+  "gesture_state_machines": [
+    {
+      "id": "lane-page-select-button",
+      "input": "channel 16 CC40 through CC46 press and release",
+      "state": "accepted selected page 0 through 6 plus per-button down latch",
+      "transition": "a zero-to-positive edge selects the addressed lane page at the next Core quantum; duplicate positive values and release produce no semantic event; selection never copies or changes musical records"
+    },
+    {
+      "id": "global-select-clear-button",
+      "input": "channel 16 CC47 press and release",
+      "state": "accepted selected page 0 through 7, CC47 down latch, and unsigned effect-clear generation",
+      "transition": "a zero-to-positive edge from a lane page selects Global without clearing; a zero-to-positive edge while Global is already selected increments clear generation exactly once; duplicate positive values and release do not dispatch"
+    },
+    {
+      "id": "absolute-lane-route-encoder",
+      "input": "channel 16 CC20 through CC27 while page 0 through 6 is selected",
+      "state": "selected lane's local route destination 0 through 7",
+      "transition": "route = clamp((value - 64) / 63, -1, 1), with value 64 exactly zero and endpoints exact minus one/plus one; only the selected lane record changes"
+    },
+    {
+      "id": "absolute-lane-timing-encoder",
+      "input": "channel 16 CC28 through CC35 while page 0 through 6 is selected",
+      "state": "selected lane's Rate, Phase, Shape, Hits, Rotation, Probability, Repeat, or Amplitude",
+      "transition": "apply the binding-specific bounded absolute transform to only the selected lane and publish the next accepted snapshot"
+    },
+    {
+      "id": "absolute-global-effect-encoder",
+      "input": "channel 16 CC20 through CC27 while page 7 is selected",
+      "state": "Drive, Cohere, Root, Spread, Tail, Damping, Width, or Duck",
+      "transition": "apply the binding-specific bounded transform to shared effect controls only; Root is quantized to a MIDI note and every other effect value is normalized"
+    },
+    {
+      "id": "absolute-global-system-encoder",
+      "input": "channel 16 CC28 through CC35 while page 7 is selected",
+      "state": "BPM, Master, and ignored-global-input count",
+      "transition": "CC28 updates BPM, CC29 updates Master, and CC30 through CC35 increment the ignored-global-input diagnostic without changing musical state"
+    }
+  ],
+  "not_applicable_rationale": "Physical mapping of lane MODEL, Note, Harmonics, Timbre, Morph, Decay, Colour, and Level remains outside revision 0.4; those accepted lane-voice values are edited in JUCE. Global CC30 through CC35 are intentionally unassigned so page eight does not reproduce lane controls.",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {
+      "binding": "on a positive edge select complete lane/voice page CC minus 40 for CC40 through CC46; duplicates and releases do not dispatch",
+      "id": "select-lane-page",
+      "rejection": "wrong channel, wrong CC, data outside 0 through 127, or a non-edge is ignored and counted without musical-state change"
+    },
+    {
+      "binding": "on a CC47 positive edge select Global if a lane page is accepted, otherwise increment unsigned effect-clear generation once; duplicates and releases do not dispatch",
+      "id": "select-global-or-clear",
+      "rejection": "wrong channel, invalid data, or a non-edge is ignored and counted; clear-generation wrap still denotes one changed generation"
+    },
+    {
+      "binding": "on lane pages set only the selected lane route destination CC minus 20 using the signed absolute route transform; destination 2 is MODEL SWEEP",
+      "id": "set-lane-route",
+      "rejection": "no valid lane page, wrong channel/CC, or invalid data is ignored and counted"
+    },
+    {
+      "binding": "on a lane page CC28 maps floor(value times 16 divided by 128) to Rate index 0 through 15",
+      "id": "set-lane-rate",
+      "rejection": "invalid data or Global context is not interpreted as lane timing"
+    },
+    {
+      "binding": "on a lane page CC29 retains value 0 through 127 as Phase, representing value divided by 128 in [0,1)",
+      "id": "set-lane-phase",
+      "rejection": "invalid data or Global context is not interpreted as lane timing"
+    },
+    {
+      "binding": "on a lane page CC30 maps floor(value times 8 divided by 128) to Shape index 0 through 7",
+      "id": "set-lane-shape",
+      "rejection": "invalid data or Global context is not interpreted as lane timing"
+    },
+    {
+      "binding": "on a lane page CC31 maps round(value times 16 divided by 127) to Hits 0 through 16",
+      "id": "set-lane-hits",
+      "rejection": "invalid data or Global context is not interpreted as lane timing"
+    },
+    {
+      "binding": "on a lane page CC32 maps floor(value times 16 divided by 128) to Rotation 0 through 15",
+      "id": "set-lane-rotation",
+      "rejection": "invalid data or Global context is not interpreted as lane timing"
+    },
+    {
+      "binding": "on a lane page CC33 maps value divided by 127 to Probability with exact zero and one endpoints",
+      "id": "set-lane-probability",
+      "rejection": "invalid data or Global context is not interpreted as lane timing"
+    },
+    {
+      "binding": "on a lane page CC34 maps zero to free Repeat and positive values to 1 plus floor((value - 1) times 64 divided by 127), clamped 1 through 64",
+      "id": "set-lane-repeat",
+      "rejection": "invalid data or Global context is not interpreted as lane timing"
+    },
+    {
+      "binding": "on a lane page CC35 maps value divided by 127 to Amplitude with exact zero and one endpoints",
+      "id": "set-lane-amplitude",
+      "rejection": "invalid data or Global context is not interpreted as lane timing"
+    },
+    {
+      "binding": "on Global CC20, CC21, and CC23 through CC27 map value divided by 127 to Drive, Cohere, Spread, Tail, Damping, Width, and Duck respectively",
+      "id": "set-global-normalized-effect",
+      "rejection": "invalid data or a lane-page context is not interpreted as a global effect value"
+    },
+    {
+      "binding": "on Global CC22 maps 24 plus round(value times 60 divided by 127) to integer Root MIDI note 24 through 84",
+      "id": "set-global-root",
+      "rejection": "invalid data or a lane-page context is not interpreted as Root"
+    },
+    {
+      "binding": "on Global CC28 maps 20 plus round(value times 280 divided by 127) to BPM 20 through 300",
+      "id": "set-global-bpm",
+      "rejection": "invalid data or a lane-page context is not interpreted as BPM"
+    },
+    {
+      "binding": "on Global CC29 maps value divided by 127 to Master with exact zero and one endpoints",
+      "id": "set-global-master",
+      "rejection": "invalid data or a lane-page context is not interpreted as Master"
+    },
+    {
+      "binding": "on Global CC30 through CC35 produce one counted ignored-global event and change no accepted musical field",
+      "id": "ignore-global-unassigned",
+      "rejection": "wrong channel, CC outside the declared range, or invalid data follows the ordinary rejected-message diagnostic"
+    }
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/pamplist/contract-r04/control-map.json",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "control": "top encoders 1 through 8",
+      "input": "Custom Mode 1 MIDI channel 16 CC20 through CC27 absolute 0 through 127",
+      "mode": "lane pages 1 through 7",
+      "semantic": "signed local routes to Trigger, Pitch, MODEL SWEEP, Harmonics, Timbre, Morph, Decay, and Level"
+    },
+    {
+      "control": "bottom encoders 1 through 8",
+      "input": "Custom Mode 1 MIDI channel 16 CC28 through CC35 absolute 0 through 127",
+      "mode": "lane pages 1 through 7",
+      "semantic": "Rate, Phase, Shape, Euclidean Hits, Rotation, Probability, Repeat, and Amplitude for only that lane"
+    },
+    {
+      "control": "top encoders 1 through 8",
+      "input": "Custom Mode 1 MIDI channel 16 CC20 through CC27 absolute 0 through 127",
+      "mode": "GLOBAL / CLEAR page",
+      "semantic": "Drive, Cohere, Root, Spread, Tail, Damping, Width, and Duck for the shared post-mix body"
+    },
+    {
+      "control": "bottom encoders 1 through 8",
+      "input": "Custom Mode 1 MIDI channel 16 CC28 through CC35 absolute 0 through 127",
+      "mode": "GLOBAL / CLEAR page",
+      "semantic": "BPM and Master on encoders 1 and 2; encoders 3 through 8 are deliberately counted no-ops"
+    },
+    {
+      "control": "buttons 1 through 7",
+      "input": "Custom Mode 1 MIDI channel 16 CC40 through CC46 press and release",
+      "mode": "all",
+      "semantic": "positive edge selects complete lane/voice page 1 through 7; duplicate positive and release do not dispatch"
+    },
+    {
+      "control": "button 8",
+      "input": "Custom Mode 1 MIDI channel 16 CC47 press and release",
+      "mode": "all",
+      "semantic": "positive edge from a lane selects GLOBAL / CLEAR without clearing; positive edge while Global is already accepted clears effect history exactly once"
+    },
+    {
+      "control": "JUCE lane-page controls",
+      "input": "mouse or keyboard through bounded application controls",
+      "mode": "selected complete lane/voice page",
+      "semantic": "MODEL, Note, Harmonics, Timbre, Morph, Decay, Colour, Level plus that lane's timing and route controls; base and resolved model names display from accepted state"
+    },
+    {
+      "control": "JUCE Global page controls",
+      "input": "mouse or keyboard through bounded application controls and explicit CLEAR FX action",
+      "mode": "GLOBAL / CLEAR",
+      "semantic": "Drive, Cohere, Root, Spread, Tail, Damping, Width, Duck, BPM, Master, Running, and effect-only Clear"
+    }
+  ],
+  "title": "Pamplist 0.4: Seven Voices and Cohesion Bus"
+}

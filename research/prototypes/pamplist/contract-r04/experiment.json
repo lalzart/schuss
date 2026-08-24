@@ -1,0 +1,149 @@
+{
+  "artifact_retention": {
+    "location": "research/prototypes/pamplist/contract-r04/evidence",
+    "policy": "checked-in"
+  },
+  "comparator_condition_id": "PAMP_R04_DRY_CMP",
+  "conditions": [
+    {
+      "events": [
+        "frame 0 activate lanes 1 through 7 with base models 0, 3, 6, 9, 12, 15, and 21; Levels 0.07; Trigger routes 1; Drive 1; Cohere 0",
+        "frame 0 assign rates x1, x3/2, /2, x2, /4, x3, and /8 plus distinct phases, shapes, hits, rotations, notes, and tone controls",
+        "render frames 0 through 131071 and retain all seven pre-mix source records and the exact dry output"
+      ],
+      "id": "PAMP_R04_DRY7",
+      "purpose": "Prove exactly seven independent voices reach the inherited additive dry path, there is no eighth voice bit or record, and Drive cannot leak while settled Cohere is zero."
+    },
+    {
+      "events": [
+        "start on lane page 1; send CC47 positive, duplicate positive, and release; require page Global, clear count zero, and no musical record change",
+        "while Global exhaust values 0 through 127 for CC20 through CC35; require only the declared effect fields, BPM, Master, and ignored-input count to change",
+        "send CC47 positive while released and Global, duplicate the held positive, release, and press/release again; require one clear per new positive edge and no lane, voice, scheduler, source RNG, or transport change",
+        "send CC40 through CC46 positive/release and require exact corresponding lane-page selection without audio-state mutation"
+      ],
+      "id": "PAMP_R04_GLOBAL_ISOLATION",
+      "purpose": "Falsify the contextual map if Global entry clears, a held button repeats, an unassigned encoder mutates sound state, or any global gesture edits one of the seven lanes or voices."
+    },
+    {
+      "events": [
+        "frame 0 apply the same seven-voice excitation and timeline as PAMP_R04_DRY_CMP",
+        "frame 0 set Drive 0.35, Cohere 0.72, Root 48, Spread 0.45, Tail 0.65, Damping 0.40, Width 0.70, Duck 0.30, and Master 0.65",
+        "render frames 0 through 131071 and retain per-mode frequency, pole, state peak, duck envelope, dry-difference energy, and final PCM"
+      ],
+      "id": "PAMP_R04_COHERE",
+      "purpose": "Prove the common body is objectively active, receives the aggregate bus, remains bounded, and diverges from the otherwise identical dry comparator."
+    },
+    {
+      "events": [
+        "frame 0 excite all seven voices with Cohere 0.8, Drive 0.25, Tail 0.8, and distinct schedules for 32768 frames",
+        "frame 32768 set all seven Voice Levels to zero while transport and schedulers continue; render 8192 frames and require a finite nonzero effect tail",
+        "at the next quantum increment effect-clear generation once; require modal and envelope state exact zero before that quantum's first sample and exact-zero PCM while Levels remain zero",
+        "compare against an otherwise identical no-clear Core and require every accepted lane/voice record, phase, address, trigger count, source RNG state, and transport field to remain exact"
+      ],
+      "id": "PAMP_R04_CLEAR",
+      "purpose": "Prove Clear flushes only shared effect history and never resets or retimes a lane, voice, source, scheduler, accepted parameter, or transport."
+    },
+    {
+      "events": [
+        "run seven low-level active voices for 131072 frames",
+        "at successive 16-frame boundaries drive each effect control through exact minimum, maximum, and alternating 0/127 controller values; sweep Root from MIDI 24 through 84",
+        "retain every smoothed control, modal frequency, pole radius, state peak, duck envelope, non-finite recovery, and final saturation count"
+      ],
+      "id": "PAMP_R04_SWEEP",
+      "purpose": "Exercise coefficient smoothing, pole guards, denormal/non-finite recovery, and final bounds under worst declared global automation without implying a live callback deadline."
+    },
+    {
+      "events": [
+        "for model 0 through 23 reset one Core, set lane 1 Model and expected name exactly, configure x4 pulse 16-of-16 Trigger route 1 and Level 0.3, keep Cohere zero, and render 8192 frames",
+        "retain per-model label, main and auxiliary finite, peak, RMS, DC, saturation, and non-silence metrics",
+        "retain the standalone-versus-interleaved stochastic source RNG comparison from revision 0.3"
+      ],
+      "id": "PAMP_R04_24",
+      "purpose": "Retain the complete authenticated model bank, frozen source-order labels, main/aux execution, and stochastic instance isolation after the seven-lane and bus change."
+    },
+    {
+      "events": [
+        "subcase stopped: running false with Cohere 1 and previously empty effect state for 8192 frames",
+        "subcase zero-hits: all lanes hits zero from reset for 8192 frames",
+        "subcase zero-amplitude: all lanes amplitude zero from reset for 8192 frames",
+        "subcase zero-trigger-route: all seven local Trigger routes zero from reset for 8192 frames",
+        "require every stereo PCM byte and every modal state value to be zero"
+      ],
+      "id": "PAMP_R04_SILENCE",
+      "purpose": "Prove unstarted and stopped paths remain exact silence even when the cohesion branch is selected."
+    },
+    {
+      "events": [
+        "use exactly the PAMP_R04_COHERE seven-voice schedules, base models, notes, local routes, Levels, BPM, Master, and 131072-frame timeline",
+        "set Cohere 0 from construction through the final sample while setting Drive 1 and the remaining effect parameters to the PAMP_R04_COHERE values",
+        "require output byte equality with the independently computed signed-64-bit seven-voice dry path and unequal PCM/effect-state hashes versus PAMP_R04_COHERE"
+      ],
+      "id": "PAMP_R04_DRY_CMP",
+      "purpose": "Falsify the shared-body hypothesis if Cohere cannot provide an exact dry escape or if enabling Cohere is observationally inactive."
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "per-condition stereo signed 24-bit PCM WAV at 48 kHz, with source main on left and source auxiliary on right after the declared dry/cohesion/master path",
+      "name": "audio.wav"
+    },
+    {
+      "kind": "canonical JSON per-lane steps, addresses, decisions, trigger masks, base/resolved model indices and names, source state, effect clear events, and diagnostics",
+      "name": "events.json"
+    },
+    {
+      "kind": "canonical JSON accepted globals, selected page, seven lane records, seven voice records, effect controls/state summary, and final authoritative snapshot for every supported partition",
+      "name": "snapshots.json"
+    },
+    {
+      "kind": "canonical JSON frame, finite, peak, RMS, DC, silence, saturation, per-lane trigger/isolation, modal frequency/pole/state, clear, duck, and dry-difference metrics",
+      "name": "metrics.json"
+    },
+    {
+      "kind": "canonical JSON proposal, source, build, experiment, condition, model-name table, control-map, and output fingerprints",
+      "name": "manifest.json"
+    },
+    {
+      "kind": "SHA-256 manifest over every retained evidence output",
+      "name": "SHA256SUMS"
+    },
+    {
+      "kind": "canonical JSON synthetic CC input, button-edge state, semantic event, accepted selected page, target record, and non-target equality trace",
+      "name": "controller-trace.json"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 1346456912,
+  "status": "ready",
+  "supported_block_frames": [
+    1,
+    16,
+    64,
+    128,
+    257,
+    512
+  ],
+  "timeline_convention": "Controls are presented at absolute frame zero and sanitized into one coherent accepted Controls value at the next persistent 16-frame quantum. A changed effect-clear generation clears all modal and duck state before the first sample of that quantum. Each lane boundary and local accepted trigger occurs before only that lane's source render. Seven voices render in fixed lane order with their source random context restored immediately before and saved immediately after each call. Signed 64-bit main/aux sums then feed the exact dry branch and the shared cohesion branch; smoothing and final mix advance once per sample. Outer host blocks only copy persistent carry and never realign scheduler, source random, smoothing, modal, mixer, or snapshot state.",
+  "title": "Pamplist 0.4: Seven Voices and Cohesion Bus",
+  "tolerances": {
+    "all_24_model_labels": "exact equality with the 24-entry proposal and compiled modelName table",
+    "all_24_models_finite_percent": 100,
+    "clear_effect_output": "all six complex modes and duck envelope are exact zero before the affected quantum's first sample; with all Voice Levels zero, every subsequent PCM byte is zero",
+    "clear_noninterference": "accepted seven lane/voice records, phase, remainder, step/address, trigger counts, source RNG states, transport, and parameters are exact against a no-clear reference",
+    "cohere_comparator": "PAMP_R04_COHERE and PAMP_R04_DRY_CMP have unequal PCM and effect-state SHA-256 with positive dry-difference energy",
+    "dry_bypass": "after Cohere's declared snap to zero, PCM is byte-exact to the signed-64-bit seven-voice dry reference regardless of Drive or modal parameters",
+    "exact_silence_pcm_absolute": 0,
+    "finite_samples_and_effect_state_percent": 100,
+    "global_isolation": "global continuous controls and Global/Clear gestures change zero bytes in all seven accepted LaneControls and VoiceControls records",
+    "maximum_modal_frequency_hz": 21600,
+    "maximum_modal_pole_exclusive": 1,
+    "maximum_output_q27": 134217727,
+    "nominal_effect_nonfinite_recovery_or_final_saturation_count": 0,
+    "partition_pcm_event_snapshot_controller_metrics": "byte exact within one frozen build for 1, 16, 64, 128, 257, and 512 frame hosts",
+    "process_allocations": 0,
+    "source_main_and_aux_non_silent": "RMS greater than zero for every model sweep channel",
+    "tail_before_clear": "finite nonzero PCM and at least one nonzero modal state sample after all seven Voice Levels become zero",
+    "voice_control_isolation": "changing one target voice or lane field changes zero bytes in all six non-target accepted records and their pre-mix source state"
+  }
+}

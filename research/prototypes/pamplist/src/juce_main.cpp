@@ -1,6 +1,7 @@
 #include "schuss/pamplist/control_map.hpp"
 #include "schuss/pamplist/control_snapshot.hpp"
 #include "schuss/pamplist/core.hpp"
+#include "schuss/pamplist/ui_model.hpp"
 
 #include <juce_audio_devices/juce_audio_devices.h>
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -30,8 +31,8 @@ const std::array<juce::Colour, pam::kLaneCount> kLaneColours{{
     juce::Colour{0xff4fc3d7},
     juce::Colour{0xff5f8ff5},
     juce::Colour{0xffa779e9},
-    juce::Colour{0xffef78b5},
 }};
+constexpr juce::uint32 kGlobalColourArgb = 0xffef78b5;
 
 class AudioEngine final
     : public juce::AudioIODeviceCallback,
@@ -150,10 +151,28 @@ public:
         text += "  |  BLOCK "
             + juce::String(callback_block_frames_.load(std::memory_order_acquire));
         text += "  |  FRAME " + juce::String(snapshot.absolute_frame);
-        text += "  |  LANE "
-            + juce::String(static_cast<int>(snapshot.accepted.selected_lane) + 1);
-        text += "  |  ENGINE "
-            + juce::String(static_cast<int>(snapshot.resolved_engine));
+        const auto selected_page = std::min<std::size_t>(
+            snapshot.accepted.selected_page, pam::kGlobalPageIndex);
+        if (selected_page < pam::kLaneCount) {
+            text += "  |  LANE "
+                + juce::String(static_cast<int>(selected_page) + 1);
+            text += snapshot.accepted.lane_control_mode
+                    == pam::LaneControlMode::voice
+                ? "  |  VOICE"
+                : "  |  MOTION";
+            const auto base_model = snapshot.accepted.voices[selected_page].engine;
+            const auto resolved_model = snapshot.resolved_engines[selected_page];
+            text += "  |  MODEL " + juce::String(static_cast<int>(base_model))
+                + " " + juce::String(pam::modelName(base_model));
+            text += "  |  NOW " + juce::String(static_cast<int>(resolved_model))
+                + " " + juce::String(pam::modelName(resolved_model));
+        } else {
+            text += "  |  GLOBAL"
+                "  |  COHERE "
+                + juce::String(snapshot.accepted.cohesion.cohere, 2)
+                + "  |  FX CLEAR "
+                + juce::String(snapshot.diagnostics.effect_clear_count);
+        }
         text += "  |  TRIG "
             + juce::String(snapshot.diagnostics.trigger_count);
         if (selected_midi_identifier_.isEmpty()) {
@@ -325,6 +344,45 @@ public:
     }
 };
 
+class SurfaceSlider final : public juce::Slider {
+public:
+    void setBinaryPresentation(bool binary) noexcept {
+        binary_presentation_ = binary;
+    }
+
+    [[nodiscard]] bool userGestureActive() const noexcept {
+        return binary_mouse_down_ || isMouseButtonDown(true);
+    }
+
+    void mouseDown(const juce::MouseEvent& event) override {
+        if (!binary_presentation_) {
+            juce::Slider::mouseDown(event);
+            return;
+        }
+        if (!isEnabled() || event.mods.isPopupMenu()) return;
+        binary_mouse_down_ = true;
+        setValue(
+            getValue() >= 0.5 ? 0.0 : 1.0,
+            juce::sendNotificationSync);
+    }
+
+    void mouseDrag(const juce::MouseEvent& event) override {
+        if (!binary_presentation_) juce::Slider::mouseDrag(event);
+    }
+
+    void mouseUp(const juce::MouseEvent& event) override {
+        if (!binary_presentation_) {
+            juce::Slider::mouseUp(event);
+            return;
+        }
+        binary_mouse_down_ = false;
+    }
+
+private:
+    bool binary_presentation_{};
+    bool binary_mouse_down_{};
+};
+
 class MainComponent final
     : public juce::Component,
       private juce::Timer {
@@ -336,7 +394,7 @@ public:
         title_.setColour(juce::Label::textColourId, juce::Colour{0xffffcf56});
         addAndMakeVisible(title_);
         subtitle_.setText(
-            "eight clocked lanes / one 24-engine macro voice / main L + aux R",
+            "seven independent 24-model voices / page eight is one shared, clearable resonant body",
             juce::dontSendNotification);
         subtitle_.setColour(juce::Label::textColourId, juce::Colour{0xff9ca7b5});
         addAndMakeVisible(subtitle_);
@@ -371,76 +429,100 @@ public:
         };
         addAndMakeVisible(running_button_);
 
-        configureGlobalSlider(0U, "BPM", 20.0, 300.0, 1.0, 120.0,
-            [](pam::Controls& controls, double value) {
-                controls.tempo_milli_bpm = static_cast<std::uint32_t>(
-                    std::lround(value * 1000.0));
-            });
-        configureGlobalSlider(1U, "ENGINE", 0.0, 23.0, 1.0, 0.0,
-            [](pam::Controls& controls, double value) {
-                controls.engine = static_cast<std::uint8_t>(std::lround(value));
-            });
-        configureGlobalSlider(2U, "NOTE", 24.0, 96.0, 0.01, 48.0,
-            [](pam::Controls& controls, double value) { controls.note = static_cast<float>(value); });
-        configureGlobalSlider(3U, "HARM", 0.0, 1.0, 0.001, 0.5,
-            [](pam::Controls& controls, double value) { controls.harmonics = static_cast<float>(value); });
-        configureGlobalSlider(4U, "TIMBRE", 0.0, 1.0, 0.001, 0.5,
-            [](pam::Controls& controls, double value) { controls.timbre = static_cast<float>(value); });
-        configureGlobalSlider(5U, "MORPH", 0.0, 1.0, 0.001, 0.5,
-            [](pam::Controls& controls, double value) { controls.morph = static_cast<float>(value); });
-        configureGlobalSlider(6U, "DECAY", 0.0, 1.0, 0.001, 0.5,
-            [](pam::Controls& controls, double value) { controls.decay = static_cast<float>(value); });
-        configureGlobalSlider(7U, "LEVEL", 0.0, 1.0, 0.001, 0.8,
-            [](pam::Controls& controls, double value) { controls.source_level = static_cast<float>(value); });
-        configureGlobalSlider(8U, "MASTER", 0.0, 1.0, 0.001, 0.65,
-            [](pam::Controls& controls, double value) { controls.master_gain = static_cast<float>(value); });
+        for (std::size_t column = 0; column < pam::kSurfaceColumnCount; ++column) {
+            configureSurfaceSlot(pam::SurfaceRow::top, column);
+            configureSurfaceSlot(pam::SurfaceRow::bottom, column);
+        }
 
-        for (std::size_t lane = 0; lane < lane_buttons_.size(); ++lane) {
+        top_group_.setText("VOICE SHAPE - direct lane sound");
+        top_group_.setColour(
+            juce::GroupComponent::outlineColourId, juce::Colour{0xff46515e});
+        top_group_.setColour(
+            juce::GroupComponent::textColourId, juce::Colour{0xffd5dce5});
+        addAndMakeVisible(top_group_);
+        top_group_.toBack();
+        bottom_group_.setText("SEQUENCER - timing, pattern, and motion shape");
+        bottom_group_.setColour(
+            juce::GroupComponent::outlineColourId, juce::Colour{0xff46515e});
+        bottom_group_.setColour(
+            juce::GroupComponent::textColourId, juce::Colour{0xffd5dce5});
+        addAndMakeVisible(bottom_group_);
+        bottom_group_.toBack();
+
+        voice_mode_button_.setButtonText("VOICE");
+        voice_mode_button_.setColour(
+            juce::TextButton::buttonColourId, juce::Colour{0xff252c35});
+        voice_mode_button_.setColour(
+            juce::TextButton::buttonOnColourId, juce::Colour{0xff4fc3d7});
+        voice_mode_button_.onClick = [this] {
+            engine_.updateControls([](pam::Controls& controls) {
+                if (controls.selected_page < pam::kLaneCount) {
+                    controls.lane_control_mode = pam::LaneControlMode::voice;
+                }
+            });
+        };
+        addAndMakeVisible(voice_mode_button_);
+        motion_mode_button_.setButtonText("MOTION");
+        motion_mode_button_.setColour(
+            juce::TextButton::buttonColourId, juce::Colour{0xff252c35});
+        motion_mode_button_.setColour(
+            juce::TextButton::buttonOnColourId, juce::Colour{0xffff9f43});
+        motion_mode_button_.onClick = [this] {
+            engine_.updateControls([](pam::Controls& controls) {
+                if (controls.selected_page < pam::kLaneCount) {
+                    controls.lane_control_mode = pam::LaneControlMode::motion;
+                }
+            });
+        };
+        addAndMakeVisible(motion_mode_button_);
+
+        surface_guide_.setColour(
+            juce::Label::textColourId, juce::Colour{0xff9ca7b5});
+        surface_guide_.setJustificationType(juce::Justification::centredLeft);
+        surface_guide_.setFont(juce::FontOptions{12.0F});
+        addAndMakeVisible(surface_guide_);
+
+        engine_banner_.setText(
+            "LANE 1  /  MODEL 00 VIRTUAL ANALOG VCF  /  NOW 00 VIRTUAL ANALOG VCF",
+            juce::dontSendNotification);
+        engine_banner_.setFont(juce::FontOptions{13.0F, juce::Font::bold});
+        engine_banner_.setColour(
+            juce::Label::textColourId, juce::Colour{0xffffcf56});
+        engine_banner_.setJustificationType(juce::Justification::centredRight);
+        addAndMakeVisible(engine_banner_);
+
+        for (std::size_t page = 0; page < page_buttons_.size(); ++page) {
             auto button = std::make_unique<juce::TextButton>(
-                "LANE " + juce::String(static_cast<int>(lane + 1U)));
-            button->setColour(juce::TextButton::buttonOnColourId, kLaneColours[lane]);
+                page < pam::kLaneCount
+                    ? "LANE " + juce::String(static_cast<int>(page + 1U))
+                    : "GLOBAL / CLEAR");
+            button->setColour(
+                juce::TextButton::buttonOnColourId,
+                page < pam::kLaneCount
+                    ? kLaneColours[page]
+                    : juce::Colour{kGlobalColourArgb});
             button->setColour(juce::TextButton::buttonColourId, juce::Colour{0xff252c35});
-            button->onClick = [this, lane] {
+            button->onClick = [this, page] {
                 static_cast<void>(engine_.submitGuiCc(
-                    40 + static_cast<int>(lane), 127));
+                    40 + static_cast<int>(page), 127));
                 static_cast<void>(engine_.submitGuiCc(
-                    40 + static_cast<int>(lane), 0));
+                    40 + static_cast<int>(page), 0));
             };
             addAndMakeVisible(*button);
-            lane_buttons_[lane] = std::move(button);
+            page_buttons_[page] = std::move(button);
         }
 
-        const std::array<const char*, 16> names{{
-            "TRIGGER", "PITCH", "MODEL", "HARMONICS",
-            "TIMBRE", "MORPH", "DECAY", "LEVEL",
-            "RATE", "PHASE", "SHAPE", "HITS",
-            "ROTATE", "PROB", "REPEAT", "AMP",
-        }};
-        for (std::size_t index = 0; index < lane_sliders_.size(); ++index) {
-            auto slider = std::make_unique<juce::Slider>();
-            slider->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-            slider->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 48, 18);
-            slider->setRange(0.0, 127.0, 1.0);
-            slider->setValue(index == 0U ? 127.0 : (index < 8U ? 64.0 : 0.0),
-                juce::dontSendNotification);
-            slider->setColour(
-                juce::Slider::rotarySliderFillColourId, juce::Colour{0xffffcf56});
-            slider->onValueChange = [this, index] {
-                static_cast<void>(engine_.submitGuiCc(
-                    20 + static_cast<int>(index),
-                    juce::roundToInt(lane_sliders_[index]->getValue())));
-            };
-            addAndMakeVisible(*slider);
-            lane_sliders_[index] = std::move(slider);
-
-            auto label = std::make_unique<juce::Label>();
-            label->setText(names[index], juce::dontSendNotification);
-            label->setJustificationType(juce::Justification::centred);
-            label->setFont(juce::FontOptions{11.0F, juce::Font::bold});
-            label->setColour(juce::Label::textColourId, juce::Colour{0xffc7ced7});
-            addAndMakeVisible(*label);
-            lane_labels_[index] = std::move(label);
-        }
+        clear_fx_button_.setButtonText("CLEAR FX");
+        clear_fx_button_.setColour(
+            juce::TextButton::buttonColourId, juce::Colour{0xff492f4a});
+        clear_fx_button_.setColour(
+            juce::TextButton::buttonOnColourId, juce::Colour{kGlobalColourArgb});
+        clear_fx_button_.onClick = [this] {
+            engine_.updateControls([](pam::Controls& controls) {
+                ++controls.effect_clear_generation;
+            });
+        };
+        addAndMakeVisible(clear_fx_button_);
 
         status_.setText(
             "Build-only prototype: press Start audio explicitly; refresh/select MIDI explicitly",
@@ -449,9 +531,10 @@ public:
         status_.setJustificationType(juce::Justification::centredRight);
         addAndMakeVisible(status_);
 
+        projectAcceptedState(engine_.acceptedSnapshot());
         updateEnabledState();
         startTimerHz(20);
-        setSize(1280, 730);
+        setSize(1280, 690);
     }
 
     ~MainComponent() override { setLookAndFeel(nullptr); }
@@ -463,8 +546,9 @@ public:
             getLocalBounds().toFloat().reduced(8.5F), 6.0F, 1.0F);
         graphics.setColour(juce::Colour{0xff202730});
         graphics.fillRoundedRectangle(
-            juce::Rectangle<float>{18.0F, 178.0F,
-                static_cast<float>(getWidth() - 36), 482.0F}, 6.0F);
+            juce::Rectangle<float>{18.0F, 142.0F,
+                static_cast<float>(getWidth() - 36),
+                static_cast<float>(getHeight() - 166)}, 6.0F);
     }
 
     void resized() override {
@@ -483,122 +567,239 @@ public:
         midi_selector_.setBounds(lifecycle.removeFromLeft(340));
         lifecycle.removeFromLeft(14);
         running_button_.setBounds(lifecycle.removeFromLeft(72));
-        area.removeFromTop(8);
-
-        auto globals = area.removeFromTop(98);
-        for (std::size_t index = 0; index < global_sliders_.size(); ++index) {
-            const auto remaining = static_cast<int>(global_sliders_.size() - index);
-            auto cell = globals.removeFromLeft(globals.getWidth() / remaining).reduced(3);
-            global_labels_[index]->setBounds(cell.removeFromTop(18));
-            global_sliders_[index]->setBounds(cell);
-        }
+        lifecycle.removeFromLeft(12);
+        clear_fx_button_.setBounds(lifecycle.removeFromLeft(92));
+        lifecycle.removeFromLeft(12);
+        engine_banner_.setBounds(lifecycle);
         area.removeFromTop(8);
 
         auto lanes = area.removeFromTop(42);
-        for (std::size_t lane = 0; lane < lane_buttons_.size(); ++lane) {
-            const auto remaining = static_cast<int>(lane_buttons_.size() - lane);
-            lane_buttons_[lane]->setBounds(
+        for (std::size_t page = 0; page < page_buttons_.size(); ++page) {
+            const auto remaining = static_cast<int>(page_buttons_.size() - page);
+            page_buttons_[page]->setBounds(
                 lanes.removeFromLeft(lanes.getWidth() / remaining).reduced(4));
         }
-        area.removeFromTop(8);
+        area.removeFromTop(5);
 
-        for (std::size_t row = 0; row < 2U; ++row) {
-            auto row_area = area.removeFromTop(176);
-            for (std::size_t column = 0; column < 8U; ++column) {
-                const auto index = row * 8U + column;
-                const auto remaining = static_cast<int>(8U - column);
-                auto cell = row_area.removeFromLeft(
-                    row_area.getWidth() / remaining).reduced(5);
-                lane_labels_[index]->setBounds(cell.removeFromTop(20));
-                lane_sliders_[index]->setBounds(cell);
-            }
-        }
+        auto context = area.removeFromTop(32);
+        voice_mode_button_.setBounds(context.removeFromLeft(86).reduced(2));
+        motion_mode_button_.setBounds(context.removeFromLeft(94).reduced(2));
+        context.removeFromLeft(10);
+        surface_guide_.setBounds(context);
+        area.removeFromTop(5);
+
+        auto top = area.removeFromTop(214);
+        top_group_.setBounds(top);
+        layoutSurfaceRow(
+            top.reduced(10, 22), top_sliders_, top_labels_);
+        area.removeFromTop(5);
+        auto bottom = area.removeFromTop(214);
+        bottom_group_.setBounds(bottom);
+        layoutSurfaceRow(
+            bottom.reduced(10, 22), bottom_sliders_, bottom_labels_);
     }
 
 private:
-    using GlobalSetter = std::function<void(pam::Controls&, double)>;
+    static juce::String text(std::string_view value) {
+        return juce::String::fromUTF8(
+            value.data(), static_cast<int>(value.size()));
+    }
 
-    void configureGlobalSlider(
-        std::size_t index,
-        const char* label_text,
-        double minimum,
-        double maximum,
-        double interval,
-        double value,
-        GlobalSetter setter) {
-        auto slider = std::make_unique<juce::Slider>();
+    static juce::String formatSurfaceValue(
+        pam::PresentationKind presentation,
+        double value) {
+        switch (presentation) {
+            case pam::PresentationKind::model: {
+                const auto model = static_cast<std::uint8_t>(
+                    juce::jlimit(0, 23, juce::roundToInt(value)));
+                return juce::String(static_cast<int>(model)).paddedLeft('0', 2)
+                    + " " + juce::String(pam::modelName(model)).toUpperCase();
+            }
+            case pam::PresentationKind::note:
+                return juce::String(value, std::floor(value) == value ? 0 : 1);
+            case pam::PresentationKind::unit_percent:
+            case pam::PresentationKind::chance:
+            case pam::PresentationKind::depth:
+                return juce::String(juce::roundToInt(value * 100.0)) + "%";
+            case pam::PresentationKind::signed_percent:
+                if (std::abs(value) < 0.0005) return "DIRECT";
+                return (value > 0.0 ? "+" : "")
+                    + juce::String(juce::roundToInt(value * 100.0)) + "%";
+            case pam::PresentationKind::trigger_switch:
+                return value >= 0.5 ? "ON" : "OFF";
+            case pam::PresentationKind::rate: {
+                const auto index = static_cast<std::size_t>(
+                    juce::jlimit(0, 15, juce::roundToInt(value)));
+                const auto& rate = pam::rateTable()[index];
+                return juce::String(static_cast<int>(rate.numerator)) + "/"
+                    + juce::String(static_cast<int>(rate.denominator));
+            }
+            case pam::PresentationKind::phase:
+                return juce::String(juce::roundToInt(value)) + "/127";
+            case pam::PresentationKind::shape:
+                return juce::String(pam::shapeName(static_cast<pam::Shape>(
+                    juce::jlimit(0, 7, juce::roundToInt(value))))).toUpperCase();
+            case pam::PresentationKind::hits:
+                return juce::String(juce::roundToInt(value)) + "/16";
+            case pam::PresentationKind::rotation:
+                return "STEP " + juce::String(juce::roundToInt(value));
+            case pam::PresentationKind::repeat:
+                return value < 0.5
+                    ? juce::String{"FREE"}
+                    : "x" + juce::String(juce::roundToInt(value));
+            case pam::PresentationKind::bpm:
+                return juce::String(juce::roundToInt(value)) + " BPM";
+            case pam::PresentationKind::disabled:
+                return "-";
+        }
+        return "?";
+    }
+
+    static void layoutSurfaceRow(
+        juce::Rectangle<int> area,
+        const std::array<std::unique_ptr<SurfaceSlider>, pam::kSurfaceColumnCount>& sliders,
+        const std::array<std::unique_ptr<juce::Label>, pam::kSurfaceColumnCount>& labels) {
+        for (std::size_t column = 0; column < pam::kSurfaceColumnCount; ++column) {
+            const auto remaining = static_cast<int>(
+                pam::kSurfaceColumnCount - column);
+            auto cell = area.removeFromLeft(area.getWidth() / remaining).reduced(5);
+            labels[column]->setBounds(cell.removeFromTop(22));
+            sliders[column]->setBounds(cell);
+        }
+    }
+
+    void configureSurfaceSlot(pam::SurfaceRow row, std::size_t column) {
+        auto& sliders = row == pam::SurfaceRow::top
+            ? top_sliders_
+            : bottom_sliders_;
+        auto& labels = row == pam::SurfaceRow::top
+            ? top_labels_
+            : bottom_labels_;
+        auto slider = std::make_unique<SurfaceSlider>();
         slider->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-        slider->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 58, 18);
-        slider->setRange(minimum, maximum, interval);
-        slider->setValue(value, juce::dontSendNotification);
+        slider->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 128, 20);
+        slider->setRange(0.0, 1.0, 0.001);
         slider->setColour(
             juce::Slider::rotarySliderFillColourId, juce::Colour{0xff4fc3d7});
-        slider->onValueChange = [this, index, setter = std::move(setter)] {
-            const auto value_now = global_sliders_[index]->getValue();
-            engine_.updateControls([&setter, value_now](pam::Controls& controls) {
-                setter(controls, value_now);
+        slider->onValueChange = [this, row, column] {
+            auto& source = row == pam::SurfaceRow::top
+                ? top_sliders_
+                : bottom_sliders_;
+            const auto value = source[column]->getValue();
+            engine_.updateControls([row, column, value](pam::Controls& controls) {
+                static_cast<void>(pam::applySurfaceValue(
+                    controls, row, column, value));
             });
         };
         addAndMakeVisible(*slider);
-        global_sliders_[index] = std::move(slider);
+        sliders[column] = std::move(slider);
+
         auto label = std::make_unique<juce::Label>();
-        label->setText(label_text, juce::dontSendNotification);
+        label->setText("-", juce::dontSendNotification);
         label->setJustificationType(juce::Justification::centred);
         label->setFont(juce::FontOptions{11.0F, juce::Font::bold});
-        label->setColour(juce::Label::textColourId, juce::Colour{0xffc7ced7});
+        label->setColour(
+            juce::Label::textColourId, juce::Colour{0xffc7ced7});
         addAndMakeVisible(*label);
-        global_labels_[index] = std::move(label);
+        labels[column] = std::move(label);
     }
 
-    static int routePresentation(float value) {
-        return juce::jlimit(0, 127, juce::roundToInt(
-            value <= 0.0F ? 64.0F + value * 64.0F : 64.0F + value * 63.0F));
-    }
-
-    static int binPresentation(int value, int bins) {
-        return juce::jlimit(0, 127, (value * 128 + 64) / bins);
-    }
-
-    static int repeatPresentation(std::uint8_t repeat) {
-        if (repeat == 0U) return 0;
-        for (int value = 1; value <= 127; ++value) {
-            const auto mapped = static_cast<int>(1 + ((value - 1) * 64) / 127);
-            if (mapped >= repeat) return value;
+    void projectSlot(
+        SurfaceSlider& slider,
+        juce::Label& label,
+        const pam::SurfaceSlot& slot,
+        juce::Colour colour) {
+        label.setText(text(slot.label), juce::dontSendNotification);
+        label.setTooltip(text(slot.tooltip));
+        slider.setTooltip(text(slot.tooltip));
+        slider.setRange(slot.minimum, slot.maximum, slot.interval);
+        const auto presentation = slot.presentation;
+        slider.textFromValueFunction = [presentation](double value) {
+            return formatSurfaceValue(presentation, value);
+        };
+        slider.setBinaryPresentation(
+            presentation == pam::PresentationKind::trigger_switch);
+        if (!slider.userGestureActive()) {
+            slider.setValue(slot.value, juce::dontSendNotification);
         }
-        return 127;
+        slider.setColour(juce::Slider::rotarySliderFillColourId, colour);
+        slider.setEnabled(engine_.audioActive() && slot.enabled);
+        slider.setAlpha(slot.enabled ? 1.0F : 0.32F);
+        label.setAlpha(slot.enabled ? 1.0F : 0.42F);
     }
 
     void projectAcceptedState(const pam::Snapshot& snapshot) {
-        const auto selected = std::min<std::size_t>(
-            snapshot.accepted.selected_lane, pam::kLaneCount - 1U);
-        for (std::size_t lane = 0; lane < lane_buttons_.size(); ++lane) {
-            lane_buttons_[lane]->setToggleState(lane == selected, juce::dontSendNotification);
+        const auto selected_page = std::min<std::size_t>(
+            snapshot.accepted.selected_page, pam::kGlobalPageIndex);
+        const bool global = selected_page == pam::kGlobalPageIndex;
+        current_surface_ = pam::surfaceModel(snapshot);
+        for (std::size_t page = 0; page < page_buttons_.size(); ++page) {
+            page_buttons_[page]->setToggleState(
+                page == selected_page, juce::dontSendNotification);
         }
-        const auto& controls = snapshot.accepted.lanes[selected];
-        for (std::size_t destination = 0;
-             destination < pam::kDestinationCount;
-             ++destination) {
-            lane_sliders_[destination]->setValue(
-                routePresentation(controls.routes[destination]),
+        running_button_.setToggleState(
+            snapshot.accepted.running, juce::dontSendNotification);
+        voice_mode_button_.setVisible(!global);
+        motion_mode_button_.setVisible(!global);
+        voice_mode_button_.setToggleState(
+            !global && snapshot.accepted.lane_control_mode
+                    == pam::LaneControlMode::voice,
+            juce::dontSendNotification);
+        motion_mode_button_.setToggleState(
+            !global && snapshot.accepted.lane_control_mode
+                    == pam::LaneControlMode::motion,
+            juce::dontSendNotification);
+        clear_fx_button_.setVisible(global);
+        top_group_.setText(text(current_surface_.top_group));
+        bottom_group_.setText(text(current_surface_.bottom_group));
+        surface_guide_.setText(
+            text(current_surface_.guide), juce::dontSendNotification);
+
+        const auto colour = global
+            ? juce::Colour{kGlobalColourArgb}
+            : kLaneColours[selected_page];
+        for (std::size_t column = 0;
+             column < pam::kSurfaceColumnCount;
+             ++column) {
+            projectSlot(
+                *top_sliders_[column],
+                *top_labels_[column],
+                current_surface_.top[column],
+                colour);
+            projectSlot(
+                *bottom_sliders_[column],
+                *bottom_labels_[column],
+                current_surface_.bottom[column],
+                colour);
+        }
+
+        if (global) {
+            const auto& effect = snapshot.accepted.cohesion;
+            engine_banner_.setText(
+                "GLOBAL PERFORMANCE  /  COHERE "
+                    + juce::String(effect.cohere, 2)
+                    + "  /  FX CLEARS "
+                    + juce::String(snapshot.diagnostics.effect_clear_count)
+                    + "  /  PRESS GLOBAL AGAIN TO CLEAR",
                 juce::dontSendNotification);
-            lane_sliders_[destination]->setColour(
-                juce::Slider::rotarySliderFillColourId, kLaneColours[selected]);
+            return;
         }
-        const std::array<int, 8> values{{
-            binPresentation(controls.rate_index, 16),
-            controls.phase_u7,
-            binPresentation(static_cast<int>(controls.shape), 8),
-            juce::roundToInt(static_cast<float>(controls.hits) * 127.0F / 16.0F),
-            binPresentation(controls.rotation, 16),
-            juce::roundToInt(controls.probability * 127.0F),
-            repeatPresentation(controls.repeat),
-            juce::roundToInt(controls.amplitude * 127.0F),
-        }};
-        for (std::size_t index = 0; index < values.size(); ++index) {
-            lane_sliders_[8U + index]->setValue(values[index], juce::dontSendNotification);
-            lane_sliders_[8U + index]->setColour(
-                juce::Slider::rotarySliderFillColourId, kLaneColours[selected]);
-        }
+        const auto& voice = snapshot.accepted.voices[selected_page];
+        const auto resolved_model = snapshot.resolved_engines[selected_page];
+        const auto context = snapshot.accepted.lane_control_mode
+                == pam::LaneControlMode::voice
+            ? "VOICE"
+            : "MOTION";
+        engine_banner_.setText(
+            "LANE " + juce::String(static_cast<int>(selected_page) + 1)
+                + "  /  " + context
+                + "  /  MODEL "
+                + juce::String(static_cast<int>(voice.engine)).paddedLeft('0', 2)
+                + " " + juce::String(pam::modelName(voice.engine)).toUpperCase()
+                + "  /  NOW "
+                + juce::String(static_cast<int>(resolved_model)).paddedLeft('0', 2)
+                + " " + juce::String(pam::modelName(resolved_model)).toUpperCase(),
+            juce::dontSendNotification);
     }
 
     void refreshMidiInputs() {
@@ -630,9 +831,21 @@ private:
         const auto active = engine_.audioActive();
         audio_button_.setButtonText(active ? "Stop audio" : "Start audio");
         running_button_.setEnabled(active);
-        for (auto& slider : global_sliders_) slider->setEnabled(active);
-        for (auto& button : lane_buttons_) button->setEnabled(active);
-        for (auto& slider : lane_sliders_) slider->setEnabled(active);
+        for (auto& button : page_buttons_) button->setEnabled(active);
+        for (std::size_t column = 0;
+             column < pam::kSurfaceColumnCount;
+             ++column) {
+            top_sliders_[column]->setEnabled(
+                active && current_surface_.top[column].enabled);
+            bottom_sliders_[column]->setEnabled(
+                active && current_surface_.bottom[column].enabled);
+        }
+        const auto lane_context = current_surface_.context
+            != pam::SurfaceContext::global;
+        voice_mode_button_.setEnabled(active && lane_context);
+        motion_mode_button_.setEnabled(active && lane_context);
+        clear_fx_button_.setEnabled(
+            active && current_surface_.context == pam::SurfaceContext::global);
     }
 
     void timerCallback() override {
@@ -651,16 +864,28 @@ private:
     juce::Label title_;
     juce::Label subtitle_;
     juce::Label status_;
+    juce::Label engine_banner_;
+    juce::Label surface_guide_;
+    juce::GroupComponent top_group_;
+    juce::GroupComponent bottom_group_;
     juce::TextButton audio_button_;
     juce::TextButton refresh_midi_button_;
+    juce::TextButton clear_fx_button_;
+    juce::TextButton voice_mode_button_;
+    juce::TextButton motion_mode_button_;
     juce::ComboBox midi_selector_;
     juce::ToggleButton running_button_;
     juce::Array<juce::MidiDeviceInfo> midi_inputs_;
-    std::array<std::unique_ptr<juce::Slider>, 9> global_sliders_;
-    std::array<std::unique_ptr<juce::Label>, 9> global_labels_;
-    std::array<std::unique_ptr<juce::TextButton>, pam::kLaneCount> lane_buttons_;
-    std::array<std::unique_ptr<juce::Slider>, 16> lane_sliders_;
-    std::array<std::unique_ptr<juce::Label>, 16> lane_labels_;
+    std::array<std::unique_ptr<juce::TextButton>, pam::kPageCount> page_buttons_;
+    std::array<std::unique_ptr<SurfaceSlider>, pam::kSurfaceColumnCount>
+        top_sliders_;
+    std::array<std::unique_ptr<juce::Label>, pam::kSurfaceColumnCount>
+        top_labels_;
+    std::array<std::unique_ptr<SurfaceSlider>, pam::kSurfaceColumnCount>
+        bottom_sliders_;
+    std::array<std::unique_ptr<juce::Label>, pam::kSurfaceColumnCount>
+        bottom_labels_;
+    pam::SurfaceModel current_surface_{};
     int status_ticks_{};
 };
 
@@ -690,7 +915,7 @@ public:
     }
 
     [[nodiscard]] const juce::String getApplicationVersion() override {
-        return "0.2.0";
+        return "0.5.0";
     }
 
     void initialise(const juce::String&) override {

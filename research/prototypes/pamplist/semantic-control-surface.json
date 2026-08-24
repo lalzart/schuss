@@ -1,29 +1,244 @@
 {
+  "application_controls": [
+    {
+      "control": "selected_page",
+      "domain": [0, 7],
+      "kind": "accepted-page-index",
+      "label": "LANE 1-7 / GLOBAL",
+      "owner": "performance-state"
+    },
+    {
+      "context": "selected_page 0 through 6",
+      "control": "lane_control_mode",
+      "domain": ["voice", "motion"],
+      "kind": "accepted-context-enum",
+      "label": "VOICE / MOTION",
+      "owner": "performance-state",
+      "presentation": "explicit application buttons or an edge on the already-selected lane button"
+    },
+    {
+      "context": "lane Voice",
+      "control": "voices[selected].engine,note,harmonics,timbre,morph,decay,lpg_colour,level",
+      "kind": "eight-slot-selected-independent-voice-record",
+      "label": "MODEL PITCH HARMONICS TIMBRE MORPH DECAY COLOUR LEVEL",
+      "owner": "selected-independent-voice",
+      "presentation": "accepted semantic values; Model includes source-order number and name"
+    },
+    {
+      "context": "lane Motion",
+      "control": "lanes[selected].routes[trigger,pitch,model,harmonics,timbre,morph,decay,level]",
+      "kind": "eight-slot-selected-lane-destination-record",
+      "label": "TRIGGER PITCH MODEL SWEEP HARMONICS TIMBRE MORPH DECAY LEVEL",
+      "owner": "selected-lane-motion",
+      "presentation": "Trigger is a click-to-toggle Off/On rotary in the app; seven signed values use Direct at zero"
+    },
+    {
+      "context": "either lane mode",
+      "control": "lanes[selected].rate_index,phase_u7,shape,hits,rotation,probability,repeat,amplitude",
+      "kind": "eight-slot-selected-lane-sequencer-record",
+      "label": "RATE PHASE SHAPE HITS ROTATE CHANCE REPEAT DEPTH",
+      "owner": "selected-lane-sequencer"
+    },
+    {
+      "context": "selected_page 7",
+      "control": "cohesion.drive,cohere,root_note,spread,tail,damping,width,duck",
+      "kind": "eight-slot-shared-post-sum-body-record",
+      "label": "DRIVE COHERE ROOT SPREAD TAIL DAMP WIDTH DUCK",
+      "owner": "shared-cohesion-body"
+    },
+    {
+      "context": "selected_page 7 bottom row",
+      "control": "tempo_milli_bpm,master_gain,none,none,none,none,none,none",
+      "kind": "two-global-values-plus-six-disabled-slots",
+      "label": "BPM MASTER - - - - - -",
+      "owner": "shared-transport-and-final-output"
+    },
+    {
+      "context": "selected_page 7",
+      "control": "effect_clear_generation",
+      "kind": "effect-only-momentary-action",
+      "label": "CLEAR FX",
+      "owner": "shared-cohesion-body"
+    }
+  ],
   "bindings": [
-    {"cc": 20, "control": "lanes[selected].routes[trigger]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 21, "control": "lanes[selected].routes[pitch]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 22, "control": "lanes[selected].routes[model]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 23, "control": "lanes[selected].routes[harmonics]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 24, "control": "lanes[selected].routes[timbre]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 25, "control": "lanes[selected].routes[morph]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 26, "control": "lanes[selected].routes[decay]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 27, "control": "lanes[selected].routes[level]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 28, "control": "lanes[selected].rate_index", "domain": [0, 15], "kind": "selected-lane-absolute-index", "owner": "rational-timeline", "timing": "next-sixteen-frame-quantum-phase-preserving"},
-    {"cc": 29, "control": "lanes[selected].phase_u7", "domain": [0, 127], "kind": "selected-lane-absolute", "owner": "rational-timeline", "timing": "next-sixteen-frame-quantum-observation-offset"},
-    {"cc": 30, "control": "lanes[selected].shape", "domain": [0, 7], "kind": "selected-lane-absolute-index", "owner": "lane-shapes", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 31, "control": "lanes[selected].hits", "domain": [0, 16], "kind": "selected-lane-absolute", "owner": "step-masks", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 32, "control": "lanes[selected].rotation", "domain": [0, 15], "kind": "selected-lane-absolute-index", "owner": "step-masks", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 33, "control": "lanes[selected].probability", "domain": [0, 1], "kind": "selected-lane-absolute", "owner": "addressed-decisions", "timing": "next-lane-step"},
-    {"cc": 34, "control": "lanes[selected].repeat", "domain": [0, 64], "kind": "selected-lane-free-or-absolute-length", "owner": "addressed-decisions", "timing": "next-lane-step"},
-    {"cc": 35, "control": "lanes[selected].amplitude", "domain": [0, 1], "kind": "selected-lane-absolute", "owner": "lane-shapes", "timing": "next-sixteen-frame-quantum"},
-    {"cc": 40, "control": "selected_lane", "domain": [0, 0], "kind": "rising-edge-select", "owner": "performance-state"},
-    {"cc": 41, "control": "selected_lane", "domain": [1, 1], "kind": "rising-edge-select", "owner": "performance-state"},
-    {"cc": 42, "control": "selected_lane", "domain": [2, 2], "kind": "rising-edge-select", "owner": "performance-state"},
-    {"cc": 43, "control": "selected_lane", "domain": [3, 3], "kind": "rising-edge-select", "owner": "performance-state"},
-    {"cc": 44, "control": "selected_lane", "domain": [4, 4], "kind": "rising-edge-select", "owner": "performance-state"},
-    {"cc": 45, "control": "selected_lane", "domain": [5, 5], "kind": "rising-edge-select", "owner": "performance-state"},
-    {"cc": 46, "control": "selected_lane", "domain": [6, 6], "kind": "rising-edge-select", "owner": "performance-state"},
-    {"cc": 47, "control": "selected_lane", "domain": [7, 7], "kind": "rising-edge-select", "owner": "performance-state"}
+    {
+      "cc": 20,
+      "context": "lane Voice",
+      "control": "voices[selected].engine",
+      "domain": [0, 23],
+      "kind": "round-value-times-23-over-127",
+      "owner": "selected-independent-voice",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": 21,
+      "context": "lane Voice",
+      "control": "voices[selected].note",
+      "domain": [24, 96],
+      "kind": "24-plus-value-times-72-over-127",
+      "owner": "selected-independent-voice",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": [22, 27],
+      "context": "lane Voice",
+      "control": "voices[selected].harmonics,timbre,morph,decay,lpg_colour,level",
+      "domain": [0, 1],
+      "kind": "value-over-127",
+      "owner": "selected-independent-voice",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": 20,
+      "context": "lane Motion",
+      "control": "lanes[selected].routes[trigger]",
+      "domain": [0, 1],
+      "kind": "0-through-63-off-64-through-127-on",
+      "owner": "selected-lane-motion",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": [21, 27],
+      "context": "lane Motion",
+      "control": "lanes[selected].routes[pitch,model,harmonics,timbre,morph,decay,level]",
+      "domain": [-1, 1],
+      "kind": "clamped-value-minus-64-over-63",
+      "owner": "selected-lane-motion",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": 28,
+      "context": "either lane mode",
+      "control": "lanes[selected].rate_index",
+      "domain": [0, 15],
+      "kind": "floor-value-times-16-over-128",
+      "owner": "rational-timeline",
+      "timing": "next-sixteen-frame-quantum-phase-preserving"
+    },
+    {
+      "cc": 29,
+      "context": "either lane mode",
+      "control": "lanes[selected].phase_u7",
+      "domain": [0, 127],
+      "kind": "selected-lane-absolute",
+      "owner": "rational-timeline",
+      "timing": "next-sixteen-frame-quantum-observation-offset"
+    },
+    {
+      "cc": 30,
+      "context": "either lane mode",
+      "control": "lanes[selected].shape",
+      "domain": [0, 7],
+      "kind": "floor-value-times-8-over-128",
+      "owner": "lane-shapes",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": 31,
+      "context": "either lane mode",
+      "control": "lanes[selected].hits",
+      "domain": [0, 16],
+      "kind": "round-value-times-16-over-127",
+      "owner": "step-masks",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": 32,
+      "context": "either lane mode",
+      "control": "lanes[selected].rotation",
+      "domain": [0, 15],
+      "kind": "floor-value-times-16-over-128",
+      "owner": "step-masks",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": 33,
+      "context": "either lane mode",
+      "control": "lanes[selected].probability",
+      "domain": [0, 1],
+      "kind": "value-over-127",
+      "owner": "addressed-decisions",
+      "timing": "next-lane-step"
+    },
+    {
+      "cc": 34,
+      "context": "either lane mode",
+      "control": "lanes[selected].repeat",
+      "domain": [0, 64],
+      "kind": "zero-free-otherwise-1-plus-floor-value-minus-1-times-64-over-127",
+      "owner": "addressed-decisions",
+      "timing": "next-lane-step"
+    },
+    {
+      "cc": 35,
+      "context": "either lane mode",
+      "control": "lanes[selected].amplitude",
+      "domain": [0, 1],
+      "kind": "value-over-127",
+      "owner": "lane-shapes",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": [20, 27],
+      "context": "global page",
+      "control": "cohesion.drive,cohere,root_note,spread,tail,damping,width,duck",
+      "kind": "revision-04-global-transforms",
+      "owner": "shared-cohesion-body",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": 28,
+      "context": "global page",
+      "control": "tempo_milli_bpm",
+      "domain": [20000, 300000],
+      "kind": "global-bounded-absolute",
+      "owner": "shared-transport",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": 29,
+      "context": "global page",
+      "control": "master_gain",
+      "domain": [0, 1],
+      "kind": "global-normalized-absolute",
+      "owner": "final-output",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": [30, 35],
+      "context": "global page",
+      "control": "none",
+      "kind": "counted-no-op",
+      "owner": "controller-diagnostics",
+      "timing": "immediate-diagnostic-only"
+    },
+    {
+      "cc": [40, 46],
+      "context": "all pages",
+      "control": "selected_page or lane_control_mode",
+      "domain": [0, 6],
+      "kind": "another-lane-select-or-selected-lane-mode-toggle-on-rising-edge",
+      "owner": "performance-state",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": 47,
+      "context": "lane page",
+      "control": "selected_page",
+      "domain": [7, 7],
+      "kind": "rising-edge-enter-global",
+      "owner": "performance-state",
+      "timing": "next-sixteen-frame-quantum"
+    },
+    {
+      "cc": 47,
+      "context": "global page",
+      "control": "effect_clear_generation",
+      "kind": "rising-edge-effect-only-clear",
+      "owner": "shared-cohesion-body",
+      "timing": "next-sixteen-frame-quantum"
+    }
   ],
   "claims": {
     "endpoint_mapping": false,
@@ -34,5 +249,11 @@
     "channel": 16,
     "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
   },
-  "schema_version": "schuss-prototype-semantic-control-surface-v0"
+  "schema_version": "schuss-prototype-semantic-control-surface-v0",
+  "surface_contract": {
+    "bottom_columns": 8,
+    "context_authority": "accepted Controls and Snapshot through ui_model",
+    "rotary_controls_visible": 16,
+    "top_columns": 8
+  }
 }

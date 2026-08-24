@@ -1,0 +1,196 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "research/prototypes/pamplist/tests/verify_source_authority.py"
+      ],
+      "cost": "configured-source",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "catalog/sources.lock.json",
+        "catalog/sources.local.yml",
+        "research/prototypes/pamplist/source-dependencies.json",
+        "research/prototypes/pamplist/tests/verify_source_authority.py"
+      ],
+      "id": "source-review"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/pamplist/tests/run_focused.py"
+      ],
+      "cost": "native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/pamplist/CMakeLists.txt",
+        "research/prototypes/pamplist/include",
+        "research/prototypes/pamplist/src",
+        "research/prototypes/pamplist/tests",
+        "research/prototypes/pamplist/contract-r05/control-map.json"
+      ],
+      "id": "focused-structural"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/pamplist/tests/render_evidence.py",
+        "--check"
+      ],
+      "cost": "native",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/pamplist/contract-r05/experiment.json",
+        "research/prototypes/pamplist/contract-r04/evidence/PAMP_R04_DRY7/audio.wav",
+        "research/prototypes/pamplist/include",
+        "research/prototypes/pamplist/src",
+        "research/prototypes/pamplist/tests",
+        "research/prototypes/pamplist/source-dependencies.json"
+      ],
+      "id": "objective-render"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/pamplist/tests/build_juce.py",
+        "--check"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/pamplist/CMakeLists.txt",
+        "research/prototypes/pamplist/include/schuss/pamplist/ui_model.hpp",
+        "research/prototypes/pamplist/src/ui_model.cpp",
+        "research/prototypes/pamplist/src/juce_main.cpp",
+        "research/prototypes/pamplist/contract-r05/implementation-contract.json",
+        "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json"
+      ],
+      "id": "authenticated-juce-build"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/instrument_lab/validate_prototype.py",
+        "--repo-root",
+        ".",
+        "--consumer-root",
+        "research/prototypes/pamplist",
+        "--check"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/pamplist/prototype-index.json",
+        "research/prototypes/pamplist/dsp-topology.json",
+        "research/prototypes/pamplist/semantic-control-surface.json",
+        "research/prototypes/pamplist/source-dependencies.json"
+      ],
+      "id": "instrument-lab-prototype"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/pamplist/tests/reproduce_fresh_root.py"
+      ],
+      "cost": "reproduction",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/proposals/pamplist-r05.md",
+        "research/prototypes/pamplist",
+        "runtime/instrument-lab",
+        "catalog/sources.lock.json"
+      ],
+      "id": "fresh-root-reproduction"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "current"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/proposals/pamplist-r05.md",
+        "research/prototypes/pamplist"
+      ],
+      "id": "routine-current"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "The exact predecessor source/evidence, user audition, controller topology, accepted-state architecture, and authenticated JUCE headers support the bounded defect and feasibility claims only.",
+      "status": "available"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The revision 0.5 proposal SHA-256 matches this approved ready implementation contract and current-thread authorization.",
+      "status": "available"
+    },
+    {
+      "check_ids": [
+        "source-review"
+      ],
+      "level": "source",
+      "promotion_rule": "The configured source, controller authority, predecessor comparator, and new project-owned surface/control implementation authenticate exactly.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "focused-structural",
+        "instrument-lab-prototype",
+        "routine-current"
+      ],
+      "level": "host-structural",
+      "promotion_rule": "Release and sanitizer tests prove sixteen-slot tables, complete semantic coverage, mode/page state, contextual transforms, edge behavior, Trigger boundaries, isolation, reset, snapshot integrity, and no-allocation processing.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "objective-render",
+        "fresh-root-reproduction"
+      ],
+      "level": "host-signal",
+      "promotion_rule": "The four revision 0.5 conditions meet exact revision 0.4 audio parity, Trigger Off/On, surface/controller, Global preservation, finite/Q27, partition, and relocated tolerances.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "authenticated-juce-build"
+      ],
+      "level": "target-build",
+      "promotion_rule": "The authenticated JUCE 8.0.15 tree compiles and links a Pamplist.app whose source-level surface contract and executable identity/hash are retained without launch.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "A separately authorized launch must measure callback deadline, CPU, lifecycle, and xruns.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "A separately authorized regular Launch Control 3 session must verify endpoint identity, installed mapping, physical Voice/Motion gesture, values, feedback, and reconnect.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "The user's next audition must judge clarity, discoverability, semantic labels, and Trigger behavior.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "Canonical identity, graph/provider/runtime, packaging, distribution, and release gates require separate accepted work.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

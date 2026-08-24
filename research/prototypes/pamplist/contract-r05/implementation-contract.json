@@ -1,0 +1,112 @@
+{
+  "acceptance_tests": [
+    "The exact approved revision 0.5 proposal and every bundle artifact pass ready validation before Pamplist source changes.",
+    "The configured patcher source retains commit 08d3e6e1e2b61230308c20a15ded58ffdaf4656c, synthesis tree 58917f3e2e46a30337cfb6292a3504845b1d5552, expected file hashes, and a clean relevant subtree.",
+    "The portable surface model contains exactly two rows of eight slots in every context and the JUCE component owns exactly sixteen rotary sliders.",
+    "All eight Voice, eight Motion, and eight Sequencer fields remain independently reachable; Global retains eight cohesion fields, BPM, Master, and six explicit disabled slots.",
+    "Accepted LaneControlMode, not raw GUI focus or button input, determines the surface model, contextual CC transforms, group titles, labels, values, enabled state, and feedback.",
+    "CC20 through CC27 edit only the selected Voice record in Voice mode and only the selected Lane route record in Motion mode; CC28 through CC35 preserve revision 0.4 sequencer transforms in both modes.",
+    "A positive edge on the already-selected lane toggles Voice or Motion exactly once; duplicate positive values and release do not repeat; selecting another lane preserves mode and changes no musical record.",
+    "Trigger CC values zero and 63 map to exact Off while 64 and 127 map to exact On; invalid or legacy non-positive values sanitize Off and legacy positive values sanitize On.",
+    "Trigger Off creates no new trigger event or started voice from reset; Trigger On produces the exact revision 0.4 trigger-on event, source state, and PCM comparator.",
+    "Switching Voice or Motion changes no lane, voice, scheduler, source RNG, effect, transport, or PCM state.",
+    "Labels, tooltips, ranges, presentation kinds, and semantic values distinguish base Voice values, clock Motion amounts, Sequencer timing, and Global ownership without raw CC presentation.",
+    "The revision 0.5 audio comparator SHA-256 is exactly a07ed1a3d461f538349cd5c12678e732d1619efc6e8ec623dce30ffd31e47912, equal to retained revision 0.4 Dry7 audio.",
+    "Global effect/system mapping, Global entry and Clear edge behavior, seven-lane independence, exact Cohere dry path, all-model/source behavior, numeric safety, partition identity, and no-allocation processing do not regress.",
+    "The frozen experiment produces byte-identical PCM, event, snapshot, controller, surface, and metric artifacts at host partitions 1, 16, 64, 128, 257, and 512 frames.",
+    "The authenticated local JUCE 8.0.15 source tree configures, compiles, links, and fingerprints Pamplist.app without launch or audio/MIDI endpoint access.",
+    "Focused, sanitizer, predecessor-evidence authentication, Instrument Lab freshness, current, and relocated reproduction checks pass after implementation freeze with evidence levels reported independently."
+  ],
+  "decision_rights": {
+    "may": [
+      "Choose Pamplist-local LaneControlMode layout, surface descriptor structure, group titles, labels, tooltips, semantic presentation formats, view-selector styling, and bounded JUCE layout.",
+      "Choose exact Voice CC transforms within existing parameter ranges, same-lane re-press toggle semantics, and Trigger midpoint Off or On transform exactly as frozen in control-map.json.",
+      "Add a portable pure UI model and tests while keeping UI formatting and allocation outside audio processing.",
+      "Replace current prototype authorities only with revision 0.5 successor authorities while preserving revision 0.2 through 0.4 proposal, contract, and evidence directories.",
+      "Build and hash one authenticated standalone target without launch or endpoint access."
+    ],
+    "must_not": [
+      "Delete, combine, or silently repurpose any existing Model, Voice, Motion, Sequencer, Global, transport, or output parameter.",
+      "Change, copy, normalize, clean, reset, or replace authenticated upstream source, model order/names, source RNG behavior, voice DSP, clock math, non-Trigger motion scales, dry mixer, or cohesion DSP.",
+      "Give negative Trigger a new complement, retrigger, probability, or sequencer algorithm; Trigger is only an explicit Off or On correction.",
+      "Modify revision 0.2 through 0.4 retained proposal, contract, or evidence bytes.",
+      "Refactor another prototype, create new shared DSP/UI infrastructure, or allocate canonical Schuss identities.",
+      "Alter catalogs, schemas, graphs, providers, runtimes, device profiles, source releases, shared library records, or production/release records.",
+      "Infer physical usability, real-time safety, audible clarity, embedded feasibility, distribution readiness, or production status from synthetic, host, or build evidence.",
+      "Launch the app, enumerate or open endpoints, access hardware, install dependencies, stage, commit, push, package, publish, redistribute, upload, or flash."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Approved revision 0.5 proposal and ready implementation bundle under research/prototypes/pamplist/contract-r05.",
+    "Accepted LaneControlMode state, contextual regular Launch Control 3 mapping, and exact same-lane toggle edge grammar.",
+    "Portable pure sixteen-slot surface model defining context, groups, labels, tooltips, ranges, presentation kinds, semantic values, enabled state, and value application.",
+    "JUCE surface with exactly two outlined rows of eight rotary sliders plus explicit Voice and Motion selectors and concise ownership help.",
+    "Binary Trigger Enable semantics preserving revision 0.4 Trigger-On audio exactly.",
+    "Focused Release and sanitizer suites, control/surface exhaustion, predecessor comparator, deterministic render evidence, target-build receipt, and relocated reproduction.",
+    "Updated README, semantic surface, topology annotation, prototype index, handoff, results, and gaps with predecessor authorities preserved."
+  ],
+  "dependency_contracts": [
+    "Macro voices remain read-only configured source at patcher commit 08d3e6e1e2b61230308c20a15ded58ffdaf4656c and synthesis tree 58917f3e2e46a30337cfb6292a3504845b1d5552; missing, dirty, or mismatched source fails closed.",
+    "Revision 0.4 retained evidence is immutable comparator authority; Dry7 audio SHA-256 a07ed1a3d461f538349cd5c12678e732d1619efc6e8ec623dce30ffd31e47912 must remain exact.",
+    "Instrument Lab v1 supplies only the portable host seam and evidence boundary; Pamplist owns the surface model and all musical/control state.",
+    "JUCE 8.0.15 is an authenticated local build-only dependency with fetching disabled and no presence in Core audio processing.",
+    "The regular Launch Control 3 topology artifact with SHA-256 d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b remains physical/protocol authority; endpoint/device behavior is deferred.",
+    "No new external DSP, UI library, source byte, copied asset, or package enters this revision."
+  ],
+  "goal": {
+    "primary_claim": "Pamplist exposes every existing lane value through exactly sixteen visible and physical knob positions, with accepted Voice or Motion context on the top row, a stable Sequencer bottom row, and truthful binary Trigger Enable behavior.",
+    "why": "The user's revision 0.4 audition found that simultaneous base and modulation rows looked duplicated, raw MIDI-style values obscured meaning, the app exceeded the actual sixteen-encoder surface, and bipolar Trigger misleadingly devoted half its range to silence."
+  },
+  "inputs": [
+    "AGENTS.md, docs/PROJECT_CONTEXT.md, docs/STATUS.md, ADRs 0016 and 0018, and docs/workflows/instrument-development.md.",
+    "Inherited uncommitted but validated Pamplist revision 0.4 proposal, implementation, dependencies, tests, retained evidence, target-build receipt, and handoff.",
+    "The user's 2026-08-24 direct audition report requesting exactly sixteen visible knobs, retained features, clearer Voice versus Sequencer/Motion grouping, outlines and explanations, and correction of the silent negative Trigger range.",
+    "research/proposals/pamplist-r05.md revision 0.5 at the exact SHA-256 recorded below.",
+    "catalog/sources.lock.json and machine-local catalog/sources.local.yml for the authenticated read-only Macro Voice source.",
+    "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json, retained revision 0.4 evidence, and the authenticated JUCE 8.0.15 source-tree record.",
+    "Project-owned Layerwell and Tide Pit accepted-state/controller presentation lessons as non-normative local research."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "Current-thread user message on 2026-08-24: keep every Pamplist lane feature, replace the confusing extra/duplicate rows with a clear sixteen-knob UI grouped by voice shape versus sequencer/frequency behavior, and correct the Trigger control's silent or glitchy counterclockwise region.",
+      "state": "approved"
+    },
+    "path": "research/proposals/pamplist-r05.md",
+    "revision": "0.5",
+    "sha256": "8c15dd3c38ca8a585c2603d219daccbba9446dff7a08156e0ba579fac25e1423"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "Exactly seven existing lane/voice systems and the existing Global/Clear page.",
+      "One accepted LaneControlMode with Voice default, Motion alternative, and no audio semantics.",
+      "Exactly sixteen portable surface slots and sixteen JUCE rotary sliders arranged as two rows of eight.",
+      "Voice, Motion, Sequencer, and Global contextual semantics, grouping, labels, tooltips, ranges, presentation formats, and value application.",
+      "Contextual CC20 through CC35 transforms, same-lane re-press mode toggle, another-lane selection with mode preservation, and unchanged Global/Clear edges.",
+      "Binary Trigger Off/On with values 0-63 Off and 64-127 On, legacy positive accepted as On, and exact revision 0.4 Trigger-On audio parity.",
+      "Portable Core/surface model, deterministic renderer/evidence, source authentication, focused/sanitizer validation, authenticated unlaunched standalone, metadata freshness, current, and relocated reproduction."
+    ],
+    "out": [
+      "Removing parameters; new voice, scheduler, modulation, effect, routing, mixing, preset, external-clock, plug-in, Ksoloti, or Gills behavior.",
+      "Changing authenticated source, model bank, source RNG contract, non-Trigger audio/control scales, dry path, or cohesion body.",
+      "Physical mapping installation, endpoint enumeration/access, controller feedback, reconnect, OLED/LED behavior, and connected-device evidence.",
+      "Application launch, visual inspection by Codex, callback timing/resource measurement, controlled listening claim, packaging, distribution, publication, staging, commit, push, upload, or flash.",
+      "Canonical graph, catalog, provider, runtime, device profile, project, machine, shared library record, or production integration."
+    ]
+  },
+  "status": "ready",
+  "target": "Schuss Instrument Lab v1 portable C++17 Core, deterministic 48 kHz renderer, regular Launch Control 3 adapter, and authenticated JUCE 8.0.15 macOS standalone",
+  "title": "Pamplist 0.5: Sixteen-Knob Voice, Motion, and Sequencer Surface",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "built but unlaunched revision 0.5 Pamplist.app plus deterministic control/audio comparator evidence and synthetic Launch Control 3 trace",
+    "evidence_level": "target-build",
+    "success_observation": "The exact source authenticates; one accepted context drives an exact sixteen-slot surface and exhaustive contextual map; every existing field remains reachable; Trigger midpoint boundaries and same-lane toggle edges pass; Trigger-On PCM matches revision 0.4 exactly; focused/sanitizer/render/prototype/current/relocated checks pass; authenticated Pamplist.app is built and fingerprinted without launch or endpoint access."
+  }
+}

@@ -2,29 +2,30 @@
 
 This compact noncanonical index does not replace the approved proposal or task.
 
-- Prototype: `pamplist` revision `0.2`
+- Prototype: `pamplist` revision `0.5`
 - Lane: `new-design`
-- Index: `research/prototypes/pamplist/prototype-index.json` (`f1506f443621625229e3a9ea5fcedc9b93124f37f5d25901a6623eb8d356d40c`)
-- Working artifact: noncanonical portable Pamplist 0.2 Core with eight deterministic clock-modulation lanes, one authenticated complete macro voice, two separate q27 outputs, retained objective renders, a regular Launch Control 3 adapter, and a built but unlaunched standalone app
+- Index: `research/prototypes/pamplist/prototype-index.json` (`9108b37d5eb0e841eed075caea22e98370ffaa7aedb7c3f44faad9e57e715acb`)
+- Working artifact: noncanonical portable Pamplist 0.5 Core with seven independent deterministic lane/voice systems, accepted Voice/Motion context, exactly sixteen visible semantic controls, binary Trigger Enable, source-order model names, an exact-dry clearable six-mode post-sum cohesion body, retained objective renders, and a built but unlaunched standalone app
 
 ## Exact authorities
 
-- `control_map`: `research/prototypes/pamplist/contract/control-map.json` (`aa8c59a568c16999f72ef362b639c2d3fa24d02ee81ca47e7a7a9f4e2c096263`)
+- `control_map`: `research/prototypes/pamplist/contract-r05/control-map.json` (`1cdc7010eee169caeaf21026ecf448db5317a130a24423578a17d357d35c07cf`)
 - `controller_topology`: `research/prototype_support/controllers/novation-launch-control-3-regular-v1.json` (`d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b`)
-- `dsp_topology`: `research/prototypes/pamplist/dsp-topology.json` (`8218e529caf9991d9066f989432c631009f365a6ccd99ce7e172216f9efa0020`)
-- `experiment`: `research/prototypes/pamplist/contract/experiment.json` (`63152aa19c967dd0343258a6755d4be8a97400e4299e420472b82a98209acdab`)
-- `gaps`: `research/prototypes/pamplist/contract/GAPS.md` (`dccf4e25cb9a51979c56ba1b8f551cb8386d33c75f0cec284393fe53399249ef`)
-- `implementation_contract`: `research/prototypes/pamplist/contract/implementation-contract.json` (`9fc9a43492515c8ec5741b353c09697e79153a76b94c81edf129609da2bffaad`)
-- `proposal`: `research/proposals/pamplist.md` (`bf110cd1bfe6b86e032bc993e0baf705d7459182c891d095a9a1a39ce1789af3`)
-- `results`: `research/prototypes/pamplist/contract/RESULTS.md` (`ce2c9ac378badd19f78bc1bbb6b3208ff077a84bcdb043d9f2216cc0e147d5b2`)
-- `source_package_handoff`: `research/prototypes/pamplist/source-dependencies.json` (`305957e264e6ea14a7e6b6e18a4100c49d36306bbf52dbd574c2e4711b0ec6be`)
-- `state_matrix`: `research/prototypes/pamplist/contract/state-matrix.md` (`ab7f54380fa795fca4b72c6e4e7ad0a2905c72c4b27be900c5486b4e6b7533c7`)
-- `validation_plan`: `research/prototypes/pamplist/contract/validation-plan.json` (`5853897aa31e6eafaa3ea4c632099f7c22c67bf45d9ded3967f8f4c5c5cb0ba2`)
+- `dsp_topology`: `research/prototypes/pamplist/dsp-topology.json` (`4be41de61132b78423e12c6a3ab25680633ea6a441906c3f227b3d89afb7a014`)
+- `experiment`: `research/prototypes/pamplist/contract-r05/experiment.json` (`ea6c542ce6e5c873acccae93f424f345e23d90330163ac074b49d37c04f4f568`)
+- `gaps`: `research/prototypes/pamplist/contract-r05/GAPS.md` (`ab89c258c1298fa8a55011c3577d5df05dbf995302fbdb22efe5e425ca032212`)
+- `implementation_contract`: `research/prototypes/pamplist/contract-r05/implementation-contract.json` (`63b95b295a67f8712845bcb460b1511f5cfc6ddb4274b88ac104eb4ce9761e4d`)
+- `proposal`: `research/proposals/pamplist-r05.md` (`8c15dd3c38ca8a585c2603d219daccbba9446dff7a08156e0ba579fac25e1423`)
+- `results`: `research/prototypes/pamplist/contract-r05/RESULTS.md` (`66b396b68934233fd613dca6f04cefb28a187b267fccc71d3a26210e20895659`)
+- `source_package_handoff`: `research/prototypes/pamplist/source-dependencies.json` (`d4d16dab1cb3225c012f2be3d2edf841107e82f7cd92e15ce64f856c668bf443`)
+- `state_matrix`: `research/prototypes/pamplist/contract-r05/state-matrix.md` (`b02893d98bf48327f3e210284ac8de5d3f46091765345778e4e67cb91e657656`)
+- `validation_plan`: `research/prototypes/pamplist/contract-r05/validation-plan.json` (`dc67acc53e79cd7dd865da7782ecb9384260bf3884bd71dca96a1832d5a95a06`)
 
 ## Allowed edits
 
-- prototype-owned rational timeline, masks, keyed decisions, lane shapes, modulation matrix, Core, renderer, fixtures, and tests
-- prototype-owned accepted-state projection, whole-value control snapshots, controller mapping, and optional standalone presentation
+- prototype-owned rational timeline, masks, keyed decisions, lane shapes, seven local modulation rows, seven-voice Core, dry mixer, shared cohesion body, final output, renderer, fixtures, and tests
+- prototype-owned per-voice source RNG context isolation and source-order model labels without upstream mutation
+- prototype-owned accepted-state projection, whole-value control snapshots, accepted Voice/Motion context, contextual controller mapping, portable sixteen-slot surface model, and optional standalone presentation
 - prototype-only topology, evidence, and handoff annotations
 - exact source-authentication corrections that preserve upstream bytes and source identity
 
@@ -37,6 +38,8 @@ This compact noncanonical index does not replace the approved proposal or task.
 - schuss::pamplist::ControllerAdapter
 - schuss::pamplist::mapMidiCc
 - schuss::pamplist::applyMapping
+- schuss::pamplist::surfaceModel
+- schuss::pamplist::applySurfaceValue
 - pamplist_core
 - pamplist-render
 - pamplist
@@ -53,17 +56,17 @@ This compact noncanonical index does not replace the approved proposal or task.
 ## Stop conditions
 
 - the approved proposal or ready implementation-contract fingerprint changes
-- a frozen rate, shape, control-map, experiment, render, source, or target-build authority drifts
+- a frozen rate, shape, model-name table, control-map, experiment, render, source, or target-build authority drifts
 - a failure is relabeled or an objective tolerance is weakened without a newly approved revision
 - work expands to app launch, live endpoints, hardware, listening, distribution, canonical records, or production without explicit authorization
 - an evidence level would be promoted without its named proof
 
 ## Open decisions
 
-- hands-on balance, pattern legibility, route scale, and engine-transition approval
+- hands-on voice separation, balance, pattern legibility, route scale, model-label clarity, common-body cohesion, masking, transition, Duck, and Clear approval
 - fresh app launch, visual inspection, live callback timing, lifecycle, and xrun measurement
 - physical Launch Control 3 endpoint selection, receipt, reconnect, feedback, and control feel
-- optional external clock, variable Euclidean length, cross-lane operators, presets, polyphony, effects, and plug-in formats
+- optional mute, solo, pan, manual drone start, external clock, variable Euclidean length, cross-lane operators, presets, polyphony, additional effects, and plug-in formats
 - any Ksoloti or Gills adaptation and resource strategy
 - any canonical identity, provider, application runtime, distribution, or production promotion
 

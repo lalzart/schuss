@@ -9,9 +9,17 @@
 namespace schuss::pamplist {
 
 enum class SemanticControl : std::uint8_t {
+    voice_model,
+    voice_pitch,
+    voice_harmonics,
+    voice_timbre,
+    voice_morph,
+    voice_decay,
+    voice_colour,
+    voice_level,
     route_trigger,
     route_pitch,
-    route_model,
+    route_model_sweep,
     route_harmonics,
     route_timbre,
     route_morph,
@@ -25,14 +33,27 @@ enum class SemanticControl : std::uint8_t {
     probability,
     repeat,
     amplitude,
-    select_lane_1,
-    select_lane_2,
-    select_lane_3,
-    select_lane_4,
-    select_lane_5,
-    select_lane_6,
-    select_lane_7,
-    select_lane_8,
+    global_drive,
+    global_cohere,
+    global_root,
+    global_spread,
+    global_tail,
+    global_damping,
+    global_width,
+    global_duck,
+    global_bpm,
+    global_master,
+    global_unassigned,
+    toggle_lane_mode,
+    select_page_1,
+    select_page_2,
+    select_page_3,
+    select_page_4,
+    select_page_5,
+    select_page_6,
+    select_page_7,
+    select_global,
+    clear_fx,
     none,
 };
 
@@ -41,6 +62,7 @@ enum class MappingStatus : std::uint8_t {
     accepted_press,
     accepted_release,
     accepted_hold,
+    accepted_noop,
     ignored_channel,
     unknown_cc,
     invalid_message,
@@ -51,8 +73,9 @@ struct MappingResult final {
     SemanticControl semantic{SemanticControl::none};
     std::uint8_t cc{};
     std::uint8_t value{};
-    std::uint8_t lane{};
+    std::uint8_t page{};
     std::uint8_t discrete_value{};
+    std::uint32_t integer_value{};
     float continuous_value{};
 
     [[nodiscard]] bool accepted() const noexcept;
@@ -65,6 +88,7 @@ struct ControllerDiagnostics final {
     std::uint64_t ignored_channel_count{};
     std::uint64_t unknown_cc_count{};
     std::uint64_t invalid_message_count{};
+    std::uint64_t ignored_global_control_count{};
 };
 
 [[nodiscard]] std::uint8_t launchControlMidiChannel() noexcept;
@@ -73,7 +97,9 @@ struct ControllerDiagnostics final {
 [[nodiscard]] MappingResult mapMidiCc(
     int one_based_channel,
     int cc,
-    int value) noexcept;
+    int value,
+    std::uint8_t selected_page,
+    LaneControlMode lane_control_mode) noexcept;
 [[nodiscard]] bool applyMapping(
     Controls& controls,
     const MappingResult& mapping) noexcept;
@@ -90,7 +116,7 @@ public:
     [[nodiscard]] const ControllerDiagnostics& diagnostics() const noexcept;
 
 private:
-    std::array<bool, kLaneCount> button_down_{};
+    std::array<bool, kPageCount> button_down_{};
     ControllerDiagnostics diagnostics_{};
 };
 

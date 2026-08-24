@@ -4,126 +4,323 @@
     "executable_graph": false
   },
   "connections": [
-    {"from": "role.parameter.transport", "kind": "tempo-running-and-seed", "to": "role.node.timeline"},
-    {"from": "role.parameter.lanes", "kind": "rate-phase-and-step-program", "to": "role.node.timeline"},
-    {"from": "role.node.timeline", "kind": "lane-step-and-local-phase", "to": "role.node.masks"},
-    {"from": "role.node.masks", "kind": "accepted-step-address", "to": "role.node.decisions"},
-    {"from": "role.node.decisions", "kind": "accepted-step-and-keyed-values", "to": "role.node.shapes"},
-    {"from": "role.parameter.lanes", "kind": "shape-amplitude-and-signed-weights", "to": "role.node.shapes"},
-    {"from": "role.node.shapes", "kind": "eight-bounded-lane-values", "to": "role.node.matrix"},
-    {"from": "role.parameter.voice", "kind": "base-voice-values", "to": "role.node.matrix"},
-    {"from": "role.node.matrix", "kind": "trigger-and-seven-resolved-values", "to": "role.node.macro-voice"},
-    {"from": "role.node.macro-voice", "kind": "main-q27", "to": "role.node.output-gain"},
-    {"from": "role.node.macro-voice", "kind": "auxiliary-q27", "to": "role.node.output-gain"},
-    {"from": "role.node.output-gain", "kind": "bounded-main-q27", "to": "role.port.audio-out-left"},
-    {"from": "role.node.output-gain", "kind": "bounded-auxiliary-q27", "to": "role.port.audio-out-right"},
-    {"from": "role.node.timeline", "kind": "accepted-observation", "to": "role.display.state"},
-    {"from": "role.node.matrix", "kind": "resolved-observation", "to": "role.display.state"},
-    {"from": "role.node.output-gain", "kind": "bounded-diagnostics", "to": "role.display.diagnostics"}
+    {
+      "from": "role.parameter.transport",
+      "kind": "tempo-running-and-seed",
+      "to": "role.node.timeline"
+    },
+    {
+      "from": "role.parameter.lanes",
+      "kind": "seven-rate-phase-step-and-route-programs",
+      "to": "role.node.timeline"
+    },
+    {
+      "from": "role.node.timeline",
+      "kind": "seven-local-step-phases",
+      "to": "role.node.masks-decisions-shapes"
+    },
+    {
+      "from": "role.node.masks-decisions-shapes",
+      "kind": "seven-bounded-lane-values-and-trigger-edges",
+      "to": "role.node.local-modulation"
+    },
+    {
+      "from": "role.parameter.voices",
+      "kind": "seven-independent-base-voice-records",
+      "to": "role.node.local-modulation"
+    },
+    {
+      "from": "role.node.local-modulation",
+      "kind": "seven-independent-trigger-and-resolved-control-records",
+      "to": "role.node.macro-voice-bank"
+    },
+    {
+      "from": "role.node.macro-voice-bank",
+      "kind": "seven-main-and-seven-auxiliary-q27-streams",
+      "to": "role.node.dry-mixer"
+    },
+    {
+      "from": "role.node.dry-mixer",
+      "kind": "signed-sixty-four-bit-stereo-excitation-and-dry-reference",
+      "to": "role.node.cohesion-body"
+    },
+    {
+      "from": "role.parameter.cohesion",
+      "kind": "drive-cohere-root-spread-tail-damping-width-duck-and-clear",
+      "to": "role.node.cohesion-body"
+    },
+    {
+      "from": "role.node.cohesion-body",
+      "kind": "dry-or-cohesion-stereo-signal",
+      "to": "role.node.final-output"
+    },
+    {
+      "from": "role.parameter.transport",
+      "kind": "smoothed-master-gain",
+      "to": "role.node.final-output"
+    },
+    {
+      "from": "role.node.final-output",
+      "kind": "bounded-main-q27",
+      "to": "role.port.audio-out-left"
+    },
+    {
+      "from": "role.node.final-output",
+      "kind": "bounded-auxiliary-q27",
+      "to": "role.port.audio-out-right"
+    },
+    {
+      "from": "role.node.local-modulation",
+      "kind": "accepted-base-and-resolved-model-indices-and-names",
+      "to": "role.display.state"
+    },
+    {
+      "from": "role.node.cohesion-body",
+      "kind": "accepted-shared-body-state-and-clear-count",
+      "to": "role.display.state"
+    },
+    {
+      "from": "role.node.final-output",
+      "kind": "bounded-source-effect-and-final-diagnostics",
+      "to": "role.display.diagnostics"
+    }
   ],
   "feedback_edges": [
-    {"from": "role.node.timeline", "kind": "persistent-phase-and-remainder", "to": "role.node.timeline"},
-    {"from": "role.node.decisions", "kind": "addressed-repeat-window", "to": "role.node.decisions"},
-    {"from": "role.node.shapes", "kind": "held-and-smoothed-random-values", "to": "role.node.shapes"},
-    {"from": "role.node.macro-voice", "kind": "engine-envelope-and-resonator-state", "to": "role.node.macro-voice"}
+    {
+      "from": "role.node.timeline",
+      "kind": "seven-persistent-phases-and-remainders",
+      "to": "role.node.timeline"
+    },
+    {
+      "from": "role.node.masks-decisions-shapes",
+      "kind": "seven-addressed-repeat-windows-and-held-values",
+      "to": "role.node.masks-decisions-shapes"
+    },
+    {
+      "from": "role.node.macro-voice-bank",
+      "kind": "seven-independent-model-envelope-and-random-context-states",
+      "to": "role.node.macro-voice-bank"
+    },
+    {
+      "from": "role.node.cohesion-body",
+      "kind": "six-complex-modal-states-and-one-duck-envelope",
+      "to": "role.node.cohesion-body"
+    }
   ],
   "fusion_boundary": {
-    "implementation_note": "One portable instrument-owned Core fuses these inspectable local roles behind a persistent sixteen-frame seam.",
+    "implementation_note": "One portable instrument-owned Core fuses inspectable fixed-capacity roles behind a persistent sixteen-frame seam. Voice ownership stays local until the dry mixer; only the declared post-sum body is shared.",
     "includes": [
       "role.node.timeline",
-      "role.node.masks",
-      "role.node.decisions",
-      "role.node.shapes",
-      "role.node.matrix",
-      "role.node.macro-voice",
-      "role.node.output-gain"
+      "role.node.masks-decisions-shapes",
+      "role.node.local-modulation",
+      "role.node.macro-voice-bank",
+      "role.node.dry-mixer",
+      "role.node.cohesion-body",
+      "role.node.final-output"
     ],
     "local_role": "role.fusion.core"
   },
   "nodes": [
     {
-      "internals": ["one shared tempo", "eight exact rational accumulators", "q32 phase", "integer fractional remainders", "sixteen-frame persistent carry"],
+      "internals": [
+        "one shared tempo",
+        "seven exact rational accumulators",
+        "q32 phase",
+        "integer fractional remainders",
+        "sixteen-frame persistent carry"
+      ],
       "local_role": "role.node.timeline",
-      "name": "eight-lane rational timeline",
+      "name": "seven-lane rational timeline",
       "origin": "newly-designed",
-      "responsibility": "advance sixteenth-note-relative lane phases without host-partition drift",
+      "responsibility": "advance seven sixteenth-note-relative lane phases without host-partition drift",
       "state_owner": true,
-      "unresolved_component_contract": ["phase-preserving rational lane timeline"]
+      "unresolved_component_contract": [
+        "phase-preserving rational lane timeline"
+      ]
     },
     {
-      "internals": ["fixed sixteen steps", "hit count zero through sixteen", "rotation zero through fifteen"],
-      "local_role": "role.node.masks",
-      "name": "fixed Euclidean masks",
+      "internals": [
+        "seven fixed sixteen-step Euclidean masks",
+        "seed-lane-address-domain probability",
+        "repeat zero through sixty-four",
+        "seven lane-shape functions",
+        "per-lane amplitude"
+      ],
+      "local_role": "role.node.masks-decisions-shapes",
+      "name": "seven independent lane generators",
       "origin": "newly-designed",
-      "responsibility": "accept or reject each observed lane step with an evenly distributed bounded mask",
+      "responsibility": "turn each local schedule into one deterministic bounded lane value and trigger decision",
+      "state_owner": true,
+      "unresolved_component_contract": [
+        "rotatable fixed-length Euclidean mask",
+        "addressed musical decision generator",
+        "clock-lane shape bank"
+      ]
+    },
+    {
+      "internals": [
+        "seven local rows of one binary Trigger Enable and seven signed weights",
+        "no cross-lane sum",
+        "per-lane exact Off or On Trigger Enable",
+        "per-lane Pitch and MODEL SWEEP",
+        "per-lane Harmonics Timbre Morph Decay and Level"
+      ],
+      "local_role": "role.node.local-modulation",
+      "name": "seven local voice-modulation rows",
+      "origin": "newly-designed",
+      "responsibility": "resolve each lane value only against that lane's base voice controls",
       "state_owner": false,
-      "unresolved_component_contract": ["rotatable fixed-length Euclidean mask"]
+      "unresolved_component_contract": [
+        "bounded lane-local voice modulation"
+      ]
     },
     {
-      "internals": ["seed-lane-address-domain key", "free address", "repeat one through sixty-four", "probability decision"],
-      "local_role": "role.node.decisions",
-      "name": "addressed musical decisions",
-      "origin": "newly-designed",
-      "responsibility": "make probability and held values repeatable without shared sequential random advance",
-      "state_owner": true,
-      "unresolved_component_contract": ["addressed musical decision generator"]
-    },
-    {
-      "internals": ["gate", "pulse", "triangle", "sine", "ramp", "exponential decay", "sample hold", "smooth random", "amplitude"],
-      "local_role": "role.node.shapes",
-      "name": "eight lane-shape evaluators",
-      "origin": "newly-designed",
-      "responsibility": "turn each accepted step and local phase into one bounded unipolar lane value",
-      "state_owner": true,
-      "unresolved_component_contract": ["clock-lane shape bank"]
-    },
-    {
-      "internals": ["sixty-four signed weights", "wide sum", "per-destination clamp", "coalesced trigger", "resolved pitch and model"],
-      "local_role": "role.node.matrix",
-      "name": "eight-by-eight voice matrix",
-      "origin": "newly-designed",
-      "responsibility": "focus all lane motion on trigger, pitch, model, harmonics, timbre, morph, decay, and level",
-      "state_owner": false,
-      "unresolved_component_contract": ["bounded selected-lane modulation matrix"]
-    },
-    {
-      "internals": ["twenty-four engines", "one voice", "internal dynamics", "main output", "auxiliary output", "sixteen-frame blocks"],
-      "local_role": "role.node.macro-voice",
-      "name": "complete macro voice",
+      "internals": [
+        "seven persistent complete twenty-four-model instances",
+        "seven independent base and resolved control records",
+        "seven started flags",
+        "seven saved source random contexts",
+        "seven main and auxiliary sixteen-frame blocks"
+      ],
+      "local_role": "role.node.macro-voice-bank",
+      "name": "independent macro-voice bank",
       "origin": "source-derived",
-      "responsibility": "render the authenticated engine bank with separate main and auxiliary signals",
+      "responsibility": "render seven authenticated model-bank instances while isolating the source's process-global stochastic state",
       "state_owner": true,
-      "unresolved_component_contract": ["authenticated complete macro-voice host primitive"]
+      "unresolved_component_contract": [
+        "authenticated complete macro-voice host primitive",
+        "serialized per-instance stochastic context adapter"
+      ]
     },
     {
-      "internals": ["level destination", "master gain", "wide multiply", "q27 saturation", "finite diagnostics"],
-      "local_role": "role.node.output-gain",
-      "name": "dual output gain and guard",
+      "internals": [
+        "per-voice resolved Level",
+        "signed sixty-four-bit main and auxiliary sums",
+        "no dynamic normalization",
+        "exact dry reference"
+      ],
+      "local_role": "role.node.dry-mixer",
+      "name": "fixed independent-voice dry mixer",
       "origin": "fused-implementation",
-      "responsibility": "apply the instrument level law while preserving and bounding separate main and auxiliary signals",
+      "responsibility": "combine seven voices without changing another lane's contribution when a lane becomes active",
       "state_owner": false,
-      "unresolved_component_contract": ["bounded dual-output gain stage"]
+      "unresolved_component_contract": [
+        "bounded fixed additive dual-output mixer"
+      ]
+    },
+    {
+      "internals": [
+        "separate driven branch",
+        "six shared complex modal states",
+        "harmonic-to-inharmonic ratio interpolation",
+        "strictly sub-unity poles",
+        "stereo mode panning",
+        "peak-following wet duck",
+        "exact-zero Cohere dry selection",
+        "effect-only clear generation"
+      ],
+      "local_role": "role.node.cohesion-body",
+      "name": "clearable shared modal body",
+      "origin": "newly-designed",
+      "responsibility": "give only the post-sum stereo mix one bounded shared resonant history while preserving an exact dry escape",
+      "state_owner": true,
+      "unresolved_component_contract": [
+        "fixed six-mode post-sum cohesion body",
+        "exact dry shared-state interpolation"
+      ]
+    },
+    {
+      "internals": [
+        "smoothed shared Master",
+        "one final q27 conversion",
+        "one final saturation boundary",
+        "non-finite dry fallback"
+      ],
+      "local_role": "role.node.final-output",
+      "name": "bounded stereo final output",
+      "origin": "fused-implementation",
+      "responsibility": "apply shared output level and keep both stereo samples finite and q27 bounded",
+      "state_owner": false,
+      "unresolved_component_contract": [
+        "bounded final stereo conversion"
+      ]
     }
   ],
   "prototype_id": "pamplist",
   "public_facets": {
     "actions": [
-      {"data_type": "binary transport action", "direction": "input", "local_role": "role.action.run-stop", "name": "run or stop with phase-zero restart"},
-      {"data_type": "eight rising-edge actions", "direction": "input", "local_role": "role.action.lane-select", "name": "select lane one through eight"},
-      {"data_type": "host lifecycle action", "direction": "input", "local_role": "role.action.reset-panic", "name": "reset or panic"}
+      {
+        "data_type": "binary transport action",
+        "direction": "input",
+        "local_role": "role.action.run-stop",
+        "name": "run or stop with phase-zero all-voice restart"
+      },
+      {
+        "data_type": "eight rising-edge page actions",
+        "direction": "input",
+        "local_role": "role.action.page-select-clear",
+        "name": "select lane one through seven, re-press the selected lane to toggle Voice or Motion, or enter and re-press Global to clear shared history"
+      },
+      {
+        "data_type": "host lifecycle action",
+        "direction": "input",
+        "local_role": "role.action.reset-panic",
+        "name": "reset or panic"
+      }
     ],
     "displays": [
-      {"data_type": "accepted whole-state snapshot", "direction": "output", "local_role": "role.display.state", "name": "accepted lane, matrix, and voice state"},
-      {"data_type": "bounded counters and event trace", "direction": "output", "local_role": "role.display.diagnostics", "name": "processing diagnostics"}
+      {
+        "data_type": "accepted whole-state snapshot",
+        "direction": "output",
+        "local_role": "role.display.state",
+        "name": "accepted page and Voice or Motion context, seven base and resolved voice states, sixteen-slot surface, and shared-body state"
+      },
+      {
+        "data_type": "bounded per-lane source effect and final counters",
+        "direction": "output",
+        "local_role": "role.display.diagnostics",
+        "name": "processing, clear, recovery, and final-output diagnostics"
+      }
     ],
     "parameters": [
-      {"data_type": "tempo, seed, phase, rate, mask, probability, repeat, shape, amplitude", "direction": "input", "local_role": "role.parameter.transport", "name": "transport and deterministic time controls"},
-      {"data_type": "eight complete lane programs and sixty-four signed weights", "direction": "input", "local_role": "role.parameter.lanes", "name": "lane and matrix program"},
-      {"data_type": "engine, note, harmonics, timbre, morph, decay, colour, level, master", "direction": "input", "local_role": "role.parameter.voice", "name": "base voice and output controls"}
+      {
+        "data_type": "running tempo seed and master gain",
+        "direction": "input",
+        "local_role": "role.parameter.transport",
+        "name": "shared transport and final-output controls"
+      },
+      {
+        "data_type": "seven complete timing programs, seven binary Trigger Enables, and forty-nine local signed weights",
+        "direction": "input",
+        "local_role": "role.parameter.lanes",
+        "name": "independent lane and local-modulation programs"
+      },
+      {
+        "data_type": "seven records of model note harmonics timbre morph decay colour and level",
+        "direction": "input",
+        "local_role": "role.parameter.voices",
+        "name": "independent base voice controls"
+      },
+      {
+        "data_type": "drive cohere root spread tail damping width duck and clear generation",
+        "direction": "input",
+        "local_role": "role.parameter.cohesion",
+        "name": "shared post-sum body controls"
+      }
     ],
     "ports": [
-      {"data_type": "q27 audio", "direction": "output", "local_role": "role.port.audio-out-left", "name": "macro-voice main output"},
-      {"data_type": "q27 audio", "direction": "output", "local_role": "role.port.audio-out-right", "name": "macro-voice auxiliary output"}
+      {
+        "data_type": "q27 audio",
+        "direction": "output",
+        "local_role": "role.port.audio-out-left",
+        "name": "dry-or-cohesion macro-voice main output"
+      },
+      {
+        "data_type": "q27 audio",
+        "direction": "output",
+        "local_role": "role.port.audio-out-right",
+        "name": "dry-or-cohesion macro-voice auxiliary output"
+      }
     ]
   },
   "schema_version": "schuss-instrument-lab-dsp-topology-v1"

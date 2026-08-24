@@ -1,0 +1,42 @@
+{
+  "artifact": {
+    "bytes": 8355624,
+    "path": "build/pamplist-juce/pamplist_artefacts/Release/Pamplist.app/Contents/MacOS/Pamplist",
+    "sha256": "9beefec36337cc0543f17d6b079fdeca2e658d91460a4e32f822889c1096e7d5"
+  },
+  "claims": {
+    "app_launched": false,
+    "audio_endpoint_opened": false,
+    "midi_endpoint_opened": false,
+    "surface_rotary_controls": 16,
+    "target_built": true
+  },
+  "input_fingerprint_sha256": "400655fc8ca34991ab65be644c72170085d01f5dd9aa04d109c91af9c8db4ae7",
+  "juce_manifest": {
+    "path": "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json",
+    "sha256": "db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5"
+  },
+  "schema_version": "pamplist-authenticated-juce-build-v4",
+  "source_authority": {
+    "files": [
+      {
+        "path": "ai/sdk/ksoloti-extended/objects/extended/synthesis/macro_voice_dsp.h",
+        "sha256": "d975dd8014b5f9eef27eea22d81f08d691a46e3cbfa5ac48f22a9102241be4a6"
+      },
+      {
+        "path": "ai/sdk/ksoloti-extended/objects/extended/synthesis/macro-voice.manifest.json",
+        "sha256": "11cf12ec38c0ed4db983b8c762fc09900ad0ab09a211ca0c7573336c8616d5b4"
+      },
+      {
+        "path": "ai/sdk/ksoloti-extended/objects/extended/synthesis/vendor/README.md",
+        "sha256": "40f899a7a9547e444bb6ef0fe3e0f1016bc1ae812ada076065a61e77ba659a50"
+      }
+    ],
+    "revision": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c",
+    "source_id": "patcher",
+    "subtree_git_tree": "58917f3e2e46a30337cfb6292a3504845b1d5552",
+    "subtree_path": "ai/sdk/ksoloti-extended/objects/extended/synthesis"
+  },
+  "status": "passed",
+  "target": "pamplist"
+}

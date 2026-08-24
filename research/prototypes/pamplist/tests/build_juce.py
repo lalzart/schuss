@@ -15,7 +15,7 @@ from typing import Any
 PROTOTYPE = Path(__file__).resolve().parents[1]
 REPO_ROOT = PROTOTYPE.parents[2]
 DEFAULT_BUILD = REPO_ROOT / "build" / "pamplist-juce"
-RECEIPT = PROTOTYPE / "contract" / "juce-build.json"
+RECEIPT = PROTOTYPE / "contract-r05" / "juce-build.json"
 JUCE_MANIFEST = REPO_ROOT / "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json"
 JUCE_MANIFEST_SHA256 = "db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5"
 SOURCE_VERIFIER = PROTOTYPE / "tests" / "verify_source_authority.py"
@@ -58,7 +58,8 @@ def input_fingerprint() -> str:
         PROTOTYPE / "include",
         PROTOTYPE / "src",
         PROTOTYPE / "source-dependencies.json",
-        PROTOTYPE / "contract/control-map.json",
+        PROTOTYPE / "contract-r05/control-map.json",
+        PROTOTYPE / "contract-r05/implementation-contract.json",
         JUCE_MANIFEST,
     ]
     paths: list[Path] = []
@@ -77,6 +78,39 @@ def app_binary(build: Path) -> Path:
     return build / "pamplist_artefacts/Release/Pamplist.app/Contents/MacOS/Pamplist"
 
 
+def validate_surface_source() -> None:
+    header = (PROTOTYPE / "include/schuss/pamplist/ui_model.hpp").read_text(
+        encoding="utf-8"
+    )
+    source = (PROTOTYPE / "src/juce_main.cpp").read_text(encoding="utf-8")
+    if "kSurfaceRotaryCount = 16U" not in header:
+        raise RuntimeError("portable surface cardinality is not exactly sixteen")
+    declaration = (
+        "std::array<std::unique_ptr<SurfaceSlider>, pam::kSurfaceColumnCount>"
+    )
+    if (
+        f"{declaration}\n        top_sliders_;" not in source
+        or f"{declaration}\n        bottom_sliders_;" not in source
+    ):
+        raise RuntimeError("JUCE source does not declare exactly two eight-slider rows")
+    for required in (
+        "pam::surfaceModel(snapshot)",
+        "VOICE SHAPE - direct lane sound",
+        "SEQUENCER - timing, pattern, and motion shape",
+        "pam::LaneControlMode::voice",
+        "pam::LaneControlMode::motion",
+        "class SurfaceSlider final : public juce::Slider",
+        "getValue() >= 0.5 ? 0.0 : 1.0",
+        "presentation == pam::PresentationKind::trigger_switch",
+        "if (!slider.userGestureActive())",
+    ):
+        if required not in source:
+            raise RuntimeError(f"JUCE sixteen-control contract missing: {required}")
+    for forbidden in ("primary_sliders_", "lane_sliders_"):
+        if forbidden in source:
+            raise RuntimeError(f"obsolete extra slider bank remains: {forbidden}")
+
+
 def reproduce(build: Path, juce_source: Path) -> None:
     if not juce_source.is_dir():
         raise RuntimeError(f"JUCE source tree is missing: {juce_source}")
@@ -88,6 +122,7 @@ def reproduce(build: Path, juce_source: Path) -> None:
         "--check",
     ])
     source = source_receipt()
+    validate_surface_source()
     run([
         "cmake", "-S", str(PROTOTYPE), "-B", str(build),
         "-DCMAKE_BUILD_TYPE=Release",
@@ -109,6 +144,7 @@ def reproduce(build: Path, juce_source: Path) -> None:
             "app_launched": False,
             "audio_endpoint_opened": False,
             "midi_endpoint_opened": False,
+            "surface_rotary_controls": 16,
             "target_built": True,
         },
         "input_fingerprint_sha256": input_fingerprint(),
@@ -116,7 +152,7 @@ def reproduce(build: Path, juce_source: Path) -> None:
             "path": JUCE_MANIFEST.relative_to(REPO_ROOT).as_posix(),
             "sha256": sha256(JUCE_MANIFEST),
         },
-        "schema_version": "pamplist-authenticated-juce-build-v1",
+        "schema_version": "pamplist-authenticated-juce-build-v4",
         "source_authority": source,
         "status": "passed",
         "target": "pamplist",
@@ -130,7 +166,7 @@ def reproduce(build: Path, juce_source: Path) -> None:
 
 def check() -> None:
     document = json.loads(RECEIPT.read_text(encoding="utf-8"))
-    if document.get("schema_version") != "pamplist-authenticated-juce-build-v1":
+    if document.get("schema_version") != "pamplist-authenticated-juce-build-v4":
         raise RuntimeError("JUCE receipt schema drifted")
     if document.get("status") != "passed" or document.get("target") != "pamplist":
         raise RuntimeError("JUCE receipt does not record the named passing target")
@@ -138,6 +174,7 @@ def check() -> None:
         "app_launched": False,
         "audio_endpoint_opened": False,
         "midi_endpoint_opened": False,
+        "surface_rotary_controls": 16,
         "target_built": True,
     }
     if document.get("claims") != expected_claims:
@@ -148,6 +185,7 @@ def check() -> None:
         raise RuntimeError("JUCE receipt manifest binding drifted")
     if document.get("input_fingerprint_sha256") != input_fingerprint():
         raise RuntimeError("JUCE build inputs changed after the retained build")
+    validate_surface_source()
     observed_source = source_receipt()
     if document.get("source_authority") != observed_source:
         raise RuntimeError("configured source authority changed after the retained build")

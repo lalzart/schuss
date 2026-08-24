@@ -5,28 +5,44 @@
   },
   "needs": [
     {
-      "local_role": "role.node.decisions",
-      "required_contract": "addressed musical decision generator"
+      "local_role": "role.node.cohesion-body",
+      "required_contract": "exact dry shared-state interpolation"
     },
     {
-      "local_role": "role.node.macro-voice",
+      "local_role": "role.node.cohesion-body",
+      "required_contract": "fixed six-mode post-sum cohesion body"
+    },
+    {
+      "local_role": "role.node.dry-mixer",
+      "required_contract": "bounded fixed additive dual-output mixer"
+    },
+    {
+      "local_role": "role.node.final-output",
+      "required_contract": "bounded final stereo conversion"
+    },
+    {
+      "local_role": "role.node.local-modulation",
+      "required_contract": "bounded lane-local voice modulation"
+    },
+    {
+      "local_role": "role.node.macro-voice-bank",
       "required_contract": "authenticated complete macro-voice host primitive"
     },
     {
-      "local_role": "role.node.masks",
-      "required_contract": "rotatable fixed-length Euclidean mask"
+      "local_role": "role.node.macro-voice-bank",
+      "required_contract": "serialized per-instance stochastic context adapter"
     },
     {
-      "local_role": "role.node.matrix",
-      "required_contract": "bounded selected-lane modulation matrix"
+      "local_role": "role.node.masks-decisions-shapes",
+      "required_contract": "addressed musical decision generator"
     },
     {
-      "local_role": "role.node.output-gain",
-      "required_contract": "bounded dual-output gain stage"
-    },
-    {
-      "local_role": "role.node.shapes",
+      "local_role": "role.node.masks-decisions-shapes",
       "required_contract": "clock-lane shape bank"
+    },
+    {
+      "local_role": "role.node.masks-decisions-shapes",
+      "required_contract": "rotatable fixed-length Euclidean mask"
     },
     {
       "local_role": "role.node.timeline",

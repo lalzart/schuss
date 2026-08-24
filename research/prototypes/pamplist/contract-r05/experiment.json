@@ -1,0 +1,114 @@
+{
+  "artifact_retention": {
+    "location": "research/prototypes/pamplist/contract-r05/evidence",
+    "policy": "checked-in"
+  },
+  "comparator_condition_id": "PAMP_R05_AUDIO_CMP",
+  "conditions": [
+    {
+      "events": [
+        "frame 0 reproduce the revision 0.4 PAMP_R04_DRY7 seven-voice controls, schedules, seed, Trigger On values, dry cohesion state, and 131072-frame timeline",
+        "frame 0 accept LaneControlMode Voice without changing any musical field",
+        "retain stereo PCM, events, snapshots, source state, surface model, and metrics at every supported host partition",
+        "require audio.wav SHA-256 a07ed1a3d461f538349cd5c12678e732d1619efc6e8ec623dce30ffd31e47912 exactly"
+      ],
+      "id": "PAMP_R05_AUDIO_CMP",
+      "purpose": "Falsify the presentation-only claim if accepted mode or binary Trigger-On changes the exact revision 0.4 seven-voice dry output."
+    },
+    {
+      "events": [
+        "for each Motion CC20 value 0, 63, 64, and 127 reset one Core with lane 1 otherwise configured as the revision 0.4 x4 16-of-16 trigger comparator",
+        "enter Motion through one accepted same-lane edge, dispatch the CC value, then render 8192 frames",
+        "require values 0 and 63 to accept Trigger Off with zero trigger/started masks and exact silence",
+        "require values 64 and 127 to accept Trigger On with byte-identical PCM, events, source RNG state, and snapshots except raw-input provenance"
+      ],
+      "id": "PAMP_R05_TRIGGER",
+      "purpose": "Prove the entire physical Trigger range has one of two explicit states and that On preserves predecessor behavior."
+    },
+    {
+      "events": [
+        "start lane 1 Voice; exhaust CC20-27 representative values and require only selected Voice fields to change",
+        "press lane button 1 positive, duplicate positive, and release; require one toggle to Motion, then exhaust CC20-27 and require only selected route fields to change",
+        "exhaust CC28-35 in Voice and Motion and require exact equal selected-lane sequencer transforms",
+        "select lane 2 and require Motion preserved with no musical record copied or changed; press lane 2 again and require one toggle to Voice",
+        "retain every Voice, Motion, and Sequencer surface descriptor and require exactly sixteen slots in every accepted snapshot"
+      ],
+      "id": "PAMP_R05_SURFACE",
+      "purpose": "Falsify complete 24-value access, context authority, grouping, controller parity, edge behavior, or lane isolation."
+    },
+    {
+      "events": [
+        "retain a Motion context, enter Global on the first CC47 edge without clearing, and exhaust CC20-35",
+        "require exact revision 0.4 cohesion, BPM, Master, and six counted-no-op transforms while every lane/voice record and retained mode stays exact",
+        "send duplicate positive/release and one new CC47 edge; require exactly one Clear and no mode or musical-record mutation",
+        "select lane 1 and require the retained Motion surface to return"
+      ],
+      "id": "PAMP_R05_GLOBAL",
+      "purpose": "Prove the new lane context does not alter Global/Clear grammar and survives a Global performance excursion."
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "per-condition stereo signed 24-bit PCM WAV at 48 kHz",
+      "name": "audio.wav"
+    },
+    {
+      "kind": "canonical JSON quantum events, trigger/started masks, base/resolved models, page/mode state, and diagnostics",
+      "name": "events.json"
+    },
+    {
+      "kind": "canonical JSON accepted Controls, seven lane/voice records, scheduler/source/effect state, selected page, and LaneControlMode",
+      "name": "snapshots.json"
+    },
+    {
+      "kind": "canonical JSON finite, peak, RMS, silence, saturation, trigger, comparator, and partition metrics",
+      "name": "metrics.json"
+    },
+    {
+      "kind": "canonical JSON synthetic raw messages, edge status, prior/next page and mode, semantic target, changed-field masks, and non-target equality",
+      "name": "controller-trace.json"
+    },
+    {
+      "kind": "canonical JSON context, group, sixteen ordered slot definitions, labels, tooltips, presentation kinds, enabled state, ranges, and semantic accepted values",
+      "name": "surface.json"
+    },
+    {
+      "kind": "canonical JSON proposal, predecessor, source, controller, experiment, build, condition, and artifact fingerprints",
+      "name": "manifest.json"
+    },
+    {
+      "kind": "SHA-256 manifest over every retained evidence output",
+      "name": "SHA256SUMS"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 1346456912,
+  "status": "ready",
+  "supported_block_frames": [
+    1,
+    16,
+    64,
+    128,
+    257,
+    512
+  ],
+  "timeline_convention": "Controls are sanitized and accepted only when a persistent 16-frame source quantum begins. Accepted page and LaneControlMode determine mapping and surface context but do not enter audio equations. A ControllerAdapter zero-to-positive edge is classified before Controls publication; duplicate positive values and releases do not dispatch. Trigger Enable is exact zero or one before scheduler evaluation. The existing seven voices, scheduler, source RNG virtualization, dry/cohesion/final path, and outer-block carry retain revision 0.4 timing.",
+  "title": "Pamplist 0.5: Sixteen-Knob Voice, Motion, and Sequencer Surface",
+  "tolerances": {
+    "audio_comparator_sha256": "a07ed1a3d461f538349cd5c12678e732d1619efc6e8ec623dce30ffd31e47912",
+    "context_noninterference": "mode-only changes alter only accepted LaneControlMode, accepted sequence, surface descriptors, and provenance; PCM and every musical/scheduler/source/effect field remain exact",
+    "controller_partition_artifacts": "byte exact within one frozen build for 1, 16, 64, 128, 257, and 512 frame hosts",
+    "enabled_lane_surface_slots": 16,
+    "global_disabled_slots": 6,
+    "maximum_output_q27": 134217727,
+    "nominal_nonfinite_or_saturation_count": 0,
+    "non_target_equality": "all six non-selected lane/voice records and all global/effect records are exact for a selected-lane edit",
+    "semantic_field_coverage": "exactly 8 Voice, 8 Motion, 8 Sequencer, 8 cohesion, BPM, and Master fields are reachable with no duplicate target within a context",
+    "surface_slot_count": 16,
+    "trigger_off": "CC0 and CC63 accept exact zero and from fresh reset produce zero trigger count, zero started mask, and exact-zero PCM",
+    "trigger_on": "CC64 and CC127 accept exact one and produce byte-identical PCM, events, accepted musical state, and source RNG state except raw-input provenance",
+    "ui_rotary_slider_count": 16,
+    "voice_motion_switch": "same-lane first positive edge toggles exactly once; duplicate positive and release do not; another-lane selection preserves mode"
+  }
+}

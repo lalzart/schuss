@@ -42,11 +42,13 @@
     "source_equivalence_to_pamela": false
   },
   "consumer_id": "pamplist",
+  "adapter_boundary": "Pamplist constructs seven persistent wrapper instances. Because the authenticated source exposes one static plaits_stmlib::Random state, the prototype adapter restores and captures one deterministic 32-bit context around each single-threaded voice construction, reset, and process call. This changes no configured source byte and makes no concurrent multi-Core claim.",
   "controller_authority": {
     "path": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
     "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
   },
-  "source_policy": "The configured source is authenticated and compiled read-only in place. Pamplist copies no upstream source bytes, does not mutate the checkout, and creates no canonical source release or implementation-provider claim.",
+  "prototype_owned_processing": "The rational scheduler, lane routing, accepted-state/controller adapter, signed 64-bit dry mixer, and revision 0.4 six-mode cohesion body, smoothing, ducking, and effect-only Clear are Pamplist code. Revision 0.5 adds project-owned accepted Voice/Motion context, binary Trigger acceptance, contextual mapping, and a portable sixteen-slot surface model; it changes no authenticated source byte or inherited audio equation. No resonator or effect implementation was copied from Rings, Cinderwheel, or another library instrument.",
+  "source_policy": "The configured source is authenticated and compiled read-only in place for seven prototype-owned instances. Pamplist copies no upstream source bytes, does not mutate the checkout, and creates no canonical source release or implementation-provider claim.",
   "schema_version": "pamplist-source-dependencies-v1",
   "upstream_attribution": [
     {

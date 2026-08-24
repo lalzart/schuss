@@ -9,7 +9,10 @@
 namespace schuss::pamplist {
 
 inline constexpr std::uint32_t kSampleRateHz = 48000U;
-inline constexpr std::size_t kLaneCount = 8U;
+inline constexpr std::size_t kLaneCount = 7U;
+inline constexpr std::size_t kPageCount = 8U;
+inline constexpr std::uint8_t kGlobalPageIndex = 7U;
+inline constexpr std::size_t kCohesionModeCount = 6U;
 inline constexpr std::size_t kDestinationCount = 8U;
 inline constexpr std::size_t kRateCount = 16U;
 inline constexpr std::size_t kMaximumHostBlockFrames = 512U;
@@ -45,6 +48,11 @@ enum class Destination : std::uint8_t {
     level = 7,
 };
 
+enum class LaneControlMode : std::uint8_t {
+    voice = 0,
+    motion = 1,
+};
+
 struct LaneControls final {
     std::uint8_t rate_index{8U};
     std::uint8_t phase_u7{};
@@ -57,10 +65,7 @@ struct LaneControls final {
     std::array<float, kDestinationCount> routes{};
 };
 
-struct Controls final {
-    bool running{true};
-    std::uint32_t tempo_milli_bpm{120000U};
-    std::uint32_t seed{kDefaultSeed};
+struct VoiceControls final {
     std::uint8_t engine{};
     float note{48.0F};
     float harmonics{0.5F};
@@ -68,22 +73,66 @@ struct Controls final {
     float morph{0.5F};
     float decay{0.5F};
     float lpg_colour{0.5F};
-    float source_level{0.8F};
+    float level{0.8F};
+};
+
+struct CohesionControls final {
+    float drive{};
+    float cohere{};
+    float root_note{48.0F};
+    float spread{};
+    float tail{0.5F};
+    float damping{0.5F};
+    float width{0.5F};
+    float duck{};
+};
+
+struct Controls final {
+    bool running{true};
+    std::uint32_t tempo_milli_bpm{120000U};
+    std::uint32_t seed{kDefaultSeed};
     float master_gain{0.65F};
-    std::uint8_t selected_lane{};
+    std::uint8_t selected_page{};
+    LaneControlMode lane_control_mode{LaneControlMode::voice};
+    std::uint32_t effect_clear_generation{};
+    CohesionControls cohesion{};
     std::array<LaneControls, kLaneCount> lanes{};
+    std::array<VoiceControls, kLaneCount> voices{};
 };
 
 struct Diagnostics final {
     std::uint64_t invalid_control_count{};
     std::uint64_t clamped_control_count{};
     std::uint64_t non_finite_source_count{};
-    std::uint64_t matrix_clamp_count{};
+    std::uint64_t modulation_clamp_count{};
     std::uint64_t trigger_count{};
-    std::uint64_t coalesced_trigger_count{};
+    std::array<std::uint64_t, kLaneCount> lane_trigger_count{};
     std::uint64_t saturated_sample_count{};
+    std::uint64_t effect_clear_count{};
+    std::uint64_t effect_recovery_count{};
     std::uint64_t unsupported_process_count{};
     std::uint64_t panic_count{};
+};
+
+struct CohesionSnapshot final {
+    float smoothed_master_gain{0.65F};
+    float smoothed_drive{};
+    float smoothed_cohere{};
+    float smoothed_root_note{48.0F};
+    float smoothed_spread{};
+    float smoothed_tail{0.5F};
+    float smoothed_damping{0.5F};
+    float smoothed_width{0.5F};
+    float smoothed_duck{};
+    float duck_envelope{};
+    std::array<float, kCohesionModeCount> mode_frequencies_hz{};
+    std::array<float, kCohesionModeCount> mode_poles{};
+    std::array<float, kCohesionModeCount> mode_real{};
+    std::array<float, kCohesionModeCount> mode_imaginary{};
+    std::uint32_t applied_clear_generation{};
+    double maximum_mode_state_absolute{};
+    double maximum_duck_envelope{};
+    double dry_difference_energy{};
 };
 
 struct Snapshot final {
@@ -100,15 +149,20 @@ struct Snapshot final {
     std::array<std::uint64_t, kLaneCount> lane_steps{};
     std::array<std::uint64_t, kLaneCount> lane_addresses{};
     std::array<float, kLaneCount> lane_values{};
-    std::array<float, kDestinationCount> matrix_values{};
-    bool trigger{};
-    std::uint8_t resolved_engine{};
-    float resolved_note{48.0F};
-    float resolved_harmonics{0.5F};
-    float resolved_timbre{0.5F};
-    float resolved_morph{0.5F};
-    float resolved_decay{0.5F};
-    float resolved_level{0.8F};
+    std::array<std::array<float, kDestinationCount>, kLaneCount>
+        modulation_values{};
+    std::uint8_t trigger_lane_mask{};
+    std::uint8_t started_lane_mask{};
+    std::array<std::uint8_t, kLaneCount> resolved_engines{};
+    std::array<float, kLaneCount> resolved_notes{};
+    std::array<float, kLaneCount> resolved_harmonics{};
+    std::array<float, kLaneCount> resolved_timbres{};
+    std::array<float, kLaneCount> resolved_morphs{};
+    std::array<float, kLaneCount> resolved_decays{};
+    std::array<float, kLaneCount> resolved_lpg_colours{};
+    std::array<float, kLaneCount> resolved_levels{};
+    std::array<std::uint32_t, kLaneCount> source_random_states{};
+    CohesionSnapshot cohesion{};
 };
 
 struct QuantumEvent final {
@@ -116,8 +170,10 @@ struct QuantumEvent final {
     std::uint8_t boundary_mask{};
     std::uint8_t accepted_mask{};
     std::uint8_t trigger_lane_mask{};
-    bool trigger{};
-    std::uint8_t resolved_engine{};
+    std::uint8_t started_lane_mask{};
+    bool effect_cleared{};
+    std::uint32_t effect_clear_generation{};
+    std::array<std::uint8_t, kLaneCount> resolved_engines{};
     std::array<std::uint64_t, kLaneCount> steps{};
     std::array<std::uint64_t, kLaneCount> addresses{};
 };
@@ -143,6 +199,8 @@ struct SanitizeCounts final {
 [[nodiscard]] const std::array<Rational, kRateCount>& rateTable() noexcept;
 [[nodiscard]] const char* shapeName(Shape shape) noexcept;
 [[nodiscard]] const char* destinationName(Destination destination) noexcept;
+[[nodiscard]] const char* engineName(std::uint8_t engine) noexcept;
+[[nodiscard]] const char* modelName(std::uint8_t model) noexcept;
 [[nodiscard]] bool euclideanHit(
     std::uint8_t step,
     std::uint8_t hits,

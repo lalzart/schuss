@@ -1,0 +1,109 @@
+{
+  "acceptance_tests": [
+    "The exact approved revision 0.4 proposal and every bundle artifact pass ready validation before Pamplist DSP source changes.",
+    "The configured patcher source retains commit 08d3e6e1e2b61230308c20a15ded58ffdaf4656c, synthesis tree 58917f3e2e46a30337cfb6292a3504845b1d5552, expected file hashes, and a clean relevant subtree.",
+    "The Core contains exactly seven lane controls, seven voice controls, seven persistent source instances, and seven lane bits; controller page eight creates no eighth sound lane.",
+    "Changing a lane or voice field changes no accepted record, scheduler state, source RNG state, or pre-mix source output for the other six lanes.",
+    "On lane pages, CC20 through CC35 preserve the revision 0.3 local route and timing transforms; on the Global page, CC20 through CC29 affect only declared global/effect controls and CC30 through CC35 are counted no-ops.",
+    "The first CC47 press from a lane selects Global without clearing; another positive edge while Global is already selected increments exactly one effect-clear generation; hold and release do not repeat it.",
+    "At settled Cohere zero, output is byte-identical to the declared dry seven-voice path and Drive cannot leak into it.",
+    "Nonzero Cohere produces PCM and effect-state divergence from the dry comparator, measurable bounded tail after all voice levels reach zero, and exact-zero effect output after Clear.",
+    "Clear changes no lane phase, address, trigger history, source RNG state, accepted voice record, or transport state relative to a no-clear reference.",
+    "All modal frequencies remain positive and below 0.45 times sample rate; all poles remain finite and strictly below one; rapid parameter changes remain finite and bounded.",
+    "All 24 source-order models retain exact descriptive names and finite nonzero main and auxiliary output; stochastic interleave isolation remains byte exact.",
+    "The frozen experiment produces byte-identical PCM, events, snapshots, controller traces, and metrics at host partitions 1, 16, 64, 128, 257, and 512 frames.",
+    "Stopped transport and declared zero cases are exact silence; nominal frozen conditions have zero final saturation and every output remains Q27 bounded.",
+    "Repeated Core processing performs no allocation, lock, file I/O, JSON, endpoint, or UI work after construction.",
+    "The authenticated local JUCE 8.0.15 source tree configures, compiles, links, and fingerprints Pamplist.app without launch or audio/MIDI endpoint access.",
+    "Focused, sanitizer, Instrument Lab freshness, current, and relocated reproduction checks pass after implementation freeze, with evidence levels reported independently."
+  ],
+  "decision_rights": {
+    "may": [
+      "Choose Pamplist-local seven-lane state layout, six-mode modal coefficients within the approved equations, smoothing, diagnostics, wet gain, accepted-state presentation, and frozen fixture values.",
+      "Replace revision 0.3 source/UI/test authorities only with revision 0.4 successor authorities while preserving predecessor proposal and contract/evidence directories.",
+      "Use contextual Custom Mode 1 CC20 through CC35 transforms and CC47 Global/Clear edge semantics exactly as frozen in control-map.json.",
+      "Build and hash one authenticated standalone target without launch or endpoint access."
+    ],
+    "must_not": [
+      "Change, copy, normalize, clean, reset, or replace the configured patcher checkout, wrapper, vendor bytes, source order, or source RNG contract.",
+      "Introduce an eighth voice, global Plaits model, pre-voice lane summation, cross-lane modulation, dynamic normalization, generic effect rack, reverb, freeze, presets, or new dependency.",
+      "Present the new modal bank as Mutable Instruments Rings, Cinderwheel, an acoustic model, official Plaits wording, or Pamela firmware/UI/algorithm equivalence.",
+      "Refactor another prototype or create new shared DSP infrastructure in this iteration.",
+      "Allocate canonical Schuss identities or alter catalogs, schemas, graphs, providers, runtime factories, device profiles, shared library records, or release records.",
+      "Infer live real-time safety, physical endpoint receipt, controller feel, audible cohesion, embedded feasibility, distribution readiness, or production status.",
+      "Launch the app, enumerate/open endpoints, access hardware, install dependencies, stage, commit, push, upload, flash, package, publish, or redistribute."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Approved revision 0.4 proposal and ready implementation bundle under research/prototypes/pamplist/contract-r04.",
+    "Portable Pamplist Core with seven persistent lane voices, seven local route rows, isolated source RNG contexts, signed 64-bit dry sums, and one newly designed shared six-mode modal cohesion bus.",
+    "Eight-page contextual control state: seven lane pages plus Global/Clear, with exhaustive synthetic regular Launch Control 3 mapping tests.",
+    "State-driven JUCE surface that labels selected voice MODEL and local MODEL SWEEP, presents true global/effect controls on page eight, and exposes explicit CLEAR FX.",
+    "Focused Release/sanitizer/no-allocation suites, all-model/source regressions, deterministic render matrix, retained objective evidence, target-build receipt, and relocated reproduction.",
+    "Updated prototype index, topology, semantic surface, README, handoff, results, and gaps while predecessor contract/evidence directories remain unchanged."
+  ],
+  "dependency_contracts": [
+    "Macro voices remain read-only configured source at patcher commit 08d3e6e1e2b61230308c20a15ded58ffdaf4656c and synthesis tree 58917f3e2e46a30337cfb6292a3504845b1d5552; missing, dirty, or mismatched source fails closed.",
+    "The exact source process-global RNG is virtualized by one stored context per voice inside one single-threaded Core; concurrent multi-Core source calls remain unclaimed.",
+    "The cohesion bus is newly designed Pamplist code from published modal principles and project-owned stability lessons; no external resonator implementation enters the artifact.",
+    "Instrument Lab v1 supplies only the portable host seam and evidence boundary; Pamplist owns all musical state and DSP.",
+    "JUCE 8.0.15 is an authenticated local build-only dependency with fetching disabled and no presence in the portable Core.",
+    "The regular Launch Control 3 topology artifact with SHA-256 d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b is authority for 16 encoders, eight buttons, Custom Mode 1 channel 16 CC20-35/40-47; endpoint/device behavior is deferred."
+  ],
+  "goal": {
+    "primary_claim": "Pamplist has seven independently owned clock/voice lanes and one intentionally shared, clearable post-mix resonant body controlled from an eighth Global page; no synthesis model is global.",
+    "why": "The user's revision 0.3 audition showed that placing selected-lane voice controls in a global-looking surface remained conceptually confusing and that eight sound lanes were less useful than a dedicated performative cohesion/clarity gesture."
+  },
+  "inputs": [
+    "AGENTS.md, docs/PROJECT_CONTEXT.md, docs/STATUS.md, ADRs 0016 and 0018, and docs/workflows/instrument-development.md.",
+    "Inherited uncommitted but validated Pamplist revision 0.3 proposal, implementation, source, tests, and retained evidence; proposal SHA-256 ecafd12747c5afb1ad89eb4c073876e8c504c215192c0300c53a7358691e42e0.",
+    "The user's 2026-08-24 request to remove one sound track, use the eighth Launch Control page for global settings, remove duplicated/misleading globals, and add a clearable effect that resonates the parts together.",
+    "research/proposals/pamplist-r04.md revision 0.4 at the exact SHA-256 recorded below.",
+    "catalog/sources.lock.json and machine-local catalog/sources.local.yml for the authenticated read-only macro-voice source.",
+    "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json and the authenticated JUCE 8.0.15 source-tree record.",
+    "First-party Mutable Instruments Rings and Novation Launch Control 3 documentation plus project-owned Cinderwheel Core/results as non-normative design research."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "Current-thread user message on 2026-08-24: remove one of eight tracks, make the eighth Launch Control machine/page global settings, remove replicated global versus track controls, add effects that resonate everything together, and provide a performative way to clear it out.",
+      "state": "approved"
+    },
+    "path": "research/proposals/pamplist-r04.md",
+    "revision": "0.4",
+    "sha256": "d5ef3c2d37e4472d34f383eddd4deee148ede4794c6dfcbecf110dbc851ba193"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "Exactly seven persistent rational clock lanes at 48 kHz, preserving revision 0.3 scheduling, local routes, accepted state, source-order names, and independent source/RNG behavior.",
+      "Exactly seven persistent 24-model source voices and seven base VoiceControls records.",
+      "Exactly eight controller pages, with page indexes zero through six addressing lanes and index seven addressing true global/effect controls only.",
+      "CC47 first-press Global selection and already-Global clear-generation gesture with explicit hold/release behavior.",
+      "A newly designed post-sum six-mode stereo modal bank with Drive, Cohere, Root, Spread, Tail, Damping, Width, Duck, exact dry escape, effect-only Clear, smoothing, safety diagnostics, and no dynamic normalization.",
+      "Contextual accepted-state JUCE presentation and MODEL/MODEL SWEEP naming.",
+      "Portable Core, deterministic renderer/retained experiment, source authentication, focused/sanitizer validation, authenticated unlaunched standalone, metadata freshness, current, and relocated reproduction."
+    ],
+    "out": [
+      "Eighth voice, global model, cross-lane modulation, per-lane sends, pan, mute/solo, presets/scenes, external clock, arbitrary routing, reverb, granular processing, freeze, looping, or plug-in formats.",
+      "Importing Rings, Clouds, Cinderwheel, or another resonator source; changing authenticated macro-voice bytes or dependency identity.",
+      "Physical mapping installation, endpoint enumeration/access, controller feedback, reconnect, OLED/LED behavior, and connected-device evidence.",
+      "Application launch, callback deadline/resource measurement, controlled listening claim, Ksoloti/Gills target execution, packaging, distribution, publication, staging, commit, push, upload, or flash.",
+      "Canonical graph, catalog, provider, runtime, device profile, project, machine, shared library record, and production integration."
+    ]
+  },
+  "status": "ready",
+  "target": "Schuss Instrument Lab v1 portable C++17 Core, deterministic 48 kHz renderer, regular Launch Control 3 adapter, and authenticated JUCE 8.0.15 macOS standalone",
+  "title": "Pamplist 0.4: Seven Voices and Cohesion Bus",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "built but unlaunched Pamplist.app plus deterministic seven-voice cohesion-bus stereo renders, accepted-state/event traces, and synthetic Launch Control 3 page trace",
+    "evidence_level": "target-build",
+    "success_observation": "The exact source authenticates; seven-lane independence, contextual page mapping, Global/Clear gesture, modal pole/gain safety, exact dry escape, tail/clear isolation, all-model regression, partition identity, focused/sanitizer/prototype/current/relocated checks, and retained objective conditions pass; authenticated Pamplist.app is built and fingerprinted without launch or endpoint access."
+  }
+}

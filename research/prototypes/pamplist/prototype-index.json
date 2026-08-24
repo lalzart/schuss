@@ -1,8 +1,8 @@
 {
   "authorities": {
     "control_map": {
-      "path": "research/prototypes/pamplist/contract/control-map.json",
-      "sha256": "aa8c59a568c16999f72ef362b639c2d3fa24d02ee81ca47e7a7a9f4e2c096263"
+      "path": "research/prototypes/pamplist/contract-r05/control-map.json",
+      "sha256": "1cdc7010eee169caeaf21026ecf448db5317a130a24423578a17d357d35c07cf"
     },
     "controller_topology": {
       "path": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
@@ -10,39 +10,39 @@
     },
     "dsp_topology": {
       "path": "research/prototypes/pamplist/dsp-topology.json",
-      "sha256": "8218e529caf9991d9066f989432c631009f365a6ccd99ce7e172216f9efa0020"
+      "sha256": "4be41de61132b78423e12c6a3ab25680633ea6a441906c3f227b3d89afb7a014"
     },
     "experiment": {
-      "path": "research/prototypes/pamplist/contract/experiment.json",
-      "sha256": "63152aa19c967dd0343258a6755d4be8a97400e4299e420472b82a98209acdab"
+      "path": "research/prototypes/pamplist/contract-r05/experiment.json",
+      "sha256": "ea6c542ce6e5c873acccae93f424f345e23d90330163ac074b49d37c04f4f568"
     },
     "gaps": {
-      "path": "research/prototypes/pamplist/contract/GAPS.md",
-      "sha256": "dccf4e25cb9a51979c56ba1b8f551cb8386d33c75f0cec284393fe53399249ef"
+      "path": "research/prototypes/pamplist/contract-r05/GAPS.md",
+      "sha256": "ab89c258c1298fa8a55011c3577d5df05dbf995302fbdb22efe5e425ca032212"
     },
     "implementation_contract": {
-      "path": "research/prototypes/pamplist/contract/implementation-contract.json",
-      "sha256": "9fc9a43492515c8ec5741b353c09697e79153a76b94c81edf129609da2bffaad"
+      "path": "research/prototypes/pamplist/contract-r05/implementation-contract.json",
+      "sha256": "63b95b295a67f8712845bcb460b1511f5cfc6ddb4274b88ac104eb4ce9761e4d"
     },
     "proposal": {
-      "path": "research/proposals/pamplist.md",
-      "sha256": "bf110cd1bfe6b86e032bc993e0baf705d7459182c891d095a9a1a39ce1789af3"
+      "path": "research/proposals/pamplist-r05.md",
+      "sha256": "8c15dd3c38ca8a585c2603d219daccbba9446dff7a08156e0ba579fac25e1423"
     },
     "results": {
-      "path": "research/prototypes/pamplist/contract/RESULTS.md",
-      "sha256": "ce2c9ac378badd19f78bc1bbb6b3208ff077a84bcdb043d9f2216cc0e147d5b2"
+      "path": "research/prototypes/pamplist/contract-r05/RESULTS.md",
+      "sha256": "66b396b68934233fd613dca6f04cefb28a187b267fccc71d3a26210e20895659"
     },
     "source_package_handoff": {
       "path": "research/prototypes/pamplist/source-dependencies.json",
-      "sha256": "305957e264e6ea14a7e6b6e18a4100c49d36306bbf52dbd574c2e4711b0ec6be"
+      "sha256": "d4d16dab1cb3225c012f2be3d2edf841107e82f7cd92e15ce64f856c668bf443"
     },
     "state_matrix": {
-      "path": "research/prototypes/pamplist/contract/state-matrix.md",
-      "sha256": "ab7f54380fa795fca4b72c6e4e7ad0a2905c72c4b27be900c5486b4e6b7533c7"
+      "path": "research/prototypes/pamplist/contract-r05/state-matrix.md",
+      "sha256": "b02893d98bf48327f3e210284ac8de5d3f46091765345778e4e67cb91e657656"
     },
     "validation_plan": {
-      "path": "research/prototypes/pamplist/contract/validation-plan.json",
-      "sha256": "5853897aa31e6eafaa3ea4c632099f7c22c67bf45d9ded3967f8f4c5c5cb0ba2"
+      "path": "research/prototypes/pamplist/contract-r05/validation-plan.json",
+      "sha256": "dc67acc53e79cd7dd865da7782ecb9384260bf3884bd71dca96a1832d5a95a06"
     }
   },
   "claims": {
@@ -50,7 +50,7 @@
     "production_ready": false
   },
   "core_adapter": {
-    "conversion_owner": "authenticated macro voice emits q27; Pamplist owns post-voice level, master gain, and saturation",
+    "conversion_owner": "seven authenticated macro voices emit q27; Pamplist owns per-voice level, signed 64-bit additive main/aux dry sums, the shared six-mode cohesion body, master gain, and one final saturation",
     "internal_quantum": 16,
     "maximum_host_block": 512,
     "output_clearing": "Core writes every requested output frame and emits exact silence before the first accepted trigger",
@@ -78,16 +78,17 @@
   },
   "handoff": {
     "allowed_edits": [
-      "prototype-owned rational timeline, masks, keyed decisions, lane shapes, modulation matrix, Core, renderer, fixtures, and tests",
-      "prototype-owned accepted-state projection, whole-value control snapshots, controller mapping, and optional standalone presentation",
+      "prototype-owned rational timeline, masks, keyed decisions, lane shapes, seven local modulation rows, seven-voice Core, dry mixer, shared cohesion body, final output, renderer, fixtures, and tests",
+      "prototype-owned per-voice source RNG context isolation and source-order model labels without upstream mutation",
+      "prototype-owned accepted-state projection, whole-value control snapshots, accepted Voice/Motion context, contextual controller mapping, portable sixteen-slot surface model, and optional standalone presentation",
       "prototype-only topology, evidence, and handoff annotations",
       "exact source-authentication corrections that preserve upstream bytes and source identity"
     ],
     "open_decisions": [
-      "hands-on balance, pattern legibility, route scale, and engine-transition approval",
+      "hands-on voice separation, balance, pattern legibility, route scale, model-label clarity, common-body cohesion, masking, transition, Duck, and Clear approval",
       "fresh app launch, visual inspection, live callback timing, lifecycle, and xrun measurement",
       "physical Launch Control 3 endpoint selection, receipt, reconnect, feedback, and control feel",
-      "optional external clock, variable Euclidean length, cross-lane operators, presets, polyphony, effects, and plug-in formats",
+      "optional mute, solo, pan, manual drone start, external clock, variable Euclidean length, cross-lane operators, presets, polyphony, additional effects, and plug-in formats",
       "any Ksoloti or Gills adaptation and resource strategy",
       "any canonical identity, provider, application runtime, distribution, or production promotion"
     ],
@@ -107,21 +108,23 @@
       "schuss::pamplist::ControllerAdapter",
       "schuss::pamplist::mapMidiCc",
       "schuss::pamplist::applyMapping",
+      "schuss::pamplist::surfaceModel",
+      "schuss::pamplist::applySurfaceValue",
       "pamplist_core",
       "pamplist-render",
       "pamplist"
     ],
     "stop_conditions": [
       "the approved proposal or ready implementation-contract fingerprint changes",
-      "a frozen rate, shape, control-map, experiment, render, source, or target-build authority drifts",
+      "a frozen rate, shape, model-name table, control-map, experiment, render, source, or target-build authority drifts",
       "a failure is relabeled or an objective tolerance is weakened without a newly approved revision",
       "work expands to app launch, live endpoints, hardware, listening, distribution, canonical records, or production without explicit authorization",
       "an evidence level would be promoted without its named proof"
     ],
-    "working_artifact": "noncanonical portable Pamplist 0.2 Core with eight deterministic clock-modulation lanes, one authenticated complete macro voice, two separate q27 outputs, retained objective renders, a regular Launch Control 3 adapter, and a built but unlaunched standalone app"
+    "working_artifact": "noncanonical portable Pamplist 0.5 Core with seven independent deterministic lane/voice systems, accepted Voice/Motion context, exactly sixteen visible semantic controls, binary Trigger Enable, source-order model names, an exact-dry clearable six-mode post-sum cohesion body, retained objective renders, and a built but unlaunched standalone app"
   },
   "lane": "new-design",
   "prototype_id": "pamplist",
-  "revision": "0.2",
+  "revision": "0.5",
   "schema_version": "schuss-instrument-lab-prototype-index-v1"
 }

@@ -1,0 +1,141 @@
+{
+  "artifact_retention": {
+    "location": "research/prototypes/pamplist/contract-r03/evidence",
+    "policy": "checked-in"
+  },
+  "comparator_condition_id": "PAMP_R03_SHARED_VOICE_CMP",
+  "conditions": [
+    {
+      "events": [
+        "frame 0 accept defaults except lane 1 Base Engine 8 Virtual Analog, x1 pulse, hits 4, probability 1, amplitude 1, Trigger route 1; clear all other lane routes and amplitudes",
+        "render frames 0 through 65535"
+      ],
+      "id": "PAMP_R03_BASE",
+      "purpose": "Establish the smallest one-lane successor baseline and prove inactive lane voices remain unstarted and silent."
+    },
+    {
+      "events": [
+        "frame 0 configure lane 1 Base Engine 8 Virtual Analog, note 43, x1 pulse, 5-of-16, Trigger route 1, Level 0.35",
+        "frame 0 configure lane 2 Base Engine 21 Bass Drum, note 48, x3/2 pulse, phase 37/128, 3-of-16 rotated 2, Trigger route 1, Level 0.35",
+        "render frames 0 through 131071 and retain both base/resolved engine records and trigger masks"
+      ],
+      "id": "PAMP_R03_DUAL",
+      "purpose": "Prove two simultaneously active lanes retain different engines, controls, scheduler histories, and source outputs before the additive mix."
+    },
+    {
+      "events": [
+        "frame 0 activate lanes 1 through 8 with base engines 0, 3, 6, 9, 12, 15, 18, and 21; Levels 0.08; Trigger routes 1",
+        "frame 0 assign rates x1, x3/2, /2, x2, /4, x3, /8, and x4 plus distinct phases, shapes, hits, rotations, notes, and tone controls",
+        "render frames 0 through 131071"
+      ],
+      "id": "PAMP_R03_EIGHT",
+      "purpose": "Exercise all eight persistent voices, every local route row, the fixed main/aux mixer, started mask, and nominal no-saturation bound."
+    },
+    {
+      "events": [
+        "frame 0 activate lane 1 at Base Engine 8 with smooth-random Model Mod route 0.35 and lane 2 at Base Engine 20 with Model Mod route zero",
+        "render frames 0 through 131071",
+        "require lane 2 resolved engine to remain exactly 20 while lane 1 changes within 0 through 23"
+      ],
+      "id": "PAMP_R03_MODEL_LOCAL",
+      "purpose": "Prove Model Mod is a local offset from one lane's base engine rather than another global engine selector."
+    },
+    {
+      "events": [
+        "construct reference and interleaved MacroVoice pairs from identical lane-derived seeds",
+        "render the reference stochastic voice for 256 quanta using Engine 17 Noise and a fixed trigger/control sequence",
+        "render the comparison voice with an Engine 18 Particle voice processed between every pair of its quanta",
+        "retain exact output and final random-state equality"
+      ],
+      "id": "PAMP_R03_RNG_ISOLATION",
+      "purpose": "Falsify independence if another stochastic source instance can consume or change the reference lane's random sequence."
+    },
+    {
+      "events": [
+        "for engine 0 through 23 reset one Core, set lane 1 Base Engine and expected name exactly, configure x4 pulse 16-of-16 Trigger route 1 and Level 0.3, and render 8192 frames",
+        "retain per-engine label, main and auxiliary finite, peak, RMS, DC, saturation, and non-silence metrics"
+      ],
+      "id": "PAMP_R03_24",
+      "purpose": "Prove the complete authenticated engine bank and frozen source-order labels execute through one isolated lane adapter."
+    },
+    {
+      "events": [
+        "subcase stopped: running false for 8192 frames",
+        "subcase zero-hits: all lanes hits zero for 8192 frames from reset",
+        "subcase zero-amplitude: all lanes amplitude zero for 8192 frames from reset",
+        "subcase zero-trigger-route: all local Trigger routes zero for 8192 frames from reset",
+        "require every stereo PCM byte to be zero"
+      ],
+      "id": "PAMP_R03_SILENCE",
+      "purpose": "Prove declared unstarted/transport silence paths stay exact after adding eight source instances and a final mixer."
+    },
+    {
+      "events": [
+        "use the same scheduler and base data as PAMP_R03_DUAL but force both lane events into one shared predecessor-style source voice and shared Base Engine 8",
+        "render frames 0 through 131071",
+        "require PCM and canonical resolved-engine/source event traces to differ from PAMP_R03_DUAL"
+      ],
+      "id": "PAMP_R03_SHARED_VOICE_CMP",
+      "purpose": "Falsify the successor hypothesis if the independent dual-voice condition is observationally indistinguishable from the rejected shared-voice architecture."
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "per-condition stereo signed 24-bit PCM WAV at 48 kHz with the fixed sum of independent source mains left and auxiliaries right",
+      "name": "audio.wav"
+    },
+    {
+      "kind": "canonical JSON per-lane steps, addresses, decisions, trigger and started masks, base/resolved engine indices and names, resolved voice controls, and diagnostics",
+      "name": "events.json"
+    },
+    {
+      "kind": "canonical JSON accepted globals, eight lane records, eight voice records, and final authoritative snapshot for every supported partition",
+      "name": "snapshots.json"
+    },
+    {
+      "kind": "canonical JSON frame, finite, peak, RMS, DC, silence, saturation, source non-finite, per-lane trigger, isolation, and partition metrics",
+      "name": "metrics.json"
+    },
+    {
+      "kind": "canonical JSON proposal, source, build, experiment, condition, engine-name table, and output fingerprints",
+      "name": "manifest.json"
+    },
+    {
+      "kind": "SHA-256 manifest over every retained evidence output",
+      "name": "SHA256SUMS"
+    },
+    {
+      "kind": "canonical JSON synthetic CC input, semantic event, accepted selected/target lane, non-target equality, and UI projection trace",
+      "name": "controller-trace.json"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 1346456912,
+  "status": "ready",
+  "supported_block_frames": [
+    1,
+    16,
+    64,
+    128,
+    257,
+    512
+  ],
+  "timeline_convention": "Controls are presented at absolute frame zero and sanitized into one coherent accepted Controls value at the next persistent 16-frame quantum. Each lane boundary and local accepted trigger occurs before only that lane's source render for the quantum. All eight voices render in fixed lane order, with their random context restored immediately before and saved immediately after each source call. The final mixer runs after all voices. Outer host blocks only copy persistent carry and never realign scheduler, random, source, mixer, or snapshot state.",
+  "title": "Pamplist 0.3: Independent Lane Voices",
+  "tolerances": {
+    "all_24_engine_labels": "exact equality with the 24-entry proposal and compiled engineName table",
+    "all_24_engines_finite_percent": 100,
+    "comparator_audio_and_trace": "PAMP_R03_DUAL and PAMP_R03_SHARED_VOICE_CMP must have unequal PCM SHA-256 and unequal canonical resolved-engine/source event SHA-256",
+    "exact_silence_pcm_absolute": 0,
+    "finite_samples_percent": 100,
+    "maximum_output_q27": 134217727,
+    "model_locality": "lane 2 base and resolved engine stay exactly 20 and all non-target accepted voice records remain byte-identical",
+    "nominal_invalid_recovery_or_saturation_count": 0,
+    "partition_pcm_trace_snapshot_metrics": "byte exact within one frozen build for 1, 16, 64, 128, 257, and 512 frame hosts",
+    "process_allocations": 0,
+    "rng_interleave": "byte-exact reference main PCM, auxiliary PCM, and final stored random state",
+    "source_main_and_aux_non_silent": "RMS greater than zero for every engine sweep channel",
+    "voice_control_isolation": "changing one target voice field changes zero bytes in all seven non-target accepted VoiceControls records"
+  }
+}

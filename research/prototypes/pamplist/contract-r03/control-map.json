@@ -1,0 +1,141 @@
+{
+  "application_feedback": [
+    {
+      "authority": "accepted Pamplist Snapshot only",
+      "message": "selected complete lane/voice highlight plus its accepted timing, route, and base synthesis values",
+      "purpose": "show which track and values the Core accepted rather than raw GUI or MIDI input"
+    },
+    {
+      "authority": "accepted Pamplist Snapshot only",
+      "message": "selected lane base engine index/name and current resolved engine index/name",
+      "purpose": "distinguish the persistent BASE ENGINE from that lane's time-varying MODEL MOD result"
+    },
+    {
+      "authority": "accepted Pamplist Snapshot and diagnostics only",
+      "message": "eight lane values, trigger/started masks, per-lane resolved states, final saturation, invalid-input, source-non-finite, and recovery indicators",
+      "purpose": "make independent musical state and evidence limits visible without physical controller or real-time claims"
+    },
+    {
+      "authority": "accepted Pamplist Snapshot after a synthetic CC dispatch",
+      "message": "canonical controller-trace.json input, semantic event, selected lane, target lane record, and non-target equality tuple",
+      "purpose": "exhaustively compare compiled mapping behavior with this source-of-truth map"
+    }
+  ],
+  "endpoint_device_evidence": {
+    "connection_policy": "No endpoint is enumerated or opened. A later host may explicitly select an input whose identity has been verified as the regular Launch Control 3 Custom Mode 1 port.",
+    "notes": "Repository topology and synthetic messages prove protocol transforms only. They do not prove endpoint identity, receipt, encoder behavior, firmware mode, reconnect, LEDs, or physical usefulness. The regular Launch Control 3 has no faders and none are inferred.",
+    "state": "deferred"
+  },
+  "gesture_state_machines": [
+    {
+      "id": "lane-voice-select-button",
+      "input": "channel 16 CC40 through CC47",
+      "state": "accepted selected complete lane/voice 0 through 7",
+      "transition": "value greater than zero selects the addressed lane at the next Core quantum; value zero is an explicit release with no semantic dispatch; selection never copies voice values between lanes"
+    },
+    {
+      "id": "absolute-local-route-encoder",
+      "input": "channel 16 CC20 through CC27 absolute value 0 through 127",
+      "state": "selected lane's local route destination 0 through 7",
+      "transition": "route = clamp((value - 64) / 63, -1, 1), with value 64 exactly zero and values 0 and 127 exactly minus one and plus one; only the selected lane record changes"
+    },
+    {
+      "id": "absolute-lane-encoder",
+      "input": "channel 16 CC28 through CC35 absolute value 0 through 127",
+      "state": "selected lane's rate, phase, shape, hits, rotation, probability, repeat, or amplitude",
+      "transition": "apply the binding-specific bounded absolute transform to only the selected lane and publish the next accepted snapshot"
+    }
+  ],
+  "not_applicable_rationale": "The selected lane's base Engine, Note, Harmonics, Timbre, Morph, Decay, LPG Colour, and Level are JUCE application controls only in revision 0.3; no physical mapping is claimed or generated for them.",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {
+      "binding": "select complete lane/voice index CC minus 40 on a positive value; releases do not dispatch",
+      "id": "select-lane-voice",
+      "rejection": "wrong channel, wrong CC, data outside 0 through 127, or release is ignored and counted without musical-state change"
+    },
+    {
+      "binding": "set only the selected lane's local route destination CC minus 20 using the signed absolute route transform; destination 2 is Model Mod, not a second base-engine selector",
+      "id": "set-local-route",
+      "rejection": "no valid selected lane, wrong channel, wrong CC, or invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC28 maps floor(value times 16 divided by 128) to rate index 0 through 15",
+      "id": "set-rate",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC29 maps value divided by 128 to phase in [0,1), retained as the accepted 7-bit phase value",
+      "id": "set-phase",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC30 maps floor(value times 8 divided by 128) to shape index 0 through 7",
+      "id": "set-shape",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC31 maps round(value times 16 divided by 127) to hits 0 through 16",
+      "id": "set-hits",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC32 maps floor(value times 16 divided by 128) to rotation 0 through 15",
+      "id": "set-rotation",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC33 maps value divided by 127 to probability with exact zero and one endpoints",
+      "id": "set-probability",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC34 maps value zero to free repeat and positive values to 1 plus floor((value - 1) times 64 divided by 127), clamped 1 through 64",
+      "id": "set-repeat",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC35 maps value divided by 127 to amplitude with exact zero and one endpoints",
+      "id": "set-amplitude",
+      "rejection": "invalid data is ignored and counted"
+    }
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/pamplist/contract-r03/control-map.json",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "control": "top encoders 1 through 8",
+      "input": "Custom Mode 1 MIDI channel 16 CC20 through CC27 absolute 0 through 127",
+      "mode": "selected complete lane/voice",
+      "semantic": "signed local routes to Trigger, Pitch, Model Mod, Harmonics, Timbre, Morph, Decay, and Level"
+    },
+    {
+      "control": "bottom encoders 1 through 8",
+      "input": "Custom Mode 1 MIDI channel 16 CC28 through CC35 absolute 0 through 127",
+      "mode": "selected complete lane/voice",
+      "semantic": "Rate, Phase, Shape, Euclidean Hits, Rotation, Probability, Repeat, and Amplitude for only that lane"
+    },
+    {
+      "control": "buttons 1 through 8",
+      "input": "Custom Mode 1 MIDI channel 16 CC40 through CC47 press and release",
+      "mode": "all",
+      "semantic": "positive edge selects complete lane/voice 1 through 8; release does not dispatch"
+    },
+    {
+      "control": "JUCE selected-lane voice controls",
+      "input": "mouse or keyboard through bounded application controls",
+      "mode": "selected complete lane/voice",
+      "semantic": "Base Engine, Note, Harmonics, Timbre, Morph, Decay, LPG Colour, and Level for only the selected lane; base and resolved engine names are displayed from accepted state"
+    },
+    {
+      "control": "JUCE global controls",
+      "input": "mouse or keyboard through bounded application controls",
+      "mode": "all",
+      "semantic": "Running, Tempo, Seed, Master Gain, and Reset"
+    }
+  ],
+  "title": "Pamplist 0.3: Independent Lane Voices"
+}

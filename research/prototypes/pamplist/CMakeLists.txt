@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(schuss_pamplist_prototype VERSION 0.2.0 LANGUAGES C CXX)
+project(schuss_pamplist_prototype VERSION 0.5.0 LANGUAGES C CXX)
 
 option(PAMPLIST_ENABLE_JUCE "Build the authenticated-JUCE standalone UI" OFF)
 set(PAMPLIST_JUCE_SOURCE_DIR "" CACHE PATH "Authenticated JUCE 8.0.15 source tree")
@@ -63,7 +63,8 @@ schuss_instrument_lab_enable_sanitizers(
 
 add_library(pamplist_core STATIC
     src/control_map.cpp
-    src/core.cpp)
+    src/core.cpp
+    src/ui_model.cpp)
 target_include_directories(pamplist_core PUBLIC include)
 target_link_libraries(pamplist_core
     PUBLIC SchussInstrumentLab::Core
@@ -95,6 +96,14 @@ schuss_instrument_lab_enable_warnings(pamplist_control_map_tests)
 schuss_instrument_lab_enable_sanitizers(
     pamplist_control_map_tests ${PAMPLIST_ENABLE_SANITIZERS})
 add_test(NAME pamplist_control_map_tests COMMAND pamplist_control_map_tests)
+
+add_executable(pamplist_ui_model_tests tests/ui_model_tests.cpp)
+target_link_libraries(pamplist_ui_model_tests PRIVATE pamplist_core)
+target_compile_features(pamplist_ui_model_tests PRIVATE cxx_std_17)
+schuss_instrument_lab_enable_warnings(pamplist_ui_model_tests)
+schuss_instrument_lab_enable_sanitizers(
+    pamplist_ui_model_tests ${PAMPLIST_ENABLE_SANITIZERS})
+add_test(NAME pamplist_ui_model_tests COMMAND pamplist_ui_model_tests)
 
 add_executable(pamplist_snapshot_tests tests/snapshot_tests.cpp)
 target_link_libraries(pamplist_snapshot_tests PRIVATE pamplist_core Threads::Threads)

@@ -40,6 +40,8 @@ public:
         std::array<std::int32_t, kMacroVoiceQuantumFrames>& main_q27,
         std::array<std::int32_t, kMacroVoiceQuantumFrames>& auxiliary_q27) noexcept;
 
+    [[nodiscard]] std::uint32_t randomState() const noexcept;
+
 private:
     struct Impl;
     std::unique_ptr<Impl> impl_;

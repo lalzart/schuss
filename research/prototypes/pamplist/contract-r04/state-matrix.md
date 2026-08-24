@@ -1,0 +1,51 @@
+# Pamplist 0.4: Seven Voices and Cohesion Bus state-by-operation matrix
+
+> Status: ready
+
+The Core is the sole musical-state writer. The UI and synthetic controller
+trace project coherent accepted snapshots rather than raw-input state. Pages
+zero through six address complete lane/voice pairs; page seven addresses only
+shared controls. There is no eighth lane or voice. Selecting a page is silent.
+
+| Operation | Current controls | Pending controls | DSP/audio state | Buffers/write heads | Random/scheduler state | Event provenance | Host/controller/UI feedback | Exact timing and failure behavior |
+|---|---|---|---|---|---|---|---|---|
+| Initialization | Running true; BPM 120; seed `0x50414D50`; Master 0.65; selected page lane 1; clear generation 0; Drive 0, Cohere 0, Root 48, Spread 0, Tail 0.5, Damping 0.5, Width 0.5, Duck 0; all seven voices Model 0, note 48, tone fields 0.5, Level 0.8; lane 1 x1 pulse 4-of-16 amplitude 1 Trigger route 1; lanes 2-7 zero amplitude/routes | Constructor Controls await first 16-frame acceptance | Seven exact source instances are constructed once from seven deterministic lane-derived seeds; all are unstarted; six complex modal states, duck envelope, and smoothers are zero/default; dry path is selected exactly | Seven main and seven auxiliary 16-frame voice quanta plus final stereo quantum are zero; final read cursor equals 16 so first supported process renders | Master/lane phases, remainders, steps, free addresses, keyed decisions, and seven-bit started mask are zero; each adapter captures its post-initialization source RNG state | Absolute frame, quantum, accepted sequence, per-lane triggers, clear count, ignored-global count, and diagnostics start at zero | Initial snapshot reports seven default records, selected lane 1, accepted/resolved Model 0 `Virtual Analog VCF`, effect defaults, and no physical endpoint | Construction may allocate fixed objects only; first supported process accepts defaults before frame zero; unsupported sample rate/frame request emits silence and does not advance |
+| Reset | Restore every declared default, all seven distinct lane/voice records, selected lane 1, effect controls, and clear generation zero | Discard any not-yet-accepted host Controls | Reconstruct all seven source voices from default lane-derived seeds; clear started mask, six modes, duck envelope, smoothers, and transport/output | Clear all source/final quanta and set final read cursor to 16 | Zero phases, remainders, steps, addresses, held/smoothed lane random values; restore global seed and seven captured source RNG contexts | Clear accepted sequence, controller edge latches, event trace cursor, effect-clear acceptance, and every diagnostic | Publish one default accepted snapshot on the next supported process call | Host invokes reset outside concurrent processing; the next quantum is byte-equivalent to a fresh instance and starts at absolute frame zero |
+| Panic | Preserve accepted BPM, seed, page, lane/voice values, effect values, Master, and clear generation but force accepted Running false | Discard unaccepted host Controls | Silence immediately for the remainder of the bounded process request; reconstruct all seven source voices and clear all modal/duck/smoother state before a later start | Zero all unconsumed final/voice carry and set cursor to 16 | Zero scheduler state and started mask; preserve accepted seed and recreate its seven lane-derived source RNG contexts | Increment panic count and retain request absolute frame | Snapshot reports stopped state and panic count; UI derives from it | Public panic is host-only and applies before the next output sample; no allocation, lock, endpoint, or file work occurs |
+| Freeze or capture | N/A - revision 0.4 has no freeze, capture, recording, held-tail, or sampled-global-state operation | N/A - no freeze or capture command is accepted | Continuous seven-voice plus shared-body processing only | No capture storage or write head exists | Addressed Repeat windows are musical lane state, not capture | Unsupported operations are absent from the public event type | UI exposes no freeze/capture control | A future freeze/capture feature requires a new approved DSP and state contract |
+| Mode change | Lane buttons change only `selected_page`; MODEL and other voice fields change only `voices[selected_page]` on pages 0-6; MODEL SWEEP changes only that lane route; Global controls change only effect/BPM/Master; first Global edge enters page 7 and a later Global edge while already selected increments clear generation | One coherent full Controls value plus controller button-down latches may await the next quantum | Selection alone is inaudible; local changes affect only their voice before its next render; effect targets smooth without reconstructing sources; a changed clear generation zeros all six modes and duck envelope only; a seed change reconstructs seven voices by explicit shared semantics | Already-rendered final carry is never rewritten; the next quantum uses accepted controls and Clear applies before its first output sample | Lane phase/keyed addresses continue across selection, local MODEL, global-effect, and Clear changes; only global seed reset changes lane decisions/source RNG contexts | Trace records raw context, target page/field, base/resolved model names, clear edge/generation, changed-field mask, and quantum frame | Lane page reloads its accepted timing/routing/voice controls; Global page shows accepted shared values and Clear count; MODEL banner shows accepted base/resolved names | Valid changes apply at the next persistent 16-frame quantum; invalid values sanitize/count; Global entry never clears; positive duplicates/holds and releases do not repeat; changing lane A cannot change B-G |
+| State recall | N/A - session save, presets, serialization, scenes, and recall are unsupported | N/A - no recall queue exists | No recall operation exists | No disk, preset, or scene buffer exists | No serialized scheduler, source RNG, modal, or smoother state exists | Unsupported calls are absent from the public API | UI identifies the session as volatile | Future recall must define seven source contexts plus modal/smoother equivalence and migrations in a new contract |
+| Disconnect/reconnect | Preserve every accepted Core global, effect, lane, voice, route, selected-page, and clear-generation value | A host-only raw MIDI message not yet transformed may be discarded; Core has no endpoint queue | Audio and the shared tail continue independently of controller presence | No source, modal, or final quantum changes | No scheduler, keyed lane random, source RNG, modal, or duck change | Endpoint identity and wall-clock disconnect time never enter musical provenance | A future host repopulates only from the latest accepted snapshot; revision 0.4 sends no physical feedback | Validation constructs messages in memory only; it does not enumerate/open endpoints and proves no reconnect behavior |
+| Non-finite recovery | BPM becomes 120; Note 48; unit voice fields default as declared; Master 0.65; non-finite lane route becomes zero; effect values default independently to Drive 0, Cohere 0, Root 48, Spread 0, Tail/Damping/Width 0.5, Duck 0; integer/enum fields clamp | Invalid fields are replaced inside one sanitized coherent Controls value; all unrelated lane/voice/global bytes remain unchanged | A non-finite source sample becomes zero for that lane/channel/sample before sum; any non-finite effect coefficient/state clears all six modes and envelope, increments effect recovery, and substitutes the exact dry sample; finite voices continue | No non-finite value enters persistent source/final carry; cleared modal values are exact zero | Preserve valid phase/address/source RNG state; invalid scheduler input uses its declared default; effect recovery never consumes source random state | Increment invalid-control, clamp, ignored-global, source-non-finite, effect-recovery, or final-saturation counter at the affected quantum/frame | Snapshot shows recovered accepted values and counters; raw NaN/infinity is never formatted or mirrored | Recovery occurs before scheduler math, Q conversion, smoothing/coefficient use, and final Q27 conversion; every output remains finite and bounded |
+
+## State equivalence
+
+Within one frozen build and experiment, repeatability means byte equality of
+signed 24-bit stereo PCM and canonical per-lane event, accepted-snapshot,
+controller, effect-metric, and aggregate-metric JSON across host partitions 1,
+16, 64, 128, 257, and 512. It also means exact equality of absolute frame and
+quantum, master/lane phases and remainders, step/loop addresses, keyed
+decisions, all seven base/resolved voice records, seven-bit trigger/started
+masks, stored source RNG contexts, accepted effect controls, smoothed controls,
+six complex modal states, duck envelope, clear generation/count, and every
+recovery/saturation diagnostic.
+
+Lane independence means a local operation addressed to lane A changes no
+accepted record, scheduler/source output, or stored RNG state for lanes B-G.
+The final mixed output is excluded from that per-lane equality because audio
+from lane A is expected to change the mix and therefore the shared body. Global
+isolation means a Global-page continuous control or Clear changes no accepted
+lane/voice record or lane/source/scheduler state; changing shared output is
+expected. Clear equivalence compares against a no-clear reference at the same
+frame and excludes only modal state, duck envelope, final PCM, clear
+generation/count, and its provenance event.
+
+Freshly reset instances are equivalent when every public accepted record,
+scheduler integer, seven source initializations/RNG contexts, started mask,
+source/final carry, modal/smoother/envelope state, seed, selected page,
+controller edge latch, and diagnostic agree. C++ padding, pointer/allocator
+addresses, local source/build paths, Git worktree location, host handles,
+endpoint identities, wall time, GUI component state, and unaccepted raw input
+are excluded. Concurrent processing by multiple Core instances,
+cross-toolchain floating-bit identity, real-time deadline behavior, physical
+controller behavior, and subjective sound are not claimed.

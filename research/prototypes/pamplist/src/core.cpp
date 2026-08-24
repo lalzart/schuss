@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <memory>
 #include <new>
 #include <utility>
 
@@ -18,6 +19,47 @@ constexpr std::uint64_t kProbabilityDomain = UINT64_C(0x50524f424142494c);
 constexpr std::uint64_t kShapeDomain = UINT64_C(0x534841504552414e);
 constexpr double kTwoToMinus53 = 1.0 / 9007199254740992.0;
 constexpr double kTwoPi = 6.283185307179586476925286766559;
+constexpr double kQ27Scale = 134217728.0;
+constexpr double kMaximumModalFrequencyHz = 21599.0;
+constexpr double kDenormalThreshold = 1.0e-20;
+constexpr double kSmootherSnapThreshold = 1.0e-7;
+
+constexpr std::array<double, kCohesionModeCount> kHarmonicRatios{{
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+}};
+constexpr std::array<double, kCohesionModeCount> kInharmonicRatios{{
+    1.0, 1.41421356, 1.932, 2.756, 3.561, 4.781,
+}};
+constexpr std::array<double, kCohesionModeCount> kBasePans{{
+    -1.0, 0.55, -0.35, 0.85, -0.7, 0.25,
+}};
+
+constexpr std::array<const char*, 24U> kEngineNames{{
+    "Virtual Analog VCF",
+    "Phase Distortion",
+    "6-Op FM A",
+    "6-Op FM B",
+    "6-Op FM C",
+    "Wave Terrain",
+    "String Machine",
+    "Chiptune",
+    "Virtual Analog",
+    "Waveshaping",
+    "2-Op FM",
+    "Granular Formant",
+    "Harmonic / Additive",
+    "Wavetable",
+    "Chord",
+    "Speech",
+    "Swarm",
+    "Noise",
+    "Particle",
+    "String",
+    "Modal Resonator",
+    "Bass Drum",
+    "Snare Drum",
+    "Hi-Hat",
+}};
 
 constexpr std::array<Rational, kRateCount> kRates{{
     {1U, 16U},
@@ -71,17 +113,79 @@ constexpr std::array<Rational, kRateCount> kRates{{
         && left.routes == right.routes;
 }
 
-[[nodiscard]] std::int32_t scaleAndSaturateQ27(
+[[nodiscard]] bool sameVoice(
+    const VoiceControls& left,
+    const VoiceControls& right) noexcept {
+    return left.engine == right.engine
+        && left.note == right.note
+        && left.harmonics == right.harmonics
+        && left.timbre == right.timbre
+        && left.morph == right.morph
+        && left.decay == right.decay
+        && left.lpg_colour == right.lpg_colour
+        && left.level == right.level;
+}
+
+[[nodiscard]] bool sameCohesion(
+    const CohesionControls& left,
+    const CohesionControls& right) noexcept {
+    return left.drive == right.drive
+        && left.cohere == right.cohere
+        && left.root_note == right.root_note
+        && left.spread == right.spread
+        && left.tail == right.tail
+        && left.damping == right.damping
+        && left.width == right.width
+        && left.duck == right.duck;
+}
+
+[[nodiscard]] std::uint32_t laneVoiceSeed(
+    std::uint32_t seed,
+    std::size_t lane) noexcept {
+    auto value = seed
+        ^ (UINT32_C(0x9e3779b9) * static_cast<std::uint32_t>(lane + 1U));
+    value ^= value >> 16U;
+    value *= UINT32_C(0x7feb352d);
+    value ^= value >> 15U;
+    value *= UINT32_C(0x846ca68b);
+    value ^= value >> 16U;
+    return value == 0U ? static_cast<std::uint32_t>(lane + 1U) : value;
+}
+
+[[nodiscard]] std::int64_t scaleContributionQ27(
     std::int32_t sample,
-    float gain,
+    float level) noexcept {
+    return static_cast<std::int64_t>(std::llround(
+        static_cast<double>(sample) * static_cast<double>(level)));
+}
+
+[[nodiscard]] std::int32_t saturateMixQ27(
+    std::int64_t sum,
+    double gain,
     Diagnostics& diagnostics) noexcept {
     const auto scaled = static_cast<std::int64_t>(std::llround(
-        static_cast<double>(sample) * static_cast<double>(gain)));
+        static_cast<double>(sum) * gain));
     if (scaled > kQ27Maximum || scaled < kQ27Minimum) {
         ++diagnostics.saturated_sample_count;
     }
     return static_cast<std::int32_t>(
         std::clamp<std::int64_t>(scaled, kQ27Minimum, kQ27Maximum));
+}
+
+[[nodiscard]] std::int32_t saturateFloatQ27(
+    double sample,
+    double gain,
+    Diagnostics& diagnostics) noexcept {
+    const auto scaled = sample * kQ27Scale * gain;
+    if (scaled > static_cast<double>(kQ27Maximum)) {
+        ++diagnostics.saturated_sample_count;
+        return kQ27Maximum;
+    }
+    if (scaled < static_cast<double>(kQ27Minimum)) {
+        ++diagnostics.saturated_sample_count;
+        return kQ27Minimum;
+    }
+    return static_cast<std::int32_t>(std::llround(scaled));
 }
 
 }  // namespace
@@ -102,22 +206,32 @@ Controls sanitizeControls(
         result.tempo_milli_bpm = 120000U;
         ++local.invalid;
     }
-    if (result.engine > 23U) {
-        result.engine = 23U;
-        ++local.clamped;
-    }
-    result.note = finiteBounded(result.note, 24.0F, 96.0F, 48.0F, local);
-    result.harmonics = finiteBounded(result.harmonics, 0.0F, 1.0F, 0.5F, local);
-    result.timbre = finiteBounded(result.timbre, 0.0F, 1.0F, 0.5F, local);
-    result.morph = finiteBounded(result.morph, 0.0F, 1.0F, 0.5F, local);
-    result.decay = finiteBounded(result.decay, 0.0F, 1.0F, 0.5F, local);
-    result.lpg_colour = finiteBounded(result.lpg_colour, 0.0F, 1.0F, 0.5F, local);
-    result.source_level = finiteBounded(result.source_level, 0.0F, 1.0F, 0.8F, local);
     result.master_gain = finiteBounded(result.master_gain, 0.0F, 1.0F, 0.65F, local);
-    if (result.selected_lane >= kLaneCount) {
-        result.selected_lane = static_cast<std::uint8_t>(kLaneCount - 1U);
+    if (result.selected_page >= kPageCount) {
+        result.selected_page = kGlobalPageIndex;
         ++local.clamped;
     }
+    if (static_cast<std::uint8_t>(result.lane_control_mode)
+        > static_cast<std::uint8_t>(LaneControlMode::motion)) {
+        result.lane_control_mode = LaneControlMode::voice;
+        ++local.invalid;
+    }
+    result.cohesion.drive = finiteBounded(
+        result.cohesion.drive, 0.0F, 1.0F, 0.0F, local);
+    result.cohesion.cohere = finiteBounded(
+        result.cohesion.cohere, 0.0F, 1.0F, 0.0F, local);
+    result.cohesion.root_note = finiteBounded(
+        result.cohesion.root_note, 24.0F, 84.0F, 48.0F, local);
+    result.cohesion.spread = finiteBounded(
+        result.cohesion.spread, 0.0F, 1.0F, 0.0F, local);
+    result.cohesion.tail = finiteBounded(
+        result.cohesion.tail, 0.0F, 1.0F, 0.5F, local);
+    result.cohesion.damping = finiteBounded(
+        result.cohesion.damping, 0.0F, 1.0F, 0.5F, local);
+    result.cohesion.width = finiteBounded(
+        result.cohesion.width, 0.0F, 1.0F, 0.5F, local);
+    result.cohesion.duck = finiteBounded(
+        result.cohesion.duck, 0.0F, 1.0F, 0.0F, local);
     for (auto& lane : result.lanes) {
         if (lane.rate_index >= kRateCount) {
             lane.rate_index = 8U;
@@ -148,9 +262,43 @@ Controls sanitizeControls(
             lane.probability, 0.0F, 1.0F, 1.0F, local);
         lane.amplitude = finiteBounded(
             lane.amplitude, 0.0F, 1.0F, 0.0F, local);
-        for (auto& route : lane.routes) {
-            route = finiteBounded(route, -1.0F, 1.0F, 0.0F, local);
+        auto& trigger = lane.routes[destinationIndex(Destination::trigger)];
+        if (!std::isfinite(trigger)) {
+            trigger = 0.0F;
+            ++local.invalid;
+        } else {
+            const auto accepted_trigger = trigger > (1.0F / 127.0F)
+                ? 1.0F
+                : 0.0F;
+            if (accepted_trigger != trigger) ++local.clamped;
+            trigger = accepted_trigger;
         }
+        for (std::size_t destination = 1U;
+             destination < lane.routes.size();
+             ++destination) {
+            lane.routes[destination] = finiteBounded(
+                lane.routes[destination], -1.0F, 1.0F, 0.0F, local);
+        }
+    }
+    for (auto& voice : result.voices) {
+        if (voice.engine > 23U) {
+            voice.engine = 23U;
+            ++local.clamped;
+        }
+        voice.note = finiteBounded(
+            voice.note, 24.0F, 96.0F, 48.0F, local);
+        voice.harmonics = finiteBounded(
+            voice.harmonics, 0.0F, 1.0F, 0.5F, local);
+        voice.timbre = finiteBounded(
+            voice.timbre, 0.0F, 1.0F, 0.5F, local);
+        voice.morph = finiteBounded(
+            voice.morph, 0.0F, 1.0F, 0.5F, local);
+        voice.decay = finiteBounded(
+            voice.decay, 0.0F, 1.0F, 0.5F, local);
+        voice.lpg_colour = finiteBounded(
+            voice.lpg_colour, 0.0F, 1.0F, 0.5F, local);
+        voice.level = finiteBounded(
+            voice.level, 0.0F, 1.0F, 0.8F, local);
     }
     if (counts != nullptr) *counts = local;
     return result;
@@ -160,20 +308,18 @@ bool sameControls(const Controls& left, const Controls& right) noexcept {
     if (left.running != right.running
         || left.tempo_milli_bpm != right.tempo_milli_bpm
         || left.seed != right.seed
-        || left.engine != right.engine
-        || left.note != right.note
-        || left.harmonics != right.harmonics
-        || left.timbre != right.timbre
-        || left.morph != right.morph
-        || left.decay != right.decay
-        || left.lpg_colour != right.lpg_colour
-        || left.source_level != right.source_level
         || left.master_gain != right.master_gain
-        || left.selected_lane != right.selected_lane) {
+        || left.selected_page != right.selected_page
+        || left.lane_control_mode != right.lane_control_mode
+        || left.effect_clear_generation != right.effect_clear_generation
+        || !sameCohesion(left.cohesion, right.cohesion)) {
         return false;
     }
     for (std::size_t lane = 0; lane < kLaneCount; ++lane) {
-        if (!sameLane(left.lanes[lane], right.lanes[lane])) return false;
+        if (!sameLane(left.lanes[lane], right.lanes[lane])
+            || !sameVoice(left.voices[lane], right.voices[lane])) {
+            return false;
+        }
     }
     return true;
 }
@@ -198,9 +344,9 @@ const char* shapeName(Shape shape) noexcept {
 
 const char* destinationName(Destination destination) noexcept {
     switch (destination) {
-        case Destination::trigger: return "Trigger";
+        case Destination::trigger: return "Trigger Enable";
         case Destination::pitch: return "Pitch";
-        case Destination::model: return "Model";
+        case Destination::model: return "MODEL SWEEP";
         case Destination::harmonics: return "Harmonics";
         case Destination::timbre: return "Timbre";
         case Destination::morph: return "Morph";
@@ -208,6 +354,14 @@ const char* destinationName(Destination destination) noexcept {
         case Destination::level: return "Level";
     }
     return "Invalid";
+}
+
+const char* engineName(std::uint8_t engine) noexcept {
+    return engine < kEngineNames.size() ? kEngineNames[engine] : "Unknown";
+}
+
+const char* modelName(std::uint8_t model) noexcept {
+    return engineName(model);
 }
 
 bool euclideanHit(
@@ -299,10 +453,58 @@ struct Core::Impl final {
         double random_b{};
     };
 
+    struct Smoother final {
+        double current{};
+        double target{};
+        double coefficient{};
+
+        void reset(double value, double seconds) noexcept {
+            current = value;
+            target = value;
+            coefficient = 1.0 - std::exp(
+                -1.0 / (seconds * static_cast<double>(kSampleRateHz)));
+        }
+
+        void setTarget(double value) noexcept { target = value; }
+
+        [[nodiscard]] double step() noexcept {
+            current += (target - current) * coefficient;
+            if (std::abs(target - current) <= kSmootherSnapThreshold) {
+                current = target;
+            }
+            return current;
+        }
+    };
+
+    struct ModeState final {
+        double real{};
+        double imaginary{};
+        double frequency_hz{};
+        double pole{};
+    };
+
+    struct CohesionState final {
+        Smoother master{};
+        Smoother drive{};
+        Smoother cohere{};
+        Smoother root_note{};
+        Smoother spread{};
+        Smoother tail{};
+        Smoother damping{};
+        Smoother width{};
+        Smoother duck{};
+        std::array<ModeState, kCohesionModeCount> modes{};
+        double duck_envelope{};
+        double maximum_mode_state_absolute{};
+        double maximum_duck_envelope{};
+        double dry_difference_energy{};
+        std::uint32_t applied_clear_generation{};
+    };
+
     Controls accepted{defaultControls()};
     Diagnostics diagnostics{};
     Snapshot public_snapshot{};
-    MacroVoice voice{kDefaultSeed};
+    std::array<std::unique_ptr<MacroVoice>, kLaneCount> voices{};
     std::array<LaneState, kLaneCount> lanes{};
     std::uint64_t master_phase_q32{};
     std::uint64_t master_remainder{};
@@ -310,14 +512,60 @@ struct Core::Impl final {
     std::uint64_t render_frame{};
     std::uint64_t quantum_count{};
     std::uint64_t accepted_sequence{};
+    std::array<std::array<std::int32_t, kMacroVoiceQuantumFrames>, kLaneCount>
+        voice_main_quantum{};
+    std::array<std::array<std::int32_t, kMacroVoiceQuantumFrames>, kLaneCount>
+        voice_auxiliary_quantum{};
     std::array<std::int32_t, kMacroVoiceQuantumFrames> main_quantum{};
     std::array<std::int32_t, kMacroVoiceQuantumFrames> auxiliary_quantum{};
     std::size_t quantum_cursor{kMacroVoiceQuantumFrames};
     bool has_accepted{};
     bool was_running{};
-    bool voice_started{};
+    std::array<bool, kLaneCount> voice_started{};
+    CohesionState cohesion{};
+    bool effect_cleared_for_quantum{};
 
-    Impl() { refreshSnapshot(); }
+    Impl() {
+        for (std::size_t lane = 0; lane < kLaneCount; ++lane) {
+            voices[lane] = std::make_unique<MacroVoice>(
+                laneVoiceSeed(kDefaultSeed, lane));
+        }
+        resetEffectRuntimeToAccepted();
+        setResolvedToBase();
+        refreshSnapshot();
+    }
+
+    void setEffectTargets() noexcept {
+        cohesion.master.setTarget(accepted.master_gain);
+        cohesion.drive.setTarget(accepted.cohesion.drive);
+        cohesion.cohere.setTarget(accepted.cohesion.cohere);
+        cohesion.root_note.setTarget(accepted.cohesion.root_note);
+        cohesion.spread.setTarget(accepted.cohesion.spread);
+        cohesion.tail.setTarget(accepted.cohesion.tail);
+        cohesion.damping.setTarget(accepted.cohesion.damping);
+        cohesion.width.setTarget(accepted.cohesion.width);
+        cohesion.duck.setTarget(accepted.cohesion.duck);
+    }
+
+    void clearEffectHistory() noexcept {
+        for (auto& mode : cohesion.modes) mode = {};
+        cohesion.duck_envelope = 0.0;
+    }
+
+    void resetEffectRuntimeToAccepted() noexcept {
+        cohesion.master.reset(accepted.master_gain, 0.010);
+        cohesion.drive.reset(accepted.cohesion.drive, 0.030);
+        cohesion.cohere.reset(accepted.cohesion.cohere, 0.010);
+        cohesion.root_note.reset(accepted.cohesion.root_note, 0.030);
+        cohesion.spread.reset(accepted.cohesion.spread, 0.030);
+        cohesion.tail.reset(accepted.cohesion.tail, 0.030);
+        cohesion.damping.reset(accepted.cohesion.damping, 0.030);
+        cohesion.width.reset(accepted.cohesion.width, 0.030);
+        cohesion.duck.reset(accepted.cohesion.duck, 0.030);
+        cohesion.applied_clear_generation = accepted.effect_clear_generation;
+        clearEffectHistory();
+        effect_cleared_for_quantum = false;
+    }
 
     void clearScheduler() noexcept {
         master_phase_q32 = 0U;
@@ -327,12 +575,18 @@ struct Core::Impl final {
 
     void resetTransport(std::uint32_t seed) noexcept {
         clearScheduler();
-        voice.reset(seed);
+        for (std::size_t lane = 0; lane < kLaneCount; ++lane) {
+            voices[lane]->reset(laneVoiceSeed(seed, lane));
+            voice_main_quantum[lane].fill(0);
+            voice_auxiliary_quantum[lane].fill(0);
+        }
         main_quantum.fill(0);
         auxiliary_quantum.fill(0);
         quantum_cursor = kMacroVoiceQuantumFrames;
         was_running = false;
-        voice_started = false;
+        voice_started.fill(false);
+        resetEffectRuntimeToAccepted();
+        setResolvedToBase();
     }
 
     void resetAll() noexcept {
@@ -344,8 +598,28 @@ struct Core::Impl final {
         quantum_count = 0U;
         accepted_sequence = 0U;
         has_accepted = false;
+        cohesion = {};
+        effect_cleared_for_quantum = false;
         resetTransport(kDefaultSeed);
         refreshSnapshot();
+    }
+
+    void setResolvedToBase() noexcept {
+        public_snapshot.lane_values.fill(0.0F);
+        public_snapshot.modulation_values = {};
+        public_snapshot.trigger_lane_mask = 0U;
+        public_snapshot.started_lane_mask = 0U;
+        for (std::size_t lane = 0; lane < kLaneCount; ++lane) {
+            const auto& voice = accepted.voices[lane];
+            public_snapshot.resolved_engines[lane] = voice.engine;
+            public_snapshot.resolved_notes[lane] = voice.note;
+            public_snapshot.resolved_harmonics[lane] = voice.harmonics;
+            public_snapshot.resolved_timbres[lane] = voice.timbre;
+            public_snapshot.resolved_morphs[lane] = voice.morph;
+            public_snapshot.resolved_decays[lane] = voice.decay;
+            public_snapshot.resolved_lpg_colours[lane] = voice.lpg_colour;
+            public_snapshot.resolved_levels[lane] = voice.level;
+        }
     }
 
     void refreshSnapshot() noexcept {
@@ -362,7 +636,54 @@ struct Core::Impl final {
             public_snapshot.lane_remainders[lane] = lanes[lane].remainder;
             public_snapshot.lane_steps[lane] = lanes[lane].observed_step;
             public_snapshot.lane_addresses[lane] = lanes[lane].address;
+            public_snapshot.source_random_states[lane] =
+                voices[lane]->randomState();
+            if (voice_started[lane]) {
+                public_snapshot.started_lane_mask = static_cast<std::uint8_t>(
+                    public_snapshot.started_lane_mask | (1U << lane));
+            } else {
+                public_snapshot.started_lane_mask = static_cast<std::uint8_t>(
+                    public_snapshot.started_lane_mask & ~(1U << lane));
+            }
         }
+        public_snapshot.cohesion.smoothed_master_gain =
+            static_cast<float>(cohesion.master.current);
+        public_snapshot.cohesion.smoothed_drive =
+            static_cast<float>(cohesion.drive.current);
+        public_snapshot.cohesion.smoothed_cohere =
+            static_cast<float>(cohesion.cohere.current);
+        public_snapshot.cohesion.smoothed_root_note =
+            static_cast<float>(cohesion.root_note.current);
+        public_snapshot.cohesion.smoothed_spread =
+            static_cast<float>(cohesion.spread.current);
+        public_snapshot.cohesion.smoothed_tail =
+            static_cast<float>(cohesion.tail.current);
+        public_snapshot.cohesion.smoothed_damping =
+            static_cast<float>(cohesion.damping.current);
+        public_snapshot.cohesion.smoothed_width =
+            static_cast<float>(cohesion.width.current);
+        public_snapshot.cohesion.smoothed_duck =
+            static_cast<float>(cohesion.duck.current);
+        public_snapshot.cohesion.duck_envelope =
+            static_cast<float>(cohesion.duck_envelope);
+        for (std::size_t mode = 0; mode < kCohesionModeCount; ++mode) {
+            public_snapshot.cohesion.mode_frequencies_hz[mode] =
+                static_cast<float>(cohesion.modes[mode].frequency_hz);
+            public_snapshot.cohesion.mode_poles[mode] =
+                static_cast<float>(cohesion.modes[mode].pole);
+            public_snapshot.cohesion.mode_real[mode] =
+                static_cast<float>(cohesion.modes[mode].real);
+            public_snapshot.cohesion.mode_imaginary[mode] =
+                static_cast<float>(cohesion.modes[mode].imaginary);
+        }
+        public_snapshot.cohesion.applied_clear_generation =
+            cohesion.applied_clear_generation;
+        public_snapshot.cohesion.maximum_mode_state_absolute =
+            cohesion.maximum_mode_state_absolute;
+        public_snapshot.cohesion.maximum_duck_envelope =
+            cohesion.maximum_duck_envelope;
+        public_snapshot.cohesion.dry_difference_energy =
+            cohesion.dry_difference_energy;
     }
 
     void accept(const Controls& requested) noexcept {
@@ -370,6 +691,9 @@ struct Core::Impl final {
         const auto next = sanitizeControls(requested, &counts);
         diagnostics.invalid_control_count += counts.invalid;
         diagnostics.clamped_control_count += counts.clamped;
+        const bool seed_changed = next.seed != accepted.seed;
+        const bool clear_changed =
+            next.effect_clear_generation != accepted.effect_clear_generation;
         if (has_accepted) {
             if (next.tempo_milli_bpm != accepted.tempo_milli_bpm) {
                 master_remainder = 0U;
@@ -388,6 +712,19 @@ struct Core::Impl final {
         }
         accepted = next;
         has_accepted = true;
+        setEffectTargets();
+        if (seed_changed) {
+            resetTransport(accepted.seed);
+        }
+        if (clear_changed) {
+            if (!seed_changed) {
+                clearEffectHistory();
+            }
+            cohesion.applied_clear_generation =
+                accepted.effect_clear_generation;
+            effect_cleared_for_quantum = true;
+            ++diagnostics.effect_clear_count;
+        }
     }
 
     void advanceSchedulers() noexcept {
@@ -409,28 +746,204 @@ struct Core::Impl final {
         }
     }
 
+    [[nodiscard]] bool processCohesionSample(
+        std::int64_t main_sum,
+        std::int64_t auxiliary_sum,
+        double& output_left,
+        double& output_right,
+        double& master_gain) noexcept {
+        master_gain = cohesion.master.step();
+        const auto drive = cohesion.drive.step();
+        const auto cohere = cohesion.cohere.step();
+        const auto root_note = cohesion.root_note.step();
+        const auto spread = cohesion.spread.step();
+        const auto tail = cohesion.tail.step();
+        const auto damping = cohesion.damping.step();
+        const auto width = cohesion.width.step();
+        const auto duck = cohesion.duck.step();
+
+        const std::array<double, 9U> parameters{{
+            master_gain,
+            drive,
+            cohere,
+            root_note,
+            spread,
+            tail,
+            damping,
+            width,
+            duck,
+        }};
+        if (!std::all_of(
+                parameters.begin(), parameters.end(), [](double value) {
+                    return std::isfinite(value);
+                })) {
+            ++diagnostics.effect_recovery_count;
+            clearEffectHistory();
+            master_gain = std::isfinite(master_gain)
+                ? master_gain
+                : static_cast<double>(accepted.master_gain);
+            return false;
+        }
+
+        const auto dry_left = static_cast<double>(main_sum) / kQ27Scale;
+        const auto dry_right = static_cast<double>(auxiliary_sum) / kQ27Scale;
+        const auto drive_sample = [drive](double input) noexcept {
+            if (drive == 0.0) return input;
+            const auto gain = 1.0 + 7.0 * drive;
+            const auto denominator = std::tanh(gain);
+            return (1.0 - drive) * input
+                + drive * std::tanh(gain * input) / denominator;
+        };
+        const auto driven_left = drive_sample(dry_left);
+        const auto driven_right = drive_sample(dry_right);
+        const auto mid = 0.5 * (driven_left + driven_right);
+        const auto side = 0.5 * (driven_left - driven_right);
+
+        const auto envelope_input = std::max(
+            std::abs(dry_left), std::abs(dry_right));
+        const auto envelope_seconds = envelope_input > cohesion.duck_envelope
+            ? 0.005
+            : 0.160;
+        const auto envelope_coefficient = 1.0 - std::exp(
+            -1.0
+            / (envelope_seconds * static_cast<double>(kSampleRateHz)));
+        cohesion.duck_envelope +=
+            (envelope_input - cohesion.duck_envelope)
+            * envelope_coefficient;
+        cohesion.maximum_duck_envelope = std::max(
+            cohesion.maximum_duck_envelope, cohesion.duck_envelope);
+
+        const auto root_hz = 440.0 * std::pow(
+            2.0, (root_note - 69.0) / 12.0);
+        const auto base_tail = 0.06 * std::pow(4.0 / 0.06, tail);
+        double wet_left = 0.0;
+        double wet_right = 0.0;
+        double weight_sum = 0.0;
+        bool valid = std::isfinite(driven_left)
+            && std::isfinite(driven_right)
+            && std::isfinite(cohesion.duck_envelope)
+            && std::isfinite(root_hz)
+            && std::isfinite(base_tail);
+        for (std::size_t index = 0;
+             valid && index < kCohesionModeCount;
+             ++index) {
+            const auto ratio = kHarmonicRatios[index]
+                + (kInharmonicRatios[index] - kHarmonicRatios[index])
+                    * spread;
+            const auto frequency = std::min(
+                kMaximumModalFrequencyHz, root_hz * ratio);
+            const auto mode_tail = base_tail
+                / (1.0 + damping * 0.32 * static_cast<double>(index));
+            const auto pole = std::exp(
+                -1.0
+                / (mode_tail * static_cast<double>(kSampleRateHz)));
+            const auto weight = std::exp(
+                -0.34 * damping * static_cast<double>(index));
+            const auto pan = kBasePans[index] * width;
+            valid = std::isfinite(frequency)
+                && frequency > 0.0
+                && frequency < 0.45 * static_cast<double>(kSampleRateHz)
+                && std::isfinite(pole)
+                && pole > 0.0
+                && pole < 1.0
+                && std::isfinite(weight)
+                && weight > 0.0
+                && std::isfinite(pan);
+            if (!valid) break;
+
+            auto& mode = cohesion.modes[index];
+            const auto excitation = mid + side * pan;
+            const auto excited_real = mode.real
+                + excitation * weight * (1.0 - pole);
+            const auto angle = kTwoPi * frequency
+                / static_cast<double>(kSampleRateHz);
+            const auto cosine = std::cos(angle);
+            const auto sine = std::sin(angle);
+            const auto next_real = pole
+                * (excited_real * cosine - mode.imaginary * sine);
+            const auto next_imaginary = pole
+                * (excited_real * sine + mode.imaginary * cosine);
+            valid = std::isfinite(next_real) && std::isfinite(next_imaginary);
+            if (!valid) break;
+
+            mode.real = std::abs(next_real) < kDenormalThreshold
+                ? 0.0
+                : next_real;
+            mode.imaginary = std::abs(next_imaginary) < kDenormalThreshold
+                ? 0.0
+                : next_imaginary;
+            mode.frequency_hz = frequency;
+            mode.pole = pole;
+            cohesion.maximum_mode_state_absolute = std::max(
+                cohesion.maximum_mode_state_absolute,
+                std::max(std::abs(mode.real), std::abs(mode.imaginary)));
+            wet_left += mode.real * weight * (1.0 - pan);
+            wet_right += mode.real * weight * (1.0 + pan);
+            weight_sum += weight;
+        }
+
+        valid = valid
+            && std::isfinite(weight_sum)
+            && weight_sum > 0.0
+            && std::isfinite(wet_left)
+            && std::isfinite(wet_right);
+        if (!valid) {
+            ++diagnostics.effect_recovery_count;
+            clearEffectHistory();
+            return false;
+        }
+
+        wet_left /= weight_sum;
+        wet_right /= weight_sum;
+        const auto duck_gain = 1.0
+            / (1.0 + 6.0 * duck * cohesion.duck_envelope);
+        const auto effect_left = driven_left + 0.82 * wet_left * duck_gain;
+        const auto effect_right = driven_right + 0.82 * wet_right * duck_gain;
+        output_left = dry_left + cohere * (effect_left - dry_left);
+        output_right = dry_right + cohere * (effect_right - dry_right);
+        valid = std::isfinite(output_left)
+            && std::isfinite(output_right)
+            && std::isfinite(duck_gain);
+        if (!valid) {
+            ++diagnostics.effect_recovery_count;
+            clearEffectHistory();
+            return false;
+        }
+        const auto difference_left = output_left - dry_left;
+        const auto difference_right = output_right - dry_right;
+        cohesion.dry_difference_energy +=
+            difference_left * difference_left
+            + difference_right * difference_right;
+        return true;
+    }
+
     [[nodiscard]] bool renderQuantum(QuantumEvent& event) noexcept {
+        const auto effect_cleared = effect_cleared_for_quantum;
+        effect_cleared_for_quantum = false;
+        event = {};
+        event.absolute_frame = render_frame;
+        event.effect_cleared = effect_cleared;
+        event.effect_clear_generation = cohesion.applied_clear_generation;
         if (!accepted.running) {
             if (was_running) resetTransport(accepted.seed);
             main_quantum.fill(0);
             auxiliary_quantum.fill(0);
+            setResolvedToBase();
             quantum_cursor = 0U;
             render_frame += kMacroVoiceQuantumFrames;
             ++quantum_count;
             refreshSnapshot();
-            return false;
+            return effect_cleared;
         }
         was_running = true;
 
         std::array<float, kLaneCount> lane_values{};
-        std::array<float, kDestinationCount> matrix{};
+        std::array<std::array<float, kDestinationCount>, kLaneCount>
+            modulation{};
         std::uint8_t boundary_mask = 0U;
         std::uint8_t accepted_mask = 0U;
         std::uint8_t trigger_lane_mask = 0U;
-        std::uint8_t trigger_lanes = 0U;
 
-        event = {};
-        event.absolute_frame = render_frame;
         for (std::size_t lane_index = 0; lane_index < kLaneCount; ++lane_index) {
             const auto& controls = accepted.lanes[lane_index];
             auto& state = lanes[lane_index];
@@ -481,112 +994,159 @@ struct Core::Impl final {
                         accepted_mask | (1U << lane_index));
                 }
             }
+
             const auto value = state.accepted_step
                 ? shapeValue(
                     controls.shape, local_phase, state.random_a, state.random_b)
                     * controls.amplitude
                 : 0.0F;
             lane_values[lane_index] = std::clamp(value, 0.0F, 1.0F);
+            for (std::size_t destination = 0;
+                 destination < kDestinationCount;
+                 ++destination) {
+                const auto raw = lane_values[lane_index]
+                    * controls.routes[destination];
+                const auto bounded = std::clamp(raw, -1.0F, 1.0F);
+                if (bounded != raw) ++diagnostics.modulation_clamp_count;
+                modulation[lane_index][destination] = bounded;
+            }
             if (boundary
                 && state.accepted_step
                 && controls.amplitude > 0.0F
                 && controls.routes[destinationIndex(Destination::trigger)]
-                    > (1.0F / 127.0F)) {
+                    == 1.0F) {
                 trigger_lane_mask = static_cast<std::uint8_t>(
                     trigger_lane_mask | (1U << lane_index));
-                ++trigger_lanes;
+                ++diagnostics.trigger_count;
+                ++diagnostics.lane_trigger_count[lane_index];
             }
         }
 
-        for (std::size_t destination = 0;
-             destination < kDestinationCount;
-             ++destination) {
-            double sum = 0.0;
-            for (std::size_t lane = 0; lane < kLaneCount; ++lane) {
-                sum += static_cast<double>(lane_values[lane])
-                    * accepted.lanes[lane].routes[destination];
+        std::array<std::uint8_t, kLaneCount> resolved_engines{};
+        std::array<float, kLaneCount> resolved_notes{};
+        std::array<float, kLaneCount> resolved_harmonics{};
+        std::array<float, kLaneCount> resolved_timbres{};
+        std::array<float, kLaneCount> resolved_morphs{};
+        std::array<float, kLaneCount> resolved_decays{};
+        std::array<float, kLaneCount> resolved_lpg_colours{};
+        std::array<float, kLaneCount> resolved_levels{};
+
+        for (std::size_t lane = 0; lane < kLaneCount; ++lane) {
+            const auto& base = accepted.voices[lane];
+            const auto& local = modulation[lane];
+            const auto model_offset = static_cast<int>(std::lround(
+                23.0 * local[destinationIndex(Destination::model)]));
+            resolved_engines[lane] = static_cast<std::uint8_t>(std::clamp(
+                static_cast<int>(base.engine) + model_offset, 0, 23));
+            resolved_notes[lane] = std::clamp(
+                base.note
+                    + 24.0F * local[destinationIndex(Destination::pitch)],
+                24.0F,
+                96.0F);
+            const auto unit = [&local](float value, Destination destination) {
+                return std::clamp(
+                    value + local[destinationIndex(destination)], 0.0F, 1.0F);
+            };
+            resolved_harmonics[lane] = unit(
+                base.harmonics, Destination::harmonics);
+            resolved_timbres[lane] = unit(base.timbre, Destination::timbre);
+            resolved_morphs[lane] = unit(base.morph, Destination::morph);
+            resolved_decays[lane] = unit(base.decay, Destination::decay);
+            resolved_lpg_colours[lane] = base.lpg_colour;
+            resolved_levels[lane] = unit(base.level, Destination::level);
+
+            const bool trigger = (trigger_lane_mask & (1U << lane)) != 0U;
+            if (trigger) voice_started[lane] = true;
+            if (voice_started[lane]) {
+                MacroVoiceControls voice_controls{};
+                voice_controls.trigger = trigger;
+                voice_controls.engine = resolved_engines[lane];
+                voice_controls.note = resolved_notes[lane];
+                voice_controls.harmonics = resolved_harmonics[lane];
+                voice_controls.timbre = resolved_timbres[lane];
+                voice_controls.morph = resolved_morphs[lane];
+                voice_controls.decay = resolved_decays[lane];
+                voice_controls.lpg_colour = resolved_lpg_colours[lane];
+                voice_controls.level = resolved_levels[lane];
+                voices[lane]->process(
+                    voice_controls,
+                    voice_main_quantum[lane],
+                    voice_auxiliary_quantum[lane]);
+            } else {
+                voice_main_quantum[lane].fill(0);
+                voice_auxiliary_quantum[lane].fill(0);
             }
-            const auto bounded = std::clamp(sum, -1.0, 1.0);
-            if (bounded != sum) ++diagnostics.matrix_clamp_count;
-            matrix[destination] = static_cast<float>(bounded);
         }
 
-        const bool trigger = trigger_lanes > 0U;
-        if (trigger) {
-            ++diagnostics.trigger_count;
-            diagnostics.coalesced_trigger_count += trigger_lanes - 1U;
-        }
-        const auto model_offset = static_cast<int>(std::lround(
-            23.0 * matrix[destinationIndex(Destination::model)]));
-        const auto resolved_engine = static_cast<std::uint8_t>(std::clamp(
-            static_cast<int>(accepted.engine) + model_offset, 0, 23));
-        const auto resolved_note = std::clamp(
-            accepted.note
-                + 24.0F * matrix[destinationIndex(Destination::pitch)],
-            24.0F,
-            96.0F);
-        const auto unit = [&matrix](float base, Destination destination) {
-            return std::clamp(
-                base + matrix[destinationIndex(destination)], 0.0F, 1.0F);
-        };
-        const auto resolved_harmonics = unit(accepted.harmonics, Destination::harmonics);
-        const auto resolved_timbre = unit(accepted.timbre, Destination::timbre);
-        const auto resolved_morph = unit(accepted.morph, Destination::morph);
-        const auto resolved_decay = unit(accepted.decay, Destination::decay);
-        const auto resolved_level = unit(accepted.source_level, Destination::level);
-
-        MacroVoiceControls voice_controls{};
-        voice_controls.trigger = trigger;
-        voice_controls.engine = resolved_engine;
-        voice_controls.note = resolved_note;
-        voice_controls.harmonics = resolved_harmonics;
-        voice_controls.timbre = resolved_timbre;
-        voice_controls.morph = resolved_morph;
-        voice_controls.decay = resolved_decay;
-        voice_controls.lpg_colour = accepted.lpg_colour;
-        voice_controls.level = resolved_level;
-        if (trigger) voice_started = true;
-        if (voice_started) {
-            voice.process(voice_controls, main_quantum, auxiliary_quantum);
-        } else {
-            main_quantum.fill(0);
-            auxiliary_quantum.fill(0);
-        }
-        const auto output_gain = accepted.master_gain * resolved_level;
         for (std::size_t frame = 0; frame < kMacroVoiceQuantumFrames; ++frame) {
-            main_quantum[frame] = scaleAndSaturateQ27(
-                main_quantum[frame], output_gain, diagnostics);
-            auxiliary_quantum[frame] = scaleAndSaturateQ27(
-                auxiliary_quantum[frame], output_gain, diagnostics);
+            std::int64_t main_sum = 0;
+            std::int64_t auxiliary_sum = 0;
+            for (std::size_t lane = 0; lane < kLaneCount; ++lane) {
+                main_sum += scaleContributionQ27(
+                    voice_main_quantum[lane][frame], resolved_levels[lane]);
+                auxiliary_sum += scaleContributionQ27(
+                    voice_auxiliary_quantum[lane][frame], resolved_levels[lane]);
+            }
+            double effect_left = 0.0;
+            double effect_right = 0.0;
+            double master_gain = accepted.master_gain;
+            const auto effect_valid = processCohesionSample(
+                main_sum,
+                auxiliary_sum,
+                effect_left,
+                effect_right,
+                master_gain);
+            if (!effect_valid || cohesion.cohere.current == 0.0) {
+                main_quantum[frame] = saturateMixQ27(
+                    main_sum, master_gain, diagnostics);
+                auxiliary_quantum[frame] = saturateMixQ27(
+                    auxiliary_sum, master_gain, diagnostics);
+            } else {
+                main_quantum[frame] = saturateFloatQ27(
+                    effect_left, master_gain, diagnostics);
+                auxiliary_quantum[frame] = saturateFloatQ27(
+                    effect_right, master_gain, diagnostics);
+            }
         }
         quantum_cursor = 0U;
 
+        std::uint8_t started_lane_mask = 0U;
         event.boundary_mask = boundary_mask;
         event.accepted_mask = accepted_mask;
         event.trigger_lane_mask = trigger_lane_mask;
-        event.trigger = trigger;
-        event.resolved_engine = resolved_engine;
+        event.effect_cleared = effect_cleared;
+        event.effect_clear_generation = cohesion.applied_clear_generation;
+        event.resolved_engines = resolved_engines;
         for (std::size_t lane = 0; lane < kLaneCount; ++lane) {
+            if (voice_started[lane]) {
+                started_lane_mask = static_cast<std::uint8_t>(
+                    started_lane_mask | (1U << lane));
+            }
             event.steps[lane] = lanes[lane].observed_step;
             event.addresses[lane] = lanes[lane].address;
         }
+        event.started_lane_mask = started_lane_mask;
 
         public_snapshot.lane_values = lane_values;
-        public_snapshot.matrix_values = matrix;
-        public_snapshot.trigger = trigger;
-        public_snapshot.resolved_engine = resolved_engine;
-        public_snapshot.resolved_note = resolved_note;
+        public_snapshot.modulation_values = modulation;
+        public_snapshot.trigger_lane_mask = trigger_lane_mask;
+        public_snapshot.started_lane_mask = started_lane_mask;
+        public_snapshot.resolved_engines = resolved_engines;
+        public_snapshot.resolved_notes = resolved_notes;
         public_snapshot.resolved_harmonics = resolved_harmonics;
-        public_snapshot.resolved_timbre = resolved_timbre;
-        public_snapshot.resolved_morph = resolved_morph;
-        public_snapshot.resolved_decay = resolved_decay;
-        public_snapshot.resolved_level = resolved_level;
+        public_snapshot.resolved_timbres = resolved_timbres;
+        public_snapshot.resolved_morphs = resolved_morphs;
+        public_snapshot.resolved_decays = resolved_decays;
+        public_snapshot.resolved_lpg_colours = resolved_lpg_colours;
+        public_snapshot.resolved_levels = resolved_levels;
 
         advanceSchedulers();
         render_frame += kMacroVoiceQuantumFrames;
         ++quantum_count;
         refreshSnapshot();
-        return boundary_mask != 0U || trigger;
+        return boundary_mask != 0U
+            || trigger_lane_mask != 0U
+            || effect_cleared;
     }
 
     [[nodiscard]] bool process(

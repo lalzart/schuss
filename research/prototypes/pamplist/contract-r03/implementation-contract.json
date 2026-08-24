@@ -1,0 +1,107 @@
+{
+  "acceptance_tests": [
+    "The approved revision 0.3 proposal fingerprint and every successor-bundle artifact pass ready validation before any Pamplist DSP source is changed.",
+    "The configured patcher checkout matches catalog/sources.lock.json at commit 08d3e6e1e2b61230308c20a15ded58ffdaf4656c; the synthesis subtree has Git tree 58917f3e2e46a30337cfb6292a3504845b1d5552 and no tracked or untracked drift.",
+    "Changing any base voice field for one lane leaves all seven non-target accepted VoiceControls records byte-identical.",
+    "Two or more active lanes can simultaneously resolve to different source-order engines, and one lane's Model Mod changes only that lane's resolved engine.",
+    "A stochastic MacroVoice produces byte-identical output and random state whether processed alone or with arbitrary processing of another stochastic MacroVoice interleaved between its quanta.",
+    "Changing or resetting one lane's engine cannot reconstruct, trigger, advance, or alter another lane's source state, scheduler state, or accepted controls.",
+    "Every source engine index 0 through 23 maps to the frozen nonempty descriptive name and renders finite bounded main and auxiliary output.",
+    "All eight voices render simultaneously through a 64-bit additive main and auxiliary mixer; nominal frozen conditions have zero final saturation and extreme input remains Q27 bounded.",
+    "The frozen experiment produces byte-identical PCM, canonical per-lane event traces, final accepted snapshots, and metrics at host partitions 1, 16, 64, 128, 257, and 512 frames.",
+    "Stopped transport and declared zero subcases produce exact silence, while all nominal output is finite and bounded.",
+    "Synthetic regular Launch Control 3 tests exhaust lane selection, local route and temporal transforms, invalid input, and accepted-state reflection against control-map.json without changing non-target lanes.",
+    "Repeated Core processing performs no allocation, lock, file I/O, JSON work, endpoint work, or UI work after construction.",
+    "The authenticated local JUCE 8.0.15 tree configures, compiles, and links Pamplist.app without launching it or opening audio or MIDI endpoints.",
+    "Focused, adjacent, routine current, affected native, and relocated configured-source reproduction pass after implementation freeze.",
+    "RESULTS.md and GAPS.md keep target-build evidence separate from real-time, connected-device, listening, embedded, distribution, and production claims."
+  ],
+  "decision_rights": {
+    "may": [
+      "Choose prototype-local VoiceControls and Snapshot layout, per-lane source seed derivation, adapter-owned random-state context switching, diagnostics, engine labels, selected-lane UI projection, mixer implementation, and frozen fixture values within the approved equations.",
+      "Modify only the Pamplist prototype and its derived prototype-local authorities while preserving the committed revision 0.2 proposal, contract, and evidence.",
+      "Use the existing regular Launch Control 3 CC20 through CC47 map as local timing and routing input for the selected complete lane/voice.",
+      "Build and hash one authenticated standalone target without launch or endpoint access."
+    ],
+    "must_not": [
+      "Change, normalize, clean, reset, or otherwise mutate the configured patcher checkout or substitute a different source revision, wrapper, engine order, or fallback.",
+      "Present Pamplist's descriptive engine labels as official panel wording or claim Plaits hardware, Pamela's firmware, UI, calibration, or algorithm equivalence.",
+      "Reintroduce implicit pre-voice lane summation, dynamically normalize the final mix, add cross-lane routing, or invent a new physical controller mapping in this correction.",
+      "Allocate canonical Schuss identities or change catalogs, schemas, graphs, providers, runtime factories, device profiles, Ksoloti eligibility, shared audition-library record sets, or release records.",
+      "Infer real-time safety, physical endpoint receipt, controller feel, audible quality, embedded feasibility, distribution readiness, or production status.",
+      "Launch the app, enumerate or open endpoints, access hardware, install dependencies, stage, commit, push, upload, flash, package, publish, or redistribute."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Approved revision 0.3 proposal and ready successor implementation bundle under research/prototypes/pamplist/contract-r03.",
+    "Portable Pamplist Core with eight fixed-capacity clock lanes, eight accepted VoiceControls records, eight persistent source instances, isolated source random contexts, local 1 by 8 route rows, and one explicit final stereo mixer.",
+    "Frozen 24-entry engine-name table exposed in snapshots and the selected-lane JUCE presentation as base and resolved engine identity.",
+    "Source authority verifier, focused Release and sanitizer suites, voice/RNG isolation tests, 24-engine sweep, eight-voice render matrix, retained objective evidence, and relocated reproduction.",
+    "Existing synthetic regular Launch Control 3 protocol adapter updated to describe selected complete lane/voice semantics and accepted-state traces.",
+    "Authenticated JUCE 8.0.15 standalone target with a state-driven selected-lane voice surface, engine names, per-lane activity, and diagnostic presentation.",
+    "Updated prototype index, DSP topology, semantic surface, README, implementation handoff, results, and gap register without revising frozen revision 0.2 evidence."
+  ],
+  "dependency_contracts": [
+    "The macro voices are consumed from the configured patcher source at locked commit 08d3e6e1e2b61230308c20a15ded58ffdaf4656c and synthesis tree 58917f3e2e46a30337cfb6292a3504845b1d5552; configuration fails closed on missing, dirty, or mismatched bytes.",
+    "The local MacroVoice adapter may call the exact source's plaits_stmlib::Random::Seed and state functions to save and restore one deterministic context per Pamplist voice, but it must not copy or modify source bytes or promote the catalogued-only dependency.",
+    "The source adapter is owned by one single-threaded Pamplist Core render path; concurrent source calls from multiple Core instances are not claimed because the dependency RNG is process-global.",
+    "Instrument Lab v1 supplies the portable host seam and noncanonical validation boundary; Pamplist owns musical controls, eight-voice topology, engine labels, and mixer.",
+    "JUCE 8.0.15 is an authenticated local build dependency with network fetching disabled and does not enter the portable Core.",
+    "The regular Launch Control 3 topology artifact is protocol authority for Custom Mode 1 channel 16 CC20 through CC47; all endpoint behavior remains deferred."
+  ],
+  "goal": {
+    "primary_claim": "Each of Pamplist's eight lanes owns an independently editable and persistent 24-engine macro voice, including local model modulation and stochastic state, before the voices meet at one explicit final mixer.",
+    "why": "Correct the committed revision 0.2 architecture after the user's audition showed that globally shared engine and voice state contradicted the expected track-oriented workflow."
+  },
+  "inputs": [
+    "AGENTS.md, docs/PROJECT_CONTEXT.md, docs/STATUS.md, accepted ADRs 0016 and 0018, and docs/workflows/instrument-development.md.",
+    "Committed Pamplist revision 0.2 at 79bca419fccd072d017e12c8f2e6cdb31704e902, including its frozen proposal, contract, source, tests, and evidence.",
+    "The user's 2026-08-24 audition report and explicit request to implement lane-independent voices and named engines as a second iteration.",
+    "research/proposals/pamplist-r03.md revision 0.3 at the exact SHA-256 recorded below.",
+    "catalog/sources.lock.json plus machine-local catalog/sources.local.yml for the exact read-only patcher source closure and exact 24-engine registration order.",
+    "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json and the authenticated JUCE 8.0.15 source-tree record."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "Current-thread user message on 2026-08-24: implement a second iteration on top of the committed first changes; make tracks, voices, engine/model state independent and display actual engine names.",
+      "state": "approved"
+    },
+    "path": "research/proposals/pamplist-r03.md",
+    "revision": "0.3",
+    "sha256": "ecafd12747c5afb1ad89eb4c073876e8c504c215192c0300c53a7358691e42e0"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "Exactly eight persistent rational clock lanes at 48 kHz, preserving the revision 0.2 rate, phase, shape, Euclidean, probability, repeat, amplitude, and deterministic scheduling behavior.",
+      "Exactly eight persistent 24-engine source instances and eight base VoiceControls records containing Engine, Note, Harmonics, Timbre, Morph, Decay, LPG Colour, and Level.",
+      "Eight local signed route rows targeting Trigger, Pitch, Model Mod, Harmonics, Timbre, Morph, Decay, and Level, with no lane-to-lane or pre-voice summation.",
+      "Adapter-local isolation of the exact source's process-global stochastic state using one stored RNG context per voice.",
+      "An additive 64-bit main/auxiliary mixer with per-voice resolved Level, shared Master, final Q27 saturation, and no dynamic normalization.",
+      "Selected-lane accepted-state UI controls and base/resolved source-order engine names, plus unchanged synthetic controller CC assignments with corrected local semantics.",
+      "Portable Core, deterministic renderer and retained successor experiment, source authentication, focused/sanitizer validation, authenticated unlaunched JUCE standalone, metadata freshness, and relocated reproduction."
+    ],
+    "out": [
+      "New clock features, cross-lane modulation, sends, voice stealing, lane polyphony, effects, panning, mute/solo, presets, external clock, arbitrary destinations, or engine crossfades.",
+      "New physical mappings for base voice controls, endpoint enumeration or access, LED feedback, reconnect, controller feel, and connected-device evidence.",
+      "Pamela's firmware, undocumented algorithms, display, menus, panel appearance, CV hardware, or exact equivalence; official Plaits label claims or hardware emulation.",
+      "Application launch, callback-deadline measurement, controlled listening claims, Ksoloti/Gills execution, packaging, distribution, publication, staging, commit, push, upload, or flash.",
+      "Canonical graph, catalog, provider, source-release, application runtime, device profile, project, machine, shared library record-set, and production integration."
+    ]
+  },
+  "status": "ready",
+  "target": "Schuss Instrument Lab v1 portable C++17 Core, deterministic 48 kHz renderer, regular Launch Control 3 adapter, and authenticated JUCE 8.0.15 macOS standalone",
+  "title": "Pamplist 0.3: Independent Lane Voices",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "built but unlaunched Pamplist.app plus deterministic eight-voice stereo renders, per-lane accepted-state/event traces, and synthetic Launch Control 3 trace",
+    "evidence_level": "target-build",
+    "success_observation": "The exact source authenticates; lane/base/model/RNG isolation, engine names, focused, sanitizer, render-partition, prototype, current, and relocated checks pass; all 24 engines and the eight-voice mix are finite; the shared-voice comparator diverges; and the authenticated Pamplist.app executable is built and hashed without launch or endpoint access."
+  }
+}

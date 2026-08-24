@@ -1,0 +1,206 @@
+{
+  "application_feedback": [
+    {
+      "authority": "accepted Pamplist Snapshot through the portable surface model only",
+      "message": "selected lane 1 through 7 plus accepted VOICE or MOTION context, or GLOBAL / CLEAR, with exactly sixteen corresponding slot descriptors",
+      "purpose": "keep UI, synthetic mapping, and physical semantics aligned without raw-focus authority"
+    },
+    {
+      "authority": "accepted surface context and selected Voice/Lane records",
+      "message": "VOICE labels stable starting values; MOTION labels clock-driven destinations; SEQUENCER labels timing/shape fields; values use names, ratios, percentages, steps, Free, Direct, and Off/On",
+      "purpose": "separate similarly named base and modulation controls and avoid raw CC presentation"
+    },
+    {
+      "authority": "accepted Snapshot while Global is selected",
+      "message": "eight cohesion slots, BPM, Master, six disabled slots, Clear count, and existing effect diagnostics",
+      "purpose": "retain true global ownership without duplicating lane controls"
+    },
+    {
+      "authority": "accepted Snapshot after synthetic dispatch",
+      "message": "raw input, prior/next page and mode, edge status, semantic target, changed-field mask, non-target equality, and resulting sixteen-slot surface",
+      "purpose": "exhaustively compare compiled mapping and presentation with this authority"
+    }
+  ],
+  "endpoint_device_evidence": {
+    "connection_policy": "No endpoint is enumerated or opened. A later session may verify the regular Launch Control 3 Custom Mode 1 port and installed topology.",
+    "notes": "Repository topology and synthetic messages prove transforms and edge behavior only. They do not prove endpoint identity, receipt, encoder/button feel, installed configuration, feedback, reconnect, or usability.",
+    "state": "deferred"
+  },
+  "gesture_state_machines": [
+    {
+      "id": "lane-select-or-mode-toggle",
+      "input": "channel 16 CC40 through CC46 press and release",
+      "state": "accepted selected page 0 through 6, accepted LaneControlMode, and per-button down latch",
+      "transition": "a zero-to-positive edge for another lane selects it and preserves mode; an edge for the already-selected lane toggles Voice or Motion; duplicate positive and release produce no semantic change"
+    },
+    {
+      "id": "global-select-clear",
+      "input": "channel 16 CC47 press and release",
+      "state": "accepted selected page, retained LaneControlMode, CC47 down latch, and effect-clear generation",
+      "transition": "an edge from a lane selects Global without clearing; an edge while Global is accepted increments Clear exactly once; duplicate positive and release do not dispatch"
+    },
+    {
+      "id": "voice-top-row",
+      "input": "channel 16 CC20 through CC27 while a lane and Voice mode are accepted",
+      "state": "selected lane's complete VoiceControls record",
+      "transition": "CC20 selects Model 0-23, CC21 selects Pitch 24-96, and CC22-27 set unit Harmonics, Timbre, Morph, Decay, Colour, and Level; only the selected voice changes"
+    },
+    {
+      "id": "motion-top-row",
+      "input": "channel 16 CC20 through CC27 while a lane and Motion mode are accepted",
+      "state": "selected lane's eight route fields",
+      "transition": "CC20 maps 0-63 Off and 64-127 On; CC21-27 use the signed Direct-centered transform for Pitch, Model, Harmonics, Timbre, Morph, Decay, and Level Motion"
+    },
+    {
+      "id": "sequencer-bottom-row",
+      "input": "channel 16 CC28 through CC35 in either lane mode",
+      "state": "selected lane Rate, Phase, Shape, Hits, Rotation, Probability, Repeat, and Amplitude",
+      "transition": "apply the exact revision 0.4 bounded absolute transform to only the selected lane; mode does not change bottom-row semantics"
+    },
+    {
+      "id": "global-rows",
+      "input": "channel 16 CC20 through CC35 while Global is accepted",
+      "state": "existing cohesion fields, BPM, Master, and ignored-global diagnostic",
+      "transition": "CC20-27 set cohesion, CC28 BPM, CC29 Master, and CC30-35 are counted no-ops; LaneControlMode is retained but irrelevant"
+    }
+  ],
+  "not_applicable_rationale": "The surface has no 17th knob, fader, shift encoder, physical feedback, or hidden controller page. Explicit JUCE Voice/Motion buttons mirror the same accepted mode but are application actions rather than additional rotary controls.",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {
+      "binding": "on a lane-button positive edge, select CC minus 40 when different from the accepted page; when equal, toggle accepted Voice or Motion mode; duplicates/releases do not dispatch",
+      "id": "select-lane-or-toggle-mode",
+      "rejection": "wrong channel, invalid data, CC outside 40-46, or a non-edge is rejected or accepted without musical-state dispatch according to the standard diagnostic"
+    },
+    {
+      "binding": "on a CC47 positive edge select Global from a lane or increment effect-clear generation while already Global",
+      "id": "select-global-or-clear",
+      "rejection": "wrong channel, invalid data, duplicate positive, or release never clears"
+    },
+    {
+      "binding": "Voice CC20 maps round(value times 23 divided by 127) to Model 0 through 23",
+      "id": "voice-model",
+      "rejection": "Motion or Global context cannot interpret it as Voice Model"
+    },
+    {
+      "binding": "Voice CC21 maps 24 plus value times 72 divided by 127 to Pitch MIDI 24 through 96",
+      "id": "voice-pitch",
+      "rejection": "Motion or Global context cannot interpret it as Voice Pitch"
+    },
+    {
+      "binding": "Voice CC22 through CC27 map value divided by 127 to Harmonics, Timbre, Morph, Decay, Colour, and Level",
+      "id": "voice-unit-fields",
+      "rejection": "Motion or Global context cannot interpret them as base Voice fields"
+    },
+    {
+      "binding": "Motion CC20 maps values 0 through 63 to Trigger Off and 64 through 127 to Trigger On",
+      "id": "motion-trigger-enable",
+      "rejection": "Voice or Global context cannot interpret it as Trigger; there is no negative Trigger state"
+    },
+    {
+      "binding": "Motion CC21 through CC27 map clamp((value minus 64) divided by 63, minus one, one) to Pitch, Model, Harmonics, Timbre, Morph, Decay, and Level Motion",
+      "id": "motion-signed-fields",
+      "rejection": "Voice or Global context cannot interpret them as Motion; CC64 is exact Direct zero"
+    },
+    {
+      "binding": "lane CC28 maps floor(value times 16 divided by 128) to Rate 0 through 15 in both modes",
+      "id": "sequencer-rate",
+      "rejection": "Global context uses its own bottom-row grammar"
+    },
+    {
+      "binding": "lane CC29 retains value 0 through 127 as Phase in both modes",
+      "id": "sequencer-phase",
+      "rejection": "Global context uses Master on CC29"
+    },
+    {
+      "binding": "lane CC30 maps floor(value times 8 divided by 128) to Shape 0 through 7 in both modes",
+      "id": "sequencer-shape",
+      "rejection": "Global CC30 is a counted no-op"
+    },
+    {
+      "binding": "lane CC31 maps round(value times 16 divided by 127) to Hits 0 through 16 in both modes",
+      "id": "sequencer-hits",
+      "rejection": "Global CC31 is a counted no-op"
+    },
+    {
+      "binding": "lane CC32 maps floor(value times 16 divided by 128) to Rotation 0 through 15 in both modes",
+      "id": "sequencer-rotation",
+      "rejection": "Global CC32 is a counted no-op"
+    },
+    {
+      "binding": "lane CC33 maps value divided by 127 to Chance in both modes",
+      "id": "sequencer-chance",
+      "rejection": "Global CC33 is a counted no-op"
+    },
+    {
+      "binding": "lane CC34 maps zero to Free Repeat and positive values to 1 plus floor((value minus 1) times 64 divided by 127), clamped 1 through 64",
+      "id": "sequencer-repeat",
+      "rejection": "Global CC34 is a counted no-op"
+    },
+    {
+      "binding": "lane CC35 maps value divided by 127 to Depth in both modes",
+      "id": "sequencer-depth",
+      "rejection": "Global CC35 is a counted no-op"
+    },
+    {
+      "binding": "Global CC20-27, CC28, CC29, and CC30-35 retain exact revision 0.4 cohesion, BPM, Master, and counted-no-op transforms",
+      "id": "global-preserved",
+      "rejection": "lane contexts never interpret these messages as Global values"
+    },
+    {
+      "binding": "explicit JUCE Voice or Motion action sets accepted LaneControlMode without changing any musical field",
+      "id": "application-set-mode",
+      "rejection": "the actions are disabled/hidden on Global and invalid modes sanitize to Voice"
+    }
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/pamplist/contract-r05/control-map.json",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "control": "top row eight rotary positions",
+      "input": "JUCE semantic value or Custom Mode 1 channel 16 CC20 through CC27",
+      "mode": "lane Voice",
+      "semantic": "Model, Pitch, Harmonics, Timbre, Morph, Decay, Colour, Level"
+    },
+    {
+      "control": "top row eight rotary positions",
+      "input": "JUCE semantic value or Custom Mode 1 channel 16 CC20 through CC27",
+      "mode": "lane Motion",
+      "semantic": "Trigger Off/On, Pitch Motion, Model Sweep, Harmonics Motion, Timbre Motion, Morph Motion, Decay Motion, Level Motion"
+    },
+    {
+      "control": "bottom row eight rotary positions",
+      "input": "JUCE semantic value or Custom Mode 1 channel 16 CC28 through CC35",
+      "mode": "either lane mode",
+      "semantic": "Rate, Phase, Shape, Hits, Rotate, Chance, Repeat, Depth"
+    },
+    {
+      "control": "top and bottom rows",
+      "input": "JUCE semantic value or Custom Mode 1 channel 16 CC20 through CC35",
+      "mode": "Global",
+      "semantic": "top Drive through Duck; bottom BPM, Master, then six disabled/count-no-op positions"
+    },
+    {
+      "control": "buttons 1 through 7",
+      "input": "Custom Mode 1 channel 16 CC40 through CC46 press/release",
+      "mode": "all",
+      "semantic": "another lane selects; accepted lane re-press toggles Voice or Motion exactly once"
+    },
+    {
+      "control": "button 8",
+      "input": "Custom Mode 1 channel 16 CC47 press/release",
+      "mode": "all",
+      "semantic": "from lane enter Global without Clear; while Global clear effect history once"
+    },
+    {
+      "control": "JUCE Voice and Motion buttons",
+      "input": "bounded application action",
+      "mode": "lane pages only",
+      "semantic": "set accepted context explicitly; not an extra knob or raw local display state"
+    }
+  ],
+  "title": "Pamplist 0.5: Sixteen-Knob Voice, Motion, and Sequencer Surface"
+}
