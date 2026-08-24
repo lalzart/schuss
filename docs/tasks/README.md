@@ -13,6 +13,15 @@ activation and completion state.
 
 There is no active task.
 
+## Uncommitted worktree result
+
+Task 041 completed and stopped after hardening the exact shared Gills
+engine-support dependency and its five demonstrated consumers. All bounded
+implementation and validation gates passed. It allocated no canonical Schuss
+identity and authorized no generic module system, hardware work, publication,
+or Git action. `041-RESULTS.md` and `041-GAPS.md` retain the result, which is not
+a commit-bound completed milestone.
+
 ## Next gate
 
 There is no next candidate. Task 040 is deferred after its published

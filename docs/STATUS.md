@@ -10,11 +10,17 @@ schemas, records, record sets, fixtures, and evidence packets.
 
 ## Current work
 
-There is no active task. Task 040 Phase 1 completed as a planning-only
-Cinderwheel readiness bundle at published commit `955084e`. Phase 2 was never
-activated, no canonical semantic or runtime implementation began, and a future
-return requires a fresh live-parent, version, provider-route, and stable-ID
-allocation audit.
+There is no active task. Task 041 completed its narrow worktree implementation,
+evidence report, and stop gate. It hardens the exact shared Gills engine-support
+revision and its five demonstrated consumers with immutable bindings,
+deterministic self-contained release closures, preserved host behavior, and
+offline Cortex-M4 compile/link identity. It allocated no canonical Schuss
+identity and performed no device, real-time, physical-panel, listening,
+publication, or Git action.
+
+The exact result is retained in `docs/tasks/041-RESULTS.md`, but remains outside
+the commit-bound milestone list. Task 040 remains closed and deferred after its
+published planning-only Phase 1.
 
 ## Recent completed milestones
 

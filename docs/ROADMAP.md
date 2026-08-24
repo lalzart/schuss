@@ -7,14 +7,16 @@ describes sequencing rather than silently activating work.
 
 ## Active maintenance
 
-There is no active task. Task 040 Phase 1 completed as a planning-only
-Cinderwheel readiness bundle at published commit `955084e`. Phase 2 was never
-activated, and no canonical semantic, runtime, DSP, UI, device, or listening
-implementation began.
+There is no active task. Task 041 completed its bounded dependency-hardening
+result for the exact shared Gills engine-support header and five demonstrated
+consumers. The result is preserved but remains outside the commit-bound
+milestone list. Task 040 remains closed and deferred after its planning-only
+Phase 1.
 
 ## Next gate
 
-There is no next candidate. Task 040 may return only through a fresh
+There is no next candidate. Task 041 stopped after its bounded dependency
+hardening and evidence report. Task 040 may return only through a fresh
 live-parent, version, provider-route, and stable-ID allocation audit; its Phase
 1 planning snapshot does not reserve identities or silently reactivate Phase 2.
 
