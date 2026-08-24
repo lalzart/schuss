@@ -13,9 +13,11 @@ deliberately open.
 | GAP-041-005 | Offline compilation is not real-time evidence | Host stress harnesses and Cortex-M4 compilation pass, but no deadline, allocation trace, lock, underrun, restart, or long-duration target measurement was taken | Separately authorized connected-target timing and lifecycle protocol |
 | GAP-041-006 | No connected-device or physical-panel evidence | No board, USB, audio/MIDI endpoint, controller, OLED, codec, analog path, firmware upload, or SD card was accessed | Separately authorized device session with independent control, display, resource, and transport evidence |
 | GAP-041-007 | No listening evidence | Deterministic host behavior and binary identity do not establish sound quality, alias character, tuning feel, or musical usefulness | Separately documented listening or A/B protocol |
-| GAP-041-008 | The work remains uncommitted inside two inherited dirty worktrees | No unrelated file was adopted, overwritten, removed, staged, committed, pushed, or published | Explicit Git authorization plus a fresh exact path/status review before any staging or commit |
-
 The dependency authority remains Gills-local and build-specific. It must not be
 promoted into Schuss catalog, collection, implementation, provider, graph,
 binding, project, instrument, machine, target, backend, or runtime identity
 without a separate accepted contract and allocation.
+
+GAP-041-008 closed when the user separately authorized the exact Git closeout:
+Schuss recorded the task and evidence at `a6eeaab`, and Gills recorded the
+implementation at `9b5e4f9`. No push or publication occurred.

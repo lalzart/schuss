@@ -1,8 +1,9 @@
 # Task 041 results
 
-Status: implementation complete in the current worktrees; Task 041 has stopped
-with no active successor. No file was staged, committed, pushed, published,
-uploaded, or sent to hardware.
+Status: implementation and local Git closeout complete; Task 041 has stopped
+with no active successor. The Schuss task/evidence commit is `a6eeaab` and the
+Gills implementation commit is `9b5e4f9`. Neither repository was pushed or
+published, and nothing was uploaded or sent to hardware.
 
 ## Bound repositories and activation audit
 
@@ -155,7 +156,8 @@ behavior, deterministic self-contained packaging, and offline Cortex-M4
 compile/link identity. It did not connect to a board or audio/MIDI endpoint,
 upload or flash firmware, mutate an SD card, measure callback deadlines, view a
 physical OLED, assess analog output, perform listening, review a distributable
-artifact, publish, stage, commit, or push.
+artifact, publish, or push. Staging and local commits occurred only during the
+later explicitly authorized Git closeout.
 
 The first Schuss `current` attempt used an intermediate review-ready routing
 state and correctly failed because the retained Task 040 closeout requires no
@@ -163,6 +165,6 @@ active successor. Task 041's own stop condition provided the narrow correction:
 final routing now has no active task, while this result remains recoverable.
 No Task 040 validator or other shared Schuss executable was changed.
 
-Because governance requires a real commit for a completed milestone, Task 041
-must not be added to `recent_completed_milestones` or `HISTORY.md` until an
-authorized commit exists.
+The later Git authorization supplied the required local commits, so governance
+now records Task 041 in `recent_completed_milestones` and `HISTORY.md` while
+keeping publication and all higher evidence gates open.

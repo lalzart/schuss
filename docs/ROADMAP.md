@@ -7,15 +7,13 @@ describes sequencing rather than silently activating work.
 
 ## Active maintenance
 
-There is no active task. Task 042 completed its bounded Layerwell
-proposal-to-prototype slice: the existing Tide Pit and Generative Drums portable
-Cores feed three source-only synchronized capture layers, with a synthetic
-regular Launch Control 3 DAW-mode protocol surface and an authenticated
-unlaunched JUCE standalone build. Higher device, listening, distribution, and
-production gates remain separate future work.
-
-Task 041's completed but uncommitted dependency-hardening result remains
-preserved and outside the commit-bound milestone list.
+There is no active task. Task 042 completed locally at `7a66949`: the existing
+Tide Pit and Generative Drums portable Cores feed three source-only synchronized
+capture layers, with a synthetic regular Launch Control 3 DAW-mode protocol
+surface and an authenticated unlaunched JUCE standalone build. Task 041 also
+completed locally at Schuss commit `a6eeaab` and Gills commit `9b5e4f9`.
+Higher device, listening, distribution, publication, and production gates
+remain separate future work.
 
 ## Next gate
 
@@ -44,10 +42,9 @@ These are candidates, not promises or active tasks.
 ## Completed backbone
 
 Tasks 001-035, including all four phases of Task 033, form the completed
-canonical backbone. Completed noncanonical
-source/lab work in Tasks 036-038 and the Task 039 desktop audition product slice
-are also indexed in `HISTORY.md`, with their evidence limits retained. The
-important durable choices remain in ADRs:
+canonical backbone. Completed source, lab, desktop, selective-reuse, and
+meta-instrument work in Tasks 036-042 is also indexed in `HISTORY.md`, with its
+evidence limits retained. The important durable choices remain in ADRs:
 
 - ADRs 0005-0007 separate family, contract, binding, build, and evidence;
 - ADRs 0010-0015 establish the accepted backend/application/catalog sequence;

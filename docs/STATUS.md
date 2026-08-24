@@ -10,21 +10,28 @@ schemas, records, record sets, fixtures, and evidence packets.
 
 ## Current work
 
-There is no active task. Task 042 completed locally as Layerwell, a
-noncanonical desktop Instrument Lab meta-instrument: exact Tide Pit Gills and
-Generative Drums Cores feed a bounded three-layer live sampler and a regular
-Launch Control 3 DAW-mode presentation. Its Release, sanitizer, source
+There is no active task. Task 042 is complete locally at `7a66949` as
+Layerwell, a noncanonical desktop Instrument Lab meta-instrument: exact Tide Pit
+Gills and Generative Drums Cores feed a bounded three-layer live sampler and a
+regular Launch Control 3 DAW-mode presentation. Its Release, sanitizer, source
 regression, deterministic render, synthetic protocol, authenticated standalone
 target-build, and relocated reproduction checks passed. It allocated no
 canonical Schuss identity; app launch, endpoint access, physical-controller,
-listening, distribution, production, and Git actions were not performed.
+listening, distribution, and production actions were not performed.
 
-The inherited Task 041 closeout remains uncommitted and preserved underneath
-this activation. Its exact result stays in `docs/tasks/041-RESULTS.md`; it is not
-a commit-bound milestone and Task 042 does not adopt or repurpose it.
+Task 041 is also complete locally: its Schuss contract and evidence are at
+`a6eeaab`, and the exact Gills dependency authority, five consumers, and release
+closure are at sibling-repository commit `9b5e4f9`. Neither local completion was
+pushed or published.
 
 ## Recent completed milestones
 
+- Task 042 completed the noncanonical Layerwell prototype at `7a66949`, without
+  promoting app-launch, endpoint, physical-controller, listening, distribution,
+  or production evidence.
+- Task 041 completed the exact shared Gills engine-support hardening at Schuss
+  commit `a6eeaab` and Gills commit `9b5e4f9`, without allocating a canonical
+  Schuss identity or a generic reuse system.
 - Task 040 Phase 1 completed as planning-only readiness at published commit
   `955084e`. Phase 2 was never activated, no semantic/runtime/DSP work began,
   and later reactivation requires a fresh allocation audit.
@@ -71,6 +78,8 @@ Schuss currently has:
   adapter;
 - a noncanonical five-entry Instrument Lab audition library with bounded local
   JUCE process launch and an Instruments-first desktop surface;
+- a noncanonical Layerwell meta-instrument with deterministic three-layer Core
+  evidence and an authenticated but unlaunched JUCE standalone build;
 - device-independent performance-control contracts and Gills/MIDI
   configurations; and
 - source-neutral object collections and explicit implementation providers.

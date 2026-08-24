@@ -13,21 +13,20 @@ activation and completion state.
 
 There is no active task.
 
-## Uncommitted worktree result
+## Completed local milestones
 
-Task 042 completed locally as the noncanonical Layerwell desktop
+Task 042 completed locally at `7a66949` as the noncanonical Layerwell desktop
 meta-instrument. Its exact-source composition, three synchronized source-only
 layers, synthetic regular Launch Control 3 DAW-mode adapter, objective host
 evidence, authenticated unlaunched JUCE build, and relocated reproduction
 passed. It allocated no canonical identity and performed no app launch,
-endpoint access, hardware, listening, distribution, production, or Git action.
+endpoint access, hardware, listening, distribution, or production action.
 
-Task 041 completed and stopped after hardening the exact shared Gills
-engine-support dependency and its five demonstrated consumers. All bounded
-implementation and validation gates passed. It allocated no canonical Schuss
-identity and authorized no generic module system, hardware work, publication,
-or Git action. `041-RESULTS.md` and `041-GAPS.md` retain the result, which is not
-a commit-bound completed milestone.
+Task 041 completed at Schuss commit `a6eeaab` and Gills commit `9b5e4f9` after
+hardening the exact shared engine-support dependency and its five demonstrated
+consumers. All bounded implementation and validation gates passed. It allocated
+no canonical Schuss identity and authorized no generic module system, hardware
+work, or publication. Neither local milestone was pushed.
 
 ## Next gate
 

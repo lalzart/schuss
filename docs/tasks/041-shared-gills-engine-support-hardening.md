@@ -4,9 +4,11 @@ Status: explicitly authorized and completed in the worktree on 2026-08-23. The
 required first read-only audit confirmed the exact five proposed consumers and
 unchanged support-header bytes. The bounded implementation and validation are
 complete; `041-RESULTS.md` and `041-GAPS.md` retain the evidence and limits, and
-no active task remains. Authorization covered only the named support directory,
-five consumer projects, and their narrow existing validator/release seam; it
-did not adopt the rest of either dirty worktree or authorize Git publication.
+no active task remains. A later explicit Git closeout recorded the Schuss task
+and evidence at `a6eeaab` and the Gills implementation at `9b5e4f9`; neither
+commit was pushed or published. Authorization covered only the named support
+directory, five consumer projects, and their narrow existing validator/release
+seam; it did not adopt the rest of either dirty worktree.
 
 ## Activation baseline
 

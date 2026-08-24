@@ -3,8 +3,10 @@
 Status: explicitly authorized and completed locally from the user's 2026-08-23
 request to implement the agreed standalone desktop meta-instrument. This task
 owns a noncanonical Instrument Lab prototype only. It preserves the inherited,
-uncommitted Task 041 closeout and authorizes no Git, app-launch, audio/MIDI
+then-uncommitted Task 041 closeout and authorizes no Git, app-launch, audio/MIDI
 endpoint, controller-configuration, hardware, listening, or publication action.
+A later explicit Git request committed the Task 042 prototype locally at
+`7a66949`; it did not authorize a push or change any evidence boundary.
 
 ## Goal and why it exists
 

@@ -68,6 +68,18 @@
       "phase": 1,
       "status": "complete-published",
       "commit": "955084e"
+    },
+    {
+      "task_id": "041",
+      "phase": null,
+      "status": "complete-local",
+      "commit": "a6eeaab"
+    },
+    {
+      "task_id": "042",
+      "phase": null,
+      "status": "complete-local",
+      "commit": "7a66949"
     }
   ],
   "deferred_tasks": ["019", "020", "040"],
