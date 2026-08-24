@@ -1,0 +1,68 @@
+{
+  "authenticated_configured_sources": [
+    {
+      "files": [
+        {
+          "path": "ai/sdk/ksoloti-extended/objects/extended/synthesis/macro_voice_dsp.h",
+          "sha256": "d975dd8014b5f9eef27eea22d81f08d691a46e3cbfa5ac48f22a9102241be4a6"
+        },
+        {
+          "path": "ai/sdk/ksoloti-extended/objects/extended/synthesis/macro-voice.manifest.json",
+          "sha256": "11cf12ec38c0ed4db983b8c762fc09900ad0ab09a211ca0c7573336c8616d5b4"
+        },
+        {
+          "path": "ai/sdk/ksoloti-extended/objects/extended/synthesis/vendor/README.md",
+          "sha256": "40f899a7a9547e444bb6ef0fe3e0f1016bc1ae812ada076065a61e77ba659a50"
+        }
+      ],
+      "lock_path": "catalog/sources.lock.json",
+      "revision": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c",
+      "source_id": "patcher",
+      "subtree": {
+        "git_tree": "58917f3e2e46a30337cfb6292a3504845b1d5552",
+        "path": "ai/sdk/ksoloti-extended/objects/extended/synthesis"
+      }
+    }
+  ],
+  "authenticated_extracted_sources": [
+    {
+      "manifest": {
+        "path": "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json",
+        "sha256": "db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5"
+      },
+      "prerequisite": "operator-supplied exact extracted source tree"
+    }
+  ],
+  "claims": {
+    "catalog_membership": false,
+    "distribution_approval": false,
+    "graph_identity": false,
+    "implementation_identity": false,
+    "production_runtime": false,
+    "source_equivalence_to_pamela": false
+  },
+  "consumer_id": "pamplist",
+  "controller_authority": {
+    "path": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+    "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
+  },
+  "source_policy": "The configured source is authenticated and compiled read-only in place. Pamplist copies no upstream source bytes, does not mutate the checkout, and creates no canonical source release or implementation-provider claim.",
+  "schema_version": "pamplist-source-dependencies-v1",
+  "upstream_attribution": [
+    {
+      "license": "MIT",
+      "name": "Mutable Instruments Plaits DSP",
+      "revision": "08460a69a7e1f7a81c5a2abcc7189c9a6b7208d4"
+    },
+    {
+      "license": "MIT",
+      "name": "Mutable Instruments stmlib",
+      "revision": "e3bd7c9cc00e4364166f9905c0509b6ffd0535ec"
+    },
+    {
+      "license": "GPL-3.0-or-later",
+      "name": "Ksoloti Extended Macro Voice wrapper",
+      "revision": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c"
+    }
+  ]
+}

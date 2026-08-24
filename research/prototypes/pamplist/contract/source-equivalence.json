@@ -1,0 +1,6 @@
+{
+  "not_applicable_rationale": "Pamplist is a new independently specified instrument and clock engine with no normative whole-instrument implementation source. Its exact Plaits-derived macro-voice dependency is separately authenticated and consumed unchanged, but that bounded dependency does not make the surrounding eight-lane instrument a source reimplementation.",
+  "schema_version": "sonic-research-lab-source-equivalence-v1",
+  "status": "not-applicable",
+  "work_type": "new-design"
+}

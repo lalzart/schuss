@@ -1,0 +1,130 @@
+{
+  "artifact_retention": {
+    "location": "research/prototypes/pamplist/contract/evidence",
+    "policy": "checked-in"
+  },
+  "comparator_condition_id": "PAMP_CMP_PHASELESS",
+  "conditions": [
+    {
+      "events": [
+        "frame 0 accept defaults except lane 1 rate x1, pulse shape, hits 4, rotation 0, probability 1, amplitude 1, Trigger route 1; clear all other routes and lane amplitudes",
+        "render frames 0 through 65535"
+      ],
+      "id": "PAMP_BASE",
+      "purpose": "Establish the smallest four-on-the-floor trigger baseline and verify all inactive lanes and destinations remain inert."
+    },
+    {
+      "events": [
+        "frame 0 set lane 1 to x1 pulse 5-of-16 Trigger 1",
+        "frame 0 set lane 2 to x3/2 triangle phase 31/127 and Pitch 0.35",
+        "frame 0 set lane 3 to x3/4 sine phase 67/127 and Timbre 0.5",
+        "render frames 0 through 65535"
+      ],
+      "id": "PAMP_EUCLID",
+      "purpose": "Exercise a 5-of-16 trigger mask with independently phased pitch and timbre lanes while retaining exact deterministic traces."
+    },
+    {
+      "events": [
+        "frame 0 set lane 1 to x4 pulse 16-of-16 probability 0.5 repeat 7 amplitude 1 Trigger 1",
+        "render frames 0 through 131071 and retain every probability address and decision",
+        "compare every later seven-address cycle with the first complete seven-address cycle"
+      ],
+      "id": "PAMP_LOOP",
+      "purpose": "Prove keyed seven-step probability decisions repeat exactly without depending on host partition or shared RNG advance."
+    },
+    {
+      "events": [
+        "frame 0 configure lanes 1 through 8 with shapes pulse, triangle, sine, ramp, exponential-decay, sample-hold, smooth-random, and gate",
+        "frame 0 configure rates x1, x3/2, /2, x2, /4, x3, /8, and x4 with distinct phases",
+        "frame 0 route each lane at nonzero signed weight to one destination in order Trigger through Level",
+        "render frames 0 through 131071"
+      ],
+      "id": "PAMP_MATRIX",
+      "purpose": "Exercise every shape, a broad rate and phase set, every destination, signed continuous routes, trigger coalescing, and matrix clamps in one authored condition."
+    },
+    {
+      "events": [
+        "for engine 0 through 23 reset one Core, set the engine exactly, configure lane 1 x4 pulse 16-of-16 Trigger 1, and render 8192 frames",
+        "retain per-engine main and auxiliary finite, peak, RMS, DC, saturation, and non-silence metrics"
+      ],
+      "id": "PAMP_24",
+      "purpose": "Prove all 24 authenticated macro-voice engines execute through the adapter with finite bounded main and auxiliary output."
+    },
+    {
+      "events": [
+        "subcase stopped: running false for 8192 frames",
+        "subcase zero-hit: running true with lane 1 hits 0 and otherwise active Trigger route for 8192 frames",
+        "subcase zero-amplitude: running true with lane 1 amplitude 0 and otherwise active Trigger route for 8192 frames",
+        "subcase zero-route: running true with active lane values and all 64 routes exactly zero for 8192 frames"
+      ],
+      "id": "PAMP_SILENCE",
+      "purpose": "Prove the four declared suppression paths produce exact zero PCM and no source trigger."
+    },
+    {
+      "events": [
+        "copy PAMP_MATRIX rates, masks, probability, amplitude, seed, and base voice",
+        "set all lane phases to zero and all non-Trigger route weights to zero",
+        "retain the same Trigger route and render frames 0 through 131071"
+      ],
+      "id": "PAMP_CMP_PHASELESS",
+      "purpose": "Falsify the central hypothesis if removing phase and non-trigger routing fails to change both the canonical trace and PCM from PAMP_MATRIX."
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "per-condition stereo signed 24-bit PCM WAV at 48 kHz with macro-voice main left and auxiliary right",
+      "name": "audio.wav"
+    },
+    {
+      "kind": "canonical JSON lane steps, keyed addresses and decisions, triggers, resolved destinations, and diagnostics",
+      "name": "events.json"
+    },
+    {
+      "kind": "canonical JSON accepted controls and final authoritative snapshot for every supported partition",
+      "name": "snapshots.json"
+    },
+    {
+      "kind": "canonical JSON frame, finite, peak, RMS, DC, silence, saturation, clamp, trigger, and partition metrics",
+      "name": "metrics.json"
+    },
+    {
+      "kind": "canonical JSON proposal, source, build, experiment, condition, and output fingerprints",
+      "name": "manifest.json"
+    },
+    {
+      "kind": "SHA-256 manifest over every retained evidence output",
+      "name": "SHA256SUMS"
+    },
+    {
+      "kind": "canonical JSON synthetic CC input, dispatched semantic event, accepted snapshot, and UI reflection trace",
+      "name": "controller-trace.json"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 1346456912,
+  "status": "ready",
+  "supported_block_frames": [
+    1,
+    16,
+    64,
+    128,
+    257,
+    512
+  ],
+  "timeline_convention": "Controls are presented at absolute frame zero and sanitized into one coherent accepted Controls value at the next persistent 16-frame quantum. A lane boundary and accepted trigger occur before source rendering for that quantum. Outer host blocks only copy persistent quantum carry and never realign scheduler, random, source, or snapshot state.",
+  "title": "Pamplist: Eight-Lane Clocked Macro-Voice Instrument",
+  "tolerances": {
+    "all_24_engines_finite_percent": 100,
+    "comparator_audio_and_trace": "PAMP_MATRIX and PAMP_CMP_PHASELESS must have unequal PCM SHA-256 and unequal canonical event SHA-256",
+    "exact_silence_pcm_absolute": 0,
+    "finite_samples_percent": 100,
+    "loop_decisions": "exact equality at the same address modulo seven",
+    "maximum_output_q27": 134217727,
+    "nominal_invalid_or_recovery_count": 0,
+    "partition_pcm_trace_snapshot_metrics": "byte exact within one frozen build for 1, 16, 64, 128, 257, and 512 frame hosts",
+    "process_allocations": 0,
+    "probability_mean_for_65536_addresses": "within 0.01 of requested probability for the dedicated keyed-hash fixture",
+    "source_main_and_aux_non_silent": "RMS greater than zero for every engine sweep channel"
+  }
+}

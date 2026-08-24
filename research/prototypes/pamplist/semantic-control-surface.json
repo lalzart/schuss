@@ -1,0 +1,38 @@
+{
+  "bindings": [
+    {"cc": 20, "control": "lanes[selected].routes[trigger]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 21, "control": "lanes[selected].routes[pitch]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 22, "control": "lanes[selected].routes[model]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 23, "control": "lanes[selected].routes[harmonics]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 24, "control": "lanes[selected].routes[timbre]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 25, "control": "lanes[selected].routes[morph]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 26, "control": "lanes[selected].routes[decay]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 27, "control": "lanes[selected].routes[level]", "domain": [-1, 1], "kind": "selected-lane-signed-absolute", "owner": "voice-matrix", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 28, "control": "lanes[selected].rate_index", "domain": [0, 15], "kind": "selected-lane-absolute-index", "owner": "rational-timeline", "timing": "next-sixteen-frame-quantum-phase-preserving"},
+    {"cc": 29, "control": "lanes[selected].phase_u7", "domain": [0, 127], "kind": "selected-lane-absolute", "owner": "rational-timeline", "timing": "next-sixteen-frame-quantum-observation-offset"},
+    {"cc": 30, "control": "lanes[selected].shape", "domain": [0, 7], "kind": "selected-lane-absolute-index", "owner": "lane-shapes", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 31, "control": "lanes[selected].hits", "domain": [0, 16], "kind": "selected-lane-absolute", "owner": "step-masks", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 32, "control": "lanes[selected].rotation", "domain": [0, 15], "kind": "selected-lane-absolute-index", "owner": "step-masks", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 33, "control": "lanes[selected].probability", "domain": [0, 1], "kind": "selected-lane-absolute", "owner": "addressed-decisions", "timing": "next-lane-step"},
+    {"cc": 34, "control": "lanes[selected].repeat", "domain": [0, 64], "kind": "selected-lane-free-or-absolute-length", "owner": "addressed-decisions", "timing": "next-lane-step"},
+    {"cc": 35, "control": "lanes[selected].amplitude", "domain": [0, 1], "kind": "selected-lane-absolute", "owner": "lane-shapes", "timing": "next-sixteen-frame-quantum"},
+    {"cc": 40, "control": "selected_lane", "domain": [0, 0], "kind": "rising-edge-select", "owner": "performance-state"},
+    {"cc": 41, "control": "selected_lane", "domain": [1, 1], "kind": "rising-edge-select", "owner": "performance-state"},
+    {"cc": 42, "control": "selected_lane", "domain": [2, 2], "kind": "rising-edge-select", "owner": "performance-state"},
+    {"cc": 43, "control": "selected_lane", "domain": [3, 3], "kind": "rising-edge-select", "owner": "performance-state"},
+    {"cc": 44, "control": "selected_lane", "domain": [4, 4], "kind": "rising-edge-select", "owner": "performance-state"},
+    {"cc": 45, "control": "selected_lane", "domain": [5, 5], "kind": "rising-edge-select", "owner": "performance-state"},
+    {"cc": 46, "control": "selected_lane", "domain": [6, 6], "kind": "rising-edge-select", "owner": "performance-state"},
+    {"cc": 47, "control": "selected_lane", "domain": [7, 7], "kind": "rising-edge-select", "owner": "performance-state"}
+  ],
+  "claims": {
+    "endpoint_mapping": false,
+    "physical_surface": true
+  },
+  "controller_topology": {
+    "artifact": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+    "channel": 16,
+    "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
+  },
+  "schema_version": "schuss-prototype-semantic-control-surface-v0"
+}

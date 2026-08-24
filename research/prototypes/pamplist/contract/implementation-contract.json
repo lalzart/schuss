@@ -1,0 +1,97 @@
+{
+  "acceptance_tests": [
+    "The approved proposal fingerprint and every implementation-bundle artifact pass ready validation before Pamplist DSP source is added.",
+    "The configured patcher checkout matches catalog/sources.lock.json at commit 08d3e6e1e2b61230308c20a15ded58ffdaf4656c; the synthesis subtree has Git tree 58917f3e2e46a30337cfb6292a3504845b1d5552 and no tracked or untracked drift.",
+    "All 24 macro-voice engines render finite, bounded, non-silent main and auxiliary sweeps through the exact authenticated wrapper.",
+    "All 16 rates, eight shapes, Euclidean hit and rotation extremes, probability endpoints, loop lengths, route weights, amplitude, base voice controls, and invalid values have focused deterministic tests.",
+    "Keyed probability decisions depend only on seed, lane, loop address, and domain, and remain identical across host partitions and reversed lane evaluation.",
+    "The frozen experiment produces byte-identical PCM, canonical event traces, final accepted snapshots, and metrics at host partitions 1, 16, 64, 128, 257, and 512 frames.",
+    "Stopped transport, zero hits, zero amplitude, and a zero routing matrix produce the exact declared silence while nominal conditions remain finite and bounded.",
+    "Synthetic regular Launch Control 3 tests exhaust MIDI channel, CC, button-edge, lane selection, signed route, discrete and continuous transforms, invalid input, and accepted-state reflection against control-map.json.",
+    "Repeated Core processing performs no allocation, lock, file I/O, JSON work, or UI work after construction.",
+    "The authenticated local JUCE 8.0.15 tree configures, compiles, and links Pamplist.app without launching it or opening audio or MIDI endpoints.",
+    "Instrument Lab prototype validation, the routine current profile, affected native checks, and relocated configured-source reproduction pass after implementation freeze.",
+    "RESULTS.md and GAPS.md report source, host, target-build, real-time, connected-device, listening, distribution, embedded, and production evidence independently."
+  ],
+  "decision_rights": {
+    "may": [
+      "Choose prototype-local class and file names, fixed storage, integer scheduler representation, keyed musical hash, waveform formulas, diagnostic counters, snapshot layout, and restrained UI presentation within the approved equations.",
+      "Choose safe bounded defaults and exact seven-condition fixture values without changing the frozen ranges, destinations, controller assignments, 16-frame quantum, or 24-engine voice boundary.",
+      "Add the smallest local source-authentication adapter and build plumbing needed to consume the exact configured patcher synthesis subtree without copying or modifying it.",
+      "Add one noncanonical audition-library entry after the executable identity and hash are frozen."
+    ],
+    "must_not": [
+      "Claim Pamela's firmware, algorithm, UI, calibration, panel, or hardware equivalence, or copy its branding and presentation.",
+      "Change, normalize, clean, reset, or otherwise mutate the configured patcher checkout or substitute a different Plaits revision, wrapper, engine bank, or hidden fallback.",
+      "Allocate canonical Schuss identities or change catalogs, schemas, graph authorities, implementation providers, factories, production runtime, Ksoloti eligibility, or release records.",
+      "Infer faders or a different controller model, physical endpoint receipt, LED behavior, encoder feel, real-time safety, audible quality, Ksoloti feasibility, distribution readiness, or production status.",
+      "Launch the app, open audio or MIDI endpoints, access hardware, install dependencies, stage, commit, push, upload, flash, package, publish, or redistribute."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Approved proposal and ready implementation bundle under research/prototypes/pamplist/contract.",
+    "Portable Pamplist Core with eight fixed-capacity clock/modulation lanes, an 8 by 8 route matrix, coherent accepted snapshots, exact source adapter, and deterministic renderer.",
+    "Source authority verifier, focused Release and sanitizer suites, 24-engine sweep, render matrix, retained objective evidence, and relocated reproduction.",
+    "Instrument-owned semantic surface, exhaustive synthetic regular Launch Control 3 protocol adapter, and accepted-state controller trace.",
+    "Authenticated JUCE 8.0.15 standalone target with a restrained state-driven eight-lane, matrix, voice, audio, and MIDI diagnostic UI.",
+    "Prototype index, DSP topology, source dependency fingerprints, notices, promotion handoff, additive audition-library record, results, and gap register."
+  ],
+  "dependency_contracts": [
+    "The macro voice is consumed from the configured patcher source at locked commit 08d3e6e1e2b61230308c20a15ded58ffdaf4656c and synthesis tree 58917f3e2e46a30337cfb6292a3504845b1d5552; configuration fails closed on missing, dirty, or mismatched bytes.",
+    "The local adapter may include KsolotiExtendedMacroVoiceDSP and its vendored Plaits closure but must not copy source bytes into Pamplist or promote the catalogued-only Macro Voice implementation.",
+    "Instrument Lab v1 supplies the shared portable host seam and noncanonical validation boundary; Pamplist owns its musical controls and DSP topology.",
+    "JUCE 8.0.15 is an authenticated local build dependency with network fetching disabled and does not become part of the portable Core.",
+    "The regular Launch Control 3 topology artifact is protocol authority for Custom Mode 1 channel 16 CC20 through CC47; all endpoint behavior remains deferred."
+  ],
+  "goal": {
+    "primary_claim": "One selected-lane workflow with eight deterministic clock lanes and an eight-destination matrix can animate one complete 24-engine macro voice as a coherent, repeatable standalone instrument.",
+    "why": "Test whether independently phased, Euclidean-filtered, addressably random lane motion becomes musically legible when its entire interaction is focused on one macro voice rather than exposed as a general patching utility."
+  },
+  "inputs": [
+    "AGENTS.md, docs/PROJECT_CONTEXT.md, docs/STATUS.md, accepted ADRs 0016 through 0018, docs/tasks/037-instrument-lab-v1.md, and docs/workflows/instrument-development.md.",
+    "The user's 2026-08-24 private-use clarification and explicit instruction to implement the recommended version without a separate post-proposal pause.",
+    "research/proposals/pamplist.md revision 0.2 at the exact SHA-256 recorded below.",
+    "Official Pamela's PRO Workout and Plaits behavioral documentation, used only for bounded observable reference anatomy and attribution.",
+    "catalog/sources.lock.json plus machine-local catalog/sources.local.yml for the exact read-only patcher source closure.",
+    "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json and the authenticated JUCE 8.0.15 source-tree record."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "Current-thread user message on 2026-08-24: otherwise, yeah, let's go ahead and implement your recommended version.",
+      "state": "approved"
+    },
+    "path": "research/proposals/pamplist.md",
+    "revision": "0.2",
+    "sha256": "bf110cd1bfe6b86e032bc993e0baf705d7459182c891d095a9a1a39ce1789af3"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "Exactly eight persistent rational clock/modulation lanes at 48 kHz with 16 rates, phase, eight shapes, fixed 16-step Euclidean masks, keyed probability, repeat windows, amplitude, and deterministic resets.",
+      "One 8 by 8 signed matrix targeting Trigger, Pitch, Model, Harmonics, Timbre, Morph, Decay, and Level, followed by the exact complete 24-engine macro voice with main and auxiliary outputs kept separate.",
+      "Portable C++17 Core, deterministic renderer and retained experiment, source authentication, focused and sanitizer validation, synthetic controller mapping, state-driven JUCE standalone build, prototype metadata, and relocated reproduction.",
+      "A private-use noncanonical Instrument Lab prototype and additive audition-library entry through target-build evidence."
+    ],
+    "out": [
+      "Pamela's firmware, undocumented algorithms, display, menus, panel appearance, exact feature equivalence, CV calibration, expanders, or branding.",
+      "External or MIDI clock, CV input, cross-lane operators, Flex or humanization, variable Euclidean length, persistence, polyphony, samples, effects, plug-ins, arbitrary destinations, and firmware.",
+      "Ksoloti or Gills execution, canonical graph and provider integration, release packaging, distribution, publication, and source-checkout changes.",
+      "Application launch, endpoint access, callback-deadline measurement, physical controller evidence, listening claims, staging, commit, push, upload, or flash."
+    ]
+  },
+  "status": "ready",
+  "target": "Schuss Instrument Lab v1 portable C++17 Core, deterministic 48 kHz renderer, regular Launch Control 3 adapter, and authenticated JUCE 8.0.15 macOS standalone",
+  "title": "Pamplist: Eight-Lane Clocked Macro-Voice Instrument",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "built but unlaunched Pamplist.app plus deterministic stereo render, accepted-state trace, and synthetic Launch Control 3 trace",
+    "evidence_level": "target-build",
+    "success_observation": "The exact source authenticates; focused, sanitizer, render-partition, prototype, current, and relocated checks pass; all 24 engines are finite; the phaseless comparator diverges; and the authenticated Pamplist.app executable is built and hashed without launch or endpoint access."
+  }
+}

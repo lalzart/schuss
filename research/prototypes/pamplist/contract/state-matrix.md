@@ -1,0 +1,35 @@
+# Pamplist: Eight-Lane Clocked Macro-Voice Instrument state-by-operation matrix
+
+> Status: ready
+
+The Core is the sole musical-state writer. The UI and synthetic controller
+trace are projections of accepted snapshots, never raw-input mirrors.
+
+| Operation | Current controls | Pending controls | DSP/audio state | Buffers/write heads | Random/scheduler state | Event provenance | Host/controller/UI feedback | Exact timing and failure behavior |
+|---|---|---|---|---|---|---|---|---|
+| Initialization | Running true; tempo 120 BPM; seed `0x50414D50`; engine 0; note 48; harmonics, timbre, and morph 0.5; decay 0.5; source level 0.8; master gain 0.65; lane 1 x1 pulse 4-of-16 amplitude 1 Trigger route 1; lanes 2-8 zero amplitude and routes; selected lane 1 | Constructor controls await first 16-frame acceptance | Macro voice initialized once at 48 kHz; source and output are silent until the first accepted trigger | Persistent main and auxiliary 16-frame quantum is zero; read cursor equals 16 so the first process call renders a new quantum | Master and lane phases, integer remainders, step indices, free addresses, and keyed decisions are zeroed; configured seed retained | Absolute frame, quantum, accepted sequence, and all diagnostics start at zero | Initial snapshot reports constructed defaults and selected lane 1; no MIDI endpoint message exists | Construction performs fixed allocation only; first supported process accepts defaults before quantum frame 0; unsupported sample rate or frame request emits silence and does not advance |
+| Reset | Restore every declared default, including selected lane 1 | Discard any not-yet-accepted host control value | Reinitialize the exact macro voice and silence transport/output state | Clear persistent quantum and set read cursor to 16 | Zero all phases, remainders, steps, addresses, held and smoothed random values; restore seed | Clear accepted sequence, event trace cursor, and all diagnostic counters | Publish one default accepted snapshot on the next supported process call | Host must invoke reset outside concurrent processing; the next quantum is equivalent to a fresh instance and starts at absolute frame zero |
+| Panic | Preserve accepted controls but force running false | Discard unaccepted host control value | Silence immediately for the remainder of the current bounded process request and reinitialize source before a later start | Zero unconsumed quantum carry and set cursor to 16 | Zero phase, remainder, step, address, and held-random scheduler state while preserving the accepted seed | Increment panic count and retain the absolute frame at which panic was requested | Snapshot reports stopped state and panic count; UI derives from it | Public panic is host-only and applies before the next output sample; it does not allocate, lock, or touch an endpoint |
+| Freeze or capture | N/A — revision 0.2 has no freeze, capture, recording, or held-global-state operation | N/A — no freeze or capture command is accepted | Continuous lane and voice processing only | No capture storage or write head exists | Addressed repeat windows are musical loop state, not a capture function | Unsupported operations are absent from the public event type | UI exposes no freeze or capture control | A future capture feature requires a new approved contract and state model |
+| Mode change | Lane-select press changes only accepted selected lane; voice engine changes only accepted engine | One coherent host Controls value may await the next quantum | Lane selection does not alter audio; engine change is applied before source render at a quantum and has no crossfade | Persistent quantum already rendered is never rewritten; next quantum uses the accepted mode | Lane phase and keyed addresses continue across lane selection and engine changes | Accepted trace records selected-lane or engine change at its quantum frame | Selected lane, engine, lane controls, and routes update from the next accepted snapshot | Valid changes apply at the next persistent 16-frame quantum; invalid indices clamp and increment recovery diagnostics |
+| State recall | N/A — session save, presets, serialization, and recall are unsupported in revision 0.2 | N/A — no recall queue exists | No recall operation exists | No disk or preset buffer exists | No serialized phase, source, or random state exists | Unsupported calls are absent from the public API | UI truthfully identifies the session as volatile | Future recall must define source-state equivalence and migration in a new contract |
+| Disconnect/reconnect | Preserve every accepted Core control and selected lane | A host-only raw MIDI input not yet transformed may be discarded; the Core has no endpoint queue | Audio continues independently of controller presence | No output-quantum change | No scheduler or keyed-random change | Endpoint identity and wall-clock disconnect time never enter the musical ledger | A future host repopulates its controls only from the latest accepted snapshot; revision 0.2 sends no physical feedback | Validation constructs messages in memory only; it does not enumerate or open endpoints and proves no reconnect behavior |
+| Non-finite recovery | Tempo becomes 120 BPM; note 48; unit controls 0.5 except source level 0.8 and master 0.65; non-finite route becomes zero; all integer and Boolean fields clamp to declared bounds | The invalid field is replaced inside one sanitized coherent Controls value | Non-finite macro-voice sample becomes exact zero for that channel/sample; finite processing continues | Never retain a non-finite sample in persistent carry | Preserve valid phase/address state; invalid scheduler input uses its declared default; count recovery | Increment invalid-control, clamp, or non-finite-source counter with absolute quantum frame | Snapshot shows accepted recovered value and counters; raw NaN or infinity is never formatted or mirrored | Recovery occurs before scheduler math, source Q conversion, and final saturation; every output sample remains finite in Q27 range |
+
+## State equivalence
+
+Within one frozen build and experiment, repeatability means byte equality of
+signed 24-bit stereo PCM and canonical event, accepted-snapshot, controller,
+and metrics JSON across host partitions 1, 16, 64, 128, 257, and 512. It also
+means exact integer equality of absolute frame and quantum, master and lane
+phase/remainders, step and loop addresses, keyed decisions, resolved engine,
+trigger/coalescing counts, clamp/recovery counters, and accepted controls.
+
+Freshly reset instances are musically equivalent when all public accepted
+controls and snapshots, scheduler integers, source initialization, persistent
+quantum samples and cursor, seed, held random values, and diagnostics agree.
+C++ padding, pointer or allocator addresses, local source/build paths, Git worktree
+location, host handles, endpoint identities, wall time, GUI component state,
+and unaccepted raw input are deliberately excluded. Cross-toolchain floating
+bit identity is not claimed; partition equality is required inside the same
+authenticated build.

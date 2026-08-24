@@ -1,0 +1,38 @@
+{
+  "claims": {
+    "allocates_canonical_records": false,
+    "executable_graph": false
+  },
+  "needs": [
+    {
+      "local_role": "role.node.decisions",
+      "required_contract": "addressed musical decision generator"
+    },
+    {
+      "local_role": "role.node.macro-voice",
+      "required_contract": "authenticated complete macro-voice host primitive"
+    },
+    {
+      "local_role": "role.node.masks",
+      "required_contract": "rotatable fixed-length Euclidean mask"
+    },
+    {
+      "local_role": "role.node.matrix",
+      "required_contract": "bounded selected-lane modulation matrix"
+    },
+    {
+      "local_role": "role.node.output-gain",
+      "required_contract": "bounded dual-output gain stage"
+    },
+    {
+      "local_role": "role.node.shapes",
+      "required_contract": "clock-lane shape bank"
+    },
+    {
+      "local_role": "role.node.timeline",
+      "required_contract": "phase-preserving rational lane timeline"
+    }
+  ],
+  "prototype_id": "pamplist",
+  "schema_version": "schuss-instrument-lab-promotion-needs-v1"
+}

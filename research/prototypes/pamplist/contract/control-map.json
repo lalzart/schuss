@@ -1,0 +1,172 @@
+{
+  "application_feedback": [
+    {
+      "authority": "accepted Pamplist Snapshot only",
+      "message": "selected-lane highlight and lane values in the JUCE UI",
+      "purpose": "show which lane and values the Core actually accepted rather than raw MIDI input"
+    },
+    {
+      "authority": "accepted Pamplist Snapshot and controller diagnostics only",
+      "message": "route bars, global voice values, running state, frame, trigger, invalid-input, clamp, and recovery indicators in the JUCE UI",
+      "purpose": "make musical state and evidence boundary observable without controller feedback claims"
+    },
+    {
+      "authority": "accepted Pamplist Snapshot after a synthetic CC dispatch",
+      "message": "canonical controller-trace.json input, semantic event, and accepted value tuple",
+      "purpose": "exhaustively compare compiled mapping behavior with this source-of-truth map"
+    }
+  ],
+  "endpoint_device_evidence": {
+    "connection_policy": "No endpoint is enumerated or opened. A later host may explicitly select an input whose identity has been verified as the regular Launch Control 3 Custom Mode 1 port.",
+    "notes": "The repository topology and synthetic messages prove only protocol transforms. They do not prove endpoint identity, receipt, encoder behavior, firmware configuration, reconnect, LED or OLED behavior, or physical usefulness.",
+    "state": "deferred"
+  },
+  "gesture_state_machines": [
+    {
+      "id": "lane-select-button",
+      "input": "channel 16 CC40 through CC47",
+      "state": "accepted selected lane 0 through 7",
+      "transition": "value greater than zero selects the addressed lane at the next Core quantum; value zero is an explicit release with no semantic dispatch"
+    },
+    {
+      "id": "absolute-route-encoder",
+      "input": "channel 16 CC20 through CC27 absolute value 0 through 127",
+      "state": "selected lane route destination 0 through 7",
+      "transition": "route = clamp((value - 64) / 63, -1, 1), with value 64 exactly zero and values 0 and 127 exactly minus one and plus one"
+    },
+    {
+      "id": "absolute-lane-encoder",
+      "input": "channel 16 CC28 through CC35 absolute value 0 through 127",
+      "state": "selected lane rate, phase, shape, hits, rotation, probability, repeat, or amplitude",
+      "transition": "apply the binding-specific bounded absolute transform and publish only the next accepted snapshot"
+    }
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {
+      "binding": "select lane index CC minus 40 on a positive value; releases do not dispatch",
+      "id": "select-lane",
+      "rejection": "wrong channel, wrong CC, data outside 0 through 127, or duplicate release is ignored and counted without state change"
+    },
+    {
+      "binding": "set selected-lane route destination CC minus 20 using the signed absolute route transform",
+      "id": "set-route",
+      "rejection": "no valid selected lane, wrong channel, wrong CC, or invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC28 maps floor(value times 16 divided by 128) to rate index 0 through 15",
+      "id": "set-rate",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC29 maps value divided by 128 to phase in [0,1), retained as the accepted 7-bit phase value",
+      "id": "set-phase",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC30 maps floor(value times 8 divided by 128) to shape index 0 through 7",
+      "id": "set-shape",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC31 maps round(value times 16 divided by 127) to hits 0 through 16",
+      "id": "set-hits",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC32 maps floor(value times 16 divided by 128) to rotation 0 through 15",
+      "id": "set-rotation",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC33 maps value divided by 127 to probability with exact zero and one endpoints",
+      "id": "set-probability",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC34 maps value zero to free repeat and positive values to 1 plus floor((value - 1) times 64 divided by 127), clamped 1 through 64",
+      "id": "set-repeat",
+      "rejection": "invalid data is ignored and counted"
+    },
+    {
+      "binding": "CC35 maps value divided by 127 to amplitude with exact zero and one endpoints",
+      "id": "set-amplitude",
+      "rejection": "invalid data is ignored and counted"
+    }
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/pamplist/contract/control-map.json",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "control": "top encoders 1 through 8",
+      "input": "Custom Mode 1 MIDI channel 16 CC20 through CC27 absolute 0 through 127",
+      "mode": "selected lane",
+      "semantic": "signed routes to Trigger, Pitch, Model, Harmonics, Timbre, Morph, Decay, and Level"
+    },
+    {
+      "control": "bottom encoder 1",
+      "input": "Custom Mode 1 MIDI channel 16 CC28 absolute 0 through 127",
+      "mode": "selected lane",
+      "semantic": "one of 16 rational rate indices"
+    },
+    {
+      "control": "bottom encoder 2",
+      "input": "Custom Mode 1 MIDI channel 16 CC29 absolute 0 through 127",
+      "mode": "selected lane",
+      "semantic": "phase 0 through 127 over 128"
+    },
+    {
+      "control": "bottom encoder 3",
+      "input": "Custom Mode 1 MIDI channel 16 CC30 absolute 0 through 127",
+      "mode": "selected lane",
+      "semantic": "one of eight lane shapes"
+    },
+    {
+      "control": "bottom encoder 4",
+      "input": "Custom Mode 1 MIDI channel 16 CC31 absolute 0 through 127",
+      "mode": "selected lane",
+      "semantic": "Euclidean hits 0 through 16"
+    },
+    {
+      "control": "bottom encoder 5",
+      "input": "Custom Mode 1 MIDI channel 16 CC32 absolute 0 through 127",
+      "mode": "selected lane",
+      "semantic": "Euclidean rotation 0 through 15"
+    },
+    {
+      "control": "bottom encoder 6",
+      "input": "Custom Mode 1 MIDI channel 16 CC33 absolute 0 through 127",
+      "mode": "selected lane",
+      "semantic": "probability 0 through 1"
+    },
+    {
+      "control": "bottom encoder 7",
+      "input": "Custom Mode 1 MIDI channel 16 CC34 absolute 0 through 127",
+      "mode": "selected lane",
+      "semantic": "free or repeat length 1 through 64"
+    },
+    {
+      "control": "bottom encoder 8",
+      "input": "Custom Mode 1 MIDI channel 16 CC35 absolute 0 through 127",
+      "mode": "selected lane",
+      "semantic": "lane amplitude 0 through 1"
+    },
+    {
+      "control": "buttons 1 through 8",
+      "input": "Custom Mode 1 MIDI channel 16 CC40 through CC47 press and release",
+      "mode": "all",
+      "semantic": "positive edge selects lane 1 through 8; release does not dispatch"
+    },
+    {
+      "control": "JUCE global controls",
+      "input": "mouse or keyboard through bounded application controls",
+      "mode": "all",
+      "semantic": "running, tempo, seed, engine, note, harmonics, timbre, morph, decay, level, and master gain"
+    }
+  ],
+  "title": "Pamplist: Eight-Lane Clocked Macro-Voice Instrument"
+}
