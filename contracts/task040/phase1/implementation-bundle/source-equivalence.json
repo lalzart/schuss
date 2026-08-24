@@ -7,7 +7,7 @@
     "repository_id": "schuss-original-task040",
     "revision": "task040-phase1",
     "observed_branch": "main",
-    "dirty_state": "phase1-owned-uncommitted-artifacts",
+    "dirty_state": "phase1-owned-uncommitted-artifacts-at-readiness-freeze",
     "source_root_id": "repository-owned-original-source-only"
   },
   "files": [],

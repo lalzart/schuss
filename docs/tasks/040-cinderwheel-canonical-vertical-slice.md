@@ -1,9 +1,9 @@
 # Task 040: Cinderwheel canonical vertical slice
 
-Status: Phase 1 explicitly authorized and review-ready on 2026-08-22. The exact
-allocation and implementation-ready bundle are frozen for user review. Phase 2
-is not activated; no shared semantic/runtime implementation, device action,
-Task 040 commit, or Task 040 push is authorized by this status.
+Status: Task 040 closed after Phase 1 at the user's direction on 2026-08-23.
+The planning bundle is retained at published commit `955084e`; Phase 2 was
+never activated, all remaining phases are deferred, and no canonical semantic,
+runtime, DSP, controller, or device implementation was produced.
 
 ## Goal and why it exists
 
@@ -128,7 +128,7 @@ are explicit. It may not imply float/Q27 equivalence or add `juce_dsp`.
   AI adapters. Opening a client allowlist remains a separate explicit decision.
 - Documentation and evidence packets that preserve every correction and gap.
 
-## Phase 1 activated allocation
+## Retained Phase 1 allocation
 
 The normative machine-readable freeze is
 `contracts/task040/phase1/allocation.json`; the ready implementation bundle is
@@ -137,6 +137,12 @@ The normative machine-readable freeze is
 commit `0bf22b67b03862b2efecd9fed377118501bf5f8d`, and parent record set
 `schuss-record-set-000033@1` at
 `sha256:01dc913b0d637573adda283f84985e7196ee7162b6f2eaadf76b1d3a2890b786`.
+
+This allocation is a retained planning snapshot, not a live stable-ID or
+record-set reservation. Phase 1 created no canonical records. Any later
+reactivation must begin with an explicit new activation and re-audit the live
+parent, schema and operation versions, provider route, and every conflict-free
+allocation rather than assuming these proposed successors remain available.
 
 The exact route reuses `schuss-compute-target-000002@1` and allocates
 `schuss-backend-000003@2`,
@@ -235,14 +241,16 @@ Deliverables are:
 
 Freeze the ready bundle, current parent closure, new identities, numeric route,
 graph decomposition/fusion boundary, operation changes, experiment, and
-validation plan. Perform no shared implementation edit before this passes.
+validation plan. This planning-only phase completed at published commit
+`955084e` without shared implementation.
 
 ### Phase 2: canonical model and performance execution
 
 Add the exact graph, instrument, project, public facets, controller-independent
 performance-control semantics, regular-controller configuration, synthetic
 event executor, and client-neutral inspection. No native DSP implementation is
-promoted until the semantic closure passes.
+promoted until the semantic closure passes. This phase was not activated and
+is deferred.
 
 ### Phase 3: native realization and objective host signal
 

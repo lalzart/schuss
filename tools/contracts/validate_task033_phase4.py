@@ -118,7 +118,8 @@ def validate(repository_root: Path = ROOT) -> dict[str, Any]:
     task040_phase1_ready = (
         "Status: Phase 1 explicitly authorized and review-ready" in task040
     )
-    if not (task040_proposed or task040_phase1_ready):
+    task040_deferred = "Status: Task 040 closed after Phase 1" in task040
+    if not (task040_proposed or task040_phase1_ready or task040_deferred):
         raise ValueError("TASK040_STATUS_INVALID")
     _require(
         task040,
@@ -142,7 +143,7 @@ def validate(repository_root: Path = ROOT) -> dict[str, Any]:
                 "No stable ID, record-set\nsuccessor, provider successor, operation, build, device action, commit, or push",
             ),
         )
-    else:
+    elif task040_phase1_ready:
         _require(
             task040,
             TASK040,
@@ -150,6 +151,16 @@ def validate(repository_root: Path = ROOT) -> dict[str, Any]:
                 "contracts/task040/phase1/allocation.json",
                 "Phase 2\nis not activated",
                 "schuss-record-set-000033@1",
+            ),
+        )
+    else:
+        _require(
+            task040,
+            TASK040,
+            (
+                "contracts/task040/phase1/allocation.json",
+                "Phase 2 was\nnever activated",
+                "not a live stable-ID or\nrecord-set reservation",
             ),
         )
     for path, expected in PROTOTYPE_AUTHORITIES.items():

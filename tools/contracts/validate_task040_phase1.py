@@ -17,8 +17,10 @@ BUNDLE = Path("contracts/task040/phase1/implementation-bundle")
 ALLOCATION = Path("contracts/task040/phase1/allocation.json")
 STATE = Path("docs/governance/current-state.json")
 TASK = Path("docs/tasks/040-cinderwheel-canonical-vertical-slice.md")
+CLOSEOUT = Path("contracts/task040/phase1/CLOSEOUT.md")
 
 BASELINE = "b21a0c4aa88488adde04446f35a7fd1d91b06a38"
+PHASE1_REVIEW_COMMIT = "955084e581ebf21e979f039fb7bba088787b8f71"
 TASK033_ACCEPTED = "0bf22b67b03862b2efecd9fed377118501bf5f8d"
 PARENT_RECORD_SET = {
     "stable_id": "schuss-record-set-000033",
@@ -129,6 +131,15 @@ def _git_blob(data: bytes) -> str:
     return hashlib.sha1(header + data).hexdigest()
 
 
+def _review_state(head: str, origin_main: str) -> str | None:
+    return {
+        (BASELINE, BASELINE): "baseline-with-phase1-worktree",
+        (PHASE1_REVIEW_COMMIT, BASELINE): "local-phase1-review-commit",
+        (PHASE1_REVIEW_COMMIT, PHASE1_REVIEW_COMMIT):
+            "published-phase1-review-commit",
+    }.get((head, origin_main))
+
+
 def _contains_unresolved_value(value: Any) -> bool:
     if isinstance(value, str):
         return "UNRESOLVED" in value.upper()
@@ -200,6 +211,9 @@ def _parent_maxima(root: Path, allocation: dict[str, Any]) -> dict[str, int]:
 def validate(root: Path = ROOT) -> dict[str, Any]:
     root = root.resolve()
     errors: list[str] = []
+    head_commit: str | None = None
+    origin_main_commit: str | None = None
+    review_state: str | None = None
 
     try:
         allocation = _json(root, ALLOCATION)
@@ -214,13 +228,23 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
     try:
         if _git(root, "branch", "--show-current") != "main":
             errors.append("live branch is not main")
-        if _git(root, "rev-parse", "HEAD") != BASELINE:
-            errors.append("HEAD differs from the frozen Phase 1 baseline")
-        if _git(root, "rev-parse", "origin/main") != BASELINE:
-            errors.append("origin/main differs from the frozen Phase 1 baseline")
+        head_commit = _git(root, "rev-parse", "HEAD")
+        origin_main_commit = _git(root, "rev-parse", "origin/main")
+        review_state = _review_state(head_commit, origin_main_commit)
+        if review_state is None:
+            _git(root, "merge-base", "--is-ancestor", PHASE1_REVIEW_COMMIT, head_commit)
+            _git(
+                root,
+                "merge-base",
+                "--is-ancestor",
+                PHASE1_REVIEW_COMMIT,
+                origin_main_commit,
+            )
+            review_state = "phase1-review-retained-by-descendants"
         if _git(root, "diff", "--cached", "--name-only"):
             errors.append("staged work exists during the Phase 1 review gate")
         _git(root, "merge-base", "--is-ancestor", TASK033_ACCEPTED, BASELINE)
+        _git(root, "merge-base", "--is-ancestor", BASELINE, PHASE1_REVIEW_COMMIT)
     except (OSError, subprocess.CalledProcessError) as exc:
         errors.append(f"git state check failed: {exc}")
 
@@ -335,20 +359,37 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
 
     try:
         state = _json(root, STATE)
-        expected_active = {
-            "task_id": "040",
-            "phase": 1,
-            "kind": "canonical-instrument",
-            "status": "review-ready",
-            "contract": TASK.as_posix(),
-            "baseline_commit": BASELINE,
+        milestones = {
+            (
+                item.get("task_id"),
+                item.get("phase"),
+                item.get("status"),
+                item.get("commit"),
+            )
+            for item in state.get("recent_completed_milestones", [])
+            if isinstance(item, dict)
         }
-        if state.get("active_task") != expected_active or state.get("next_candidate") is not None:
-            errors.append("governance does not expose Task 040 Phase 1 review-ready")
+        parked = (
+            state.get("active_task") is None
+            and state.get("next_candidate") is None
+            and "040" in state.get("deferred_tasks", [])
+            and ("040", 1, "complete-published", "955084e") in milestones
+        )
+        if not parked:
+            errors.append("governance does not expose the Task 040 Phase 1 closeout")
         task_text = (root / TASK).read_text(encoding="utf-8")
         leading = "\n".join(task_text.splitlines()[:8]).lower()
-        if "explicitly authorized" not in leading or "review-ready" not in leading:
+        if "closed after phase 1" not in leading or "deferred" not in leading:
             errors.append("Task 040 leading status differs")
+        closeout_text = (root / CLOSEOUT).read_text(encoding="utf-8")
+        for phrase in (
+            "Phase 2 was never activated",
+            "not live reservations",
+            "fresh audit",
+            "No successor task is activated",
+        ):
+            if phrase not in closeout_text:
+                errors.append(f"Task 040 closeout phrase missing: {phrase}")
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         errors.append(f"governance check failed: {exc}")
 
@@ -444,12 +485,17 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
         "schema_version": "task040-phase1-validation-summary-v1",
         "status": "valid" if not errors else "invalid",
         "baseline_commit": BASELINE,
+        "phase1_review_commit": PHASE1_REVIEW_COMMIT,
+        "head_commit": head_commit,
+        "origin_main_commit": origin_main_commit,
+        "review_state": review_state,
         "parent_record_set": "schuss-record-set-000033@1",
         "allocated_semantic_record_set": "schuss-record-set-000034@1",
         "allocated_native_record_set": "schuss-record-set-000035@1",
         "internal_graph_node_count": 9,
         "control_assignment_count": 24,
         "experiment_condition_count": 7,
+        "task_status": "deferred-after-phase1",
         "phase2_implemented": False,
         "errors": errors,
     }

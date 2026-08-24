@@ -1,6 +1,6 @@
 # Task contracts
 
-<!-- schuss-governance-routing: active=040-phase-1@review-ready; next=none -->
+<!-- schuss-governance-routing: active=none; next=none -->
 
 Current scheduling authority is `../governance/current-state.json`. Task files
 define frozen boundaries; their presence in this directory does not make them
@@ -11,13 +11,13 @@ activation and completion state.
 
 ## Active
 
-- Task 040 Phase 1, the Cinderwheel readiness and exact-allocation gate, is
-  review-ready. The bundle is valid and Phase 2 is not activated.
+There is no active task.
 
 ## Next gate
 
-- Task 040 Phase 2 requires explicit user review and activation after the Phase
-  1 bundle. No shared semantic or runtime implementation is authorized yet.
+There is no next candidate. Task 040 is deferred after its published
+planning-only Phase 1 and can return only through explicit reactivation and a
+fresh allocation audit.
 
 ## Completed source, lab, and desktop follow-ups
 
@@ -38,6 +38,9 @@ activation and completion state.
 
 ## Recent retained contracts
 
+- Task 040 retains its Phase 1 Cinderwheel proposal, ready bundle, and planning
+  allocation at `955084e`. Phase 2 was never activated; no proposed stable ID
+  remains reserved against future work.
 - Task 035 is complete and owns proportional validation profiles, one-pass
   record-set validation, and structured current-work governance.
 - Task 034 is complete and owns the controller-independent performance graph

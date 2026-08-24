@@ -1,6 +1,6 @@
 # Schuss status
 
-<!-- schuss-governance-routing: active=040-phase-1@review-ready; next=none -->
+<!-- schuss-governance-routing: active=none; next=none -->
 
 The machine-readable current routing source is
 `docs/governance/current-state.json`. This file explains that state in plain
@@ -10,15 +10,17 @@ schemas, records, record sets, fixtures, and evidence packets.
 
 ## Current work
 
-Task 040 Phase 1 is the only active task and is review-ready. Its
-implementation-ready Cinderwheel bundle and exact allocation are frozen under
-`contracts/task040/phase1/` against baseline `b21a0c4`, parent record set
-`schuss-record-set-000033@1`, and the existing fixed-Q27 desktop target.
-Phase 2 is not activated, and no canonical semantic or runtime implementation
-has begun.
+There is no active task. Task 040 Phase 1 completed as a planning-only
+Cinderwheel readiness bundle at published commit `955084e`. Phase 2 was never
+activated, no canonical semantic or runtime implementation began, and a future
+return requires a fresh live-parent, version, provider-route, and stable-ID
+allocation audit.
 
 ## Recent completed milestones
 
+- Task 040 Phase 1 completed as planning-only readiness at published commit
+  `955084e`. Phase 2 was never activated, no semantic/runtime/DSP work began,
+  and later reactivation requires a fresh allocation audit.
 - Task 033 Phases 3 and 4 completed at published commit `0bf22b6`, preserving
   provider `schuss-implementation-provider-000001@1`, record set
   `schuss-record-set-000031@1`, and the exact seven native factories while
@@ -43,9 +45,9 @@ has begun.
   `schuss-record-set-000031@1`.
 
 Task 033 is complete through Phase 4. Task numbers never override exact
-record-set ancestry or the completion gate. Task 040 Phase 1 is review-ready;
-its ready bundle does not activate Phase 2 or promote Cinderwheel into the
-catalog, graph runtime, provider, application, device, or listening evidence.
+record-set ancestry or the completion gate. Task 040 retains only its Phase 1
+planning bundle; it did not promote Cinderwheel into the catalog, graph
+runtime, provider, application, device, or listening evidence.
 
 ## Current product boundary
 
@@ -111,12 +113,12 @@ mapping is never reported as passed.
 
 ## Deferred and external gates
 
-Tasks 019 and 020 remain deferred. Task 012B remains retired by ADR 0010. Any
+Tasks 019, 020, and 040 remain deferred. Task 012B remains retired by ADR 0010. Any
 further UI, MIDI execution, controller mapping runtime, new DSP palette tranche,
 JUCE DSP provider, structured connected-device evidence, packaging, or
 distribution work requires a separate explicit contract and activation.
 
 Local completion and publication are separate. Task 033's implementation and
-evidence result is published at `0bf22b6`. Task 040 Phase 1 was activated
-separately by the user and now stops at review; no Task 040 commit or push is
-authorized by that activation.
+evidence result is published at `0bf22b6`. Task 040's planning-only Phase 1 is
+published at `955084e` and closed without Phase 2 implementation. Returning to
+Cinderwheel requires a new explicit activation and fresh allocation audit.

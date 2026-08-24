@@ -1,6 +1,19 @@
 # Cinderwheel canonical vertical slice implementation results
 
-> Status: Phase 1 readiness valid; review gate open
+> Status: Phase 1 readiness retained; Task 040 closed before implementation
+
+The activation baseline remains `b21a0c4`. The exact Phase 1 review artifacts
+are retained at published commit `955084e`; that retention does not activate
+Phase 2.
+
+## Closeout
+
+On 2026-08-23 the user chose to leave Cinderwheel as-is and close Task 040.
+Phase 1 is complete as planning-only work. Phase 2 was never activated; no
+canonical records, performance executor, fixed-Q27 DSP, provider factory,
+native render, or device work was produced. The proposed IDs in
+`allocation.json` are no longer live reservations and require a fresh conflict
+audit if the task is ever reactivated.
 
 ## Proposal and contract fingerprints
 
@@ -20,20 +33,25 @@
 - `python3 tools/contracts/validate_task040_phase1.py --repo-root .`:
   exit 0; parent `000033@1`, semantic successor `000034@1`, native
   successor `000035@1`, nine internal nodes, 24 control assignments, seven
-  conditions, and `phase2_implemented=false`.
+  conditions, `review_state=published-phase1-review-commit`, and
+  `phase2_implemented=false`. The gate retains the exact baseline/review
+  lineage and permits later repository descendants only while the published
+  Phase 1 commit remains an ancestor and all frozen authorities still match.
 - `python3 tools/contracts/validate_task033_phase4.py`: exit 0; seven Task
   033 factories and historical runtime bytes preserved.
-- `python3 tools/contracts/validate_backbone_governance.py`: exit 0; Task 040
-  Phase 1 is the sole active review-ready work unit.
+- `python3 tools/contracts/validate_backbone_governance.py`: exit 0; no task or
+  successor is active, and Task 040 is deferred after its Phase 1 milestone.
 - `python3 -m py_compile tools/contracts/validate_task040_phase1.py
   tools/contracts/validate_task033_phase4.py`: exit 0.
 - `python3 -m unittest tools.contracts.tests.test_task033_phase4_integration
   tools.contracts.tests.test_backbone_governance`: exit 0; 15 tests passed,
   one expected skip.
+- `python3 -m unittest tools.contracts.tests.test_task040_phase1`: exit 0;
+  three focused Phase 1 allocation, lineage, and stop-gate tests passed.
 - `git diff --check`: exit 0.
 - `python3 tools/validation/run.py --profile current`: exit 0; all eight
-  selected checks passed in 59.857 seconds. The current contract partition ran
-  67 tests with one expected skip.
+  selected checks passed in 64.706 seconds. The current contract partition ran
+  70 tests with one expected skip.
 
 Phase 2 and later commands were not run.
 
@@ -56,7 +74,7 @@ seventh fixed-round-robin condition closes the proposal's missing comparator.
 | Level | Result | Artifact or observation | Remaining limitation |
 |---|---|---|---|
 | Research | retained | Approved proposal and prototype fingerprints | Prototype is noncanonical and float |
-| Proposal | passed | Ready bundle, exact allocation, governance, and Phase 1 validator | User review still gates Phase 2 |
+| Proposal | retained | Ready bundle, exact allocation, governance, and Phase 1 validator | Task deferred; reactivation requires a fresh allocation audit |
 | Source | not run | Planned original Schuss source | No fixed-Q27 implementation exists |
 | Host structural | not run | Planned semantic, state, bounds, and failure checks | No Phase 2 implementation exists |
 | Host signal | not run | Planned seven-condition matrix | No canonical render exists |

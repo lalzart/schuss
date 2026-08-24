@@ -1,26 +1,22 @@
 # Schuss roadmap
 
-<!-- schuss-governance-routing: active=040-phase-1@review-ready; next=none -->
+<!-- schuss-governance-routing: active=none; next=none -->
 
 Current routing is defined by `docs/governance/current-state.json`; this roadmap
 describes sequencing rather than silently activating work.
 
 ## Active maintenance
 
-Task 040 Phase 1 is the only active task and is review-ready. The exact parent,
-stable-ID, schema, operation, provider, numeric, graph/fusion, experiment, and
-validation allocations are frozen. The ready bundle adds no canonical record,
-DSP implementation, provider factory, application launch, device action, or
-higher evidence.
+There is no active task. Task 040 Phase 1 completed as a planning-only
+Cinderwheel readiness bundle at published commit `955084e`. Phase 2 was never
+activated, and no canonical semantic, runtime, DSP, UI, device, or listening
+implementation began.
 
 ## Next gate
 
-Task 040 Phase 2 is not activated. It may begin only after user review of the
-Phase 1 bundle and exact allocation. The later serialized phases remain bounded
-to canonical model, device-independent performance execution, and deterministic
-native host-signal evidence; no DSP algorithm, source dependency, provider,
-runtime, UI, device, real-time, listening, packaging, or release work starts
-from Phase 1 readiness alone.
+There is no next candidate. Task 040 may return only through a fresh
+live-parent, version, provider-route, and stable-ID allocation audit; its Phase
+1 planning snapshot does not reserve identities or silently reactivate Phase 2.
 
 ## Likely later work
 
@@ -53,5 +49,5 @@ important durable choices remain in ADRs:
 - ADR 0017 separates collections from providers; and
 - ADR 0018 adopts proportional validation profiles.
 
-Tasks 019 and 020 remain deferred. Task 012B remains retired. Completion of Task
-033 did not automatically activate Task 040 or any later candidate.
+Tasks 019, 020, and 040 remain deferred. Task 012B remains retired. Completion
+of one task does not automatically activate any later candidate.
