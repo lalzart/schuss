@@ -7,11 +7,15 @@ describes sequencing rather than silently activating work.
 
 ## Active maintenance
 
-There is no active task. Task 041 completed its bounded dependency-hardening
-result for the exact shared Gills engine-support header and five demonstrated
-consumers. The result is preserved but remains outside the commit-bound
-milestone list. Task 040 remains closed and deferred after its planning-only
-Phase 1.
+There is no active task. Task 042 completed its bounded Layerwell
+proposal-to-prototype slice: the existing Tide Pit and Generative Drums portable
+Cores feed three source-only synchronized capture layers, with a synthetic
+regular Launch Control 3 DAW-mode protocol surface and an authenticated
+unlaunched JUCE standalone build. Higher device, listening, distribution, and
+production gates remain separate future work.
+
+Task 041's completed but uncommitted dependency-hardening result remains
+preserved and outside the commit-bound milestone list.
 
 ## Next gate
 

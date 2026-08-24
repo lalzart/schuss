@@ -10,17 +10,18 @@ schemas, records, record sets, fixtures, and evidence packets.
 
 ## Current work
 
-There is no active task. Task 041 completed its narrow worktree implementation,
-evidence report, and stop gate. It hardens the exact shared Gills engine-support
-revision and its five demonstrated consumers with immutable bindings,
-deterministic self-contained release closures, preserved host behavior, and
-offline Cortex-M4 compile/link identity. It allocated no canonical Schuss
-identity and performed no device, real-time, physical-panel, listening,
-publication, or Git action.
+There is no active task. Task 042 completed locally as Layerwell, a
+noncanonical desktop Instrument Lab meta-instrument: exact Tide Pit Gills and
+Generative Drums Cores feed a bounded three-layer live sampler and a regular
+Launch Control 3 DAW-mode presentation. Its Release, sanitizer, source
+regression, deterministic render, synthetic protocol, authenticated standalone
+target-build, and relocated reproduction checks passed. It allocated no
+canonical Schuss identity; app launch, endpoint access, physical-controller,
+listening, distribution, production, and Git actions were not performed.
 
-The exact result is retained in `docs/tasks/041-RESULTS.md`, but remains outside
-the commit-bound milestone list. Task 040 remains closed and deferred after its
-published planning-only Phase 1.
+The inherited Task 041 closeout remains uncommitted and preserved underneath
+this activation. Its exact result stays in `docs/tasks/041-RESULTS.md`; it is not
+a commit-bound milestone and Task 042 does not adopt or repurpose it.
 
 ## Recent completed milestones
 

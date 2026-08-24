@@ -1,0 +1,77 @@
+{
+  "bindings": [
+    {
+      "control": "Page Up and Page Down",
+      "input": "channel 1 CC106 or CC107 value 127",
+      "mode": "all",
+      "semantic": "select previous or next resident source"
+    },
+    {
+      "control": "Track Left and Track Right",
+      "input": "channel 1 CC103 or CC102 value 127",
+      "mode": "all",
+      "semantic": "select previous or next layer"
+    },
+    {
+      "control": "sixteen encoders",
+      "input": "channel 16 CC77 through CC92, relative pivot 64",
+      "mode": "Control",
+      "semantic": "dispatch to selected source public encoder slots 1 through 16"
+    },
+    {
+      "control": "eight buttons",
+      "input": "channel 1 CC37 through CC44 press and release",
+      "mode": "Control",
+      "semantic": "dispatch to selected source public button slots 1 through 8"
+    },
+    {
+      "control": "top encoders 1 through 4",
+      "input": "channel 16 CC77 through CC80, relative pivot 64",
+      "mode": "Mixer",
+      "semantic": "layer 1 through 3 pan and source-monitor level"
+    },
+    {
+      "control": "bottom encoders 1 through 4",
+      "input": "channel 16 CC85 through CC88, relative pivot 64",
+      "mode": "Mixer",
+      "semantic": "layer 1 through 3 level and master level"
+    },
+    {
+      "control": "buttons 1 through 8",
+      "input": "channel 1 CC37 through CC44 value 127",
+      "mode": "Mixer",
+      "semantic": "select layer 1 through 3, mute layer 1 through 3, capture or cancel, source monitor"
+    },
+    {
+      "control": "Shift plus Mixer button 8",
+      "input": "channel 7 CC63 held plus channel 1 CC44 value 127",
+      "mode": "Mixer",
+      "semantic": "clear selected layer"
+    },
+    {
+      "control": "mode report",
+      "input": "channel 7 CC30 value 1 or 2",
+      "mode": "all",
+      "semantic": "select Mixer or Control presentation"
+    }
+  ],
+  "claims": {
+    "accepted_state_feedback": true,
+    "endpoint_mapping": true,
+    "physical_surface": true,
+    "physical_validation": false
+  },
+  "controller_topology": {
+    "artifact": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+    "model": "Novation Launch Control 3 regular model",
+    "port": "dedicated DAW USB port",
+    "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
+  },
+  "feedback": {
+    "authority": "accepted Layerwell Snapshot only",
+    "connection": "enable DAW mode, set both encoder rows relative, then send a complete accepted-state resync",
+    "outputs": "absolute encoder positions, RGB control colors, stationary source and layer text, temporary parameter overlays",
+    "shutdown": "send DAW-mode disable before output endpoint close or change"
+  },
+  "schema_version": "schuss-prototype-semantic-control-surface-v0"
+}

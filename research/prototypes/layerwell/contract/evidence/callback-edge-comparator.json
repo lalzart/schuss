@@ -1,0 +1,8 @@
+{
+  "callback_edge_512_wav_sha256": "4ec84ee5ecf3b636c2b29adf89be6271526ede936a049a8a9e1109263c01ebab",
+  "candidate_block_frames": 512,
+  "diverged": true,
+  "sample_exact_wav_sha256": "296ed46aaff493b6cbdb0d37c6ef3979607621579f0a9f334d053384afae0237",
+  "schema": "layerwell-callback-edge-comparator-v1",
+  "timing_change": "all events quantized to the next outer callback edge"
+}

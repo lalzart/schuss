@@ -1,0 +1,148 @@
+{
+  "claims": {
+    "canonical_schuss_record": false,
+    "executable_graph": false
+  },
+  "connections": [
+    {"from": "role.parameter.source-select", "kind": "resident-source-choice", "to": "role.node.source-switch"},
+    {"from": "role.parameter.source-performance", "kind": "source-owned-semantic-values", "to": "role.node.source-switch"},
+    {"from": "role.node.source-switch", "kind": "selected-source-advance", "to": "role.node.tide-source"},
+    {"from": "role.node.source-switch", "kind": "selected-source-advance", "to": "role.node.drum-source"},
+    {"from": "role.node.tide-source", "kind": "selected-stereo-signal", "to": "role.node.capture-state"},
+    {"from": "role.node.drum-source", "kind": "selected-stereo-signal", "to": "role.node.capture-state"},
+    {"from": "role.action.capture", "kind": "capture-transition", "to": "role.node.capture-state"},
+    {"from": "role.node.loop-phase", "kind": "phase-zero-boundary", "to": "role.node.capture-state"},
+    {"from": "role.node.capture-state", "kind": "provisional-stereo-write", "to": "role.node.sample-stores"},
+    {"from": "role.node.sample-stores", "kind": "three-aligned-stereo-layers", "to": "role.node.layer-mix"},
+    {"from": "role.parameter.layer-level", "kind": "three-bounded-levels", "to": "role.node.layer-mix"},
+    {"from": "role.parameter.layer-pan", "kind": "three-equal-power-positions", "to": "role.node.layer-mix"},
+    {"from": "role.action.layer-mute", "kind": "three-mute-states", "to": "role.node.layer-mix"},
+    {"from": "role.parameter.monitor-level", "kind": "selected-source-monitor", "to": "role.node.layer-mix"},
+    {"from": "role.parameter.master-level", "kind": "final-level", "to": "role.node.output-guard"},
+    {"from": "role.node.layer-mix", "kind": "summed-stereo-signal", "to": "role.node.output-guard"},
+    {"from": "role.node.output-guard", "kind": "bounded-float32", "to": "role.port.audio-out-left"},
+    {"from": "role.node.output-guard", "kind": "bounded-float32", "to": "role.port.audio-out-right"},
+    {"from": "role.node.capture-state", "kind": "accepted-capture-observation", "to": "role.display.state"},
+    {"from": "role.node.output-guard", "kind": "bounded-fault-observation", "to": "role.display.diagnostics"}
+  ],
+  "feedback_edges": [
+    {"from": "role.node.tide-source", "kind": "retained-source-state", "to": "role.node.tide-source"},
+    {"from": "role.node.drum-source", "kind": "retained-source-state", "to": "role.node.drum-source"},
+    {"from": "role.node.loop-phase", "kind": "integer-cycle-phase", "to": "role.node.loop-phase"},
+    {"from": "role.node.sample-stores", "kind": "committed-owner-playback", "to": "role.node.sample-stores"}
+  ],
+  "fusion_boundary": {
+    "implementation_note": "One portable instrument-owned Core fuses the bounded capture, phase, storage, mixing, and output roles while retaining two inspectable resident source adapters.",
+    "includes": [
+      "role.node.source-switch",
+      "role.node.capture-state",
+      "role.node.loop-phase",
+      "role.node.sample-stores",
+      "role.node.layer-mix",
+      "role.node.output-guard"
+    ],
+    "local_role": "role.fusion.core"
+  },
+  "nodes": [
+    {
+      "internals": ["two resident identities", "selected-state retention", "inactive-state pause"],
+      "local_role": "role.node.source-switch",
+      "name": "resident source switch",
+      "origin": "adapter",
+      "responsibility": "advance exactly one resident source and preserve the other source state",
+      "state_owner": true,
+      "unresolved_component_contract": ["resident musical source adapter"]
+    },
+    {
+      "internals": ["exact public portable Core", "existing parameter reducer", "sixteen-frame signal quantum"],
+      "local_role": "role.node.tide-source",
+      "name": "Tide Pit source",
+      "origin": "source-derived",
+      "responsibility": "produce the selected Tide Pit stereo phrase without changing its musical behavior",
+      "state_owner": true,
+      "unresolved_component_contract": ["licensed resident musical source"]
+    },
+    {
+      "internals": ["exact public streaming Core", "existing parameter reducer", "deterministic seed"],
+      "local_role": "role.node.drum-source",
+      "name": "generative drum source",
+      "origin": "source-derived",
+      "responsibility": "produce the selected generative drum stereo phrase without changing its musical behavior",
+      "state_owner": true,
+      "unresolved_component_contract": ["licensed resident musical source"]
+    },
+    {
+      "internals": ["idle", "waiting for phase zero", "recording", "cancel", "bounded owner swap"],
+      "local_role": "role.node.capture-state",
+      "name": "provisional capture state",
+      "origin": "newly-designed",
+      "responsibility": "establish the first cycle and replace later layers only after a complete valid take",
+      "state_owner": true,
+      "unresolved_component_contract": ["provisional cycle capture"]
+    },
+    {
+      "internals": ["integer frame index", "first-take length", "phase-zero wrap"],
+      "local_role": "role.node.loop-phase",
+      "name": "session loop phase",
+      "origin": "newly-designed",
+      "responsibility": "keep all committed layers aligned to one exact session cycle",
+      "state_owner": true,
+      "unresolved_component_contract": ["sample-exact session phase"]
+    },
+    {
+      "internals": ["three committed owners", "one staging owner", "fixed stereo float capacity"],
+      "local_role": "role.node.sample-stores",
+      "name": "four fixed sample stores",
+      "origin": "newly-designed",
+      "responsibility": "retain three committed source-only layers and one provisional take without processing-time allocation",
+      "state_owner": true,
+      "unresolved_component_contract": ["fixed-capacity stereo loop storage"]
+    },
+    {
+      "internals": ["three levels", "three equal-power pans", "three mutes", "source monitor", "seam bridge"],
+      "local_role": "role.node.layer-mix",
+      "name": "phase-aligned layer mix",
+      "origin": "newly-designed",
+      "responsibility": "combine committed layers and optional selected-source monitoring without recursive capture",
+      "state_owner": false,
+      "unresolved_component_contract": ["bounded phase-aligned layer mixer"]
+    },
+    {
+      "internals": ["master level", "finite replacement", "hard output bound", "diagnostic counters"],
+      "local_role": "role.node.output-guard",
+      "name": "bounded stereo output",
+      "origin": "fused-implementation",
+      "responsibility": "emit finite float samples and make limiting or invalid state observable",
+      "state_owner": true,
+      "unresolved_component_contract": ["bounded stereo output"]
+    }
+  ],
+  "prototype_id": "layerwell",
+  "public_facets": {
+    "actions": [
+      {"data_type": "three-way selection action", "direction": "input", "local_role": "role.action.layer-select", "name": "select layer"},
+      {"data_type": "three toggle actions", "direction": "input", "local_role": "role.action.layer-mute", "name": "toggle layer mute"},
+      {"data_type": "capture-state action", "direction": "input", "local_role": "role.action.capture", "name": "capture arm stop or cancel"},
+      {"data_type": "toggle action", "direction": "input", "local_role": "role.action.monitor", "name": "toggle selected-source monitor"},
+      {"data_type": "three-way destructive musical action", "direction": "input", "local_role": "role.action.clear", "name": "clear selected committed layer"},
+      {"data_type": "safety action", "direction": "input", "local_role": "role.action.panic", "name": "abort provisional capture and silence source for the current request"}
+    ],
+    "displays": [
+      {"data_type": "accepted state snapshot", "direction": "output", "local_role": "role.display.state", "name": "source layer capture and phase state"},
+      {"data_type": "bounded counters", "direction": "output", "local_role": "role.display.diagnostics", "name": "event capture source and output diagnostics"}
+    ],
+    "parameters": [
+      {"data_type": "two-way selection", "direction": "input", "local_role": "role.parameter.source-select", "name": "resident source"},
+      {"data_type": "selected-source semantic values", "direction": "input", "local_role": "role.parameter.source-performance", "name": "resident source performance state"},
+      {"data_type": "three normalized values", "direction": "input", "local_role": "role.parameter.layer-level", "name": "layer levels"},
+      {"data_type": "three bipolar values", "direction": "input", "local_role": "role.parameter.layer-pan", "name": "layer pans"},
+      {"data_type": "normalized value", "direction": "input", "local_role": "role.parameter.monitor-level", "name": "source monitor level"},
+      {"data_type": "normalized value", "direction": "input", "local_role": "role.parameter.master-level", "name": "master level"}
+    ],
+    "ports": [
+      {"data_type": "float32 audio", "direction": "output", "local_role": "role.port.audio-out-left", "name": "audio out left"},
+      {"data_type": "float32 audio", "direction": "output", "local_role": "role.port.audio-out-right", "name": "audio out right"}
+    ]
+  },
+  "schema_version": "schuss-instrument-lab-dsp-topology-v1"
+}

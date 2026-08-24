@@ -1,0 +1,173 @@
+{
+  "application_feedback": [
+    {
+      "authority": "accepted Layerwell Snapshot only",
+      "message": "channel 16 CC13 through CC28",
+      "purpose": "absolute accepted encoder positions"
+    },
+    {
+      "authority": "accepted source, layer, mute, capture, monitor, and mode state",
+      "message": "channel 1 CC at the official control index or RGB SysEx F0 00 20 29 02 16 01 53 index R G B F7",
+      "purpose": "navigation, mode, source-action, layer, capture, and monitor colors"
+    },
+    {
+      "authority": "accepted source, layer, loop length, phase, capture state, and parameter value",
+      "message": "fixed-capacity display SysEx for stationary target 53 and temporary target 54",
+      "purpose": "source-layer-capture status and short parameter overlays"
+    },
+    {
+      "authority": "accepted snapshot after connection or endpoint change",
+      "message": "bounded full encoder, LED, RGB, and display resync",
+      "purpose": "controller presentation catches up without mutating Core state"
+    }
+  ],
+  "endpoint_device_evidence": {
+    "connection_policy": "A future host may prefer input and output endpoints whose reported names identify the regular Launch Control 3 DAW port, but endpoint identity must remain host-only and explicit; no endpoint is opened by Task 042 validation.",
+    "notes": "Official protocol documentation and synthetic message traces do not prove enumeration, receipt, firmware configuration, LED or OLED appearance, encoder feel, or physical usefulness.",
+    "state": "deferred"
+  },
+  "gesture_state_machines": [
+    {
+      "id": "relative-encoder",
+      "input": "7-bit value with pivot 64",
+      "state": "accepted 7-bit mirror per source slot or accepted mixer value",
+      "transition": "delta = value - 64; clamp after the declared source or mixer step; value 64 is accepted no-change"
+    },
+    {
+      "id": "source-action-button",
+      "input": "channel 1 official button index press and release",
+      "state": "selected source and exact source reducer outcome",
+      "transition": "map physical slot 1 through 8 to existing source CC40 through CC47; press dispatches, release remains explicit and never double-dispatches"
+    },
+    {
+      "id": "capture-button",
+      "input": "Mixer button 7 rising edge",
+      "state": "idle no loop, playing, waiting boundary, or recording",
+      "transition": "start immediate first take; arm later take; cancel waiting; cancel recording; successful full cycle commits"
+    },
+    {
+      "id": "shift-clear",
+      "input": "Shift held on channel 7 plus Mixer button 8 rising edge",
+      "state": "selected layer and capture state",
+      "transition": "clear selected committed layer only when capture is idle; Shift prevents the normal monitor toggle"
+    },
+    {
+      "id": "mode-report",
+      "input": "channel 7 CC30 value 1 or 2",
+      "state": "Mixer or Control presentation mode",
+      "transition": "update presentation mode and resync from the same accepted Core snapshot; no source DSP mutation"
+    }
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {
+      "binding": "wrap source index by minus or plus one and turn source monitor on",
+      "id": "source-previous-next",
+      "rejection": "blocked and counted while waiting or recording"
+    },
+    {
+      "binding": "wrap selected layer index by minus or plus one",
+      "id": "layer-previous-next",
+      "rejection": "blocked and counted while waiting or recording"
+    },
+    {
+      "binding": "selected source encoder slot 1 through 16 becomes existing source CC20 through CC35 after relative mirror update",
+      "id": "source-encoder",
+      "rejection": "invalid slot, value, or unassigned source descriptor is counted and does not dispatch"
+    },
+    {
+      "binding": "selected source action slot 1 through 8 becomes existing source CC40 through CC47",
+      "id": "source-button",
+      "rejection": "invalid slot or unassigned source descriptor is counted and does not dispatch"
+    },
+    {
+      "binding": "set layer 1 through 3 pan with relative step 1/64 and clamp minus one through one",
+      "id": "layer-pan",
+      "rejection": "invalid layer or non-finite semantic set is ignored and counted"
+    },
+    {
+      "binding": "set layer 1 through 3 level with relative step 1/127 and clamp zero through one",
+      "id": "layer-level",
+      "rejection": "invalid layer or non-finite semantic set is ignored and counted"
+    },
+    {
+      "binding": "set monitor or master level with relative step 1/127 and clamp zero through one",
+      "id": "monitor-master",
+      "rejection": "non-finite semantic set is recovered to declared default and counted"
+    },
+    {
+      "binding": "select layer, toggle its mute, toggle source monitor, drive capture state, or clear selected layer",
+      "id": "layer-actions",
+      "rejection": "selection and clear are blocked during capture; invalid action is counted"
+    }
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/layerwell/contract/control-map.json",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "control": "Page Left and Page Right",
+      "input": "channel 1 CC106 and CC107 press",
+      "mode": "all",
+      "semantic": "previous and next source"
+    },
+    {
+      "control": "Track Left and Track Right",
+      "input": "channel 1 CC103 and CC102 press",
+      "mode": "all",
+      "semantic": "previous and next layer"
+    },
+    {
+      "control": "16 encoders",
+      "input": "channel 16 CC77 through CC92 relative, pivot 64",
+      "mode": "Control",
+      "semantic": "selected source slots 1 through 16"
+    },
+    {
+      "control": "eight bottom buttons",
+      "input": "channel 1 official indices 37 through 44",
+      "mode": "Control",
+      "semantic": "selected source action slots 1 through 8"
+    },
+    {
+      "control": "top encoders 1 through 4",
+      "input": "channel 16 CC77 through CC80 relative",
+      "mode": "Mixer",
+      "semantic": "layer 1 through 3 pan and source monitor level"
+    },
+    {
+      "control": "bottom encoders 1 through 4",
+      "input": "channel 16 CC85 through CC88 relative",
+      "mode": "Mixer",
+      "semantic": "layer 1 through 3 level and master level"
+    },
+    {
+      "control": "Mixer buttons 1 through 8",
+      "input": "channel 1 official indices 37 through 44",
+      "mode": "Mixer",
+      "semantic": "select layers 1 through 3, mute layers 1 through 3, capture or cancel, and monitor toggle"
+    },
+    {
+      "control": "Shift plus Mixer button 8",
+      "input": "Shift channel 7 CC63 held plus official index 44 rising edge",
+      "mode": "Mixer",
+      "semantic": "clear selected layer"
+    },
+    {
+      "control": "DAW mode report",
+      "input": "channel 7 CC30 value 1 Mixer or 2 Control",
+      "mode": "all",
+      "semantic": "presentation mode only"
+    },
+    {
+      "control": "DAW lifecycle",
+      "input": "enable SysEx F0 00 20 29 02 16 02 7F F7; relative rows channel 7 CC69 and CC72 value 127; disable SysEx ending 00 F7",
+      "mode": "host lifecycle",
+      "semantic": "no Core event; configure and clean up one explicitly selected future endpoint"
+    }
+  ],
+  "title": "Layerwell Desktop Meta-Instrument"
+}

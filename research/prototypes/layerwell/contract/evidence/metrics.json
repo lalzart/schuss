@@ -1,0 +1,18 @@
+{
+  "callback_edge_comparator_diverged": true,
+  "capture_aborts": 0,
+  "capture_commits": 2,
+  "dc": 0.005545143407787191,
+  "events_accepted": 5,
+  "events_dropped": 0,
+  "finite_samples": 288000,
+  "frames": 144000,
+  "limited_samples": 0,
+  "listening_performed": false,
+  "peak_absolute": 0.12469605356454849,
+  "physical_device_observed": false,
+  "rms": 0.015420317764667148,
+  "sample_storage_bytes": 49152000,
+  "schema": "layerwell-metrics-v1",
+  "timing_model": "sample-exact"
+}

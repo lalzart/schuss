@@ -1,0 +1,21 @@
+{
+  "artifact": {
+    "bytes": 8415496,
+    "path": "build/layerwell-juce-evidence/layerwell-instrument_artefacts/Release/Layerwell.app/Contents/MacOS/Layerwell",
+    "sha256": "89d0858cf5dd3d9dfdef4fcdb53f7ef6124a7fea92435e2e5d654dc4285dccdf"
+  },
+  "claims": {
+    "app_launched": false,
+    "audio_endpoint_opened": false,
+    "midi_endpoint_opened": false,
+    "target_built": true
+  },
+  "input_fingerprint_sha256": "4d58f3cca0f9cf612b7cb2db398f0a03b5561d6b6b8e62317ad342bb5608ff95",
+  "juce_manifest": {
+    "path": "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json",
+    "sha256": "db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5"
+  },
+  "schema_version": "layerwell-authenticated-juce-build-v1",
+  "status": "passed",
+  "target": "layerwell-instrument"
+}

@@ -1,0 +1,185 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/verify_source_authorities.py"
+      ],
+      "cost": "fast",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/prototypes/layerwell/prototype-index.json",
+        "research/prototypes/layerwell/source-dependencies.json",
+        "research/prototypes/tide-pit-gills/prototype-index.json",
+        "research/prototypes/generative-drum-machine/prototype-index.json"
+      ],
+      "id": "source-review"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/run_focused.py"
+      ],
+      "cost": "native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/layerwell/CMakeLists.txt",
+        "research/prototypes/layerwell/include",
+        "research/prototypes/layerwell/src",
+        "research/prototypes/layerwell/tests",
+        "research/prototypes/layerwell/contract/control-map.json"
+      ],
+      "id": "focused-structural"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/render_evidence.py",
+        "--check"
+      ],
+      "cost": "native",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/layerwell/contract/experiment.json",
+        "research/prototypes/layerwell/src",
+        "research/prototypes/layerwell/tests"
+      ],
+      "id": "objective-render"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/run_source_regressions.py"
+      ],
+      "cost": "native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/tide-pit-gills",
+        "research/prototypes/generative-drum-machine",
+        "research/prototypes/layerwell/CMakeLists.txt"
+      ],
+      "id": "affected-source-regressions"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/build_juce.py",
+        "--check"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/layerwell/CMakeLists.txt",
+        "research/prototypes/layerwell/src/juce_main.cpp",
+        "tools/dependencies/juce-source-tree-v1.json"
+      ],
+      "id": "authenticated-juce-build"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/reproduce_fresh_root.py"
+      ],
+      "cost": "reproduction",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/layerwell",
+        "research/prototypes/tide-pit-gills",
+        "research/prototypes/generative-drum-machine",
+        "runtime/instrument-lab"
+      ],
+      "id": "fresh-root-reproduction"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "current"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "docs",
+        "research/proposals/layerwell.md",
+        "research/prototypes/layerwell"
+      ],
+      "id": "routine-current"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "Cited primary, official, product, and exact local sources support only the bounded mechanism and protocol claims.",
+      "status": "available"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The proposal SHA-256 matches the approved implementation contract and uninterrupted user authorization.",
+      "status": "available"
+    },
+    {
+      "check_ids": [
+        "source-review"
+      ],
+      "level": "source",
+      "promotion_rule": "Exact source and dependency fingerprints, notices, public target use, and complete prototype diff pass review without source DSP changes.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "focused-structural",
+        "affected-source-regressions",
+        "routine-current"
+      ],
+      "level": "host-structural",
+      "promotion_rule": "Focused state, bounds, failure, map, mailbox, combined-link, affected-source, sanitizer, and governance checks pass.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "objective-render",
+        "fresh-root-reproduction"
+      ],
+      "level": "host-signal",
+      "promotion_rule": "Frozen renders meet exact partition, boundary, preservation, finiteness, range, source-advance, comparator, and repeatability requirements.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "authenticated-juce-build"
+      ],
+      "level": "target-build",
+      "promotion_rule": "The named Layerwell.app target configures, compiles, and links against the authenticated local JUCE 8.0.15 tree without launch.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "A separately authorized launched audio-device test must measure worst-case and p99 callback deadlines under declared load.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "A separately authorized regular Launch Control 3 endpoint test must observe input receipt, accepted state, feedback, and cleanup on physical hardware.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "A documented listening protocol must evaluate seam audibility, balance, replacement timing, and controller legibility.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "Canonical identities, graph and provider integration, distribution review, packaging, notarization, and release gates require separate accepted work.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

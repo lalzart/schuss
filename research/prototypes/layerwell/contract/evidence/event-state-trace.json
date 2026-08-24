@@ -1,0 +1,28 @@
+{
+  "schema": "layerwell-event-state-trace-v1",
+  "timing_model": "sample-exact",
+  "timeline_convention": "event-before-sample; start-inclusive; stop-exclusive",
+  "events": [
+    {"frame": 0, "sequence": 1, "kind": "capture-press"},
+    {"frame": 48000, "sequence": 2, "kind": "capture-press"},
+    {"frame": 48000, "sequence": 3, "kind": "source-next"},
+    {"frame": 72000, "sequence": 4, "kind": "select-layer-2"},
+    {"frame": 72000, "sequence": 5, "kind": "capture-press"}
+  ],
+  "capture_boundaries": {"first_start": 0, "first_commit": 48000, "second_arm": 72000, "second_start": 96000, "second_commit": 144000},
+  "final": {
+    "absolute_frame": 144000,
+    "accepted_sequence": 5,
+    "loop_length_frames": 48000,
+    "phase_frames": 0,
+    "selected_source": "GENERATIVE DRUMS",
+    "selected_layer": 1,
+    "capture_state": "IDLE",
+    "layers": [
+      {"index": 0, "occupied": true, "muted": false, "store_owner": 3},
+      {"index": 1, "occupied": true, "muted": false, "store_owner": 0},
+      {"index": 2, "occupied": false, "muted": false, "store_owner": 2}
+    ],
+    "source_processed_frames": [48000, 96000]
+  }
+}

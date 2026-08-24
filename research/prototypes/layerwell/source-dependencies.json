@@ -1,0 +1,73 @@
+{
+  "authorities": [
+    {
+      "path": "research/prototypes/tide-pit-gills/prototype-index.json",
+      "sha256": "8056df4d779b077247d0829a371205a47f74e916fcf514207eff9faca69616e2"
+    },
+    {
+      "path": "research/prototypes/tide-pit-gills/implementation-contract.json",
+      "sha256": "81071c9cac8b76770eb4184d9afd07dda5bc47a1b0bfcdd6075d56a42e01b8c2"
+    },
+    {
+      "path": "research/prototypes/tide-pit-gills/source-equivalence.json",
+      "sha256": "2c661c07068d552a696cb222f78c37aea27c468939f386b3a793eac82b7cf747"
+    },
+    {
+      "path": "research/prototypes/tide-pit-gills/third_party/THIRD_PARTY_NOTICES.md",
+      "sha256": "4e198a537ca719925bc407a073350d7708ecb15d0152fe876478e565e23a98aa"
+    },
+    {
+      "path": "research/prototypes/generative-drum-machine/prototype-index.json",
+      "sha256": "ecfa9c33c60ba6e35ad61e34c245533ed5fb4515a9c6e53dbc1ae504f80f6d4e"
+    },
+    {
+      "path": "research/prototypes/generative-drum-machine/contract/implementation-contract.json",
+      "sha256": "79c4998fecbc9914c65cdaf89834e90b4c974af3521122ab42babd6e566211d2"
+    },
+    {
+      "path": "research/prototypes/generative-drum-machine/contract/source-dependencies.json",
+      "sha256": "d61e5973840024075f72b40f63f6b3f06ba4cfb834c0c21c74eed1f21111ba13"
+    },
+    {
+      "path": "packages/dsp_adapters/mutable_braids_v1/ADAPTER.json",
+      "sha256": "c0c56698d495cbc582671cb5414f77f603fa3cba81319e221fd2910965f6facd"
+    },
+    {
+      "path": "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json",
+      "sha256": "db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5"
+    },
+    {
+      "path": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+      "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
+    }
+  ],
+  "claims": {
+    "catalog_membership": false,
+    "distribution_approval": false,
+    "graph_identity": false,
+    "implementation_identity": false,
+    "production_runtime": false
+  },
+  "composition": {
+    "embedded_test_policy": "The parent selects only Layerwell test names; each source suite is configured and run separately through its unchanged standalone CMake.",
+    "instrument_lab_policy": "The unchanged Tide Pit project owns the single SchussInstrumentLab::Core subdirectory. Layerwell recreates only the Generative Drums public Core target from its exact declared sources and links it to that same authority.",
+    "mutable_symbol_policy": "Only the parent build privately prefixes Tide Pit's internal braids and stmlib namespaces. Tide Pit standalone defaults to the original names, and no upstream byte is changed.",
+    "source_policy": "Both instruments are resident and called through their existing public Core and mapping surfaces; no binary is launched or hosted."
+  },
+  "consumer_id": "layerwell",
+  "notice_closure": [
+    {
+      "path": "packages/dsp_sources/mutable_eurorack_braids_v1/THIRD_PARTY_NOTICES.md",
+      "sha256": "d8b9f775d7adbdae406164e0ddad8cfb79a3e5c4b84afb3e08f1222ec787fb68"
+    },
+    {
+      "path": "packages/dsp_sources/mutable_stmlib_v1/THIRD_PARTY_NOTICES.md",
+      "sha256": "73a98e8c100f93d499ad2b389a5a7d59d074aeb9253fca4506f052d0c740c89e"
+    },
+    {
+      "path": "packages/dsp_sources/mutable_ksoloti_v1/THIRD_PARTY_NOTICES.md",
+      "sha256": "ddc99eecad00ff1387c50675f2a56c9079764ba2f5ea453d0e6816b700cb82f7"
+    }
+  ],
+  "schema_version": "layerwell-source-dependencies-v1"
+}

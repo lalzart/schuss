@@ -1,0 +1,98 @@
+{
+  "acceptance_tests": [
+    "Proposal fingerprint and all bundle artifacts pass ready validation before DSP source is added.",
+    "One parent build links the exact Tide Pit and Generative Drums public Cores with one Instrument Lab authority and both source suites still pass.",
+    "The same absolute event timeline produces identical accepted traces, capture boundaries, PCM, and metrics at 16, 64, 128, and 512 frame partitions.",
+    "First capture length is in 24000 through 1536000 frames, starts inclusively, stops exclusively, and establishes phase zero and the session cycle.",
+    "Later captures start at the next phase-zero boundary, record one cycle of selected-source audio, and commit with a bounded owner swap.",
+    "Cancel, short first take, overflow, unsupported process shape, and source failure preserve the prior committed layer bytes.",
+    "Prepare owns four preallocated stereo float buffers and repeated process calls allocate nothing, take no lock, perform no I/O, and emit finite bounded output.",
+    "Source controls terminate at the existing Tide Pit and Generative Drums reducers while inactive source state is preserved and not advanced.",
+    "Synthetic Launch Control 3 tests exhaustively compare DAW enable, cleanup, modes, relative encoders, Page and Track controls, layer actions, Shift-clear, resync, LEDs, encoder positions, OLED messages, and invalid MIDI with this bundle map.",
+    "The authenticated JUCE 8.0.15 Layerwell.app target configures, compiles, and links without app launch or endpoint access.",
+    "Focused, affected-source, sanitizer, objective render, fresh-root, and routine-current checks pass after implementation freeze.",
+    "RESULTS.md and GAPS.md keep target-build, real-time, connected-device, listening, distribution, and production evidence independent."
+  ],
+  "decision_rights": {
+    "may": [
+      "Choose prototype-local class and file names, fixed storage ownership, event representation, snapshot transport, restrained UI layout, colors, and diagnostic wording.",
+      "Choose relative encoder step sizes and the declared safe default layer, monitor, and master gains without expanding their ranges.",
+      "Apply the smallest target-existence guards needed for both existing prototype targets to compose without changing their standalone behavior."
+    ],
+    "must_not": [
+      "Change either source instrument DSP, public mapping, source state, defaults, labels, hashes, dependency authority, or retained evidence.",
+      "Add arbitrary source discovery, plug-in hosting, external synchronization, persistence, sample editing, more sources, or more layers.",
+      "Allocate canonical Schuss identities or change catalogs, schemas, providers, factories, application-library records, accepted graphs, or production runtime.",
+      "Infer a different controller model, faders, endpoint receipt, physical success, real-time behavior, listening quality, distribution readiness, or production status.",
+      "Launch the app, open audio or MIDI endpoints, configure hardware, stage, commit, push, upload, flash, publish, or overwrite inherited Task 041 work."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Completed proposal and ready implementation bundle under research/prototypes/layerwell/contract.",
+    "Portable Layerwell Core, exact Tide Pit and Generative Drums adapters, fixed-capacity event/state boundaries, and deterministic renderer.",
+    "Instrument-owned semantic surface, regular Launch Control 3 DAW-mode protocol adapter, accepted-state feedback, and exhaustive synthetic protocol tests.",
+    "Authenticated JUCE 8.0.15 standalone target with a restrained state-driven source, layer, capture, audio, and MIDI diagnostic UI.",
+    "Prototype index, DSP topology, semantic control surface, source dependency fingerprints, notices, retained evidence, results, gaps, and promotion handoff."
+  ],
+  "dependency_contracts": [
+    "Instrument Lab v1 is the sole shared portable host boundary and must appear only once in the combined parent graph.",
+    "Tide Pit Gills 0.1 is consumed read-only through its public targets; exact index SHA-256 8056df4d779b077247d0829a371205a47f74e916fcf514207eff9faca69616e2, contract 81071c9cac8b76770eb4184d9afd07dda5bc47a1b0bfcdd6075d56a42e01b8c2, source equivalence 2c661c07068d552a696cb222f78c37aea27c468939f386b3a793eac82b7cf747, and notices 4e198a537ca719925bc407a073350d7708ecb15d0152fe876478e565e23a98aa.",
+    "Schuss Generative Drums 0.6 is consumed read-only through its public targets; exact index SHA-256 ecfa9c33c60ba6e35ad61e34c245533ed5fb4515a9c6e53dbc1ae504f80f6d4e, contract 79c4998fecbc9914c65cdaf89834e90b4c974af3521122ab42babd6e566211d2, dependencies d61e5973840024075f72b40f63f6b3f06ba4cfb834c0c21c74eed1f21111ba13, and Braids adapter c0c56698d495cbc582671cb5414f77f603fa3cba81319e221fd2910965f6facd.",
+    "JUCE 8.0.15 is authenticated by manifest SHA-256 db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5; only local source may be used and network fetching is disabled.",
+    "Regular Launch Control 3 topology SHA-256 d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b and official Novation DAW-mode documentation are protocol authorities, not compiled or distributed dependencies.",
+    "Existing Mutable Instruments and stmlib source bytes and notices remain owned by the two source prototypes; no upstream source is copied or modified and distribution review remains deferred."
+  ],
+  "goal": {
+    "primary_claim": "One integer session phase plus a provisional staging-owner swap can produce three source-only aligned layers with partition-independent accepted state and PCM while the exact embedded source Cores and a regular Launch Control 3 surface remain cleanly separated.",
+    "why": "The performer needs a small standalone instrument for browsing, shaping, capturing, and layering existing Schuss sources without constructing Ableton tracks, virtual audio routing, or another general sampler workstation."
+  },
+  "inputs": [
+    "AGENTS.md, docs/PROJECT_CONTEXT.md, accepted ADRs 0016 through 0018, current governance, and docs/workflows/instrument-development.md.",
+    "Task 042 and the user's uninterrupted 2026-08-23 implementation authorization in the current Codex thread.",
+    "Exact local Tide Pit Gills 0.1 public Core, control map, source equivalence, dependencies, and notices.",
+    "Exact local Schuss Generative Drums 0.6 streaming Core, control map, dependencies, Braids adapter, and notices.",
+    "Instrument Lab v1, authenticated local JUCE 8.0.15 source, regular Launch Control 3 topology, official Novation programmer documentation, and cited looper prior art."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "User request in the current Codex thread on 2026-08-23: Okay, let's go ahead and implement it then; this followed the explicit clarification that the result is its own standalone wrapper instrument rather than advice to record extra Ableton Live tracks.",
+      "state": "approved"
+    },
+    "path": "research/proposals/layerwell.md",
+    "revision": "0.1",
+    "sha256": "631084a81e5a012a6029f2a4a072772a6adae07e2e1156d92d90ceb567ea1b21"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "Exactly two resident selectable sources: Tide Pit Gills 0.1 and Schuss Generative Drums 0.6; only the selected source advances.",
+      "Exactly three committed stereo layer slots plus one staging buffer, preallocated for 32 seconds at exactly 48 kHz.",
+      "Immediate first capture, one established session loop, boundary-quantized one-cycle later captures, provisional replacement, cancel, and clear.",
+      "Source-only capture, fixed seam ramp, per-layer level, pan, mute, selection, source monitor, master, limiting and finite diagnostics.",
+      "Regular Launch Control 3 DAW-mode adapter on the dedicated DAW port with Page source selection, Track layer selection, Control source shaping, Mixer layer and capture controls, Shift-clear, and accepted-state feedback.",
+      "Portable tests and renderer plus a built but unlaunched authenticated JUCE standalone target."
+    ],
+    "out": [
+      "Ableton integration, plug-ins, separate-binary or arbitrary source hosting, system audio capture, virtual loopback, or composite-mix resampling.",
+      "More sources or layers, overdub, external or MIDI clock, transport synchronization, slicing, timestretch, pitch shift, reverse, editable fades, import, export, or persistence.",
+      "Changes to either source instrument musical behavior, mapping, authority, dependencies, defaults, labels, or retained evidence.",
+      "Canonical Schuss or Gills identities, records, schemas, catalogs, providers, factories, application-library integration, Ksoloti execution, or firmware.",
+      "App launch, endpoint access, controller configuration, physical device, real-time, listening, distribution, release, staging, commit, push, upload, or publication."
+    ]
+  },
+  "status": "ready",
+  "target": "Portable C++17 Instrument Lab Core, deterministic 48 kHz renderer, regular Launch Control 3 DAW-mode adapter, and authenticated JUCE 8.0.15 macOS standalone",
+  "title": "Layerwell Desktop Meta-Instrument",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "built Layerwell.app plus deterministic stereo render, accepted-state trace, and Launch Control 3 protocol trace",
+    "evidence_level": "target-build",
+    "success_observation": "The exact source-composed portable test and render matrix passes at 16, 64, 128, and 512 frames; retained state, PCM, metrics, and synthetic LC3 traces meet frozen tolerances; and Layerwell.app configures, compiles, and links against authenticated JUCE 8.0.15 without being launched or opening an endpoint."
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "artifact_retention": {
+    "location": "research/prototypes/layerwell/contract/evidence",
+    "policy": "checked-in"
+  },
+  "comparator_condition_id": "callback-edge-comparator",
+  "conditions": [
+    {
+      "events": [
+        "frame 0 capture press includes source sample 0",
+        "frame 48000 capture press excludes source sample 48000 and commits layer 1"
+      ],
+      "id": "first-capture-establishes-loop",
+      "purpose": "Prove a valid immediate first take establishes N=48000, resets transport phase to zero, and occupies the selected layer."
+    },
+    {
+      "events": [
+        "frame 72000 select layer 2 and capture press while phase is 24000",
+        "frame 96000 begin source-only staging at phase zero",
+        "frame 144000 commit exactly 48000 staged frames before phase-zero playback"
+      ],
+      "id": "second-capture-quantized",
+      "purpose": "Prove later capture waits for the next boundary, records one exact cycle, and commits in bounded time."
+    },
+    {
+      "events": [
+        "hash occupied selected layer",
+        "arm replacement and cancel before boundary",
+        "arm replacement, begin recording, and cancel before completion"
+      ],
+      "id": "replacement-cancel-preserves",
+      "purpose": "Prove waiting and recording cancellation preserve the old committed bytes and owner."
+    },
+    {
+      "events": [
+        "start first capture at frame 0",
+        "stop at frame 23999"
+      ],
+      "id": "short-first-capture-rejected",
+      "purpose": "Prove a first take below 24000 frames is rejected without establishing a session loop."
+    },
+    {
+      "events": [
+        "occupy selected layer and hash it",
+        "start provisional replacement",
+        "present more than 128 events in one process request"
+      ],
+      "id": "overflow-aborts-replacement",
+      "purpose": "Prove event overflow aborts before commit, preserves the old layer, and reports dropped events."
+    },
+    {
+      "events": [
+        "run the same absolute event ledger at 16, 64, 128, and 512 frame outer blocks"
+      ],
+      "id": "partition-matrix",
+      "purpose": "Prove event, state, PCM, and metric identity across every canonical supported partition."
+    },
+    {
+      "events": [
+        "edit Tide Pit source mirrors and process it",
+        "select Generative Drums, edit its mirrors, and process it",
+        "return to Tide Pit and compare preserved snapshot and advance counters"
+      ],
+      "id": "source-pause-and-controls",
+      "purpose": "Prove source controls terminate at existing reducers and the inactive source preserves state without advancing."
+    },
+    {
+      "events": [
+        "occupy all three layers",
+        "sweep legal level, pan, monitor, master, mute, and clear extremes",
+        "inject non-finite semantic values through the negative API fixture"
+      ],
+      "id": "mix-safety-extremes",
+      "purpose": "Prove finite bounded output, equal-power pan endpoints, limiting diagnostics, and declared non-finite recovery."
+    },
+    {
+      "events": [
+        "quantize each semantic event to the next callback edge in a test-only implementation",
+        "compare 16 and 512 frame results"
+      ],
+      "id": "callback-edge-comparator",
+      "purpose": "Falsify callback-boundary timing by requiring this deliberately naive comparator to diverge across partitions while production remains identical."
+    },
+    {
+      "events": [
+        "enable DAW mode and relative rows",
+        "parse Page, Track, mode, encoder, source-button, layer-button, Shift-clear, invalid, and release messages",
+        "build accepted-state encoder, LED, RGB, OLED, resync, endpoint-change, and disable messages"
+      ],
+      "id": "lc3-protocol",
+      "purpose": "Exhaustively compare the pure controller adapter and feedback builder with control-map.json without opening a MIDI endpoint."
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "stereo PCM WAV at 48 kHz",
+      "name": "layerwell.wav"
+    },
+    {
+      "kind": "canonical JSON accepted event, capture, ownership, phase, and source-state trace",
+      "name": "event-state-trace.json"
+    },
+    {
+      "kind": "canonical JSON synthetic MIDI input and accepted-state feedback trace",
+      "name": "controller-trace.json"
+    },
+    {
+      "kind": "canonical JSON frame, signal, allocation, limiter, event, and source-advance metrics",
+      "name": "metrics.json"
+    },
+    {
+      "kind": "SHA-256 manifest for retained outputs and abort-preservation fixtures",
+      "name": "SHA256SUMS"
+    },
+    {
+      "kind": "stereo PCM WAV from the deliberately callback-edge-quantized 512-frame comparator",
+      "name": "callback-edge-512.wav"
+    },
+    {
+      "kind": "canonical JSON binding the sample-exact and deliberately naive comparator hashes",
+      "name": "callback-edge-comparator.json"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 1279342930,
+  "status": "ready",
+  "supported_block_frames": [
+    16,
+    64,
+    128,
+    512
+  ],
+  "timeline_convention": "Events are stable-sorted by block-relative sample_offset then ingress_sequence and apply before the addressed sample. First-capture start is inclusive and stop is exclusive. An established-loop capture starts at phase zero, records exactly N frames, and commits before the following phase-zero sample is mixed.",
+  "title": "Layerwell Desktop Meta-Instrument",
+  "tolerances": {
+    "abort_committed_buffer_sha256": "exactly unchanged",
+    "accepted_state_and_controller_trace": "byte-exact canonical JSON within one build and identical across all supported blocks",
+    "finite_samples_percent": 100,
+    "maximum_output_absolute": 1.0,
+    "partition_pcm": "byte-exact float-to-PCM result within one build",
+    "process_allocations": 0,
+    "session_boundaries_frames": "exact integer equality",
+    "source_inactive_advance_frames": 0
+  }
+}

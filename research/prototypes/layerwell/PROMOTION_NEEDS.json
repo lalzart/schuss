@@ -1,0 +1,42 @@
+{
+  "claims": {
+    "allocates_canonical_records": false,
+    "executable_graph": false
+  },
+  "needs": [
+    {
+      "local_role": "role.node.capture-state",
+      "required_contract": "provisional cycle capture"
+    },
+    {
+      "local_role": "role.node.drum-source",
+      "required_contract": "licensed resident musical source"
+    },
+    {
+      "local_role": "role.node.layer-mix",
+      "required_contract": "bounded phase-aligned layer mixer"
+    },
+    {
+      "local_role": "role.node.loop-phase",
+      "required_contract": "sample-exact session phase"
+    },
+    {
+      "local_role": "role.node.output-guard",
+      "required_contract": "bounded stereo output"
+    },
+    {
+      "local_role": "role.node.sample-stores",
+      "required_contract": "fixed-capacity stereo loop storage"
+    },
+    {
+      "local_role": "role.node.source-switch",
+      "required_contract": "resident musical source adapter"
+    },
+    {
+      "local_role": "role.node.tide-source",
+      "required_contract": "licensed resident musical source"
+    }
+  ],
+  "prototype_id": "layerwell",
+  "schema_version": "schuss-instrument-lab-promotion-needs-v1"
+}
