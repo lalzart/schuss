@@ -1,0 +1,156 @@
+{
+  "checks": [
+    {
+      "command": ["python3", "research/prototypes/wanderbody/tests/verify_provenance.py"],
+      "cost": "fast",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/proposals/wanderbody-standalone-r01.md",
+        "research/prototypes/wanderbody/contract-r01",
+        "research/prototypes/wanderbody/THIRD_PARTY_NOTICES.md",
+        "research/prototypes/wanderbody/source-dependencies.json"
+      ],
+      "id": "source-review"
+    },
+    {
+      "command": ["python3", "research/prototypes/wanderbody/tests/run_structural.py", "--check"],
+      "cost": "native-focused",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/wanderbody/CMakeLists.txt",
+        "research/prototypes/wanderbody/include",
+        "research/prototypes/wanderbody/src",
+        "research/prototypes/wanderbody/tests"
+      ],
+      "id": "focused-structural"
+    },
+    {
+      "command": ["python3", "research/prototypes/wanderbody/tests/render_evidence.py", "--reproduce", "--output", "build/wanderbody-evidence"],
+      "cost": "native-render",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/wanderbody/contract-r01/experiment.json",
+        "research/prototypes/wanderbody/src/core.cpp",
+        "research/prototypes/wanderbody/src/render.cpp",
+        "research/prototypes/wanderbody/fixtures/expected-render-manifest.json"
+      ],
+      "id": "objective-render"
+    },
+    {
+      "command": ["python3", "research/prototypes/wanderbody/tests/run_structural.py", "--sanitizers"],
+      "cost": "native-sanitizer",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/wanderbody/include",
+        "research/prototypes/wanderbody/src",
+        "research/prototypes/wanderbody/tests"
+      ],
+      "id": "sanitizers"
+    },
+    {
+      "command": ["python3", "research/prototypes/wanderbody/tests/build_juce.py", "--build-dir", "build/wanderbody-juce-release", "--juce-source-dir", "operator-supplied-authenticated-juce-8.0.15-root"],
+      "cost": "native-target-build",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/wanderbody/CMakeLists.txt",
+        "research/prototypes/wanderbody/src/juce_main.cpp",
+        "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json"
+      ],
+      "id": "authenticated-juce-build"
+    },
+    {
+      "command": ["python3", "tools/instrument_lab/validate_prototype.py", "--repo-root", ".", "--consumer-root", "research/prototypes/wanderbody", "--check"],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/wanderbody/prototype-index.json",
+        "research/prototypes/wanderbody/dsp-topology.json",
+        "research/prototypes/wanderbody/semantic-control-surface.json",
+        "research/prototypes/wanderbody/PROMOTION_NEEDS.json",
+        "research/prototypes/wanderbody/IMPLEMENTATION_HANDOFF.md"
+      ],
+      "id": "instrument-lab-consumer"
+    },
+    {
+      "command": ["python3", "tools/instrument_lab/reproduce.py", "--repo-root", ".", "--consumer-root", "research/prototypes/wanderbody", "--reproduce"],
+      "cost": "reproduction-expensive",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/wanderbody",
+        "research/prototype_support/instrument_lab"
+      ],
+      "id": "relocated-reproduction"
+    },
+    {
+      "command": ["python3", "tools/validation/run.py", "--profile", "current"],
+      "cost": "aggregate-current",
+      "evidence_level": "host-structural",
+      "freshness_inputs": ["research/prototypes/wanderbody", "docs/tasks/048-wanderbody-standalone-first-playable.md"],
+      "id": "repository-current"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "Cited first-party CDP Mutable Instruments and JUCE sources plus the modal-synthesis technical reference support the selected mechanisms without a novelty or source-equivalence claim.",
+      "status": "available"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The user-approved revision-0.1 proposal SHA-256 matches this ready implementation contract.",
+      "status": "available"
+    },
+    {
+      "check_ids": ["source-review"],
+      "level": "source",
+      "promotion_rule": "The implementation exists as original Wanderbody-owned code with exact proposal contract notice and dependency fingerprints and a complete-diff review.",
+      "status": "planned"
+    },
+    {
+      "check_ids": ["focused-structural", "sanitizers", "instrument-lab-consumer", "relocated-reproduction", "repository-current"],
+      "level": "host-structural",
+      "promotion_rule": "Focused state capture motion recurrence allocation failure UI-exchange sanitizer freshness repository and relocated checks pass at their declared cadence.",
+      "status": "planned"
+    },
+    {
+      "check_ids": ["objective-render"],
+      "level": "host-signal",
+      "promotion_rule": "WB01 through WB10 decision and PCM artifacts meet the frozen finite peak DC locality correlation recurrence body silence and partition tolerances.",
+      "status": "planned"
+    },
+    {
+      "check_ids": ["authenticated-juce-build"],
+      "level": "target-build",
+      "promotion_rule": "The exact macOS arm64 standalone compiles and links against authenticated JUCE 8.0.15 and remains unlaunched and uninstalled.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "A separately authorized named audio configuration must meet declared callback deadline allocation xrun restart and resource budgets.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "A separately authorized audio and MIDI endpoint session must prove selection receipt output lifecycle reconnect and any physical mapping.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "A documented randomized listening protocol must support source relationship recurrence recognition and body usefulness for the exact build.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "Canonical identity graph provider runtime persistence packaging licensing distribution and release gates require a separate accepted task.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

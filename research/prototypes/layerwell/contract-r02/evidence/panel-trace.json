@@ -1,0 +1,42 @@
+{
+  "schema": "layerwell-embedded-panel-trace-v1",
+  "presentation_authority": "accepted Layerwell Snapshot only",
+  "tide_pit": {
+    "processed_frames": 48000,
+    "source": "REED",
+    "scale": "MAJ5",
+    "effect": "CLEAN",
+    "target": "PIT",
+    "display_lines": ["TIDE PIT PIT    C 4  ", "WAVE 1-4-7-2 STEP 4  ", "M77 S59 D34 CLEAN    ", "MAJ5  REED EVOLVE    "],
+    "encoder_positions": 16,
+    "button_positions": 8,
+    "scope_samples": 256
+  },
+  "pamplist": {
+    "processed_frames": 96000,
+    "selected_page": 0,
+    "context": "VOICE",
+    "running": true,
+    "guide": "VOICE edits the base sound. The lower SEQUENCER row decides when and how the lane moves.",
+    "controls": [
+      {"slot": 0, "label": "MODEL", "value": 0, "enabled": true},
+      {"slot": 1, "label": "PITCH", "value": 48, "enabled": true},
+      {"slot": 2, "label": "HARMONICS", "value": 0.5, "enabled": true},
+      {"slot": 3, "label": "TIMBRE", "value": 0.5, "enabled": true},
+      {"slot": 4, "label": "MORPH", "value": 0.5, "enabled": true},
+      {"slot": 5, "label": "DECAY", "value": 0.5, "enabled": true},
+      {"slot": 6, "label": "COLOUR", "value": 0.5, "enabled": true},
+      {"slot": 7, "label": "LEVEL", "value": 0.80000001192092896, "enabled": true},
+      {"slot": 8, "label": "RATE", "value": 8, "enabled": true},
+      {"slot": 9, "label": "PHASE", "value": 0, "enabled": true},
+      {"slot": 10, "label": "SHAPE", "value": 1, "enabled": true},
+      {"slot": 11, "label": "HITS", "value": 4, "enabled": true},
+      {"slot": 12, "label": "ROTATE", "value": 0, "enabled": true},
+      {"slot": 13, "label": "CHANCE", "value": 1, "enabled": true},
+      {"slot": 14, "label": "REPEAT", "value": 0, "enabled": true},
+      {"slot": 15, "label": "DEPTH", "value": 1, "enabled": true}
+    ],
+    "page_buttons": 8,
+    "impact_history_samples": 40
+  }
+}

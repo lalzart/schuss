@@ -1,0 +1,94 @@
+{
+  "artifact_retention": {
+    "location": "research/prototypes/pamplist/contract-vst3-r01/evidence generated deterministically from the final frozen implementation; the VST3 binary remains only in the ignored build tree and is bound by a checked-in receipt",
+    "policy": "reproducible-only"
+  },
+  "comparator_condition_id": "PAMP_VST3_DIRECT_COMPARATOR",
+  "conditions": [
+    {
+      "events": [
+        "At frame 0 set lane 1 Rate 8, Phase 0, Shape Pulse, Hits 5, Trigger On, Depth 1, model 21, pitch 36, voice level 0.2, master 0.65, and Run On.",
+        "At non-quantum sample offsets change Phase, Rotate, Chance, and a signed Pitch route through channel-16 CC messages.",
+        "At a later non-block offset enter Global, raise Cohere, issue one Clear edge, return to lane 1, and render through all block partitions."
+      ],
+      "id": "PAMP_VST3_DIRECT_COMPARATOR",
+      "purpose": "Drive the frozen direct Core and the VST processor with equivalent Controls transitions and compare exact stereo samples and accepted traces."
+    },
+    {
+      "events": [
+        "Serialize a dense seven-lane program with signed routes, cohesion, Run, seed, page 6, and Motion mode.",
+        "Restore the bytes into a fresh instance and a fresh direct-Core fixture without replaying Clear.",
+        "Render both from frame zero, then inject one Clear and verify exactly one effect-clear transition."
+      ],
+      "id": "PAMP_VST3_STATE_TWIN",
+      "purpose": "Prove transactional complete program recall and the declared fresh volatile-state equivalence relation."
+    },
+    {
+      "events": [
+        "Prepare two independent instances with identical state and render identical blocks.",
+        "Mutate only instance A through one parameter, private mode, and Clear event.",
+        "Verify instance B parameter bytes, accepted snapshot, diagnostics, and subsequent PCM remain equal to its untouched comparator."
+      ],
+      "id": "PAMP_VST3_MULTI_INSTANCE",
+      "purpose": "Detect shared globals, controller state, Core state, scratch buffers, accepted mailboxes, or editor-history leakage."
+    },
+    {
+      "events": [
+        "Instantiate at 44100 Hz and 96000 Hz, process nonempty MIDI and output buffers, and require exact silence.",
+        "Attempt malformed, wrong-version, duplicate-ID, missing-ID, non-finite, and truncated state payloads.",
+        "Request unsupported audio layouts and verify fail-closed behavior without changing the last valid program."
+      ],
+      "id": "PAMP_VST3_NEGATIVE",
+      "purpose": "Prove deterministic silence and transactional retention at unsupported host and state boundaries."
+    },
+    {
+      "events": [
+        "Scan the built bundle through a separate JUCE VST3 host and require exactly one Pamplist instrument description.",
+        "Instantiate at 48000 Hz and 512 frames, require zero input and stereo output, create and destroy an unattached editor, set the enabled single-lane fixture, and render nonzero finite PCM.",
+        "Round-trip state into a second module instance and compare the fresh render and parameter inventory."
+      ],
+      "id": "PAMP_VST3_MODULE_HOST",
+      "purpose": "Validate the actual arm64 VST3 ABI bundle rather than only the directly linked processor class."
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "SHA-256 and maximum-delta record for interleaved stereo float PCM",
+      "name": "direct-processor-pcm"
+    },
+    {
+      "kind": "Canonical JSON parameter descriptor, Controls, accepted Snapshot, event, and diagnostic traces",
+      "name": "state-and-event-trace"
+    },
+    {
+      "kind": "Versioned plug-in state byte hashes plus accept/reject transaction report",
+      "name": "state-roundtrip"
+    },
+    {
+      "kind": "VST3 scanner description, buses, parameter inventory, editor lifecycle, architecture, module metadata, and render result",
+      "name": "module-host-receipt"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 1346456912,
+  "status": "ready",
+  "supported_block_frames": [
+    1,
+    16,
+    64,
+    128,
+    512,
+    513,
+    2048
+  ],
+  "timeline_convention": "Frame zero is the first output sample after prepare or accepted state recall. A MIDI event at host sample position N applies before rendering sample N; equal-position events retain JUCE MidiBuffer iteration order. Calls over 512 frames are consecutive source-time partitions with no inserted or dropped frame.",
+  "title": "Pamplist 0.6 Local VST3 Host Migration",
+  "tolerances": {
+    "direct_processor_max_absolute_pcm_delta": 0,
+    "finite_sample_failures": 0,
+    "invalid_rate_max_absolute_pcm": 0,
+    "module_state_normalized_parameter_delta": 0,
+    "multi_instance_comparator_max_absolute_pcm_delta": 0
+  }
+}

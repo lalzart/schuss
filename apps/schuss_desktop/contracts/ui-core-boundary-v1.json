@@ -282,7 +282,7 @@
     "operation_selection": "closed-listed-allowlist",
     "renderer_file_access": "absent",
     "request_handling": "submit-one-versioned-schuss-operation-and-explicit-workspace",
-    "selected_record_set": "contracts/record-sets/ui-desktop-instrument-library-v1.json",
+    "selected_record_set": "contracts/record-sets/task043-pamplist-canonical-v1.json",
     "status": "implemented-instrument-library-home",
     "unknown_operation": "reject",
     "unknown_result_schema": "reject",

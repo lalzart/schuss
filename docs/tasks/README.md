@@ -15,6 +15,54 @@ There is no active task.
 
 ## Completed local milestones
 
+Task 048 completed in the current working tree as the noncanonical Wanderbody
+0.1 standalone first playable. Its portable recent-memory Core, Hover/Drunk
+motion, exact tuple recurrence, four fragment voices, original six-mode body,
+transactional state, accepted-state shell, focused/sanitizer checks, objective
+matrix, authenticated unlaunched JUCE target, and relocated reproduction
+passed. App launch, endpoints, real-time, devices, listening, distribution,
+Git publication, canonical identity, and production integration remain
+separate gates. The work is not committed.
+
+Task 047 completed in the current working tree as the bounded fixed-internal-
+rate successor for both private macOS arm64 VST3 adapters. Tide Pit and
+Pamplist retain exact 48 kHz Core behavior and accept 32, 44.1, 48, 88.2, 96,
+176.4, and 192 kHz hosts through one shared fixed-capacity converter with
+reported latency. Focused, allocation, actual-module, authenticated Release,
+and relocated reproduction evidence passed. Ableton, endpoints, devices,
+listening, distribution, Git publication, and production integration remain
+separate gates. Schuss `current` passed; the repository compatibility run
+retained one unrelated inherited Task 043 stale five-versus-six library-count
+assertion. The work is not committed.
+
+Task 046 completed in the current working tree as the private macOS arm64 Tide
+Pit VST3 adapter. Its sixteen stable parameters, fresh-Core transactional
+state, bounded 48 kHz processor, accepted-state editor, direct/module-host
+evidence, authenticated uninstalled Release bundle, and relocated reproduction
+passed. Ableton, endpoints, devices, listening, distribution, Git publication,
+and production integration remain separate gates. The work is not committed.
+
+Task 045 completed in the current working tree as the private macOS arm64
+Pamplist 0.6 VST3 adapter. Its 179 stable adapter parameters, transactional
+state, bounded 48 kHz processor, source-faithful editor, direct/module-host
+evidence, authenticated uninstalled Release bundle, and relocated reproduction
+passed. Ableton, endpoints, devices, listening, distribution, Git publication,
+and production integration remain separate gates. The work is not committed.
+
+Task 044 completed in the current working tree as the noncanonical Layerwell
+0.2 revision with exactly Tide Pit and Pamplist, complete accepted-state
+embedded source panels, the existing three-layer source-only sampler, bounded
+sole-layer start/end trim, deterministic retained evidence, and an
+authenticated but unlaunched app build. The configured Macro Voice signed-shift
+limitation remains explicit; no app, endpoint, device, listening, Git,
+distribution, or production action was performed. The work is not committed.
+
+Task 043 completed in the current working tree as Pamplist 0.6's canonical
+catalog, seven-role graph, and instrument identity plus its exact audition
+library v2 link. The retained JUCE executable remains Instrument Lab launch
+authority; no canonical provider/runtime, device, distribution, or production
+claim was added. The work is not committed.
+
 Task 042 completed locally at `7a66949` as the noncanonical Layerwell desktop
 meta-instrument. Its exact-source composition, three synchronized source-only
 layers, synthetic regular Launch Control 3 DAW-mode adapter, objective host
@@ -36,6 +84,8 @@ fresh allocation audit.
 
 ## Completed source, lab, and desktop follow-ups
 
+- Task 043 promoted only Pamplist's accepted musical identity and linked its
+  exact prototype/build authority from the six-entry audition library.
 - Task 036 completed the shared authenticated Mutable/Ksoloti physical source
   package and exact Tide Pit migration at `c6fad1f`. Its frozen contract retains
   proposal-time wording; `036-RESULTS.md`, `036-GAPS.md`, and the exact handoff

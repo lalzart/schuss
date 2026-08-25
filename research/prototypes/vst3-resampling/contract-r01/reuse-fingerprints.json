@@ -1,0 +1,25 @@
+{
+  "artifacts": [
+    {
+      "path": "research/prototypes/tide-pit-gills/control-map.json",
+      "role": "Tide Pit controller and semantic map",
+      "sha256": "a91f4ee46b3339f455d5d277f4b8f25d378c652eb946d6c017076e44fd356f60"
+    },
+    {
+      "path": "research/prototypes/pamplist/semantic-control-surface.json",
+      "role": "Pamplist controller and semantic surface",
+      "sha256": "1944250974303b05e75059a4fa1d58d6c70d661d19ca6d60ca490b72d5b1015a"
+    },
+    {
+      "path": "research/prototypes/tide-pit-gills/include/tidepit/ui_model.hpp",
+      "role": "Tide Pit accepted-state UI model",
+      "sha256": "c43620444595de670480acc374f75b8c0ae69d5f67e96b8f3da469c6f429163a"
+    },
+    {
+      "path": "research/prototypes/pamplist/vst3/src/vst3_editor.cpp",
+      "role": "Pamplist accepted-state VST3 editor",
+      "sha256": "9da42c100091be05c93e51e0dfafaa77779e38e406893dc983bdc136dbd2f597"
+    }
+  ],
+  "schema_version": "schuss-task047-reuse-fingerprints-v1"
+}

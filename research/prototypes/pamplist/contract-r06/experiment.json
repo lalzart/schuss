@@ -1,0 +1,80 @@
+{
+  "artifact_retention": {
+    "location": "research/prototypes/pamplist/contract-r06/evidence",
+    "policy": "checked-in"
+  },
+  "comparator_condition_id": "PAMP_R06_DRY_CMP",
+  "conditions": [
+    {
+      "events": [
+        "frame 0 reproduce the exact revision 0.5 PAMP_R05_AUDIO_CMP controls, seed, seven voices, Trigger On values, dry cohesion state, and 131072-frame timeline",
+        "set every non-Cohere body control to the same active predecessor values while retaining Cohere exact zero",
+        "retain stereo PCM, events, snapshots, energy telemetry, surface model, and metrics at every supported host partition",
+        "require audio.wav SHA-256 a07ed1a3d461f538349cd5c12678e732d1619efc6e8ec623dce30ffd31e47912 exactly"
+      ],
+      "id": "PAMP_R06_DRY_CMP",
+      "purpose": "Falsify the exact-dry claim if body gain, ducking, or telemetry changes any revision 0.5 Cohere-zero audio byte."
+    },
+    {
+      "events": [
+        "render one frozen 5-of-16 lane at Phase 0 and 64 and require different eligible trigger frames with equal rate and hit count",
+        "render the same lane at Rotate 0 and 3 and require different trigger positions with equal 5-of-16 cardinality",
+        "render trigger-only Pulse and Triangle shapes and require equal trigger-event timing",
+        "add one positive Pitch Motion route, render Pulse, Triangle, Sine, Ramp, Decay, Hold, and Smooth shapes, and require routed modulation trajectories plus representative PCM to differ"
+      ],
+      "id": "PAMP_R06_SEQUENCE",
+      "purpose": "Prove Phase, Shape, and Rotate are wired according to their existing dependencies without inventing new sequencer semantics."
+    },
+    {
+      "events": [
+        "render the same seven-voice body fixture with one-at-a-time low and high Drive, Root, Spread, Tail, Damping, Width, and Duck values at Cohere 0.8",
+        "measure stereo RMS differences or stronger frequency, tail, side-energy, and duck invariants and require finite stable output with zero nominal saturation or recovery",
+        "excite the Tail 0.8 body, set every voice level to zero, retain a pre-Clear tail with peak at least 5e-4 normalized, increment Clear generation once, and require exact-zero effect-only output on the next quantum",
+        "require Clear to preserve lane, voice, scheduler, source RNG, and accepted control state except generation, count, and effect history"
+      ],
+      "id": "PAMP_R06_GLOBAL",
+      "purpose": "Falsify the claim that every active Global body control and effect-only Clear is materially observable under its declared Cohere dependency."
+    },
+    {
+      "events": [
+        "render all seven voices with distinct schedules and require every active lane cumulative energy to be finite, monotone, nonzero, and partition exact while an unstarted control lane remains zero in a separate part",
+        "sample accepted Snapshots at irregular intervals through the portable activity reducer and retain seven display levels, trigger deltas, cohesion activity, and Clear flags",
+        "reset or roll back frame and counters and require one exact-zero rebase sample without a false trigger or Clear",
+        "push more than 192 reduced samples through the fixed history model and require chronological wrap ordering and fixed capacity"
+      ],
+      "id": "PAMP_R06_ACTIVITY",
+      "purpose": "Prove the visual history receives all callback-period activity through bounded accepted telemetry rather than torn or polled raw buffers."
+    }
+  ],
+  "outputs": [
+    {"kind": "per-condition stereo signed 24-bit PCM WAV at 48 kHz", "name": "audio.wav"},
+    {"kind": "canonical JSON quantum events, trigger masks, accepted steps, and Clear provenance", "name": "events.json"},
+    {"kind": "canonical JSON accepted controls, scheduler/source/effect state, and cumulative lane/body telemetry", "name": "snapshots.json"},
+    {"kind": "canonical JSON signal, response, difference, tail, safety, and partition metrics", "name": "metrics.json"},
+    {"kind": "canonical JSON reduced per-lane levels, trigger/Clear flags, cohesion activity, reset, and fixed-history observations", "name": "activity.json"},
+    {"kind": "canonical JSON Voice, Motion, Sequencer, and Global surface descriptors and dependency tooltips", "name": "surface.json"},
+    {"kind": "canonical JSON proposal, predecessor, source, condition, control-map, and artifact fingerprints", "name": "manifest.json"},
+    {"kind": "SHA-256 manifest over every retained evidence output", "name": "SHA256SUMS"}
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 1346456912,
+  "status": "ready",
+  "supported_block_frames": [1, 16, 64, 128, 257, 512],
+  "timeline_convention": "Controls are sanitized and accepted only when a persistent 16-frame source quantum begins. Phase offsets the existing Q32 lane phase, Shape forms the accepted continuous Motion value, and Rotate enters only the modulo-16 Euclidean predicate. Per-lane normalized energy accumulates for every rendered post-level pre-cohesion sample and is copied through the accepted Snapshot. Activity reduction differences consecutive accepted counters on the UI side. Clear applies at one accepted quantum. Host intervals are half-open and outer partitioning never changes Core/event/telemetry bytes.",
+  "title": "Pamplist 0.6: Control Response and Impact Trails",
+  "tolerances": {
+    "activity_display_bounds": "every reduced lane/body level is finite in [0,1], silence is exact zero, and reset emits one zero rebase sample",
+    "activity_history_capacity": 192,
+    "audio_comparator_sha256": "a07ed1a3d461f538349cd5c12678e732d1619efc6e8ec623dce30ffd31e47912",
+    "clear": "pre-Clear silent-input tail peak is at least 5e-4 normalized; next effect-only quantum is exact zero; one generation/count/event changes; musical/scheduler/source state remains exact",
+    "controller_partition_artifacts": "byte exact within one frozen build for 1, 16, 64, 128, 257, and 512 frame hosts",
+    "global_parameter_response": "each one-at-a-time active Drive, Root, Spread, Tail, Damping, Width, and Duck comparison has normalized stereo RMS difference at least 5e-4 or a stronger parameter-specific invariant",
+    "lane_energy": "finite nonnegative cumulative values, monotone while the transport is continuous, zero for silent/unstarted lanes, reset to zero, and exact across partitions",
+    "maximum_output_q27": 134217727,
+    "nominal_nonfinite_recovery_or_saturation_count": 0,
+    "phase": "Phase 0 and 64 produce different eligible trigger frames while rate and frozen hit count remain equal",
+    "rotate": "Rotate 0 and 3 produce different eligible trigger positions with equal 5-of-16 cardinality",
+    "shape": "trigger-only event timing is exact across shapes; nonzero Pitch Motion produces different finite modulation trajectories and representative PCM"
+  }
+}

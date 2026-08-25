@@ -1,7 +1,8 @@
 #include "layerwell/source_adapters.hpp"
 
-#include "schuss/generative_drum_machine/control_map.hpp"
-#include "schuss/generative_drum_machine/core.hpp"
+#include "schuss/pamplist/activity_model.hpp"
+#include "schuss/pamplist/control_map.hpp"
+#include "schuss/pamplist/ui_model.hpp"
 #include "tidepit/control_map.hpp"
 #include "tidepit/core.hpp"
 
@@ -15,7 +16,10 @@
 namespace layerwell {
 namespace {
 
-namespace drums = schuss::generative_drum_machine;
+namespace pam = schuss::pamplist;
+
+constexpr double kQ27ToFloat = 1.0 / 134217728.0;
+constexpr std::uint32_t kPamplistActivityPeriodFrames = 2400U;
 
 std::uint8_t normalizedToMidi(double value) noexcept {
     if (!std::isfinite(value)) return 0U;
@@ -49,74 +53,23 @@ std::uint8_t tideAcceptedValue(
             return normalizedToMidi(snapshot.controls.fx_b);
         case tidepit::ControlId::set_root: {
             const auto note = std::clamp(snapshot.controls.root_note, 36, 72);
-            return static_cast<std::uint8_t>(
-                ((note - 36) * 127 + 18) / 36);
+            return static_cast<std::uint8_t>(((note - 36) * 127 + 18) / 36);
         }
         default:
             return 0U;
     }
 }
 
-std::uint32_t drumAcceptedValue(
-    drums::ControlId id,
-    const drums::Controls& controls) noexcept {
-    switch (id) {
-        case drums::ControlId::complexity_kick: return controls.complexity[0];
-        case drums::ControlId::complexity_snare: return controls.complexity[1];
-        case drums::ControlId::complexity_hat: return controls.complexity[2];
-        case drums::ControlId::complexity_percussion_1: return controls.complexity[3];
-        case drums::ControlId::complexity_percussion_2: return controls.complexity[4];
-        case drums::ControlId::complexity_percussion_3: return controls.complexity[5];
-        case drums::ControlId::enthusiasm: return controls.enthusiasm;
-        case drums::ControlId::tempo_milli_bpm: return controls.tempo_milli_bpm;
-        case drums::ControlId::swing_u15: return controls.swing_u15;
-        case drums::ControlId::rhythm_select: return controls.rhythm_preset;
-        case drums::ControlId::shape_tune:
-        case drums::ControlId::shape_timbre:
-        case drums::ControlId::shape_color:
-        case drums::ControlId::shape_decay:
-        case drums::ControlId::shape_pitch_env:
-        case drums::ControlId::shape_level: {
-            const auto lane = std::min<std::size_t>(
-                controls.selected_voice_lane,
-                controls.voice_shapes.size() - 1U);
-            const auto& shape = controls.voice_shapes[lane];
-            switch (id) {
-                case drums::ControlId::shape_tune: return shape.tune_u7;
-                case drums::ControlId::shape_timbre: return shape.timbre_u7;
-                case drums::ControlId::shape_color: return shape.color_u7;
-                case drums::ControlId::shape_decay: return shape.decay_u7;
-                case drums::ControlId::shape_pitch_env: return shape.pitch_env_u7;
-                case drums::ControlId::shape_level: return shape.level_u7;
-                default: return 0U;
-            }
-        }
-        default:
-            return 0U;
+std::uint8_t surfaceValueToMidi(const pam::SurfaceSlot& slot) noexcept {
+    if (!slot.enabled || !std::isfinite(slot.value)
+        || !std::isfinite(slot.minimum) || !std::isfinite(slot.maximum)
+        || slot.maximum <= slot.minimum) {
+        return 0U;
     }
-}
-
-std::uint8_t drumMidiForAccepted(
-    const drums::EncoderDescriptor& descriptor,
-    const drums::Controls& controls) noexcept {
-    const auto target = drumAcceptedValue(descriptor.id, controls);
-    std::uint8_t best = 0U;
-    auto best_distance = std::numeric_limits<std::uint32_t>::max();
-    for (std::uint16_t raw = 0U; raw <= 127U; ++raw) {
-        const auto mapping = drums::mapMidiCc(
-            drums::launchControlMidiChannel(),
-            descriptor.cc,
-            static_cast<std::uint8_t>(raw));
-        if (mapping.status != drums::MappingStatus::accepted_continuous) continue;
-        const auto distance = mapping.mapped_value > target
-            ? mapping.mapped_value - target
-            : target - mapping.mapped_value;
-        if (distance < best_distance) {
-            best_distance = distance;
-            best = static_cast<std::uint8_t>(raw);
-        }
-    }
-    return best;
+    const auto normalized = std::clamp(
+        (slot.value - slot.minimum) / (slot.maximum - slot.minimum), 0.0, 1.0);
+    return static_cast<std::uint8_t>(std::clamp(
+        static_cast<int>(std::lround(normalized * 127.0)), 0, 127));
 }
 
 SourceControlStatus tideStatus(tidepit::MappingStatus status) noexcept {
@@ -133,57 +86,178 @@ SourceControlStatus tideStatus(tidepit::MappingStatus status) noexcept {
     }
 }
 
-SourceControlStatus drumStatus(drums::MappingStatus status) noexcept {
+SourceControlStatus pamStatus(pam::MappingStatus status) noexcept {
     switch (status) {
-        case drums::MappingStatus::accepted_continuous:
-        case drums::MappingStatus::accepted_action_press:
+        case pam::MappingStatus::accepted_continuous:
+        case pam::MappingStatus::accepted_press:
             return SourceControlStatus::accepted;
-        case drums::MappingStatus::accepted_action_release:
+        case pam::MappingStatus::accepted_release:
+        case pam::MappingStatus::accepted_hold:
             return SourceControlStatus::accepted_release;
-        case drums::MappingStatus::unassigned:
+        case pam::MappingStatus::accepted_noop:
             return SourceControlStatus::unassigned;
-        case drums::MappingStatus::inactive_mode:
-            return SourceControlStatus::inactive;
         default:
             return SourceControlStatus::invalid;
     }
 }
 
+constexpr std::array<std::string_view, 8> kPamplistButtonLabels{{
+    "LANE 1", "LANE 2", "LANE 3", "LANE 4",
+    "LANE 5", "LANE 6", "LANE 7", "GLOBAL / CLEAR",
+}};
+
+constexpr std::array<std::string_view, 16> kPamplistFallbackEncoderLabels{{
+    "TOP 1", "TOP 2", "TOP 3", "TOP 4", "TOP 5", "TOP 6", "TOP 7", "TOP 8",
+    "BOTTOM 1", "BOTTOM 2", "BOTTOM 3", "BOTTOM 4",
+    "BOTTOM 5", "BOTTOM 6", "BOTTOM 7", "BOTTOM 8",
+}};
+
 }  // namespace
 
 struct SourceRack::Impl final {
     tidepit::Core tide{};
-    std::unique_ptr<drums::StreamingEngine> drums_engine{};
-    drums::Controls drum_controls{drums::desktopAuditionControls()};
+    pam::Core pamplist{};
+    pam::Controls pamplist_controls{pam::defaultControls()};
+    pam::ControllerAdapter pamplist_controller{};
+    pam::ActivityReducer pamplist_activity_reducer{};
+    std::array<pam::ActivitySample, kPamplistImpactHistorySamples>
+        pamplist_activity_history{};
     std::array<tidepit::SemanticEvent, kMaximumEvents> tide_pending{};
+    std::array<float, kTideScopeSamples> tide_scope_left{};
+    std::array<float, kTideScopeSamples> tide_scope_right{};
     std::size_t tide_pending_count{};
-    std::uint64_t fill_sequence{};
+    std::size_t tide_scope_write{};
+    std::size_t tide_scope_count{};
+    std::size_t pamplist_activity_write{};
+    std::size_t pamplist_activity_count{};
+    std::uint64_t tide_scope_generation{};
+    std::uint64_t pamplist_activity_generation{};
+    std::uint32_t pamplist_activity_frames{};
     double sample_rate{};
     std::uint32_t maximum_block_frames{};
     bool prepared{};
 
+    pam::SurfaceModel pendingPamplistSurface() const noexcept {
+        auto snapshot = pamplist.snapshot();
+        snapshot.accepted = pamplist_controls;
+        return pam::surfaceModel(snapshot);
+    }
+
+    void resetPresentation() noexcept {
+        tide_scope_left.fill(0.0F);
+        tide_scope_right.fill(0.0F);
+        pamplist_activity_history.fill(pam::ActivitySample{});
+        tide_scope_write = 0U;
+        tide_scope_count = 0U;
+        pamplist_activity_write = 0U;
+        pamplist_activity_count = 0U;
+        tide_scope_generation = 0U;
+        pamplist_activity_generation = 0U;
+        pamplist_activity_frames = 0U;
+        pamplist_activity_reducer.reset();
+    }
+
     bool initialize() noexcept {
         prepared = false;
-        drums_engine.reset();
         tide_pending_count = 0U;
-        fill_sequence = 0U;
-        drum_controls = drums::desktopAuditionControls();
-        if (!tide.prepare(sample_rate, maximum_block_frames)) {
-            return false;
-        }
-        // Layerwell's parent build privately prefixes Tide Pit's Mutable
-        // namespaces because the two exact source closures otherwise export
-        // colliding braids/stmlib symbols. Construction remains stopped-host
-        // work; neither source bytes nor either public Core contract changes.
-        try {
-            drums_engine = std::make_unique<drums::StreamingEngine>(
-                kDeterministicSeed);
-        } catch (...) {
-            drums_engine.reset();
-            return false;
-        }
+        pamplist_controls = pam::defaultControls();
+        pamplist_controller.reset();
+        resetPresentation();
+        if (!tide.prepare(sample_rate, maximum_block_frames)) return false;
+        pamplist.reset();
         prepared = true;
         return true;
+    }
+
+    SourceControlStatus setTideAbsolute(
+        std::size_t slot,
+        std::uint8_t value) noexcept {
+        const auto mapping = tidepit::mapMidiCc(
+            tidepit::launchControlMidiChannel(),
+            static_cast<std::uint8_t>(20U + slot), value);
+        const auto status = tideStatus(mapping.status);
+        if (status != SourceControlStatus::accepted) return status;
+        const auto action = tidepit::semanticAction(mapping.id);
+        if (!action.has_value()
+            || !tide.setControlNormalized(*action, mapping.normalized_value)) {
+            return SourceControlStatus::invalid;
+        }
+        return SourceControlStatus::accepted;
+    }
+
+    SourceControlStatus setPamplistAbsolute(
+        std::size_t slot,
+        std::uint8_t value) noexcept {
+        const auto mapping = pam::mapMidiCc(
+            pam::launchControlMidiChannel(),
+            static_cast<int>(20U + slot),
+            value,
+            pamplist_controls.selected_page,
+            pamplist_controls.lane_control_mode);
+        const auto status = pamStatus(mapping.status);
+        if (status != SourceControlStatus::accepted) return status;
+        return pam::applyMapping(pamplist_controls, mapping)
+            ? SourceControlStatus::accepted
+            : SourceControlStatus::inactive;
+    }
+
+    void pushTideScope(
+        const std::int32_t* left,
+        const std::int32_t* right,
+        std::uint32_t frames) noexcept {
+        for (std::uint32_t frame = 0U; frame < frames; ++frame) {
+            tide_scope_left[tide_scope_write] = static_cast<float>(
+                static_cast<double>(left[frame]) * kQ27ToFloat);
+            tide_scope_right[tide_scope_write] = static_cast<float>(
+                static_cast<double>(right[frame]) * kQ27ToFloat);
+            tide_scope_write = (tide_scope_write + 1U) % kTideScopeSamples;
+            tide_scope_count = std::min(tide_scope_count + 1U, kTideScopeSamples);
+        }
+        ++tide_scope_generation;
+    }
+
+    void observePamplistActivity(std::uint32_t frames) noexcept {
+        pamplist_activity_frames += frames;
+        if (pamplist_activity_frames < kPamplistActivityPeriodFrames) return;
+        pamplist_activity_frames %= kPamplistActivityPeriodFrames;
+        const auto sample = pamplist_activity_reducer.reduce(pamplist.snapshot());
+        pamplist_activity_history[pamplist_activity_write] = sample;
+        pamplist_activity_write =
+            (pamplist_activity_write + 1U) % kPamplistImpactHistorySamples;
+        pamplist_activity_count = std::min(
+            pamplist_activity_count + 1U, kPamplistImpactHistorySamples);
+        ++pamplist_activity_generation;
+    }
+
+    TideScopeSnapshot tideScopeSnapshot() const noexcept {
+        TideScopeSnapshot result{};
+        result.generation = tide_scope_generation;
+        result.sample_count = static_cast<std::uint16_t>(tide_scope_count);
+        const auto start = tide_scope_count == kTideScopeSamples
+            ? tide_scope_write
+            : 0U;
+        for (std::size_t index = 0U; index < tide_scope_count; ++index) {
+            const auto source = (start + index) % kTideScopeSamples;
+            result.left[index] = tide_scope_left[source];
+            result.right[index] = tide_scope_right[source];
+            result.peak_left = std::max(result.peak_left, std::abs(result.left[index]));
+            result.peak_right = std::max(result.peak_right, std::abs(result.right[index]));
+        }
+        return result;
+    }
+
+    PamplistImpactHistorySnapshot pamplistImpactSnapshot() const noexcept {
+        PamplistImpactHistorySnapshot result{};
+        result.generation = pamplist_activity_generation;
+        result.sample_count = static_cast<std::uint8_t>(pamplist_activity_count);
+        const auto start = pamplist_activity_count == kPamplistImpactHistorySamples
+            ? pamplist_activity_write
+            : 0U;
+        for (std::size_t index = 0U; index < pamplist_activity_count; ++index) {
+            result.samples[index] = pamplist_activity_history[
+                (start + index) % kPamplistImpactHistorySamples];
+        }
+        return result;
     }
 };
 
@@ -217,42 +291,73 @@ SourceControlStatus SourceRack::applyRelativeEncoder(
     SourceId source,
     std::size_t slot,
     std::uint8_t relative_value,
-    std::uint64_t) noexcept {
+    std::uint64_t ingress_sequence) noexcept {
     if (!impl_->prepared || slot >= 16U || relative_value > 127U) {
         return SourceControlStatus::invalid;
     }
-    const auto current = projection(source).encoder_values[slot];
+    std::uint8_t current{};
+    if (source == SourceId::tide_pit) {
+        current = projection(source).encoder_values[slot];
+    } else if (source == SourceId::pamplist) {
+        const auto surface = impl_->pendingPamplistSurface();
+        current = surfaceValueToMidi(
+            slot < 8U ? surface.top[slot] : surface.bottom[slot - 8U]);
+    } else {
+        return SourceControlStatus::invalid;
+    }
     const auto delta = static_cast<int>(relative_value) - 64;
     const auto next = static_cast<std::uint8_t>(std::clamp(
         static_cast<int>(current) + delta, 0, 127));
+    return applyAbsoluteEncoder(source, slot, next, ingress_sequence);
+}
 
+SourceControlStatus SourceRack::applyAbsoluteEncoder(
+    SourceId source,
+    std::size_t slot,
+    std::uint8_t absolute_value,
+    std::uint64_t) noexcept {
+    if (!impl_->prepared || slot >= 16U || absolute_value > 127U) {
+        return SourceControlStatus::invalid;
+    }
     if (source == SourceId::tide_pit) {
-        const auto mapping = tidepit::mapMidiCc(
-            tidepit::launchControlMidiChannel(),
-            static_cast<std::uint8_t>(20U + slot),
-            next);
-        const auto status = tideStatus(mapping.status);
-        if (status != SourceControlStatus::accepted) return status;
-        const auto action = tidepit::semanticAction(mapping.id);
-        if (!action.has_value()
-            || !impl_->tide.setControlNormalized(*action, mapping.normalized_value)) {
+        return impl_->setTideAbsolute(slot, absolute_value);
+    }
+    if (source == SourceId::pamplist) {
+        return impl_->setPamplistAbsolute(slot, absolute_value);
+    }
+    return SourceControlStatus::invalid;
+}
+
+SourceControlStatus SourceRack::applySurfaceValue(
+    SourceId source,
+    std::size_t slot,
+    double value,
+    std::uint64_t) noexcept {
+    if (!impl_->prepared || slot >= 16U || !std::isfinite(value)) {
+        return SourceControlStatus::invalid;
+    }
+    if (source == SourceId::tide_pit) {
+        if (value < 0.0 || value > 1.0) return SourceControlStatus::invalid;
+        const auto& descriptor = tidepit::encoderDescriptors()[slot];
+        if (descriptor.kind == tidepit::ControlKind::unassigned) {
+            return SourceControlStatus::unassigned;
+        }
+        const auto action = tidepit::semanticAction(descriptor.id);
+        if (!action.has_value() || !impl_->tide.setControlNormalized(*action, value)) {
             return SourceControlStatus::invalid;
         }
         return SourceControlStatus::accepted;
     }
-
-    const auto mapping = drums::mapMidiCc(
-        drums::launchControlMidiChannel(),
-        static_cast<std::uint8_t>(20U + slot),
-        next);
-    const auto status = drumStatus(mapping.status);
-    if (status != SourceControlStatus::accepted) return status;
-    bool fill_queued = false;
-    if (!drums::applyMapping(impl_->drum_controls, fill_queued, mapping)) {
-        return SourceControlStatus::inactive;
+    if (source == SourceId::pamplist) {
+        return pam::applySurfaceValue(
+                   impl_->pamplist_controls,
+                   slot < 8U ? pam::SurfaceRow::top : pam::SurfaceRow::bottom,
+                   slot < 8U ? slot : slot - 8U,
+                   value)
+            ? SourceControlStatus::accepted
+            : SourceControlStatus::inactive;
     }
-    if (fill_queued) ++impl_->fill_sequence;
-    return SourceControlStatus::accepted;
+    return SourceControlStatus::invalid;
 }
 
 SourceControlStatus SourceRack::applyButton(
@@ -263,13 +368,12 @@ SourceControlStatus SourceRack::applyButton(
     if (!impl_->prepared || slot >= 8U || value > 127U) {
         return SourceControlStatus::invalid;
     }
-
     if (source == SourceId::tide_pit) {
         const auto mapping = tidepit::mapMidiCc(
             tidepit::launchControlMidiChannel(),
-            static_cast<std::uint8_t>(40U + slot),
-            value);
+            static_cast<std::uint8_t>(40U + slot), value);
         const auto status = tideStatus(mapping.status);
+        if (status == SourceControlStatus::accepted_release) return status;
         if (status != SourceControlStatus::accepted) return status;
         const auto action = tidepit::semanticAction(mapping.id);
         if (!action.has_value()) return SourceControlStatus::invalid;
@@ -277,25 +381,49 @@ SourceControlStatus SourceRack::applyButton(
             return SourceControlStatus::capacity_exceeded;
         }
         impl_->tide_pending[impl_->tide_pending_count++] = {
-            0U,
-            ingress_sequence,
-            *action,
-            0.0,
+            0U, ingress_sequence, *action, 0.0,
         };
         return SourceControlStatus::accepted;
     }
-
-    const auto mapping = drums::mapMidiCc(
-        drums::launchControlMidiChannel(),
-        static_cast<std::uint8_t>(40U + slot),
-        value);
-    const auto status = drumStatus(mapping.status);
-    if (status != SourceControlStatus::accepted) return status;
-    bool fill_queued = false;
-    if (!drums::applyMapping(impl_->drum_controls, fill_queued, mapping)) {
-        return SourceControlStatus::invalid;
+    if (source == SourceId::pamplist) {
+        const auto mapping = impl_->pamplist_controller.handleCc(
+            impl_->pamplist_controls,
+            pam::launchControlMidiChannel(),
+            static_cast<int>(40U + slot),
+            value);
+        return pamStatus(mapping.status);
     }
-    if (fill_queued) ++impl_->fill_sequence;
+    return SourceControlStatus::invalid;
+}
+
+SourceControlStatus SourceRack::toggleRun(SourceId source) noexcept {
+    if (!impl_->prepared || source != SourceId::pamplist) {
+        return SourceControlStatus::unassigned;
+    }
+    impl_->pamplist_controls.running = !impl_->pamplist_controls.running;
+    return SourceControlStatus::accepted;
+}
+
+SourceControlStatus SourceRack::setContext(
+    SourceId source,
+    std::uint8_t context) noexcept {
+    if (!impl_->prepared || source != SourceId::pamplist || context > 1U) {
+        return SourceControlStatus::unassigned;
+    }
+    if (impl_->pamplist_controls.selected_page >= pam::kLaneCount) {
+        return SourceControlStatus::inactive;
+    }
+    impl_->pamplist_controls.lane_control_mode = context == 0U
+        ? pam::LaneControlMode::voice
+        : pam::LaneControlMode::motion;
+    return SourceControlStatus::accepted;
+}
+
+SourceControlStatus SourceRack::clearEffect(SourceId source) noexcept {
+    if (!impl_->prepared || source != SourceId::pamplist) {
+        return SourceControlStatus::unassigned;
+    }
+    ++impl_->pamplist_controls.effect_clear_generation;
     return SourceControlStatus::accepted;
 }
 
@@ -312,33 +440,37 @@ bool SourceRack::render(
         || frames % kSourceQuantumFrames != 0U) {
         return false;
     }
-
     if (source == SourceId::tide_pit) {
         const auto report = impl_->tide.processQ27(
+            left_q27, right_q27, frames,
+            impl_->tide_pending.data(), impl_->tide_pending_count);
+        impl_->tide_pending_count = 0U;
+        if (report.events_dropped != 0U) return false;
+        impl_->pushTideScope(left_q27, right_q27, frames);
+        return true;
+    }
+    if (source == SourceId::pamplist) {
+        pam::ProcessReport report{};
+        const auto ok = impl_->pamplist.process(
+            impl_->pamplist_controls,
             left_q27,
             right_q27,
             frames,
-            impl_->tide_pending.data(),
-            impl_->tide_pending_count);
-        impl_->tide_pending_count = 0U;
-        return report.events_dropped == 0U;
+            &report);
+        if (!ok) return false;
+        impl_->pamplist_controls = report.snapshot.accepted;
+        impl_->observePamplistActivity(frames);
+        return true;
     }
-
-    drums::StreamingProcessReport report{};
-    if (impl_->drums_engine == nullptr) return false;
-    return impl_->drums_engine->process(
-        impl_->drum_controls,
-        impl_->fill_sequence,
-        left_q27,
-        right_q27,
-        frames,
-        &report);
+    return false;
 }
 
 SourceProjection SourceRack::projection(SourceId source) const noexcept {
     SourceProjection result{};
     if (source == SourceId::tide_pit) {
         const auto snapshot = impl_->tide.snapshot();
+        result.panel.tide_pit = snapshot;
+        result.panel.tide_scope = impl_->tideScopeSnapshot();
         result.processed_frames = snapshot.absolute_sample;
         const auto& encoders = tidepit::encoderDescriptors();
         for (std::size_t slot = 0U; slot < encoders.size(); ++slot) {
@@ -347,36 +479,40 @@ SourceProjection SourceRack::projection(SourceId source) const noexcept {
             result.encoder_values[slot] = result.encoder_assigned[slot]
                 ? tideAcceptedValue(encoders[slot].id, snapshot)
                 : 0U;
+            result.encoder_labels[slot] = encoders[slot].label;
+            result.encoder_tooltips[slot] = encoders[slot].timing;
         }
         const auto& buttons = tidepit::buttonDescriptors();
         for (std::size_t slot = 0U; slot < buttons.size(); ++slot) {
             result.button_assigned[slot] =
                 buttons[slot].kind != tidepit::ControlKind::unassigned;
+            result.button_labels[slot] = buttons[slot].label;
         }
         result.button_active[2] = snapshot.locked;
         result.button_active[3] = snapshot.captured;
         return result;
     }
-
-    result.processed_frames = impl_->drums_engine != nullptr
-        ? impl_->drums_engine->absoluteFrame()
-        : 0U;
-    const auto& encoders = drums::encoderDescriptors();
-    for (std::size_t slot = 0U; slot < encoders.size(); ++slot) {
-        result.encoder_assigned[slot] =
-            encoders[slot].kind != drums::ControlKind::unassigned;
-        result.encoder_values[slot] = result.encoder_assigned[slot]
-            ? drumMidiForAccepted(encoders[slot], impl_->drum_controls)
-            : 0U;
-    }
-    const auto& buttons = drums::buttonDescriptors();
-    for (std::size_t slot = 0U; slot < buttons.size(); ++slot) {
-        result.button_assigned[slot] =
-            buttons[slot].kind != drums::ControlKind::unassigned;
-    }
-    if (impl_->drum_controls.voice_shaping
-        && impl_->drum_controls.selected_voice_lane < 6U) {
-        result.button_active[impl_->drum_controls.selected_voice_lane] = true;
+    if (source == SourceId::pamplist) {
+        const auto snapshot = impl_->pamplist.snapshot();
+        const auto surface = pam::surfaceModel(snapshot);
+        result.panel.pamplist = snapshot;
+        result.panel.pamplist_impact = impl_->pamplistImpactSnapshot();
+        result.processed_frames = snapshot.absolute_frame;
+        for (std::size_t slot = 0U; slot < 16U; ++slot) {
+            const auto& model = slot < 8U
+                ? surface.top[slot]
+                : surface.bottom[slot - 8U];
+            result.encoder_assigned[slot] = model.enabled;
+            result.encoder_values[slot] = surfaceValueToMidi(model);
+            result.encoder_labels[slot] = model.label;
+            result.encoder_tooltips[slot] = model.tooltip;
+        }
+        for (std::size_t slot = 0U; slot < 8U; ++slot) {
+            result.button_assigned[slot] = true;
+            result.button_active[slot] = snapshot.accepted.selected_page == slot;
+            result.button_labels[slot] = kPamplistButtonLabels[slot];
+        }
+        return result;
     }
     return result;
 }
@@ -385,14 +521,14 @@ std::string_view sourceEncoderLabel(SourceId source, std::size_t slot) noexcept 
     if (slot >= 16U) return "INVALID";
     return source == SourceId::tide_pit
         ? tidepit::encoderDescriptors()[slot].label
-        : drums::encoderDescriptors()[slot].label;
+        : kPamplistFallbackEncoderLabels[slot];
 }
 
 std::string_view sourceButtonLabel(SourceId source, std::size_t slot) noexcept {
     if (slot >= 8U) return "INVALID";
     return source == SourceId::tide_pit
         ? tidepit::buttonDescriptors()[slot].label
-        : drums::buttonDescriptors()[slot].label;
+        : kPamplistButtonLabels[slot];
 }
 
 }  // namespace layerwell

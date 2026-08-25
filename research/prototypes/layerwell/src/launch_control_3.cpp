@@ -47,6 +47,13 @@ std::uint8_t panMidi(float pan) noexcept {
         static_cast<int>(std::lround((pan + 1.0f) * 63.5f)), 0, 127));
 }
 
+std::uint8_t trimMidi(std::uint32_t frame, std::uint32_t extent) noexcept {
+    if (extent == 0U) return 0U;
+    const auto scaled = (static_cast<std::uint64_t>(frame) * 127U
+        + extent / 2U) / extent;
+    return static_cast<std::uint8_t>(std::min<std::uint64_t>(scaled, 127U));
+}
+
 void pushCc(
     MidiBatch& batch,
     std::uint8_t status,
@@ -127,6 +134,12 @@ void encoderValuesForSnapshot(
     }
     values[3] = normalizedMidi(snapshot.monitor_level);
     assigned[3] = true;
+    if (snapshot.trim_available) {
+        values[4] = trimMidi(snapshot.trim_start_frames, snapshot.trim_extent_frames);
+        values[5] = trimMidi(snapshot.trim_end_frames, snapshot.trim_extent_frames);
+        assigned[4] = true;
+        assigned[5] = true;
+    }
     values[11] = normalizedMidi(snapshot.master_level);
     assigned[11] = true;
 }
@@ -203,11 +216,21 @@ void addStateSync(MidiBatch& batch, const Snapshot& snapshot) noexcept {
     pushDisplayText(batch, kDisplayStationary, 0U, "LAYERWELL");
     pushDisplayText(batch, kDisplayStationary, 1U, sourceName(snapshot.selected_source));
     std::array<char, 40> detail{};
-    std::snprintf(detail.data(), detail.size(), "L%u %s %u/%u",
-        static_cast<unsigned>(snapshot.selected_layer + 1U),
-        captureStateName(snapshot.capture_state),
-        snapshot.phase_frames,
-        snapshot.loop_length_frames);
+    if (snapshot.surface_mode == SurfaceMode::mixer
+        && snapshot.occupied_layer_count != 0U) {
+        std::snprintf(detail.data(), detail.size(), "L%u %s %u-%u%s",
+            static_cast<unsigned>(snapshot.selected_layer + 1U),
+            captureStateName(snapshot.capture_state),
+            snapshot.trim_start_frames,
+            snapshot.trim_end_frames,
+            snapshot.trim_available ? "" : " LOCK");
+    } else {
+        std::snprintf(detail.data(), detail.size(), "L%u %s %u/%u",
+            static_cast<unsigned>(snapshot.selected_layer + 1U),
+            captureStateName(snapshot.capture_state),
+            snapshot.phase_frames,
+            snapshot.loop_length_frames);
+    }
     pushDisplayText(batch, kDisplayStationary, 2U, detail.data());
 }
 
@@ -313,6 +336,18 @@ MidiParseResult LaunchControl3Adapter::parse(
         }
         if (slot < 3U) return emit(EventKind::adjust_layer_pan, slot, value);
         if (slot == 3U) return emit(EventKind::adjust_monitor_level, 0U, value);
+        if (slot == 4U || slot == 5U) {
+            const auto step = shift_held_
+                ? kTrimCoarseStepFrames
+                : kTrimFineStepFrames;
+            const auto delta = (static_cast<int>(value) - 64) * step;
+            return emit(
+                slot == 4U
+                    ? EventKind::adjust_trim_start
+                    : EventKind::adjust_trim_end,
+                0U,
+                static_cast<double>(delta));
+        }
         if (slot >= 8U && slot < 11U) {
             return emit(EventKind::adjust_layer_level,
                 static_cast<std::uint8_t>(slot - 8U), value);

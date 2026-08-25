@@ -1,0 +1,87 @@
+{
+  "acceptance_tests": [
+    "The Task 047 proposal, predecessor VST3 contracts, exact processor seams, source closures, reuse fingerprints, and JUCE manifest authenticate before implementation.",
+    "Only 32000, 44100, 48000, 88200, 96000, 176400, and 192000 Hz prepare; 48000 Hz bypasses with zero latency and every other declared rate reports deterministic positive latency.",
+    "For absolute host frame H, cumulative source frames equal ceil(H*48000/F_host), event mappings are monotone and never early, and results are independent of callback partitioning.",
+    "Both existing 48000-Hz processor suites retain exact direct-Core PCM, event, state, reset, and instance parity.",
+    "At every other declared rate both processors emit finite bounded nonzero stereo output with preserved source progress, event ordering, reset behavior, and instance isolation.",
+    "The converter meets the frozen DC, 1-kHz, 18-kHz passband, 23-kHz stopband, latency, and partition tolerances, while the unfiltered comparator fails the alias threshold.",
+    "Repeated non-48000-Hz processing owns no heap allocation or lock; unsupported rates and layouts and callbacks above 8192 frames fail to exact silence with bounded diagnostics.",
+    "Both actual Release modules scan, instantiate, report latency, round-trip unchanged state, create and destroy editors, and render at 44100, 48000, and 96000 Hz.",
+    "Affected Instrument Lab, Tide Pit, and Pamplist regressions, applicable sanitizers, Schuss current, selected compatibility, and one relocated reproduction per VST3 pass after freeze.",
+    "Results keep source, host structural, host signal, target build, Live, real-time, connected-device, listening, distribution, and production evidence independent."
+  ],
+  "decision_rights": {
+    "may": [
+      "Choose the narrow shared converter API, supported-rate set, rational phase convention, 129-tap Kaiser coefficients, fixed capacities, latency convention, reset behavior, failure diagnostics, and objective fixtures.",
+      "Add the smallest instrument-specific source-render and MIDI-offset translation branches while preserving each exact 48000-Hz processor lane.",
+      "Update task-local status text, tests, build receipts, results, gaps, and proportional validation selection inside the target-build evidence ceiling."
+    ],
+    "must_not": [
+      "Change either musical Core, parameter/state contract, seed, equation, default, gesture, controller mapping, accepted-state rule, retained source oracle, or canonical identity.",
+      "Create a generic plug-in framework, public SDK, canonical provider/runtime/catalog identity, native multi-rate Core, audio-input converter, time stretch, pitch shift, or host-tempo feature.",
+      "Install or launch a plug-in or application, open endpoints or devices, install dependencies, mutate configured/upstream trees, alter Git state, publish, distribute, or promote real-time/listening/production evidence."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Frozen Task 047 proposal and ready bundle under research/prototypes/vst3-resampling/contract-r01.",
+    "JUCE-independent FixedRateStereoResampler and focused Instrument Lab signal/timeline tests.",
+    "Tide Pit and Pamplist VST3 processor integrations with exact 48000-Hz bypass, multi-rate tests, allocation probes, status presentation, and module-host coverage.",
+    "Authenticated uninstalled arm64 Tide Pit.vst3 and Pamplist.vst3 Release bundles with portable receipts.",
+    "Updated Task 045/046 successor results, Task 047 results/gaps/status/history, affected regressions, current result, and two relocated reproductions."
+  ],
+  "dependency_contracts": [
+    "Task 045 and Task 046 frozen proposals, implementation contracts, source-equivalence contracts, parameter/state models, controller maps, and exact 48000-Hz processor tests remain normative.",
+    "Tide Pit source lock and Pamplist configured Macro Voice source must authenticate and remain unmodified.",
+    "Instrument Lab remains prototype-only JUCE-independent support; the new utility may serve only the two evidenced VST3 consumers in this task.",
+    "JUCE 8.0.15 must come from the authenticated local source manifest; fetching, source mutation, and copy-after-build installation remain disabled."
+  ],
+  "goal": {
+    "primary_claim": "At each declared host rate, Tide Pit and Pamplist advance their unchanged 48000-Hz Core timelines and ordered controls through one bounded causal converter, while the exact 48000-Hz VST3 paths remain direct and unchanged.",
+    "why": "Ableton should remain free to use a common project or interface sample rate without silencing either private instrument or changing either instrument's musical speed, pitch, controls, or state contract."
+  },
+  "inputs": [
+    "AGENTS.md, docs/PROJECT_CONTEXT.md, ADRs 0016-0018, docs/workflows/instrument-development.md, docs/tasks/047-vst3-fixed-rate-resampling.md, and the current validation manifest.",
+    "Approved proposal research/proposals/tide-pit-pamplist-vst3-resampling.md at SHA-256 064fb6fb4c9e74ee5285080940ed694d5b2136735c5211e8ed50454ac59b7e43.",
+    "Task 045 Pamplist and Task 046 Tide Pit VST3 proposals, ready bundles, processors, tests, source authorities, and uninstalled build/reproduction paths.",
+    "Task 047 reuse-fingerprints.json at SHA-256 8affdaee24eeb0b1f66052c6b848e638b4ef4e793a0d37f7974ae35c3e474d4f.",
+    "Authenticated JUCE 8.0.15 manifest, Tide Pit source lock, Pamplist configured source verifier, and existing Instrument Lab Core."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "User request in the active 2026-08-25 task: Sounds good. Let's go ahead and implement this.",
+      "state": "approved"
+    },
+    "path": "research/proposals/tide-pit-pamplist-vst3-resampling.md",
+    "revision": "0.1",
+    "sha256": "064fb6fb4c9e74ee5285080940ed694d5b2136735c5211e8ed50454ac59b7e43"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "One narrow JUCE-independent rational timeline and causal stereo FIR adapter for source rate 48000 Hz and host rates 32000, 44100, 48000, 88200, 96000, 176400, and 192000 Hz.",
+      "Exact 48000-Hz bypass, instrument-owned event scheduling, fixed non-bypass callback capacity of 8192 host frames, host latency reporting, reset/history rules, and deterministic silence on failure.",
+      "Focused signal/timeline/allocation validation, both instrument integrations, actual arm64 module-host validation, affected regressions, current/compatibility selection, and two reproductions."
+    ],
+    "out": [
+      "Musical Core changes, native multi-rate DSP, new controls or state, controller remapping, input conversion, continuously variable ratios, time stretch, pitch shift, tempo sync, or a generic plug-in architecture.",
+      "Canonical provider/runtime/catalog identity, other formats/platforms/architectures, installer, signing/notarization, packaging, public distribution, or production integration.",
+      "Installation, Ableton or application launch, endpoint/device access, callback-deadline promotion, structured listening, Git/publication actions, or mutation of external/configured sources."
+    ]
+  },
+  "status": "ready",
+  "target": "Shared JUCE-independent fixed-rate stereo adapter and the existing macOS arm64 Tide Pit and Pamplist VST3 wrappers",
+  "title": "Tide Pit and Pamplist Fixed-Rate VST3 Resampling",
+  "work_type": "source-reimplementation",
+  "working_definition": {
+    "artifact": "Two authenticated uninstalled arm64 VST3 modules using one bounded internal 48 kHz resampling adapter",
+    "evidence_level": "target-build",
+    "success_observation": "Both authenticated uninstalled arm64 modules pass their existing exact 48000-Hz processor behavior and actual-module checks, additionally render finite nonzero fixtures at all declared rates with the frozen timeline and signal tolerances, and retain Live, real-time, device, listening, distribution, and production as unproved."
+  }
+}

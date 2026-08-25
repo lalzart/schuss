@@ -1,0 +1,156 @@
+{
+  "application_feedback": [
+    {
+      "authority": "accepted Layerwell Snapshot only",
+      "feedback": "The upper desktop panel switches between complete Tide Pit and Pamplist accepted projections; the lower strip always shows accepted source, layer, capture, trim, mix, audio, MIDI, and diagnostic state."
+    },
+    {
+      "authority": "accepted Layerwell Snapshot only",
+      "feedback": "Control mode sends absolute encoder positions, RGB action state, source/context labels, and temporary accepted parameter overlays for the selected source."
+    },
+    {
+      "authority": "accepted Layerwell Snapshot only",
+      "feedback": "Mixer mode sends layer, capture, mute, monitor, master, and trim state; trim positions are neutral/read-only when availability is false."
+    },
+    {
+      "authority": "host lifecycle state",
+      "feedback": "Connection performs DAW enable, relative-row setup, and bounded full accepted-state resync; shutdown or explicit endpoint change constructs DAW disable before close."
+    }
+  ],
+  "endpoint_device_evidence": {
+    "notes": "The exact regular Novation Launch Control 3 DAW-port topology and official protocol are authority for message construction only. No endpoint is enumerated or opened, no physical message is sent or received, and no device-success claim is made.",
+    "state": "deferred"
+  },
+  "gesture_state_machines": [
+    {
+      "gesture": "Page press",
+      "states": [
+        "release ignored",
+        "press selects previous or next resident source when capture permits",
+        "accepted source drives complete resync"
+      ]
+    },
+    {
+      "gesture": "Relative encoder",
+      "states": [
+        "value 64 is neutral",
+        "values below or above 64 decrement or increment bounded accepted state",
+        "Shift changes only trim increment from 48 to 480 frames"
+      ]
+    },
+    {
+      "gesture": "Capture button",
+      "states": [
+        "empty session starts first capture immediately",
+        "existing session arms capture until phase zero",
+        "waiting or recording press cancels provisional take",
+        "valid completion commits staging owner atomically"
+      ]
+    },
+    {
+      "gesture": "Pamplist action",
+      "states": [
+        "button presses terminate at the existing contextual reducer",
+        "Run Stop toggles accepted running state",
+        "Global Clear applies the existing effect-only Clear behavior",
+        "releases do not invent a new source action"
+      ]
+    },
+    {
+      "gesture": "Shift plus Mixer button 8",
+      "states": [
+        "Shift press latches host gesture state",
+        "button 8 press clears selected layer",
+        "Shift release returns normal button 8 monitor behavior"
+      ]
+    }
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {
+      "control": "Page Up and Page Down",
+      "input": "channel 1 CC106 or CC107 value 127",
+      "semantic": "select previous or next resident source, wrapping between Tide Pit and Pamplist"
+    },
+    {
+      "control": "Track Left and Track Right",
+      "input": "channel 1 CC103 or CC102 value 127",
+      "semantic": "select previous or next sampler layer"
+    },
+    {
+      "control": "sixteen encoders in Control mode",
+      "input": "channel 16 CC77 through CC92, relative pivot 64",
+      "semantic": "dispatch to selected Tide Pit or contextual Pamplist public encoder slots 1 through 16"
+    },
+    {
+      "control": "eight buttons in Control mode",
+      "input": "channel 1 CC37 through CC44 press and release",
+      "semantic": "dispatch to selected source public button slots 1 through 8, including exact Tide Pit actions or Pamplist page/context/action behavior"
+    },
+    {
+      "control": "Mixer top encoders 1 through 4",
+      "input": "channel 16 CC77 through CC80, relative pivot 64",
+      "semantic": "layer 1 through 3 pan and source-monitor level"
+    },
+    {
+      "control": "Mixer top encoders 5 and 6",
+      "input": "channel 16 CC81 and CC82, relative pivot 64",
+      "semantic": "trim start and trim end by 48 frames per step, or 480 frames while Shift is held; accepted only when trim is available"
+    },
+    {
+      "control": "Mixer top encoders 7 and 8",
+      "input": "channel 16 CC83 and CC84",
+      "semantic": "reserved and ignored with neutral feedback"
+    },
+    {
+      "control": "Mixer bottom encoders 1 through 4",
+      "input": "channel 16 CC85 through CC88, relative pivot 64",
+      "semantic": "layer 1 through 3 level and master level"
+    },
+    {
+      "control": "Mixer buttons 1 through 8",
+      "input": "channel 1 CC37 through CC44 value 127",
+      "semantic": "select layers 1 through 3, mute layers 1 through 3, capture or cancel, and toggle source monitor"
+    },
+    {
+      "control": "Shift plus Mixer button 8",
+      "input": "channel 7 CC63 held plus channel 1 CC44 value 127",
+      "semantic": "clear selected layer"
+    },
+    {
+      "control": "mode report",
+      "input": "channel 7 CC30 value 1 or 2",
+      "semantic": "select Mixer or Control presentation only"
+    },
+    {
+      "control": "desktop source and panel controls",
+      "input": "fixed-capacity GUI semantic command mailbox",
+      "semantic": "select source, set source control/action, capture/mix, or set/reset trim through the same Core event authority"
+    }
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/layerwell/contract-r02/control-map.json",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "surface": "regular Launch Control 3 DAW port Control mode",
+      "assignment": "complete selected source surface: sixteen relative encoders, eight press/release buttons, accepted RGB/position/OLED feedback"
+    },
+    {
+      "surface": "regular Launch Control 3 DAW port Mixer mode",
+      "assignment": "three-layer sampler, source monitor, master, capture, clear, and non-destructive trim start/end"
+    },
+    {
+      "surface": "Layerwell desktop upper workspace",
+      "assignment": "replaceable source-faithful Tide Pit or Pamplist panel with complete accepted controls and bounded visual state"
+    },
+    {
+      "surface": "Layerwell desktop lower strip",
+      "assignment": "permanent source selector, capture, three layers, trim window/reset, mixer, and lifecycle diagnostics"
+    }
+  ],
+  "title": "Layerwell 0.2: Embedded Tide Pit and Pamplist Sampler"
+}

@@ -1,0 +1,60 @@
+{
+  "application_feedback": [
+    {
+      "authority": "existing accepted Core snapshot and existing processor diagnostics",
+      "feedback": "Tide Pit and Pamplist musical controls, modes, actions, meters, trails, and scope remain instrument-owned; Task 047 may add only fixed 48 kHz Core, active host rate, bypass/resampling, and failure status text."
+    }
+  ],
+  "endpoint_device_evidence": {
+    "notes": "No physical-device claim is made by this contract.",
+    "state": "deferred"
+  },
+  "gesture_state_machines": [
+    {
+      "input": "host MIDI event at absolute frame E",
+      "states": "received -> mapped to B(E)=ceil(E*48000/F_host) -> instrument-owned controller/gesture dispatch -> accepted Core state",
+      "timing": "never earlier than E; equal B(E) values retain JUCE ingress order; Tide Pit retains its later 16-frame source quantization"
+    },
+    {
+      "input": "valid state recall or processor reset",
+      "states": "request -> next valid audio block -> fresh Core plus zeroed converter history -> reported-latency transient -> accepted state",
+      "timing": "one transition; pre-reset FIR samples and excluded one-shots do not cross"
+    }
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {
+      "host_surface": "all existing Tide Pit VST3 parameters, editor actions, and channel-16 CC mapping",
+      "mapping": "unchanged musical mapping; only raw host sample offsets are translated through B(E) before the existing semantic event bridge"
+    },
+    {
+      "host_surface": "all existing Pamplist VST3 parameters, Run/Clear/page/mode presentation, and channel-16 CC mapping",
+      "mapping": "unchanged musical mapping; MIDI-driven control changes divide the generated 48 kHz source range at B(E) before existing Core calls"
+    },
+    {
+      "host_surface": "JUCE prepare/reset/latency lifecycle",
+      "mapping": "declared host rate selects exact bypass or fixed FIR phase bank; no user musical control or state byte is added"
+    }
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/vst3-resampling/contract-r01/reuse-fingerprints.json",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "assignment": "No new parameter, selector, gesture, or state field. Existing sixteen Tide Pit musical parameters and one-shots remain unchanged.",
+      "surface": "Tide Pit VST3"
+    },
+    {
+      "assignment": "No new parameter, selector, gesture, or state field. Existing 178 Pamplist musical parameters plus Run and non-persistent Clear remain unchanged.",
+      "surface": "Pamplist VST3"
+    },
+    {
+      "assignment": "Ableton remains sample-rate and endpoint authority; the plugin reports latency and receives host-rate buffers without exposing resampling as a musical control.",
+      "surface": "Host lifecycle"
+    }
+  ],
+  "title": "Tide Pit and Pamplist Fixed-Rate VST3 Resampling"
+}

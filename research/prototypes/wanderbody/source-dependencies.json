@@ -1,0 +1,32 @@
+{
+  "authenticated_extracted_sources": [
+    {
+      "manifest": {
+        "path": "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json",
+        "sha256": "db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5"
+      },
+      "prerequisite": "operator-supplied exact extracted source tree",
+      "source_release": {
+        "content_hash": "sha256:fe43e61c91a48b2e29dd24ad08118f21c656eae2b765cae1a5c96682121b4652",
+        "path": "contracts/task033/phase2/source-release-07.json",
+        "revision": 1,
+        "source_release_id": "schuss-source-release-000007"
+      }
+    }
+  ],
+  "claims": {
+    "catalog_membership": false,
+    "graph_identity": false,
+    "implementation_identity": false,
+    "provider_identity": false,
+    "runtime_support": false
+  },
+  "consumer_id": "wanderbody",
+  "composition": {
+    "dsp_policy": "Wanderbody Core and modal body are original task-owned C++17 code; no external DSP implementation bytes are compiled.",
+    "instrument_lab_policy": "The repository-owned Instrument Lab contributes mechanical build and warning helpers only.",
+    "juce_policy": "JUCE 8.0.15 is an authenticated operator-supplied standalone shell dependency; fetch remains disabled."
+  },
+  "physical_packages": [],
+  "schema_version": "wanderbody-source-dependencies-v1"
+}

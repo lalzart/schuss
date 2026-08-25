@@ -1,0 +1,132 @@
+{
+  "artifact_retention": {
+    "location": "Build outputs remain under build/instrument-lab-task047, build/tide-pit-vst3-task047-release, and build/pamplist-vst3-task047-release; portable contracts, receipts, results, gaps, and reproducible commands remain in the repository.",
+    "policy": "reproducible-only"
+  },
+  "comparator_condition_id": "unfiltered-alias-comparator",
+  "conditions": [
+    {
+      "events": [
+        {
+          "at_sample": 0,
+          "event": "prepare the shared adapter at each of 32000, 44100, 48000, 88200, 96000, 176400, and 192000 Hz"
+        },
+        {
+          "at_sample": 1,
+          "event": "check exact source boundary, event mapping, phase count, bypass state, and reported latency"
+        },
+        {
+          "at_sample": 480000,
+          "event": "compare cumulative source frames and mapped event sequence across one-block and repartitioned host timelines"
+        }
+      ],
+      "id": "rational-timeline-and-partition",
+      "purpose": "Falsify drift, early events, nonmonotone mappings, or callback-partition dependence."
+    },
+    {
+      "events": [
+        {
+          "at_sample": 0,
+          "event": "reset and feed deterministic stereo impulse then DC"
+        },
+        {
+          "at_sample": 16384,
+          "event": "feed 1000-Hz and 18000-Hz binary64-generated source sine fixtures"
+        },
+        {
+          "at_sample": 32768,
+          "event": "feed a 23000-Hz source sine and measure 44100-Hz output after latency transients"
+        }
+      ],
+      "id": "bandlimited-fir-signal",
+      "purpose": "Measure latency, DC normalization, passband gain, stopband alias rejection, finiteness, and reset repeatability."
+    },
+    {
+      "events": [
+        {
+          "at_sample": 0,
+          "event": "convert the same 23000-Hz source sine to 44100 Hz with an intentionally unfiltered linear interpolator"
+        }
+      ],
+      "id": "unfiltered-alias-comparator",
+      "purpose": "Falsify a weak acceptance gate by requiring the no-low-pass comparator to fail the -70 dBFS alias threshold."
+    },
+    {
+      "events": [
+        {
+          "at_sample": 0,
+          "event": "apply the existing deterministic Tide Pit and Pamplist VST3 programs and prepare at each declared host rate"
+        },
+        {
+          "at_sample": 31,
+          "event": "deliver existing channel-16 MIDI fixtures at first, equal-mapped, interior, and last-frame offsets"
+        },
+        {
+          "at_sample": 4096,
+          "event": "serialize state, restore a fresh twin, and compare the reset-plus-latency relation"
+        }
+      ],
+      "id": "instrument-multirate",
+      "purpose": "Require exact 48000-Hz parity and finite nonzero multi-rate instrument output with exact source progress, event order, state, and instance isolation."
+    },
+    {
+      "events": [
+        {
+          "at_sample": 0,
+          "event": "prepare at 48001 Hz, request mono output, and process 8193 host frames at a declared non-bypass rate"
+        }
+      ],
+      "id": "negative-host-shapes",
+      "purpose": "Require deterministic silence and bounded diagnostics for unsupported rate, layout, and callback capacity."
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "focused native rational-timeline and FIR signal metrics",
+      "name": "fixed-rate-resampler-results"
+    },
+    {
+      "kind": "exact 48000-Hz and tolerance-based multi-rate processor PCM, source progress, event, state, allocation, and instance observations",
+      "name": "dual-vst3-processor-results"
+    },
+    {
+      "kind": "two uninstalled arm64 VST3 module metadata, latency, state/editor lifecycle, signal results, and tree hashes",
+      "name": "dual-vst3-build-receipts"
+    },
+    {
+      "kind": "two copied-root build and module-host results",
+      "name": "dual-vst3-relocated-reproduction"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 33,
+  "status": "ready",
+  "supported_block_frames": [
+    1,
+    16,
+    64,
+    127,
+    128,
+    511,
+    512,
+    513,
+    2048,
+    4096
+  ],
+  "timeline_convention": "Host callbacks are consecutive half-open ranges on one absolute host frame counter. For reduced ratio p/q=48000/F_host, source boundary B(H)=ceil(H*p/q). A host event at E is delivered before source frame B(E), never earlier, and equal mapped frames retain ingress order. Non-bypass output is delayed by L_h=ceil(65*q/p) host frames; reset restarts both counters at zero.",
+  "title": "Tide Pit and Pamplist Fixed-Rate VST3 Resampling",
+  "tolerances": {
+    "alias_23000_to_44100": "bandlimited RMS below -70 dBFS after transient exclusion and unfiltered comparator at or above -40 dBFS",
+    "allocation_probe": "zero adapter-owned C++ heap allocations during repeated non-bypass processing",
+    "dc_error": "absolute steady-state error <= 2e-5",
+    "direct_48000_pcm": "exact float equality for both predecessor processor suites",
+    "event_mapping": "exact B(E), monotone, never early, equal-frame order preserved",
+    "finite_pcm": "all output finite; instrument fixtures within [-1,1] and nonzero after reported latency",
+    "gain_1000_hz": "absolute RMS gain error <= 0.05 dB",
+    "gain_18000_hz_at_44100": "absolute RMS gain error <= 0.35 dB",
+    "latency": "impulse peak and processor-reported delay equal ceil(65*q/p) host frames within one sample only where the bandlimited impulse has an equal adjacent maximum",
+    "source_count": "exact B(H) at every tested prefix independent of partition",
+    "unsupported_shape": "exact available-channel silence and unprepared or incremented bounded failure state"
+  }
+}

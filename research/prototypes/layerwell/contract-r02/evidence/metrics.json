@@ -1,0 +1,21 @@
+{
+  "capture_aborts": 0,
+  "capture_commits": 2,
+  "condition": "LW02_TRIM",
+  "dc": 0.005405936256915534,
+  "events_accepted": 7,
+  "events_dropped": 0,
+  "finite_samples": 288000,
+  "frames": 144000,
+  "limited_samples": 0,
+  "listening_performed": false,
+  "peak_absolute": 0.0639972910284996,
+  "physical_device_observed": false,
+  "playback_invariant_faults": 0,
+  "rms": 0.016809778146076072,
+  "sample_storage_bytes": 49152000,
+  "schema": "layerwell-metrics-v2",
+  "trim_accepts": 2,
+  "trim_rejections": 0,
+  "untrimmed_comparator_diverged": true
+}

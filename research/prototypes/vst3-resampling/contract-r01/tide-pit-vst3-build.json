@@ -1,0 +1,127 @@
+{
+  "artifact": {
+    "architectures": [
+      "arm64"
+    ],
+    "binary_kind": "Mach-O 64-bit bundle arm64",
+    "bundle_path": "build/tide-pit-vst3-task047-release/tide-pit-vst3_artefacts/Release/VST3/Tide Pit.vst3",
+    "bundle_tree_sha256": "0b72c144d996c6dafc6bc244441d2a4b654139e4e31729de3d00d10d9ff81d46",
+    "files": [
+      {
+        "bytes": 866,
+        "path": "Contents/Info.plist",
+        "sha256": "7638d51752e6e6b5347f01ac7afecac62e79f8b1e80d34b1202450aae706d693"
+      },
+      {
+        "bytes": 8885440,
+        "path": "Contents/MacOS/Tide Pit",
+        "sha256": "ee3cedb0942871bfb59f2358bc6ce27f243f75419481c72083bc96ccc8df4d77"
+      },
+      {
+        "bytes": 8,
+        "path": "Contents/PkgInfo",
+        "sha256": "d06a80ba92de0833d0ed03de1b02b7c8913f126d9e8c8931b190765dd5d83b11"
+      },
+      {
+        "bytes": 1029,
+        "path": "Contents/Resources/moduleinfo.json",
+        "sha256": "8669b2558ae2bf9bd732f1a23e6b88f44180d4f8e85fa1799e875a4af1d9c4e8"
+      },
+      {
+        "bytes": 2452,
+        "path": "Contents/_CodeSignature/CodeResources",
+        "sha256": "e5899ab38b2711de2b80f63a417b46a54161bb8b97e1604cb0f2542777195bd6"
+      }
+    ]
+  },
+  "claims": {
+    "ableton_launched": false,
+    "app_or_endpoint_opened": false,
+    "bundle_installed": false,
+    "codesign_kind": "local-ad-hoc-seal-only",
+    "distribution_approved": false,
+    "listening_performed": false,
+    "module_host_offline_passed": true,
+    "module_host_rates_hz": [
+      44100,
+      48000,
+      96000
+    ],
+    "target_built": true
+  },
+  "input_fingerprint_sha256": "ffd8ede953c2aa3a044380979d14fd630eac64a2270154ca2fd77af8215eee4a",
+  "juce_manifest": {
+    "path": "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json",
+    "sha256": "db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5"
+  },
+  "parameter_contract": {
+    "adapter_parameters": 16,
+    "musical_parameters": 16,
+    "parameter_fingerprint": "14672542899034963389",
+    "schema": "schuss-tide-pit-vst3-state-v1",
+    "wrapper_service_parameters": 2081
+  },
+  "resampling_contract": {
+    "bypass_host_rate_hz": 48000,
+    "core_rate_hz": 48000,
+    "host_latency_frames": {
+      "176400": 239,
+      "192000": 260,
+      "32000": 44,
+      "44100": 60,
+      "48000": 0,
+      "88200": 120,
+      "96000": 130
+    },
+    "maximum_non_bypass_callback_frames": 8192,
+    "supported_host_rates_hz": [
+      32000,
+      44100,
+      48000,
+      88200,
+      96000,
+      176400,
+      192000
+    ]
+  },
+  "schema_version": "tide-pit-fixed-rate-vst3-build-v1",
+  "source_authority": {
+    "files": [
+      {
+        "path": "LICENSE.md",
+        "sha256": "2701d4f24dfe91723d1d43103daa123e8be61e53ad09f142735c91f58a06baac"
+      },
+      {
+        "path": "README.md",
+        "sha256": "be3a5174d13f03fc02faff57b9afa3275faf34b3210850c7f50b219fdad7b52a"
+      },
+      {
+        "path": "tidepit-gills.axp",
+        "sha256": "35b8df83ffc06bacca1890d936525c75758b193bcf7ef7edd69082acdb7e963c"
+      },
+      {
+        "path": "tidepit.axo",
+        "sha256": "8e62fdfd1f6b101cb5b6f876d3d54538af8be9a04a46cddba2711eaabc3b9009"
+      },
+      {
+        "path": "tidepit_dsp.h",
+        "sha256": "3f75a3aa337109e7de270cb4a4aa7281f71ba4de443f057b4e37299e3bd7b32e"
+      },
+      {
+        "path": "tidepit_voice.h",
+        "sha256": "e6cd224160df87afbfda5743c5124a4600c5f3c6fe4c02df272c41916cd6566c"
+      }
+    ],
+    "manifest_sha256": "6cbb9842a785c90f54de28e122487194c79868b4b5505f0ab26506836abaaa85",
+    "mutable_package": {
+      "package_id": "mutable-ksoloti-v1",
+      "package_revision": "1",
+      "source_package_manifest_sha256": "9f45e860f1fff388cc18dab077232196befbc7cfb6f383effd35331bf102f2a1"
+    },
+    "revision": "53287e49e5bcc5fb0d73b546d88431f82467f969",
+    "source_id": "gills-instruments:tide-pit-gills",
+    "source_lock_sha256": "52a13c11dbd81df05a3590d2aaa5cf1efc95bdddcc874d69cf6961c18de61a02"
+  },
+  "status": "passed",
+  "target": "tide-pit-vst3_VST3"
+}

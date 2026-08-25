@@ -57,6 +57,28 @@ The last command launches an audio/MIDI application and is intentionally not
 part of automated validation. In the app, select a 48 kHz audio device and the
 Launch Control 3 MIDI input. Unsupported sample rates fail closed.
 
+## Private local VST3 adapter
+
+The standalone remains fixed at 48 kHz. Task 047 extends the separate private
+macOS arm64 VST3 adapter with bounded output resampling while the musical Core
+continues to run at exactly 48 kHz. The VST3 accepts 32, 44.1, 48, 88.2, 96,
+176.4, and 192 kHz hosts, bypasses the converter exactly at 48 kHz, and reports
+its conversion latency to the host. Other rates and non-bypass callbacks above
+8,192 frames fail closed to silence.
+
+Build the uninstalled Release bundle from an authenticated JUCE 8.0.15 tree:
+
+```sh
+python3 research/prototypes/tide-pit-gills/vst3/tests/build_vst3.py \
+  --juce-source /path/to/authenticated/juce-8.0.15
+```
+
+The build remains under `build/tide-pit-vst3-task047-release/`; it does not
+install or launch the plug-in. Task 047 evidence and both current build receipts
+live in `research/prototypes/vst3-resampling/contract-r01/`. Offline module
+tests do not prove Ableton behavior, callback deadlines, physical MIDI,
+listening quality, distribution readiness, or production integration.
+
 ## Launch Control 3
 
 Reuse the same regular-model Custom Mode created for Cinderwheel: Custom Mode

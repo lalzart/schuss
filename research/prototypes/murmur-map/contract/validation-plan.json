@@ -1,0 +1,212 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "research/prototypes/murmur-map/tests/verify_source_authorities.py"
+      ],
+      "cost": "fast",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/prototypes/murmur-map/source-dependencies.json",
+        "contracts/task038/source-release-01.json",
+        "contracts/task038/source-release-02.json",
+        "contracts/task033/phase2/source-release-07.json",
+        "packages/dsp_adapters/mutable_braids_v1/ADAPTER.json",
+        "packages/dsp_sources/mutable_eurorack_braids_v1/SOURCE_PACKAGE.json",
+        "packages/dsp_sources/mutable_stmlib_v1/SOURCE_PACKAGE.json",
+        "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json"
+      ],
+      "id": "source-authorities"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/murmur-map/tests/run_structural.py",
+        "--check"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/murmur-map/contract",
+        "research/prototypes/murmur-map/include",
+        "research/prototypes/murmur-map/src",
+        "research/prototypes/murmur-map/tests",
+        "research/prototypes/murmur-map/dsp-topology.json",
+        "research/prototypes/murmur-map/semantic-control-surface.json"
+      ],
+      "id": "focused-structural"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/murmur-map/tests/render_evidence.py",
+        "--reproduce",
+        "--output",
+        "build/murmur-map-evidence"
+      ],
+      "cost": "native-expensive",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/murmur-map/contract/experiment.json",
+        "research/prototypes/murmur-map/src/core.cpp",
+        "research/prototypes/murmur-map/src/render.cpp",
+        "packages/dsp_adapters/mutable_braids_v1",
+        "packages/dsp_sources/mutable_eurorack_braids_v1",
+        "packages/dsp_sources/mutable_stmlib_v1"
+      ],
+      "id": "objective-render"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/murmur-map/tests/build_juce.py",
+        "--build-dir",
+        "build/murmur-map-juce-release",
+        "--juce-source-dir",
+        "operator-supplied-authenticated-juce-8.0.15-root"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/murmur-map/CMakeLists.txt",
+        "research/prototypes/murmur-map/src/juce_main.cpp",
+        "research/prototypes/murmur-map/src/ui_model.cpp",
+        "research/prototypes/murmur-map/src/control_map.cpp",
+        "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json"
+      ],
+      "id": "authenticated-juce-build"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/instrument_lab/validate_prototype.py",
+        "--repo-root",
+        ".",
+        "--consumer-root",
+        "research/prototypes/murmur-map",
+        "--check"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/murmur-map/prototype-index.json",
+        "research/prototypes/murmur-map/dsp-topology.json",
+        "research/prototypes/murmur-map/semantic-control-surface.json",
+        "research/prototypes/murmur-map/PROMOTION_NEEDS.json",
+        "research/prototypes/murmur-map/IMPLEMENTATION_HANDOFF.md"
+      ],
+      "id": "instrument-lab-consumer"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/instrument_lab/reproduce.py",
+        "--repo-root",
+        ".",
+        "--consumer-root",
+        "research/prototypes/murmur-map",
+        "--reproduce"
+      ],
+      "cost": "reproduction-expensive",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/murmur-map",
+        "research/prototype_support/instrument_lab",
+        "packages/dsp_adapters/mutable_braids_v1",
+        "packages/dsp_sources/mutable_eurorack_braids_v1",
+        "packages/dsp_sources/mutable_stmlib_v1"
+      ],
+      "id": "relocated-reproduction"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "current"
+      ],
+      "cost": "aggregate-current",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/murmur-map"
+      ],
+      "id": "repository-current"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "The cited first-party modular documentation and bounded prior-art sources support the selected mechanism without a global novelty claim.",
+      "status": "available"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The user-approved proposal path, revision, and SHA-256 match this ready contract.",
+      "status": "available"
+    },
+    {
+      "check_ids": [
+        "source-authorities"
+      ],
+      "level": "source",
+      "promotion_rule": "The implementation exists only after exact source, adapter, notice, and complete-diff checks pass without shared-source mutation.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "focused-structural",
+        "instrument-lab-consumer",
+        "relocated-reproduction",
+        "repository-current"
+      ],
+      "level": "host-structural",
+      "promotion_rule": "Focused Core, state, controller, UI-model, negative, freshness, repository, and relocated checks pass at their declared cadence.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "objective-render"
+      ],
+      "level": "host-signal",
+      "promotion_rule": "MM01-MM10 route/event/audio outputs meet the frozen deterministic, recurrence, silence, gain, DC, non-finite, and capacity tolerances.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "authenticated-juce-build"
+      ],
+      "level": "target-build",
+      "promotion_rule": "The exact macOS arm64 standalone app bundle compiles and links against the authenticated JUCE 8.0.15 tree and remains unlaunched.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "A separately authorized live callback deadline, allocation, xrun, and lifecycle measurement must pass on a named audio configuration.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "A separately authorized physical Launch Control 3 and audio/MIDI endpoint session must confirm discovery, receipt, mapping, reconnect, and accepted feedback.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "The frozen blinded slow-erosion versus white-scene protocol must meet the proposal thresholds for the exact build.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "Canonical identities, graph/provider/runtime ownership, packaging, licensing, distribution, and release gates require a separate accepted task.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

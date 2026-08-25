@@ -1,0 +1,222 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "$SONIC_RESEARCH_LAB_SKILL/scripts/validate_implementation_bundle.py",
+        "research/prototypes/tide-pit-gills/contract-vst3-r01",
+        "--workspace-root",
+        ".",
+        "--source-root",
+        "$GILLS_SOURCE_ROOT",
+        "--phase",
+        "ready"
+      ],
+      "cost": "fast configured-source authentication",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/proposals/tide-pit-vst3-local.md",
+        "research/prototypes/tide-pit-gills/contract-vst3-r01",
+        "Gills Tide Pit six-file source authority"
+      ],
+      "id": "tide-pit-vst3-ready-source"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/tide-pit-gills/tests/validate_source_lock.py"
+      ],
+      "cost": "fast",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/prototypes/tide-pit-gills/third_party/SOURCE_LOCK.json",
+        "research/prototypes/tide-pit-gills/third_party/tidepit/upstream",
+        "packages/dsp_sources/mutable_ksoloti_v1"
+      ],
+      "id": "tide-pit-source-lock"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/tide-pit-vst3-task046-release",
+        "-C",
+        "Release",
+        "--output-on-failure",
+        "-R",
+        "^tide_pit_vst3_(model|processor|allocation)_tests$"
+      ],
+      "cost": "focused native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/tide-pit-gills/vst3/include",
+        "research/prototypes/tide-pit-gills/vst3/src",
+        "research/prototypes/tide-pit-gills/vst3/tests"
+      ],
+      "id": "tide-pit-vst3-focused-structural"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/tide-pit-vst3-task046-release",
+        "-C",
+        "Release",
+        "--output-on-failure",
+        "-R",
+        "^tide_pit_vst3_processor_tests$"
+      ],
+      "cost": "focused native signal",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/tide-pit-gills/vst3",
+        "research/prototypes/tide-pit-gills/include/tidepit/core.hpp",
+        "research/prototypes/tide-pit-gills/include/tidepit/juce_midi_adapter.hpp",
+        "research/prototypes/tide-pit-gills/contract-vst3-r01/experiment.json"
+      ],
+      "id": "tide-pit-vst3-direct-signal"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/tide-pit-gills/vst3/tests/build_vst3.py",
+        "--check",
+        "--build-dir",
+        "build/tide-pit-vst3-task046-release"
+      ],
+      "cost": "native Release target build and module host",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/tide-pit-gills/vst3",
+        "research/prototypes/tide-pit-gills/contract-vst3-r01",
+        "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json"
+      ],
+      "id": "tide-pit-vst3-target-build"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/tide-pit-juce",
+        "--output-on-failure",
+        "-R",
+        "^tide_pit_"
+      ],
+      "cost": "adjacent native regression",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/tide-pit-gills/CMakeLists.txt",
+        "research/prototypes/tide-pit-gills/include",
+        "research/prototypes/tide-pit-gills/src",
+        "research/prototypes/tide-pit-gills/tests"
+      ],
+      "id": "tide-pit-adjacent-regression"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "current"
+      ],
+      "cost": "routine current profile",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "Task 046 complete diff",
+        "tools/validation/manifest-v1.json"
+      ],
+      "id": "schuss-current"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/tide-pit-gills/vst3/tests/reproduce_vst3.py",
+        "--juce-source",
+        "$JUCE_SOURCE_ROOT"
+      ],
+      "cost": "one relocated Release reproduction",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/tide-pit-gills complete consumer tree",
+        "authenticated JUCE source tree"
+      ],
+      "id": "tide-pit-vst3-relocated-reproduction"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "The existing source audit, license closure, local host identity, and authenticated dependency evidence support the selected host migration.",
+      "status": "passed"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The approved proposal fingerprint matches this implementation contract and Task 046 scope.",
+      "status": "passed"
+    },
+    {
+      "check_ids": [
+        "tide-pit-vst3-ready-source",
+        "tide-pit-source-lock"
+      ],
+      "level": "source",
+      "promotion_rule": "The exact Gills, Tide Pit, shared Mutable, JUCE, proposal, and bundle source authorities authenticate before implementation and at freeze.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "tide-pit-vst3-focused-structural",
+        "schuss-current"
+      ],
+      "level": "host-structural",
+      "promotion_rule": "Stable model, transactional state, bounds, negative, lifecycle, multi-instance, allocation, and routine governance checks pass.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "tide-pit-vst3-direct-signal",
+        "tide-pit-adjacent-regression"
+      ],
+      "level": "host-signal",
+      "promotion_rule": "Direct processor PCM and accepted traces meet exact frozen tolerances and existing Tide Pit objective regressions remain valid.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "tide-pit-vst3-target-build",
+        "tide-pit-vst3-relocated-reproduction"
+      ],
+      "level": "target-build",
+      "promotion_rule": "The uninstalled arm64 Release module scans, instantiates, renders, round-trips state, passes metadata and seal checks, and reproduces from a relocated root.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "A later authorized Live session must meet declared callback, xrun, CPU, memory, and multi-instance budgets.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "A later authorized Ableton MIDI route and physical Launch Control 3 session must prove endpoint, receipt, feedback, and reconnect behavior.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "A documented local single-instance and layered Ableton audition must support subjective workflow and sound claims.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "Canonical identity and provider routing, full licensing, signing, notarization, packaging, distribution, and release gates must be accepted separately.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

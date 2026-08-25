@@ -35,6 +35,25 @@ const entries = [
   },
 ] as const;
 
+const pamplistEntry = {
+  prototype_id: "pamplist",
+  revision: "0.6",
+  display_name: "Pamplist",
+  summary: "Seven independent generative percussion voices.",
+  controller_label: "Launch Control 3",
+  lane: "source-derived",
+  canonical_identity: {
+    status: "canonical",
+    instrument_reference: { instrument_id: "schuss-instrument-000007", revision: 1, content_hash: `sha256:${"a".repeat(64)}` },
+    graph_reference: { graph_id: "schuss-graph-000009", revision: 1, content_hash: `sha256:${"b".repeat(64)}` },
+    record_set_reference: { record_set_id: "schuss-record-set-000036", revision: 1, content_hash: `sha256:${"c".repeat(64)}` },
+  },
+  availability: "verified-local-build",
+  launchable: true,
+  executable_sha256: "d".repeat(64),
+  evidence: { application_launch: "not-evaluated", listening: "not-evaluated", physical_controller: "not-evaluated" },
+} as const;
+
 describe("InstrumentLibrary", () => {
   beforeEach(() => dispatchMock.mockReset());
 
@@ -94,5 +113,20 @@ describe("InstrumentLibrary", () => {
     await user.click(screen.getByRole("button", { name: "Check status" }));
     await waitFor(() => expect(screen.getByText("Instrument closed")).toBeVisible());
     expect(screen.getByText(/exit 0/)).toBeVisible();
+  });
+
+  it("distinguishes canonical musical identity from its audition runtime", async () => {
+    dispatchMock.mockResolvedValueOnce({
+      library_id: "instrument-lab-audition-library",
+      library_revision: 2,
+      claims: { canonical_identity_count: 1, production_ready: false, runtime_authority: "prototype-build-only" },
+      instrument_count: 1,
+      instruments: [pamplistEntry],
+    });
+    render(<InstrumentLibrary />);
+    expect(await screen.findByRole("heading", { name: "Pamplist" })).toBeVisible();
+    expect(screen.getByText("SCHUSS INSTRUMENTS")).toBeVisible();
+    expect(screen.getByText("Canonical")).toBeVisible();
+    expect(screen.getByText(/This musical identity is canonical/)).toBeVisible();
   });
 });

@@ -1,0 +1,87 @@
+{
+  "acceptance_tests": [
+    "The proposal fingerprint, every declared Tide Pit input, original Gills files, shared Mutable package, and authenticated JUCE source pass readiness authentication before plug-in implementation.",
+    "Exactly sixteen adapter parameters have unique stable IDs, exact source domains, defaults, quantization, complete mapping, and a frozen contract fingerprint.",
+    "Versioned state applies only after complete schema, fingerprint, ID, cardinality, finite-value, and range validation and rejects malformed bytes without partial mutation.",
+    "State recall creates a fresh Core, restores continuous and persistent desired mode state through existing source gestures, and never replays Mutate or Freeze or claims evolving-state restoration.",
+    "At 48000 Hz the processor and direct Core plus Q27HostBridge paths match exactly for controls, timestamped channel-16 CC events, one-shots, mode reconciliation, recall, and declared host block partitions.",
+    "Unsupported rates and layouts produce deterministic silence, overflow is bounded and counted, and repeated processing performs no adapter-owned heap, lock, file, endpoint, paint, JSON, or unbounded callback work.",
+    "Two instances remain independent and deterministic, and editor creation and destruction open no endpoint and inject no duplicate event.",
+    "The Release arm64 VST3 exposes one zero-input stereo-output MIDI instrument, scans and instantiates in a separate JUCE VST3 host, round-trips state, creates and destroys its editor, and renders the expected nonzero fixture.",
+    "Existing Tide Pit source, Core, control, UI, MIDI, render, and standalone checks, Schuss current, and one relocated VST3 reproduction pass after freeze.",
+    "Results keep source, host structural, host signal, target build, real-time, Live, connected-device, listening, distribution, and production evidence independent."
+  ],
+  "decision_rights": {
+    "may": [
+      "Choose prototype-local VST3 codes, bundle and target names, sixteen stable adapter parameter IDs, state schema, processor and editor classes, fixed capacities, fixtures, dimensions, and bounded error presentation.",
+      "Represent Source, Lock, FX Mode, Target, and Scale as desired persistent VST values reconciled only through the existing Tide Pit gestures, while Mutate and Freeze remain one-shots.",
+      "Add the smallest direct processor, allocation, module-host, receipt, and relocation evidence needed by this contract."
+    ],
+    "must_not": [
+      "Change Tide Pit DSP equations, defaults, scales, random state law, source gestures, controller semantics, source dependencies, retained standalone evidence, or original source oracle.",
+      "Create or imply a canonical JUCE provider, implementation binding, runtime, package, distribution approval, real-time result, Live result, device result, listening result, or production promotion.",
+      "Mutate configured upstream or JUCE trees, inherited Pamplist or Layerwell work, install or copy the plug-in, launch an application, open endpoints, access hardware, or alter Git or publication state."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Frozen Task 046 proposal and ready source-reimplementation bundle under research/prototypes/tide-pit-gills/contract-vst3-r01.",
+    "JUCE-independent stable sixteen-parameter program model with exhaustive focused tests.",
+    "Isolated JUCE VST3 processor, accepted-state editor, factory entry, versioned state seam, direct processor tests, allocation probe, and separate module-host tests.",
+    "Opt-in authenticated CMake VST3 target with source fetching and copy-after-build installation disabled.",
+    "Release arm64 Tide Pit.vst3 retained only in a build directory with portable build receipt, results, gaps, affected regressions, current result, and one relocated reproduction."
+  ],
+  "dependency_contracts": [
+    "The six original Gills Tide Pit files must match source-equivalence.json at runtime and remain read-only.",
+    "The current Tide Pit portable Core, host bridge, controller map, UI model, source lock, and original proposal fingerprints in the approved proposal remain the normative Schuss implementation input.",
+    "The shared mutable-ksoloti-v1 package must authenticate at package revision 1 and remain unmodified.",
+    "JUCE 8.0.15 must be supplied as an authenticated local source tree; fetching, source mutation, and installation are disabled by default."
+  ],
+  "goal": {
+    "primary_claim": "At exactly 48000 Hz, the private arm64 VST3 host adapter preserves the frozen Tide Pit Core's continuous controls, source actions, desired persistent modes, fresh-recall rule, timestamped MIDI, and stereo signal behavior across arbitrary positive host block partitions.",
+    "why": "Running Tide Pit directly in Ableton removes the separate-process routing step and makes private recording, freezing, resampling, layering, automation, and multi-instance use practical without redesigning the instrument."
+  },
+  "inputs": [
+    "AGENTS.md, docs/PROJECT_CONTEXT.md, accepted ADRs 0016-0018, docs/workflows/instrument-development.md, and Task 046.",
+    "Approved proposal research/proposals/tide-pit-vst3-local.md at SHA-256 841f77bdf4a0e2cc9b8301178a95ced9f18641629cf58aff560eaa40b4be0fd5.",
+    "The exact Tide Pit Core, controller map, Q27 host bridge, UI model, source lock, original JUCE-port proposal, and source files listed in the proposal and source-equivalence.json.",
+    "Authenticated shared Mutable package, authenticated JUCE 8.0.15 source, and read-only local Ableton Live 12.4.1 host identity.",
+    "Existing Tide Pit source, Core, control, UI, MIDI, renderer, oracle, standalone target, and Instrument Lab evidence."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "User request in the active 2026-08-25 task: Let's make Tide Pit a Ableton VST.",
+      "state": "approved"
+    },
+    "path": "research/proposals/tide-pit-vst3-local.md",
+    "revision": "0.1",
+    "sha256": "841f77bdf4a0e2cc9b8301178a95ced9f18641629cf58aff560eaa40b4be0fd5"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "One private macOS arm64 VST3 instrument with zero inputs, stereo output, MIDI input, sixteen stable adapter parameters, Mutate and Freeze one-shots, and transactional state.",
+      "Exact frozen Tide Pit Core reuse, bounded block and timestamped MIDI adaptation, per-instance lifecycle, accepted-state editor, and offline host validation at 48000 Hz.",
+      "Uninstalled Release target build, exact receipt, affected source and standalone regressions, Schuss current, and one relocated reproduction."
+    ],
+    "out": [
+      "Core musical changes, captured-buffer or full-DSP serialization, host tempo or note-trigger modes, audio input, sidechain, MIDI output, sample export, preset browser, resampling, and a generic plug-in framework.",
+      "Canonical provider, runtime, binding, graph, catalog, package, other plug-in formats, other platforms or architectures, installer, identity signing, notarization, and public distribution.",
+      "Plug-in installation, Ableton or application launch, endpoint or physical-controller access, callback-deadline promotion, structured listening, Git publication, and hardware action."
+    ]
+  },
+  "status": "ready",
+  "target": "macOS arm64 VST3 instrument for Ableton Live 12.4.1 at exactly 48 kHz using authenticated JUCE 8.0.15",
+  "title": "Tide Pit Local VST3 Host Migration",
+  "work_type": "source-reimplementation",
+  "working_definition": {
+    "artifact": "Tide Pit.vst3 private build bundle plus offline host-validation receipt",
+    "evidence_level": "target-build",
+    "success_observation": "A Release arm64 VST3 remains uninstalled in the build tree, is discovered and instantiated as one zero-input stereo instrument by a separate JUCE VST3 host, passes complete parameter, state, action, editor, multi-instance, direct-signal, source-regression, and relocation checks at 48000 Hz, and records all higher evidence gates as unproved."
+  }
+}

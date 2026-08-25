@@ -79,6 +79,12 @@ void testVoiceAndMotionDescriptors() {
         && voice.bottom[3].semantic == pam::SurfaceSemantic::sequence_hits
         && voice.bottom[3].value == 11.0,
         "Sequencer descriptor does not project accepted lane values");
+    expect(voice.bottom[1].tooltip.find("alignment") != std::string_view::npos
+            && voice.bottom[2].tooltip.find("Trigger On")
+                != std::string_view::npos
+            && voice.bottom[4].tooltip.find("Hits 0 or 16")
+                != std::string_view::npos,
+        "Phase, Shape, or Rotate interaction help is missing");
 
     controls.lane_control_mode = pam::LaneControlMode::motion;
     controls.lanes[2].routes[0] = 1.0F;
@@ -121,6 +127,11 @@ void testGlobalDescriptor() {
         expect(slot.enabled && !slot.tooltip.empty(),
             "Global cohesion slot unavailable or unexplained");
     }
+    expect(global.guide.find("require Cohere above zero")
+            != std::string_view::npos
+            && global.guide.find("Clear removes only")
+                != std::string_view::npos,
+        "Global dependency or Clear scope is not explained");
     expect(global.bottom[0].enabled && global.bottom[0].value == 137.0
         && global.bottom[1].enabled
         && std::abs(global.bottom[1].value - 0.42) < 1.0e-6,

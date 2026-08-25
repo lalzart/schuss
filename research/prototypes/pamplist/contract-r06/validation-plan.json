@@ -1,0 +1,163 @@
+{
+  "checks": [
+    {
+      "command": ["python3", "research/prototypes/pamplist/tests/verify_source_authority.py"],
+      "cost": "configured-source",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "catalog/sources.lock.json",
+        "catalog/sources.local.yml",
+        "research/prototypes/pamplist/source-dependencies.json",
+        "research/prototypes/pamplist/tests/verify_source_authority.py"
+      ],
+      "id": "source-review"
+    },
+    {
+      "command": ["python3", "research/prototypes/pamplist/tests/run_focused.py"],
+      "cost": "native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/pamplist/CMakeLists.txt",
+        "research/prototypes/pamplist/include",
+        "research/prototypes/pamplist/src/control_map.cpp",
+        "research/prototypes/pamplist/src/core.cpp",
+        "research/prototypes/pamplist/src/ui_model.cpp",
+        "research/prototypes/pamplist/src/activity_model.cpp",
+        "research/prototypes/pamplist/tests",
+        "research/prototypes/pamplist/contract-r06/control-map.json"
+      ],
+      "id": "focused-structural"
+    },
+    {
+      "command": ["python3", "research/prototypes/pamplist/tests/render_evidence.py", "--check"],
+      "cost": "native",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/pamplist/contract-r06/experiment.json",
+        "research/prototypes/pamplist/contract-r05/evidence/PAMP_R05_AUDIO_CMP/audio.wav",
+        "research/prototypes/pamplist/include/schuss/pamplist/core.hpp",
+        "research/prototypes/pamplist/include/schuss/pamplist/activity_model.hpp",
+        "research/prototypes/pamplist/src/core.cpp",
+        "research/prototypes/pamplist/src/activity_model.cpp",
+        "research/prototypes/pamplist/src/render.cpp",
+        "research/prototypes/pamplist/tests/render_evidence.py",
+        "research/prototypes/pamplist/source-dependencies.json"
+      ],
+      "id": "objective-render"
+    },
+    {
+      "command": ["python3", "research/prototypes/pamplist/tests/build_juce.py", "--check"],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/pamplist/CMakeLists.txt",
+        "research/prototypes/pamplist/include/schuss/pamplist/core.hpp",
+        "research/prototypes/pamplist/include/schuss/pamplist/activity_model.hpp",
+        "research/prototypes/pamplist/src/activity_model.cpp",
+        "research/prototypes/pamplist/src/ui_model.cpp",
+        "research/prototypes/pamplist/src/juce_main.cpp",
+        "research/prototypes/pamplist/contract-r06/implementation-contract.json",
+        "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json"
+      ],
+      "id": "authenticated-juce-build"
+    },
+    {
+      "command": ["python3", "tools/instrument_lab/validate_prototype.py", "--repo-root", ".", "--consumer-root", "research/prototypes/pamplist", "--check"],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/pamplist/prototype-index.json",
+        "research/prototypes/pamplist/dsp-topology.json",
+        "research/prototypes/pamplist/semantic-control-surface.json",
+        "research/prototypes/pamplist/source-dependencies.json"
+      ],
+      "id": "instrument-lab-prototype"
+    },
+    {
+      "command": ["python3", "research/prototypes/pamplist/tests/reproduce_fresh_root.py"],
+      "cost": "reproduction",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/proposals/pamplist-r06.md",
+        "research/prototypes/pamplist",
+        "research/prototype_support/instrument_lab",
+        "catalog/sources.lock.json"
+      ],
+      "id": "fresh-root-reproduction"
+    },
+    {
+      "command": ["python3", "tools/validation/run.py", "--profile", "current"],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/proposals/pamplist-r06.md",
+        "research/prototypes/pamplist"
+      ],
+      "id": "routine-current"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "Exact predecessor source/evidence and the user's audition support the bounded wiring, weak-tail, and visualization problem statements only.",
+      "status": "available"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The revision 0.6 proposal SHA-256 matches this approved ready implementation contract and current-thread authorization.",
+      "status": "available"
+    },
+    {
+      "check_ids": ["source-review"],
+      "level": "source",
+      "promotion_rule": "Configured source, predecessor comparator, controller topology, and new project-owned telemetry/UI implementation authenticate exactly.",
+      "status": "planned"
+    },
+    {
+      "check_ids": ["focused-structural", "instrument-lab-prototype", "routine-current"],
+      "level": "host-structural",
+      "promotion_rule": "Release and sanitizer tests prove control dependencies, individual body response, Clear isolation, cumulative energy, activity reduction/history, snapshot integrity, and no-allocation processing.",
+      "status": "planned"
+    },
+    {
+      "check_ids": ["objective-render", "fresh-root-reproduction"],
+      "level": "host-signal",
+      "promotion_rule": "Four revision 0.6 conditions meet exact r05 dry, sequencer dependency, Global response/Clear, telemetry, finite/Q27, partition, and relocated tolerances.",
+      "status": "planned"
+    },
+    {
+      "check_ids": ["authenticated-juce-build"],
+      "level": "target-build",
+      "promotion_rule": "Authenticated JUCE 8.0.15 compiles and links a Pamplist.app containing the bounded ImpactHistory and accepted-state feedback without launch.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "A separately authorized live run must measure deadline, CPU, lifecycle, and xruns.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "A separately authorized Launch Control 3 session must verify endpoint identity, installed mapping, receipt, feel, feedback, and reconnect.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "The user's next audition must judge control strength, Clear usefulness, trail readability, colour separation, and visual persistence.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "Audition-library entry, canonical identity, graph/provider/runtime, packaging, distribution, and release gates require separate accepted work.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

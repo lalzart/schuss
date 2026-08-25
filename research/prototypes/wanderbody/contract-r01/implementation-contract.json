@@ -1,0 +1,106 @@
+{
+  "acceptance_tests": [
+    "The proposal fingerprint and this bundle validate in ready mode before DSP edits.",
+    "Prepare accepts finite rates from 8 to 192 kHz and declared maximum blocks through 2048 frames while process performs no heap allocation.",
+    "Capture wrap freeze clear and invalidation preserve bounded absolute-time reads without stale pointers or callback-scale clearing.",
+    "Hover stays in its resolved field and Drunk is reflected correlated deterministic and exactly still at minimum Wander.",
+    "Fresh Locked Shuffled and Mutated recurrence satisfy their exact tuple-history invariants with one fixed seed.",
+    "Four windowed fragment voices remain finite bounded and deterministic across the frozen callback partitions.",
+    "The six-mode body is bypassable source-preserving decaying and stable under full-range gestures.",
+    "Version-1 state round-trips transactionally and invalid versions enums ranges and non-finite fields fail closed.",
+    "The ten-condition objective matrix meets peak DC finite locality correlation recurrence body and partition tolerances while the uncorrelated comparator fails the correlation criterion.",
+    "The exact authenticated JUCE 8.0.15 tree compiles and links an unlaunched macOS arm64 standalone bundle without fetching or installation.",
+    "Focused sanitizer Instrument Lab relocated-reproduction and Schuss current checks pass after freeze.",
+    "Results keep host signal target build real-time device listening distribution and production evidence independent."
+  ],
+  "decision_rights": {
+    "may": [
+      "Choose revision-0.1 original equations fixed capacities provisional defaults semantic controls objective tolerances and task-local source layout.",
+      "Use a mono recent-memory Core with stereo pan and body presentation while documenting the channel choice as provisional.",
+      "Use a six-mode parallel second-order resonator bank implemented from published principles without external DSP source.",
+      "Choose task-local test fixtures build helpers diagnostics evidence retention and UI layout within the declared evidence ceiling."
+    ],
+    "must_not": [
+      "Allocate canonical Schuss catalog graph instrument binding provider runtime target or production identity.",
+      "Copy or adapt CDP Mutable Instruments or other external DSP source or claim source equivalence.",
+      "Make permanent product decisions for capture duration voice count interpolation channel topology pitch-time relationship body resolution public controls persistence OS support or distribution.",
+      "Promote app launch callback deadlines physical endpoints devices listening quality distribution or production integration from offline or target-build evidence.",
+      "Fetch or install dependencies launch the application access endpoints mutate upstream or configured sources stage commit push or publish."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Frozen proposal and ready contract-r01 implementation bundle.",
+    "Portable C++17 Wanderbody Core versioned state focused tests and deterministic renderer.",
+    "Minimal JUCE 8.0.15 standalone source and authenticated built-but-unlaunched macOS arm64 target.",
+    "Noncanonical Instrument Lab prototype index topology semantic control surface dependency notices promotion needs and handoff.",
+    "Retained canonical objective artifacts manifest exact results and explicit gaps."
+  ],
+  "dependency_contracts": [
+    {
+      "download_policy": "local repository bytes only",
+      "id": "schuss-instrument-lab-v1",
+      "license_boundary": "repository-owned mechanical support only and no musical semantics",
+      "revision": "Task 048 baseline 982ded194526f2fbe7e392ae070062df701c34f2 plus preserved inherited work"
+    },
+    {
+      "authentication": "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json",
+      "download_policy": "fetch disabled and operator-supplied exact extracted tree only",
+      "id": "juce",
+      "license_boundary": "private prototype development under ADR 0016 with a separate distribution review gate",
+      "revision": "8.0.15"
+    }
+  ],
+  "goal": {
+    "primary_claim": "A correlated field-bounded motion policy plus finite decision-tuple recurrence can create local and recognizable recent-memory gestures while a bypassable modal body adds bounded decaying energy without erasing the source.",
+    "why": "Turn the user-supplied Wanderbody handoff into the smallest exact testable standalone instrument slice without confusing implementation or build evidence with real-time device listening or product completion."
+  },
+  "inputs": [
+    "AGENTS.md docs/PROJECT_CONTEXT.md ADR 0016 ADR 0018 and docs/workflows/instrument-development.md.",
+    "docs/tasks/048-wanderbody-standalone-first-playable.md and the user's explicit 2026-08-25 implement-it authorization.",
+    "The user-supplied Wanderbody JUCE handoff as product and engineering reference rather than autonomous authority.",
+    "research/proposals/wanderbody-standalone-r01.md at SHA-256 2441ae557cd4a692cd3aa42b87b80bf42e401d35250f685912d1f288ba3d6682.",
+    "Repository-owned Instrument Lab and authenticated JUCE 8.0.15 manifest.",
+    "Cited primary CDP Mutable Instruments JUCE and modal-synthesis references; no external implementation bytes."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "User message on 2026-08-25: implement it",
+      "state": "approved"
+    },
+    "path": "research/proposals/wanderbody-standalone-r01.md",
+    "revision": "0.1",
+    "sha256": "2441ae557cd4a692cd3aa42b87b80bf42e401d35250f685912d1f288ba3d6682"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "One noncanonical research/prototypes/wanderbody Instrument Lab consumer.",
+      "Device-rate preallocated capture internal exciter Hover Drunk recurrence four fragment voices original six-mode body stereo safety mix and fixed diagnostics.",
+      "Versioned reset-boundary state and bounded Reset Panic Freeze Clear and mode actions.",
+      "Deterministic Core property renderer sanitizer authenticated target-build relocated reproduction and current-profile evidence.",
+      "Minimal accepted-state JUCE standalone UI and audio-MIDI device-settings surface without launch or endpoint access."
+    ],
+    "out": [
+      "External DSP source ports CDP fidelity Mutable fidelity onset landmarks imported files interaction spectral processing convolution and pitch-independent time stretching.",
+      "Plug-ins Ksoloti Gills canonical promotion shared runtime or provider changes.",
+      "MIDI learn physical controller mapping captured-audio persistence crash recovery packaging signing notarization and distribution.",
+      "Application launch audio or MIDI endpoint access callback deadline promotion device evidence listening or production integration.",
+      "Dependency fetch or install upstream mutation unrelated dirty-work changes Git staging commit push or publication."
+    ]
+  },
+  "status": "ready",
+  "target": "macOS arm64 standalone JUCE 8.0.15 application with JUCE-independent portable C++17 Core",
+  "title": "Wanderbody 0.1 standalone first playable",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "noncanonical portable C++17 Wanderbody Core with deterministic ten-condition renderer and authenticated unlaunched standalone target",
+    "evidence_level": "host-signal",
+    "success_observation": "The exact semantic schedule produces partition-identical decisions and tolerance-compliant finite audio for all ten frozen conditions; the uncorrelated comparator fails the declared correlation criterion; and the standalone target separately compiles and links without launch."
+  }
+}

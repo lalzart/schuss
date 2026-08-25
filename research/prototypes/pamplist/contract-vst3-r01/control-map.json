@@ -1,0 +1,143 @@
+{
+  "application_feedback": [
+    {
+      "authority": "Accepted Core Snapshot published by the processor audio path",
+      "feedback": "Eight page selections, Voice or Motion context, Run, all sixteen slot values, model-now label, frame and trigger diagnostics, and seven lane activity trails"
+    },
+    {
+      "authority": "Accepted diagnostics.effect_clear_count delta",
+      "feedback": "CLEARING then bounded CLEARED text and one impact-history clear marker"
+    },
+    {
+      "authority": "Processor prepared sample rate and layout status",
+      "feedback": "VST3 48K READY or an exact unsupported-rate/layout silence message; no endpoint status is shown"
+    }
+  ],
+  "endpoint_device_evidence": {
+    "notes": "Host MIDI-buffer tests are synthetic/offline. No endpoint is enumerated or opened, no physical controller is accessed, and no Live/device claim is made.",
+    "state": "deferred"
+  },
+  "gesture_state_machines": [
+    {
+      "input": "Editor rotary drag",
+      "states": [
+        "beginGesture on the one resolved stable parameter",
+        "set normalized value with host notification during drag",
+        "endGesture on release"
+      ],
+      "transition": "The source slot domain and quantization resolve from accepted page/mode; no unrelated parameter is rewritten."
+    },
+    {
+      "input": "Host MIDI channel 16 page button press and release",
+      "states": [
+        "existing ControllerAdapter edge memory is idle",
+        "press selects page; a repeated accepted Global press emits one Clear generation",
+        "release clears only edge memory"
+      ],
+      "transition": "The event applies before its host sample position and never notifies the host from the audio thread."
+    },
+    {
+      "input": "Editor Clear Cohesion click",
+      "states": [
+        "idle",
+        "one pending generation increment",
+        "accepted effect_clear_count observation",
+        "bounded CLEARED feedback then idle"
+      ],
+      "transition": "The generation is one-shot, excluded from state, and cannot replay on recall."
+    },
+    {
+      "input": "State recall",
+      "states": [
+        "parse candidate",
+        "validate exact schema, unique complete parameter IDs, finite normalized values, seed, page, and mode",
+        "atomic program commit plus fresh-Core request or complete rejection"
+      ],
+      "transition": "No partial parameter, Clear, controller-edge, or volatile Core state survives an invalid transaction."
+    }
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {
+      "adapter_ids": "pamp.tempo and pamp.lane1.rate through pamp.lane7.phase",
+      "count": 15,
+      "destination": "Controls::tempo_milli_bpm and each LaneControls rate_index/phase_u7",
+      "source": "Task 043 timeline labels cross-checked against frozen UI physical domains"
+    },
+    {
+      "adapter_ids": "pamp.lane1.shape through pamp.lane7.depth",
+      "count": 42,
+      "destination": "Each LaneControls shape/hits/rotation/probability/repeat/amplitude",
+      "source": "Frozen sequence row semantics"
+    },
+    {
+      "adapter_ids": "pamp.lane1.motion.trigger through pamp.lane7.motion.level",
+      "count": 56,
+      "destination": "Each LaneControls routes[0..7] with trigger boolean and other routes signed",
+      "source": "Frozen Motion row semantics"
+    },
+    {
+      "adapter_ids": "pamp.lane1.voice.model through pamp.lane7.voice.level",
+      "count": 56,
+      "destination": "Each VoiceControls engine/note/harmonics/timbre/morph/decay/lpg_colour/level",
+      "source": "Frozen Voice row semantics"
+    },
+    {
+      "adapter_ids": "pamp.global.drive through pamp.global.duck and pamp.master",
+      "count": 9,
+      "destination": "CohesionControls fields and Controls::master_gain",
+      "source": "Frozen Global page semantics"
+    },
+    {
+      "adapter_ids": "pamp.run",
+      "count": 1,
+      "destination": "Controls::running",
+      "source": "Host-only persistent adaptation of the existing Run or Stop action"
+    },
+    {
+      "adapter_ids": "no parameter ID",
+      "count": 0,
+      "destination": "Controls::effect_clear_generation increment",
+      "source": "Clear Cohesion remains a one-shot editor or ControllerAdapter action"
+    }
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/pamplist/semantic-control-surface.json plus research/prototypes/pamplist/src/ui_model.cpp and contracts/task043/pamplist-instrument.json as a non-provider completeness cross-check",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "controls": "Eight page buttons and Voice or Motion mode buttons",
+      "destination": "Private selected_page and lane_control_mode state",
+      "visibility": "Page/mode choose presentation only and are recalled but not public musical parameters"
+    },
+    {
+      "controls": "Eight top rotary slots",
+      "destination": "Selected lane Voice fields, selected lane Motion routes, or eight Global cohesion fields",
+      "visibility": "Resolved through the accepted page/mode SurfaceModel"
+    },
+    {
+      "controls": "Eight bottom rotary slots",
+      "destination": "Selected lane sequence fields or Global BPM/Master plus six disabled positions",
+      "visibility": "Resolved through the accepted page/mode SurfaceModel"
+    },
+    {
+      "controls": "Run toggle",
+      "destination": "Stable host parameter pamp.run then Controls::running",
+      "visibility": "Always visible and automatable"
+    },
+    {
+      "controls": "Clear Cohesion button",
+      "destination": "One processor-owned effect-clear generation request",
+      "visibility": "Visible only on Global and never serialized"
+    },
+    {
+      "controls": "Host MIDI channel 16 CC20-35 and CC40-47",
+      "destination": "Existing ControllerAdapter semantic mapping at the exact message sample position",
+      "visibility": "No physical endpoint selection inside the plug-in"
+    }
+  ],
+  "title": "Pamplist 0.6 Local VST3 Host Migration"
+}

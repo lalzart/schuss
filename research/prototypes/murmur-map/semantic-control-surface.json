@@ -1,0 +1,38 @@
+{
+  "bindings": [
+    {"cc": 20, "control": "tempo_milli_bpm", "domain": [30000, 240000], "kind": "continuous", "owner": "route-timeline", "timing": "next-block-phase-continuous"},
+    {"cc": 21, "control": "travel_milli_quarters", "domain": [250, 8000], "kind": "continuous-logarithmic", "owner": "route-timeline", "timing": "future-edges"},
+    {"cc": 22, "control": "memory_u15", "domain": [0, 32767], "kind": "continuous", "owner": "route-memory", "timing": "next-route-slot"},
+    {"cc": 23, "control": "memory_length", "domain": [2, 32], "kind": "continuous-index", "owner": "route-memory", "timing": "next-node-arrival"},
+    {"cc": 24, "control": "roam_u15", "domain": [0, 32767], "kind": "continuous", "owner": "route-walker", "timing": "next-fresh-destination"},
+    {"cc": 25, "control": "home_u15", "domain": [0, 32767], "kind": "continuous", "owner": "route-walker", "timing": "next-fresh-destination"},
+    {"cc": 26, "control": "radius_u15", "domain": [0, 32767], "kind": "continuous", "owner": "scene-interpolator", "timing": "next-control-tick-with-128-frame-slew"},
+    {"cc": 27, "control": "density_u15", "domain": [0, 32767], "kind": "continuous", "owner": "event-scheduler", "timing": "next-semantic-lane-tick"},
+    {"cc": 28, "control": "draft_lane.interval_semitones", "domain": [-24, 24], "kind": "selected-draft-continuous", "owner": "waypoint-editor", "timing": "draft-only-until-capture"},
+    {"cc": 29, "control": "draft_lane.activity_u15", "domain": [0, 32767], "kind": "selected-draft-continuous", "owner": "waypoint-editor", "timing": "draft-only-until-capture"},
+    {"cc": 30, "control": "draft_lane.timbre_u15", "domain": [0, 32767], "kind": "selected-draft-continuous", "owner": "waypoint-editor", "timing": "draft-only-until-capture"},
+    {"cc": 31, "control": "draft_lane.color_u15", "domain": [0, 32767], "kind": "selected-draft-continuous", "owner": "waypoint-editor", "timing": "draft-only-until-capture"},
+    {"cc": 32, "control": "draft_lane.decay_ms", "domain": [40, 4000], "kind": "selected-draft-continuous-logarithmic", "owner": "waypoint-editor", "timing": "draft-only-until-capture"},
+    {"cc": 33, "control": "draft_lane.level_milli_db", "domain": [-60000, -6000], "kind": "selected-draft-continuous", "owner": "waypoint-editor", "timing": "draft-only-until-capture"},
+    {"cc": 34, "control": "draft_lane.pan_s15", "domain": [-32767, 32767], "kind": "selected-draft-continuous", "owner": "waypoint-editor", "timing": "draft-only-until-capture"},
+    {"cc": 35, "control": "root_midi_note", "domain": [24, 84], "kind": "continuous-index", "owner": "pitch-resolver", "timing": "future-events"},
+    {"cc": 40, "control": "selected_waypoint_a", "domain": [0, 1], "kind": "rising-edge-select", "owner": "waypoint-editor", "timing": "next-audio-block"},
+    {"cc": 41, "control": "selected_waypoint_b", "domain": [0, 1], "kind": "rising-edge-select", "owner": "waypoint-editor", "timing": "next-audio-block"},
+    {"cc": 42, "control": "selected_waypoint_c", "domain": [0, 1], "kind": "rising-edge-select", "owner": "waypoint-editor", "timing": "next-audio-block"},
+    {"cc": 43, "control": "selected_waypoint_d", "domain": [0, 1], "kind": "rising-edge-select", "owner": "waypoint-editor", "timing": "next-audio-block"},
+    {"cc": 44, "control": "selected_lane_anchor", "domain": [0, 1], "kind": "rising-edge-select", "owner": "waypoint-editor", "timing": "next-audio-block"},
+    {"cc": 45, "control": "selected_lane_thread", "domain": [0, 1], "kind": "rising-edge-select", "owner": "waypoint-editor", "timing": "next-audio-block"},
+    {"cc": 46, "control": "selected_lane_spark", "domain": [0, 1], "kind": "rising-edge-select", "owner": "waypoint-editor", "timing": "next-audio-block"},
+    {"cc": 47, "control": "capture_replace", "domain": [0, 1], "kind": "rising-edge-action", "owner": "waypoint-store", "timing": "next-audio-block-transaction"}
+  ],
+  "claims": {
+    "endpoint_mapping": false,
+    "physical_surface": true
+  },
+  "controller_topology": {
+    "artifact": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+    "channel": 16,
+    "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
+  },
+  "schema_version": "schuss-prototype-semantic-control-surface-v0"
+}

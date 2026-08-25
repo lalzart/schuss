@@ -1,0 +1,8 @@
+{
+  "candidate_block_frames": 128,
+  "diverged": true,
+  "sample_exact_wav_sha256": "69f6fd2ff5055c9ac51f876a42caa74afec01e91b4fcdd6204a73d71f9f272c4",
+  "schema": "layerwell-untrimmed-comparator-v1",
+  "timing_change": "ignore the accepted [4800, 43200) trim window",
+  "untrimmed_wav_sha256": "fdc61c5d29a057be2f45e0a2a30a502932f986e1670b156bdf6d4d7dace470ea"
+}

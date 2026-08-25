@@ -164,6 +164,12 @@ TASK039_SCHEMA_NAMES = {
     "operation_result_v19": "operation-result-v19.schema.json",
 }
 
+TASK043_SCHEMA_NAMES = {
+    "catalog_corpus_v7": "catalog-corpus-v7.schema.json",
+    "catalog_projection_v7": "catalog-projection-v7.schema.json",
+    "instrument_audition_library_v2": "instrument-audition-library-v2.schema.json",
+}
+
 TASK015_SCHEMA_NAMES = {
     "normalized_dsp_module": "normalized-dsp-module-v0.schema.json",
     "direct_frontend_result": "direct-frontend-result-v0.schema.json",
@@ -486,6 +492,7 @@ def load_repository_context(
             "catalog-corpus-v4": "catalog-projection-v4",
             "catalog-corpus-v5": "catalog-projection-v5",
             "catalog-corpus-v6": "catalog-projection-v6",
+            "catalog-corpus-v7": "catalog-projection-v7",
         }
         projection_version = projection_versions.get(catalog_schema_version)
         if projection_version is not None:
@@ -567,6 +574,10 @@ def load_repository_context(
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]
     for key, filename in TASK039_SCHEMA_NAMES.items():
+        version = filename.removesuffix(".schema.json")
+        if version in selected.schemas:
+            schemas[key] = selected.schemas[version]
+    for key, filename in TASK043_SCHEMA_NAMES.items():
         version = filename.removesuffix(".schema.json")
         if version in selected.schemas:
             schemas[key] = selected.schemas[version]

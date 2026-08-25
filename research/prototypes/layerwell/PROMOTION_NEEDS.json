@@ -9,10 +9,6 @@
       "required_contract": "provisional cycle capture"
     },
     {
-      "local_role": "role.node.drum-source",
-      "required_contract": "licensed resident musical source"
-    },
-    {
       "local_role": "role.node.layer-mix",
       "required_contract": "bounded phase-aligned layer mixer"
     },
@@ -23,6 +19,10 @@
     {
       "local_role": "role.node.output-guard",
       "required_contract": "bounded stereo output"
+    },
+    {
+      "local_role": "role.node.pamplist-source",
+      "required_contract": "licensed resident musical source"
     },
     {
       "local_role": "role.node.sample-stores",

@@ -1,0 +1,187 @@
+{
+  "dependencies": [
+    {
+      "authentication": "Task 046 source-equivalence, Tide Pit SOURCE_LOCK.json at SHA-256 52a13c11dbd81df05a3590d2aaa5cf1efc95bdddcc874d69cf6961c18de61a02, and the existing exact Q27 oracle authenticate the unchanged Core closure.",
+      "distribution_disposition": "Private uninstalled build only; existing MIT notices retained and no new distribution approval.",
+      "id": "tide-pit-task046-core-and-vst3",
+      "license": "Tide Pit MIT plus reviewed Mutable MIT notices",
+      "revision": "Task 046 frozen proposal and ready bundle"
+    },
+    {
+      "authentication": "Task 045 source-equivalence, configured-source verifier, and source-dependencies.json at SHA-256 d7b82c51046bf96d68b726eba1ebbfc989e0d03fc4daab47f4e71f6fd71f5c38 authenticate the unchanged Pamplist closure.",
+      "distribution_disposition": "Private uninstalled build only; GPL and MIT notices retained and redistribution remains unreviewed.",
+      "id": "pamplist-task045-core-and-vst3",
+      "license": "GPL-3.0-or-later Macro Voice wrapper plus MIT Plaits/stmlib",
+      "revision": "Task 045 frozen proposal and ready bundle"
+    },
+    {
+      "authentication": "Repository-owned Instrument Lab source is reviewed through its focused suite and current/compatibility validation.",
+      "distribution_disposition": "Prototype-only shared utility for the two declared VST3 consumers.",
+      "id": "schuss-instrument-lab-v1",
+      "license": "Project source",
+      "revision": "repository revision 982ded194526f2fbe7e392ae070062df701c34f2 plus Task 047 changes"
+    },
+    {
+      "authentication": "Instrument Lab authenticates the local 4425-file JUCE tree against manifest db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5 and disables fetch by default.",
+      "distribution_disposition": "Private local build only; redistribution, signing, and packaging require a fresh review.",
+      "id": "juce-vst3-host-adapter",
+      "license": "JUCE commercial terms or AGPLv3 plus bundled VST3 SDK terms",
+      "revision": "JUCE 8.0.15 commit 91ad83ae34a81e0833b1a2b0866f54846370ae53"
+    }
+  ],
+  "fidelity": {
+    "allowed_changes": [
+      "Replace exact silence at the six newly declared non-48000-Hz host rates with a delayed band-limited output of the unchanged 48000-Hz Core timeline.",
+      "Add a shared rational host/source clock, 129-tap Kaiser phase bank, fixed source/history buffers, host latency reporting, and bounded failure diagnostics outside both Cores.",
+      "Translate host MIDI offsets to the first source frame not earlier than the host timestamp while retaining equal-frame order.",
+      "Update VST3 status and editor copy to distinguish fixed 48000-Hz Core operation from the active host rate."
+    ],
+    "excluded": [
+      "Native multi-rate Cores, changes to musical DSP or controls, audio input conversion, arbitrary or modulated ratios, time stretch, pitch shift, tempo synchronization, and a generic plug-in framework.",
+      "Other formats, targets, platforms, installation, Ableton launch, endpoint or physical controller work, callback-deadline promotion, listening, signing, notarization, packaging, distribution, and production integration.",
+      "Canonical Schuss graph, catalog, binding, provider, runtime, machine, or release identity."
+    ],
+    "preserve": [
+      "Exact Tide Pit and Pamplist 48000-Hz Core source, numeric format, seeds, schedulers, source quirks, signal graphs, controls, state, gestures, controller maps, and accepted-state presentation.",
+      "Exact direct 48000-Hz VST3 PCM, event, state, reset, instance, allocation, and module behavior from Tasks 045 and 046.",
+      "Existing parameter IDs/order/domains, state schemas/fingerprints, one-shot persistence rules, source authentication, build identity, and no-install boundary.",
+      "Instrument-specific event scheduling: Tide Pit through its existing 16-frame Q27HostBridge and Pamplist through coherent controls and at-most-512-frame Core calls."
+    ]
+  },
+  "files": [
+    {
+      "license": "Project documentation",
+      "path": "research/proposals/tide-pit-vst3-local.md",
+      "role": "normative",
+      "sha256": "841f77bdf4a0e2cc9b8301178a95ced9f18641629cf58aff560eaa40b4be0fd5"
+    },
+    {
+      "license": "Project documentation",
+      "path": "research/proposals/pamplist-vst3-local.md",
+      "role": "normative",
+      "sha256": "125826a47e649bc91d757d62d7b2a1543238769614c9b5f8b843c819291ee650"
+    },
+    {
+      "license": "Project contract",
+      "path": "research/prototypes/tide-pit-gills/contract-vst3-r01/implementation-contract.json",
+      "role": "normative",
+      "sha256": "ce25996044cbc4a236ed42e0b7d3777fe997b9c0f1d20b8a7fc2a93e531816a8"
+    },
+    {
+      "license": "Project contract plus referenced notices",
+      "path": "research/prototypes/tide-pit-gills/contract-vst3-r01/source-equivalence.json",
+      "role": "normative",
+      "sha256": "8d5a846c17ab5cfffaa9d21a70bbc81abf9fff9e5eba19247cc6da51f8dae32f"
+    },
+    {
+      "license": "Project contract",
+      "path": "research/prototypes/pamplist/contract-vst3-r01/implementation-contract.json",
+      "role": "normative",
+      "sha256": "c5bf038aec7f9eb1f6d1a683afbeb18b73e9850d61a41d86cba2113d17a31c3c"
+    },
+    {
+      "license": "Project contract plus referenced notices",
+      "path": "research/prototypes/pamplist/contract-vst3-r01/source-equivalence.json",
+      "role": "normative",
+      "sha256": "69c2ca42956f88d46793351c288c061dc77330360bcfefb61f192cd23cdfa54e"
+    },
+    {
+      "license": "Project source plus Tide Pit notices",
+      "path": "research/prototypes/tide-pit-gills/vst3/include/tidepit/vst3_processor.hpp",
+      "role": "normative",
+      "sha256": "750ea9a2abf84d53459425c8b4daccac98aac2be2d472588217dae42d48dc129"
+    },
+    {
+      "license": "Project source plus Tide Pit notices",
+      "path": "research/prototypes/tide-pit-gills/vst3/src/vst3_processor.cpp",
+      "role": "normative",
+      "sha256": "b14df5a7e8e217e1a2385db15bd8756967dbdf98e3166c962b2c3660145d3232"
+    },
+    {
+      "license": "Project source plus Pamplist notices",
+      "path": "research/prototypes/pamplist/vst3/include/schuss/pamplist/vst3_processor.hpp",
+      "role": "normative",
+      "sha256": "1ee992180606dd2f793f7ade73068998551110a30b7e0ff3640860bd601bc232"
+    },
+    {
+      "license": "Project source plus Pamplist notices",
+      "path": "research/prototypes/pamplist/vst3/src/vst3_processor.cpp",
+      "role": "normative",
+      "sha256": "11224b9f74d8b915c1d2d6f2d7e7d0c1f00a1cf6ace173039295f5bd66ae48e2"
+    },
+    {
+      "license": "Project source",
+      "path": "research/prototype_support/instrument_lab/include/schuss/instrument_lab/host_bridge.hpp",
+      "role": "supporting",
+      "sha256": "42264a6bb948cc5d08e289ac185949b8439cacc4e2eb7e7829d025c506b56a04"
+    },
+    {
+      "license": "Project contract",
+      "path": "research/prototypes/vst3-resampling/contract-r01/reuse-fingerprints.json",
+      "role": "supporting",
+      "sha256": "8affdaee24eeb0b1f66052c6b848e638b4ef4e793a0d37f7974ae35c3e474d4f"
+    }
+  ],
+  "intentional_deviations": [
+    "The six newly supported non-48000-Hz rates produce causal FIR output instead of the predecessor processors' exact silence.",
+    "Non-bypass output reports deterministic host latency near 1.35 ms; the exact 48000-Hz path remains direct with zero added latency.",
+    "Reset and state recall clear FIR history and restart the declared latency transient so pre-reset samples cannot leak into fresh state.",
+    "Non-bypass callbacks above 8192 host frames fail to silence rather than allocating or performing unbounded callback work.",
+    "The final host-rate scope time base varies with host rate while accepted musical state remains Core-owned."
+  ],
+  "not_applicable_rationale": "",
+  "oracle": {
+    "commands": [
+      "ctest --test-dir build/instrument-lab-task047 --output-on-failure -R ^instrument_lab_core_tests$",
+      "ctest --test-dir build/tide-pit-vst3-task047-release -C Release --output-on-failure -R ^tide_pit_vst3_",
+      "ctest --test-dir build/pamplist-vst3-task047-release -C Release --output-on-failure -R ^pamplist_vst3_"
+    ],
+    "fixtures": [
+      "Existing exact Tide Pit and Pamplist 48000-Hz direct processor comparators and state/MIDI fixtures.",
+      "Shared deterministic DC, impulse, 1000-Hz, 18000-Hz, and 23000-Hz stereo sources across the seven declared host rates.",
+      "Host block matrix 1, 16, 64, 127, 128, 511, 512, 513, 2048, and 4096; invalid 48001-Hz and 8193-frame negatives."
+    ],
+    "kind": "signal-tolerance",
+    "metrics": [
+      "Exact direct processor float PCM, accepted state, parameter/state fingerprints, and source progress at 48000 Hz.",
+      "Exact cumulative source counts, event mappings and ordering, reported latency, partition invariance, finite/bounded samples, and allocation count.",
+      "Steady DC error, 1000-Hz and 18000-Hz RMS gain, 23000-Hz-to-44100-Hz alias RMS, and failure of the unfiltered comparator.",
+      "Actual module identity, bus layout, state/editor lifecycle, host latency, output energy, architecture, seal, and source-tree non-mutation."
+    ],
+    "tolerances": {
+      "alias_23000_to_44100": "below -70 dBFS after initial and final latency transients; unfiltered comparator must fail",
+      "allocation_probe": "zero adapter-owned C++ heap allocations during repeated non-bypass processBlock calls",
+      "dc_error": "absolute steady-state error <= 2e-5",
+      "direct_48000_pcm": "exact float equality",
+      "event_timeline": "exact B(E)=ceil(E*48000/F_host), monotone, never early, equal-frame order preserved",
+      "finite_samples": "all and within [-1,1] for instrument fixtures",
+      "gain_1000_hz": "absolute gain error <= 0.05 dB",
+      "gain_18000_hz_at_44100": "absolute gain error <= 0.35 dB",
+      "source_count": "exact ceil(H*48000/F_host) for every prefix and partition"
+    }
+  },
+  "reuse": {
+    "controller_map": {
+      "artifact": "research/prototypes/vst3-resampling/contract-r01/reuse-fingerprints.json",
+      "sha256": "8affdaee24eeb0b1f66052c6b848e638b4ef4e793a0d37f7974ae35c3e474d4f",
+      "strategy": "reuse-fingerprinted"
+    },
+    "ui_shell": {
+      "artifact": "research/prototypes/vst3-resampling/contract-r01/reuse-fingerprints.json",
+      "sha256": "8affdaee24eeb0b1f66052c6b848e638b4ef4e793a0d37f7974ae35c3e474d4f",
+      "strategy": "reuse-fingerprinted"
+    }
+  },
+  "schema_version": "sonic-research-lab-source-equivalence-v1",
+  "source_authority": {
+    "dirty_state": "The Schuss main worktree contains accepted but uncommitted Tasks 043-046 and unrelated inherited changes. Task 047 binds only the listed predecessor and support files and must preserve every other byte.",
+    "observed_branch": "main",
+    "repository_id": "schuss",
+    "revision": "982ded194526f2fbe7e392ae070062df701c34f2 with the exact listed Task 045/046 working-tree authorities",
+    "source_id": "schuss:task047-vst3-resampling-inputs",
+    "source_root_id": "schuss-workspace"
+  },
+  "status": "ready",
+  "unresolved_items": [],
+  "work_type": "source-reimplementation"
+}

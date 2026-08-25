@@ -1,3 +1,4 @@
+#include "schuss/pamplist/activity_model.hpp"
 #include "schuss/pamplist/control_map.hpp"
 #include "schuss/pamplist/control_snapshot.hpp"
 #include "schuss/pamplist/core.hpp"
@@ -383,6 +384,145 @@ private:
     bool binary_mouse_down_{};
 };
 
+class ImpactHistoryComponent final : public juce::Component {
+public:
+    ImpactHistoryComponent() {
+        setInterceptsMouseClicks(false, false);
+    }
+
+    void pushSnapshot(const pam::Snapshot& snapshot) {
+        selected_lane_ = snapshot.accepted.selected_page < pam::kLaneCount
+            ? static_cast<int>(snapshot.accepted.selected_page)
+            : -1;
+        const auto sample = reducer_.reduce(snapshot);
+        if (sample.rebased) history_.clear();
+        if (sample.frame_count != 0U) history_.push(sample);
+        repaint();
+    }
+
+    void paint(juce::Graphics& graphics) override {
+        auto bounds = getLocalBounds().toFloat();
+        graphics.setColour(juce::Colour{0xff121820});
+        graphics.fillRoundedRectangle(bounds, 5.0F);
+        graphics.setColour(juce::Colour{0xff3a4552});
+        graphics.drawRoundedRectangle(bounds.reduced(0.5F), 5.0F, 1.0F);
+
+        auto content = bounds.reduced(10.0F, 6.0F);
+        const auto header = content.removeFromTop(18.0F);
+        graphics.setFont(juce::FontOptions{11.0F, juce::Font::bold});
+        graphics.setColour(juce::Colour{0xffd5dce5});
+        graphics.drawText(
+            "IMPACT TRAILS  /  9.6 SEC",
+            header.toNearestInt(),
+            juce::Justification::centredLeft,
+            false);
+        graphics.setFont(juce::FontOptions{10.0F});
+        graphics.setColour(juce::Colour{0xff8492a3});
+        graphics.drawText(
+            "BRIGHT = ENERGY   SPARK = TRIGGER   PINK = COHESION   LINE = CLEAR",
+            header.toNearestInt(),
+            juce::Justification::centredRight,
+            false);
+        content.removeFromTop(3.0F);
+
+        constexpr float label_width = 48.0F;
+        auto labels = content.removeFromLeft(label_width);
+        auto plot = content;
+        const auto row_height = plot.getHeight()
+            / static_cast<float>(pam::kLaneCount);
+        for (std::size_t lane = 0; lane < pam::kLaneCount; ++lane) {
+            const auto row = juce::Rectangle<float>{
+                plot.getX(),
+                plot.getY() + static_cast<float>(lane) * row_height,
+                plot.getWidth(),
+                row_height};
+            if (selected_lane_ == static_cast<int>(lane)) {
+                graphics.setColour(kLaneColours[lane].withAlpha(0.08F));
+                graphics.fillRect(row);
+            }
+            graphics.setColour(juce::Colour{0xff27313b});
+            graphics.drawHorizontalLine(
+                juce::roundToInt(row.getBottom()),
+                row.getX(),
+                row.getRight());
+            graphics.setColour(kLaneColours[lane].withAlpha(
+                selected_lane_ == static_cast<int>(lane) ? 1.0F : 0.72F));
+            graphics.setFont(juce::FontOptions{
+                10.0F,
+                selected_lane_ == static_cast<int>(lane)
+                    ? juce::Font::bold
+                    : juce::Font::plain});
+            const auto label = juce::Rectangle<float>{
+                labels.getX(),
+                row.getY(),
+                labels.getWidth() - 5.0F,
+                row.getHeight()};
+            graphics.drawText(
+                "LANE " + juce::String(static_cast<int>(lane) + 1),
+                label.toNearestInt(),
+                juce::Justification::centredRight,
+                false);
+        }
+
+        const auto count = history_.size();
+        const auto slot_width = plot.getWidth()
+            / static_cast<float>(pam::kImpactHistoryCapacity);
+        const auto first_slot = pam::kImpactHistoryCapacity - count;
+        for (std::size_t index = 0; index < count; ++index) {
+            const auto sample = history_.oldest(index);
+            const auto x = plot.getX()
+                + static_cast<float>(first_slot + index) * slot_width;
+            const auto column_width = std::max(1.0F, slot_width + 0.25F);
+            if (sample.cohesion_level > 0.0F) {
+                graphics.setColour(juce::Colour{kGlobalColourArgb}.withAlpha(
+                    0.025F + 0.16F * sample.cohesion_level));
+                graphics.fillRect(
+                    juce::Rectangle<float>{
+                        x, plot.getY(), column_width, plot.getHeight()});
+            }
+            if (sample.effect_cleared) {
+                graphics.setColour(
+                    juce::Colour{kGlobalColourArgb}.withAlpha(0.95F));
+                graphics.fillRect(juce::Rectangle<float>{
+                    x, plot.getY(), 1.5F, plot.getHeight()});
+            }
+            for (std::size_t lane = 0; lane < pam::kLaneCount; ++lane) {
+                const auto level = juce::jlimit(
+                    0.0F, 1.0F, sample.lane_levels[lane]);
+                const auto row_y = plot.getY()
+                    + static_cast<float>(lane) * row_height;
+                const auto centre_y = row_y + row_height * 0.5F;
+                if (level > 0.0F) {
+                    const auto height = std::max(
+                        1.0F, level * (row_height - 3.0F));
+                    graphics.setColour(kLaneColours[lane].withAlpha(
+                        0.18F + 0.78F * level));
+                    graphics.fillRect(juce::Rectangle<float>{
+                        x,
+                        centre_y - height * 0.5F,
+                        column_width,
+                        height});
+                }
+                if ((sample.trigger_mask & (1U << lane)) != 0U) {
+                    const auto radius = 1.8F + 0.55F * static_cast<float>(
+                        std::min<std::uint64_t>(sample.trigger_deltas[lane], 3U));
+                    graphics.setColour(kLaneColours[lane].brighter(0.45F));
+                    graphics.fillEllipse(
+                        x + column_width * 0.5F - radius,
+                        centre_y - radius,
+                        radius * 2.0F,
+                        radius * 2.0F);
+                }
+            }
+        }
+    }
+
+private:
+    pam::ActivityReducer reducer_{};
+    pam::ImpactHistory history_{};
+    int selected_lane_{-1};
+};
+
 class MainComponent final
     : public juce::Component,
       private juce::Timer {
@@ -517,12 +657,18 @@ public:
             juce::TextButton::buttonColourId, juce::Colour{0xff492f4a});
         clear_fx_button_.setColour(
             juce::TextButton::buttonOnColourId, juce::Colour{kGlobalColourArgb});
+        clear_fx_button_.setTooltip(
+            "Clears only the shared cohesion body's retained tail. Lane clocks, patterns, voices, and dry voice tails continue.");
         clear_fx_button_.onClick = [this] {
             engine_.updateControls([](pam::Controls& controls) {
                 ++controls.effect_clear_generation;
             });
+            clear_pending_ = true;
+            updateClearFeedback();
         };
         addAndMakeVisible(clear_fx_button_);
+
+        addAndMakeVisible(impact_history_);
 
         status_.setText(
             "Build-only prototype: press Start audio explicitly; refresh/select MIDI explicitly",
@@ -531,10 +677,12 @@ public:
         status_.setJustificationType(juce::Justification::centredRight);
         addAndMakeVisible(status_);
 
-        projectAcceptedState(engine_.acceptedSnapshot());
+        const auto initial_snapshot = engine_.acceptedSnapshot();
+        projectAcceptedState(initial_snapshot);
+        impact_history_.pushSnapshot(initial_snapshot);
         updateEnabledState();
         startTimerHz(20);
-        setSize(1280, 690);
+        setSize(1280, 840);
     }
 
     ~MainComponent() override { setLookAndFeel(nullptr); }
@@ -579,6 +727,9 @@ public:
             page_buttons_[page]->setBounds(
                 lanes.removeFromLeft(lanes.getWidth() / remaining).reduced(4));
         }
+        area.removeFromTop(5);
+
+        impact_history_.setBounds(area.removeFromTop(145));
         area.removeFromTop(5);
 
         auto context = area.removeFromTop(32);
@@ -729,6 +880,7 @@ private:
     }
 
     void projectAcceptedState(const pam::Snapshot& snapshot) {
+        observeClearCount(snapshot.diagnostics.effect_clear_count);
         const auto selected_page = std::min<std::size_t>(
             snapshot.accepted.selected_page, pam::kGlobalPageIndex);
         const bool global = selected_page == pam::kGlobalPageIndex;
@@ -848,10 +1000,41 @@ private:
             active && current_surface_.context == pam::SurfaceContext::global);
     }
 
+    void observeClearCount(std::uint64_t count) {
+        if (!clear_count_initialized_) {
+            last_clear_count_ = count;
+            clear_count_initialized_ = true;
+            return;
+        }
+        if (count > last_clear_count_) {
+            clear_feedback_ticks_ = 16;
+            clear_pending_ = false;
+        } else if (count < last_clear_count_) {
+            clear_feedback_ticks_ = 0;
+            clear_pending_ = false;
+        }
+        last_clear_count_ = count;
+        updateClearFeedback();
+    }
+
+    void updateClearFeedback() {
+        if (clear_feedback_ticks_ > 0) {
+            clear_fx_button_.setButtonText("CLEARED");
+        } else if (clear_pending_) {
+            clear_fx_button_.setButtonText("CLEARING");
+        } else {
+            clear_fx_button_.setButtonText("CLEAR FX");
+        }
+    }
+
     void timerCallback() override {
         if (engine_.audioActive()) {
-            projectAcceptedState(engine_.acceptedSnapshot());
+            const auto snapshot = engine_.acceptedSnapshot();
+            projectAcceptedState(snapshot);
+            impact_history_.pushSnapshot(snapshot);
         }
+        if (clear_feedback_ticks_ > 0) --clear_feedback_ticks_;
+        updateClearFeedback();
         if (++status_ticks_ >= 5) {
             status_ticks_ = 0;
             status_.setText(engine_.statusText(), juce::dontSendNotification);
@@ -868,6 +1051,7 @@ private:
     juce::Label surface_guide_;
     juce::GroupComponent top_group_;
     juce::GroupComponent bottom_group_;
+    ImpactHistoryComponent impact_history_;
     juce::TextButton audio_button_;
     juce::TextButton refresh_midi_button_;
     juce::TextButton clear_fx_button_;
@@ -886,6 +1070,10 @@ private:
     std::array<std::unique_ptr<juce::Label>, pam::kSurfaceColumnCount>
         bottom_labels_;
     pam::SurfaceModel current_surface_{};
+    std::uint64_t last_clear_count_{};
+    bool clear_count_initialized_{};
+    bool clear_pending_{};
+    int clear_feedback_ticks_{};
     int status_ticks_{};
 };
 
@@ -915,7 +1103,7 @@ public:
     }
 
     [[nodiscard]] const juce::String getApplicationVersion() override {
-        return "0.5.0";
+        return "0.6.0";
     }
 
     void initialise(const juce::String&) override {

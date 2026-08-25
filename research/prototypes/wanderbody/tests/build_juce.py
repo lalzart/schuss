@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+"""Build the authenticated Wanderbody JUCE standalone without launching it."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+from pathlib import Path
+import subprocess
+import sys
+
+
+ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = ROOT.parents[2]
+
+
+def run(command: list[str]) -> None:
+    print("+ " + " ".join(command), flush=True)
+    subprocess.run(command, cwd=REPO_ROOT, check=True)
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--build-dir", type=Path, required=True)
+    parser.add_argument("--juce-source-dir", type=Path, required=True)
+    args = parser.parse_args()
+    source = args.juce_source_dir.resolve()
+    if not (source / "CMakeLists.txt").is_file():
+        raise SystemExit(f"authenticated JUCE source prerequisite is missing: {source}")
+    build = args.build_dir.resolve()
+    run([sys.executable, str(ROOT / "tests" / "verify_provenance.py")])
+    run([
+        "cmake", "-S", str(ROOT), "-B", str(build),
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DWANDERBODY_ENABLE_JUCE=ON",
+        f"-DWANDERBODY_JUCE_SOURCE_DIR={source}",
+        "-DWANDERBODY_ALLOW_JUCE_FETCH=OFF",
+    ])
+    run(["cmake", "--build", str(build), "--config", "Release", "--parallel"])
+    run(["ctest", "--test-dir", str(build), "--output-on-failure"])
+    executable = (
+        build / "wanderbody-instrument_artefacts" / "Release" / "Wanderbody 0.1.app"
+        / "Contents" / "MacOS" / "Wanderbody 0.1"
+    )
+    if not executable.is_file():
+        raise SystemExit(f"standalone executable was not produced: {executable}")
+    run(["file", str(executable)])
+    print(f"standalone executable sha256: {sha256(executable)}")
+    print(f"standalone executable bytes: {executable.stat().st_size}")
+    print("Wanderbody target build: passed (application not launched)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

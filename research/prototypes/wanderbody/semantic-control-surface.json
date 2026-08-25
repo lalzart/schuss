@@ -1,0 +1,34 @@
+{
+  "bindings": [
+    {"control":"external","domain":[0,1],"kind":"continuous","owner":"live-source-mix","timing":"next-block-target-then-twenty-millisecond-slew"},
+    {"control":"internal","domain":[0,1],"kind":"continuous","owner":"internal-exciter","timing":"next-block-target-then-twenty-millisecond-slew"},
+    {"control":"anchor","domain":[0,1],"kind":"continuous","owner":"motion-policy","timing":"future-decisions-after-slew"},
+    {"control":"field","domain":[0,1],"kind":"continuous","owner":"motion-policy","timing":"future-decisions-after-slew"},
+    {"control":"motion","domain":[0,1],"kind":"categorical","owner":"motion-policy","timing":"next-future-decision"},
+    {"control":"wander","domain":[0,1],"kind":"continuous","owner":"motion-policy","timing":"future-decisions-after-slew"},
+    {"control":"recurrence","domain":[0,3],"kind":"categorical","owner":"decision-memory","timing":"next-future-decision"},
+    {"control":"mutation","domain":[0,1],"kind":"continuous","owner":"decision-memory","timing":"next-mutated-decision"},
+    {"control":"fragment","domain":[0,1],"kind":"continuous","owner":"fragment-scheduler","timing":"future-voice-births"},
+    {"control":"energy","domain":[0,1],"kind":"continuous","owner":"fragment-scheduler","timing":"future-exciter-and-launch-boundaries"},
+    {"control":"body","domain":[0,1],"kind":"continuous","owner":"modal-body","timing":"twenty-millisecond-slew"},
+    {"control":"structure","domain":[0,1],"kind":"continuous","owner":"modal-body","timing":"coefficient-quantum"},
+    {"control":"brightness","domain":[0,1],"kind":"continuous","owner":"modal-body","timing":"coefficient-quantum"},
+    {"control":"damping","domain":[0,1],"kind":"continuous","owner":"modal-body","timing":"coefficient-quantum"},
+    {"control":"position","domain":[0,1],"kind":"continuous","owner":"modal-body","timing":"coefficient-quantum"},
+    {"control":"dry","domain":[0,1],"kind":"continuous","owner":"stereo-mix","timing":"twenty-millisecond-slew"},
+    {"control":"memory","domain":[0,1],"kind":"continuous","owner":"stereo-mix","timing":"twenty-millisecond-slew"},
+    {"control":"freeze","domain":[0,1],"kind":"monotonic-sequence-action","owner":"capture-store","timing":"next-block-boundary"},
+    {"control":"clear","domain":[0,1],"kind":"monotonic-sequence-action","owner":"capture-store","timing":"next-block-and-bounded-fade"},
+    {"control":"reset","domain":[0,1],"kind":"monotonic-sequence-action","owner":"complete-core","timing":"next-block-boundary"},
+    {"control":"panic","domain":[0,1],"kind":"monotonic-sequence-action","owner":"voice-and-body-safety","timing":"next-block-boundary"}
+  ],
+  "claims": {
+    "endpoint_mapping": false,
+    "physical_surface": false
+  },
+  "source_of_truth": {
+    "artifact": "research/prototypes/wanderbody/contract-r01/control-map.json",
+    "strategy": "exhaustive-compare"
+  },
+  "schema_version": "schuss-prototype-semantic-control-surface-v0"
+}

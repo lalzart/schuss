@@ -1,0 +1,211 @@
+{
+  "dependencies": [
+    {
+      "authentication": "research/prototypes/pamplist/tests/verify_source_authority.py verifies the configured repository commit, clean authenticated scope, synthesis tree, and exact required files.",
+      "distribution_disposition": "Private local use only in Task 045; redistribution requires a fresh GPL and complete-source-offer review.",
+      "id": "ksoloti-extended-macro-voice",
+      "license": "GPL-3.0-or-later wrapper closure with embedded MIT dependencies",
+      "revision": "patcher commit 08d3e6e1e2b61230308c20a15ded58ffdaf4656c; synthesis tree 58917f3e2e46a30337cfb6292a3504845b1d5552"
+    },
+    {
+      "authentication": "source-dependencies.json and configured source verifier authenticate the exact Plaits subset.",
+      "distribution_disposition": "Retain MIT notice; this task does not grant independent distribution approval.",
+      "id": "mutable-instruments-plaits",
+      "license": "MIT",
+      "revision": "08460a69 source subset declared by Pamplist 0.6"
+    },
+    {
+      "authentication": "source-dependencies.json and configured source verifier authenticate the exact stmlib subset.",
+      "distribution_disposition": "Retain MIT notice; this task does not grant independent distribution approval.",
+      "id": "mutable-instruments-stmlib",
+      "license": "MIT",
+      "revision": "e3bd7c source subset declared by Pamplist 0.6"
+    },
+    {
+      "authentication": "Schuss Instrument Lab authenticated-JUCE helper requires the operator-supplied JUCE 8.0.15 source tree and disables fetch by default.",
+      "distribution_disposition": "Private local build only; JUCE and VST3 redistribution, signing, and packaging require a fresh license review.",
+      "id": "juce-vst3-host-adapter",
+      "license": "JUCE commercial terms or AGPLv3, plus bundled VST3 SDK license",
+      "revision": "JUCE 8.0.15 authenticated local source"
+    }
+  ],
+  "fidelity": {
+    "allowed_changes": [
+      "Replace the standalone audio and physical MIDI endpoint shell with a zero-input stereo VST3 processor that receives host buffers and host MIDI.",
+      "Expose the 178 source-musical controls through stable prototype-local parameters and adapt Controls::running to one additional persistent Run parameter.",
+      "Serialize the visible program, seed, page, and mode while resetting intentionally volatile Core, controller-edge, diagnostic, and impact-history state on recall.",
+      "Partition arbitrary positive host buffers and timestamped MIDI boundaries into consecutive Core calls no larger than 512 frames.",
+      "Reuse the musical editor topology without standalone Start Audio, refresh MIDI, or endpoint selection controls."
+    ],
+    "excluded": [
+      "Host transport or tempo synchronization, note-trigger behavior, audio input, sidechain, MIDI output, recording or sample export, preset browser, and hidden Core state serialization.",
+      "Canonical implementation binding, provider, runtime, package, other plug-in formats or architectures, install, Live launch, endpoint or device access, listening, distribution, and production claims."
+    ],
+    "preserve": [
+      "Pamplist Core DSP equations, fixed 48000 Hz timeline, deterministic addressed randomness, defaults, sanitization, smoothing, seven-lane decision and motion behavior, seven Macro Voices, dry mixer, cohesion body, and stereo Q27 output.",
+      "All source control domains, discrete quantization, labels, contextual page topology, channel-16 controller mappings, Clear generation semantics, and accepted-state activity reduction.",
+      "Exact configured Macro Voice source authority and byte-authentic upstream code without source checkout mutation.",
+      "Independent per-instance Core, controller, parameter, state, snapshot, and editor-history ownership."
+    ]
+  },
+  "files": [
+    {
+      "license": "Schuss project source with dependency closure declared separately",
+      "path": "research/prototypes/pamplist/src/core.cpp",
+      "role": "normative",
+      "sha256": "aad40fed6018bcfa70819cb427907fae412e67e694330ec67543d09499f6b9d3"
+    },
+    {
+      "license": "Schuss project source",
+      "path": "research/prototypes/pamplist/include/schuss/pamplist/core.hpp",
+      "role": "normative",
+      "sha256": "92e728e096ecff0bf716551080543832bf3b211f951971bc15912b4c858df7b6"
+    },
+    {
+      "license": "GPL-3.0-or-later wrapper closure",
+      "path": "research/prototypes/pamplist/src/macro_voice.cpp",
+      "role": "normative",
+      "sha256": "7bbadb688a7b39920606004ee4b5051c6a3bd7455f70aeef4fa007c7f980b4a0"
+    },
+    {
+      "license": "GPL-3.0-or-later wrapper closure",
+      "path": "research/prototypes/pamplist/include/schuss/pamplist/macro_voice.hpp",
+      "role": "normative",
+      "sha256": "b46e7a6c5356ba86334b8abf90b52a175317962b5fc48af41a3cd4c4f3228df1"
+    },
+    {
+      "license": "Schuss project source",
+      "path": "research/prototypes/pamplist/src/control_map.cpp",
+      "role": "normative",
+      "sha256": "bd86fd914e2dc975528a9fc2ae618108fb2f6ce14ba05bc896e8c2118e63c5ff"
+    },
+    {
+      "license": "Schuss project source",
+      "path": "research/prototypes/pamplist/include/schuss/pamplist/control_map.hpp",
+      "role": "normative",
+      "sha256": "3d5e1d0a4bf3a0e006e2ca621ab84946107d024e9657840bf93daabd7263165b"
+    },
+    {
+      "license": "Schuss project source",
+      "path": "research/prototypes/pamplist/src/ui_model.cpp",
+      "role": "normative",
+      "sha256": "edf1c99dcc089df24a6d546f1ee78ae084695c446b0efae01b4af46f1fe4f1f8"
+    },
+    {
+      "license": "Schuss project source",
+      "path": "research/prototypes/pamplist/include/schuss/pamplist/ui_model.hpp",
+      "role": "normative",
+      "sha256": "70f3ae476bdd5ae0ed3360d27aeb798623b3be0facea96d256ffe2e71bc142a0"
+    },
+    {
+      "license": "Schuss project source",
+      "path": "research/prototypes/pamplist/src/activity_model.cpp",
+      "role": "normative",
+      "sha256": "adbfe6d306a70d7de3b7f40c6302b90cdfe145285c362c2ad182cc8e6c99197d"
+    },
+    {
+      "license": "Schuss project source",
+      "path": "research/prototypes/pamplist/include/schuss/pamplist/activity_model.hpp",
+      "role": "normative",
+      "sha256": "5d07a6c9cd73b3745d1310889de951df4280b704856ff8747d025b32907f5c54"
+    },
+    {
+      "license": "Schuss project source plus authenticated JUCE dependency",
+      "path": "research/prototypes/pamplist/src/juce_main.cpp",
+      "role": "supporting",
+      "sha256": "c14bb7fcbc9af93a8142d40cbee7c059f456dd1ccb23c70349bb2ae7894b63f9"
+    },
+    {
+      "license": "Schuss project data",
+      "path": "research/prototypes/pamplist/semantic-control-surface.json",
+      "role": "normative",
+      "sha256": "1944250974303b05e75059a4fa1d58d6c70d661d19ca6d60ca490b72d5b1015a"
+    },
+    {
+      "license": "Exact upstream dependency declarations",
+      "path": "research/prototypes/pamplist/source-dependencies.json",
+      "role": "normative",
+      "sha256": "d7b82c51046bf96d68b726eba1ebbfc989e0d03fc4daab47f4e71f6fd71f5c38"
+    },
+    {
+      "license": "Proposal authority",
+      "path": "research/proposals/pamplist-r06.md",
+      "role": "normative",
+      "sha256": "a923b9665a6024d986a5ae8ac094aa9d41cd634de03c45c8ca954630ea43e917"
+    },
+    {
+      "license": "Retained evidence record",
+      "path": "research/prototypes/pamplist/contract-r06/RESULTS.md",
+      "role": "observational",
+      "sha256": "a9c29d66f542e7d047b86c502695d7fd981b62930e12e073bb01f77e5327d5eb"
+    },
+    {
+      "license": "Canonical Schuss semantic record; supporting only",
+      "path": "contracts/task043/pamplist-instrument.json",
+      "role": "supporting",
+      "sha256": "06de37792afd4bfd0fed49f3d6748a06fab14b1274d1c8c772dff073f01b7668"
+    }
+  ],
+  "intentional_deviations": [
+    "Run is adapter parameter 179 so a host can automate and recall it; the canonical Run action remains semantically separate.",
+    "Clear is deliberately absent from parameters and serialized state to prevent action replay during recall.",
+    "State recall restores the program into a fresh Core rather than attempting to serialize hidden voice, timeline, cohesion, diagnostic, or history state.",
+    "Host buffers over 512 frames and timestamped CC positions are rendered as consecutive bounded Core calls.",
+    "The VST3 editor reuses fingerprinted musical presentation mechanics but excludes the standalone endpoint lifecycle shell.",
+    "The authenticated JUCE VST3 boundary adds one standard bypass parameter and 16 by 130 non-automatable MIDI-controller service parameters. They are wrapper protocol state, not Pamplist-owned musical or adapter parameters; the 179 stable Pamplist parameters remain first and exhaustive."
+  ],
+  "not_applicable_rationale": "",
+  "oracle": {
+    "commands": [
+      "cmake --build <pamplist-vst3-build> --config Release --target pamplist-vst3-model-tests pamplist-vst3-processor-tests",
+      "ctest --test-dir <pamplist-vst3-build> -C Release --output-on-failure -R 'pamplist_vst3_(model|processor)_tests'",
+      "cmake --build <pamplist-vst3-build> --config Release --target pamplist-vst3_VST3 pamplist-vst3-module-tests",
+      "ctest --test-dir <pamplist-vst3-build> -C Release --output-on-failure -R pamplist_vst3_module_tests"
+    ],
+    "fixtures": [
+      "Silent faithful default and enabled single-lane direct-Core comparator",
+      "Dense seven-lane signed-motion and cohesion-extremes comparator",
+      "Timestamped channel-16 CC trace with page, mode, Run, and Clear transitions",
+      "Versioned state twin-render, malformed-state negatives, and two-instance independence matrix",
+      "VST3 module scan, instantiate, unattached-editor lifetime, state recall, and nonzero render"
+    ],
+    "kind": "state-trace",
+    "metrics": [
+      "Exact stable parameter IDs, physical domains, defaults, steps, and Controls round-trip",
+      "Exact Q27/direct float PCM hash and maximum absolute sample delta where paths share the same partition",
+      "Accepted absolute frame, event, trigger, Clear, and state-recall traces",
+      "Finite and bounded sample counts, invalid-rate silence, scanner description, bus layout, and Mach-O architecture",
+      "Independent identical-instance output equality and cross-instance mutation isolation"
+    ],
+    "tolerances": {
+      "direct_processor_max_absolute_pcm_delta": 0,
+      "finite_sample_failures": 0,
+      "invalid_rate_max_absolute_pcm": 0,
+      "state_parameter_normalized_delta": 0
+    }
+  },
+  "reuse": {
+    "controller_map": {
+      "artifact": "research/prototypes/pamplist/src/control_map.cpp",
+      "sha256": "bd86fd914e2dc975528a9fc2ae618108fb2f6ce14ba05bc896e8c2118e63c5ff",
+      "strategy": "reuse-fingerprinted"
+    },
+    "ui_shell": {
+      "artifact": "research/prototypes/pamplist/src/juce_main.cpp",
+      "sha256": "c14bb7fcbc9af93a8142d40cbee7c059f456dd1ccb23c70349bb2ae7894b63f9",
+      "strategy": "reuse-fingerprinted"
+    }
+  },
+  "schema_version": "sonic-research-lab-source-equivalence-v1",
+  "source_authority": {
+    "dirty_state": "The Schuss working tree intentionally contains completed uncommitted Tasks 043 and 044 plus Task 045 planning; only the listed exact hashes are normative inputs and all unrelated dirty bytes are preserved.",
+    "observed_branch": "main",
+    "repository_id": "schuss-local-workspace",
+    "revision": "baseline 982ded194526f2fbe7e392ae070062df701c34f2 plus the exact Task 043 Pamplist working-tree source set listed here",
+    "source_id": "pamplist-prototype-v06-task045-input",
+    "source_root_id": "schuss-workspace-root-runtime-argument"
+  },
+  "status": "ready",
+  "unresolved_items": [],
+  "work_type": "source-reimplementation"
+}

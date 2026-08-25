@@ -1,0 +1,62 @@
+{
+  "claims": {
+    "allocates_canonical_records": false,
+    "executable_graph": false
+  },
+  "needs": [
+    {
+      "local_role": "role.node.event-scheduler",
+      "required_contract": "birth-time lane-event snapshot"
+    },
+    {
+      "local_role": "role.node.event-scheduler",
+      "required_contract": "musical-phase event scheduler"
+    },
+    {
+      "local_role": "role.node.lane-voices",
+      "required_contract": "licensed macro-oscillator host primitive"
+    },
+    {
+      "local_role": "role.node.mixer",
+      "required_contract": "bounded stereo instrument mixer"
+    },
+    {
+      "local_role": "role.node.pitch-quantizer",
+      "required_contract": "bounded musical pitch quantizer"
+    },
+    {
+      "local_role": "role.node.route-memory",
+      "required_contract": "bounded semantic route memory"
+    },
+    {
+      "local_role": "role.node.route-walker",
+      "required_contract": "seeded route policy"
+    },
+    {
+      "local_role": "role.node.route-walker",
+      "required_contract": "semantic random-draw accounting"
+    },
+    {
+      "local_role": "role.node.scene-interpolator",
+      "required_contract": "two-dimensional authored-scene interpolation"
+    },
+    {
+      "local_role": "role.node.voice-wrapper",
+      "required_contract": "birth-snapshot voice"
+    },
+    {
+      "local_role": "role.node.voice-wrapper",
+      "required_contract": "deterministic integer rate converter"
+    },
+    {
+      "local_role": "role.node.waypoint-store",
+      "required_contract": "authored sound-map state"
+    },
+    {
+      "local_role": "role.node.waypoint-store",
+      "required_contract": "transactional musical-state capture"
+    }
+  ],
+  "prototype_id": "murmur-map",
+  "schema_version": "schuss-instrument-lab-promotion-needs-v1"
+}

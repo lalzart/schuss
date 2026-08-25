@@ -181,7 +181,7 @@ def validate_structure(root: Path) -> dict[str, Any]:
             _diagnostic(diagnostics, "DESKTOP_SEMANTIC_RECORD_OWNERSHIP_INVALID", APP_ROOT / relative, "renderer may not own semantic records")
 
     package = _load(root, PACKAGE, diagnostics)
-    if not isinstance(package, dict) or package.get("dependencies") != EXPECTED_DEPENDENCIES or package.get("schuss", {}).get("recordSet") != "schuss-record-set-000033@1" or package.get("schuss", {}).get("status") != "instrument-library-home":
+    if not isinstance(package, dict) or package.get("dependencies") != EXPECTED_DEPENDENCIES or package.get("schuss", {}).get("recordSet") != "schuss-record-set-000036@1" or package.get("schuss", {}).get("status") != "instrument-library-home":
         _diagnostic(diagnostics, "DESKTOP_PACKAGE_INVALID", PACKAGE, "desktop dependency or boundary metadata drifted")
     lock = _load(root, PACKAGE_LOCK, diagnostics)
     if not isinstance(lock, dict) or lock.get("packages", {}).get("", {}).get("dependencies") != EXPECTED_DEPENDENCIES:
@@ -202,7 +202,7 @@ def validate_structure(root: Path) -> dict[str, Any]:
         if isinstance(phases, list):
             planned_count = sum(len(item.get("operations", [])) for item in phases if isinstance(item, dict))
         transport = boundary.get("transport", {})
-        if transport.get("command") != "dispatch_desktop_operation" or transport.get("selected_record_set") != "contracts/record-sets/ui-desktop-instrument-library-v1.json":
+        if transport.get("command") != "dispatch_desktop_operation" or transport.get("selected_record_set") != "contracts/record-sets/task043-pamplist-canonical-v1.json":
             _diagnostic(diagnostics, "DESKTOP_TRANSPORT_BOUNDARY_INVALID", BOUNDARY, "desktop transport or exact record set drifted")
         ownership = boundary.get("ownership", {})
         if any(ownership.get(key) != "forbidden" for key in ("direct_catalog_file_access", "direct_renderer_process_access", "direct_semantic_json_access", "direct_workspace_mutation")):

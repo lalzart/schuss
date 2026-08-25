@@ -1,0 +1,72 @@
+{
+  "adapter": {
+    "interface": "SchussMutableBraidsV1::Core",
+    "manifest": {
+      "path": "packages/dsp_adapters/mutable_braids_v1/ADAPTER.json",
+      "sha256": "c0c56698d495cbc582671cb5414f77f603fa3cba81319e221fd2910965f6facd"
+    }
+  },
+  "authenticated_extracted_sources": [
+    {
+      "manifest": {
+        "path": "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json",
+        "sha256": "db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5"
+      },
+      "prerequisite": "operator-supplied exact extracted source tree",
+      "source_release": {
+        "content_hash": "sha256:fe43e61c91a48b2e29dd24ad08118f21c656eae2b765cae1a5c96682121b4652",
+        "path": "contracts/task033/phase2/source-release-07.json",
+        "revision": 1,
+        "source_release_id": "schuss-source-release-000007"
+      }
+    }
+  ],
+  "claims": {
+    "catalog_membership": false,
+    "graph_identity": false,
+    "implementation_identity": false,
+    "provider_identity": false,
+    "runtime_support": false
+  },
+  "consumer_id": "murmur-map",
+  "physical_packages": [
+    {
+      "manifest": {
+        "path": "packages/dsp_sources/mutable_eurorack_braids_v1/SOURCE_PACKAGE.json",
+        "sha256": "04d6c10203e233c883168d5bd8f42bb5edbb388f44f35423d777888085bfd823"
+      },
+      "package_id": "mutable-eurorack-braids-v1",
+      "package_revision": "1",
+      "required_components": [
+        "braids-core-sources",
+        "braids-headers",
+        "braids-resources-source"
+      ],
+      "source_release": {
+        "content_hash": "sha256:4c9213df72403a823c48db3041aca4c0213caeff8b38f06e50d197643f7c4cb0",
+        "path": "contracts/task038/source-release-01.json",
+        "revision": 1,
+        "source_release_id": "schuss-source-release-000008"
+      }
+    },
+    {
+      "manifest": {
+        "path": "packages/dsp_sources/mutable_stmlib_v1/SOURCE_PACKAGE.json",
+        "sha256": "dc7d95f7665048e947be3149a454479b0e1b3a620747e0dbba1a37c677897aba"
+      },
+      "package_id": "mutable-stmlib-v1",
+      "package_revision": "1",
+      "required_components": [
+        "stmlib-headers",
+        "stmlib-random-source"
+      ],
+      "source_release": {
+        "content_hash": "sha256:f6bcc4d88986ff587078f305007700d03aa441f9ff0bc7015c074a8351f3da20",
+        "path": "contracts/task038/source-release-02.json",
+        "revision": 1,
+        "source_release_id": "schuss-source-release-000009"
+      }
+    }
+  ],
+  "schema_version": "instrument-lab-source-dependencies-v1"
+}

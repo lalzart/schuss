@@ -1,8 +1,9 @@
 # Layerwell third-party notice routing
 
 Layerwell adds no copied third-party DSP source. It composes the existing Tide
-Pit Gills and Schuss Generative Drums public Core targets inside this repository.
-Their exact dependency manifests and retained notices remain the authorities:
+Pit Gills and Pamplist public Cores inside this repository. Pamplist in turn
+compiles its configured, locked Ksoloti Extended Macro Voice source read-only.
+The exact dependency manifests and retained notices remain the authorities:
 
 - Tide Pit import and Mutable closure:
   `research/prototypes/tide-pit-gills/third_party/THIRD_PARTY_NOTICES.md`
@@ -16,6 +17,12 @@ Their exact dependency manifests and retained notices remain the authorities:
 - Mutable Ksoloti package:
   `packages/dsp_sources/mutable_ksoloti_v1/THIRD_PARTY_NOTICES.md`
   (`ddc99eecad00ff1387c50675f2a56c9079764ba2f5ea453d0e6816b700cb82f7`).
+- Pamplist's Ksoloti Extended, Mutable Instruments Plaits, and stmlib routing:
+  `research/prototypes/pamplist/THIRD_PARTY_NOTICES.md`
+  (`79a670e45ba454cfcc74a76c9aab84467fd145044b928e34e423efa5e21a1312`).
+- Pamplist configured-source authority:
+  `research/prototypes/pamplist/source-dependencies.json`
+  (`d7b82c51046bf96d68b726eba1ebbfc989e0d03fc4daab47f4e71f6fd71f5c38`).
 
 JUCE 8.0.15 is used only from an authenticated operator-supplied local source
 tree for the unlaunched prototype build. Its source-release and license boundary

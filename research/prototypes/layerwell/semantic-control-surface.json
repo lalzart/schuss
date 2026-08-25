@@ -22,13 +22,25 @@
       "control": "eight buttons",
       "input": "channel 1 CC37 through CC44 press and release",
       "mode": "Control",
-      "semantic": "dispatch to selected source public button slots 1 through 8"
+      "semantic": "dispatch to selected source public button slots 1 through 8, including exact Tide Pit actions and Pamplist pages"
     },
     {
       "control": "top encoders 1 through 4",
       "input": "channel 16 CC77 through CC80, relative pivot 64",
       "mode": "Mixer",
       "semantic": "layer 1 through 3 pan and source-monitor level"
+    },
+    {
+      "control": "top encoders 5 and 6",
+      "input": "channel 16 CC81 and CC82, relative pivot 64",
+      "mode": "Mixer",
+      "semantic": "trim start and end by 48 frames per step, or 480 frames while Shift is held, only when exactly one layer is occupied and capture is idle"
+    },
+    {
+      "control": "top encoders 7 and 8",
+      "input": "channel 16 CC83 and CC84",
+      "mode": "Mixer",
+      "semantic": "reserved with neutral feedback"
     },
     {
       "control": "bottom encoders 1 through 4",
@@ -47,6 +59,18 @@
       "input": "channel 7 CC63 held plus channel 1 CC44 value 127",
       "mode": "Mixer",
       "semantic": "clear selected layer"
+    },
+    {
+      "control": "embedded Pamplist panel actions",
+      "input": "fixed-capacity GUI semantic commands",
+      "mode": "desktop",
+      "semantic": "select any of eight pages, choose Voice or Motion on lane pages, toggle Run Stop, and invoke effect-only Clear through the existing accepted source model"
+    },
+    {
+      "control": "embedded sampler trim controls",
+      "input": "integer start/end sliders and reset action",
+      "mode": "desktop",
+      "semantic": "set or reset the sole committed layer's active metadata window without rewriting captured samples"
     },
     {
       "control": "mode report",
@@ -70,7 +94,7 @@
   "feedback": {
     "authority": "accepted Layerwell Snapshot only",
     "connection": "enable DAW mode, set both encoder rows relative, then send a complete accepted-state resync",
-    "outputs": "absolute encoder positions, RGB control colors, stationary source and layer text, temporary parameter overlays",
+    "outputs": "absolute encoder positions, RGB control colors, stationary source, context, layer, capture, and trim text, plus temporary accepted parameter overlays",
     "shutdown": "send DAW-mode disable before output endpoint close or change"
   },
   "schema_version": "schuss-prototype-semantic-control-surface-v0"

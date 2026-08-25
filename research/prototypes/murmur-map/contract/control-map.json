@@ -1,0 +1,77 @@
+{
+  "application_feedback": [
+    {
+      "destination": "standalone global controls and map",
+      "semantics": "Tempo, Travel, Memory, Length, Roam, Home, Radius, Density, Root, Scale, Run, Lock, accepted waypoint fields, HOME identity, route position, and route trace are drawn from the latest accepted Core snapshot rather than raw GUI or MIDI input."
+    },
+    {
+      "destination": "standalone waypoint editor",
+      "semantics": "The selected waypoint and lane expose an explicitly marked draft. Encoder or GUI edits remain proposed until Capture/Replace; switching selection discards an uncommitted draft and increments a visible discard counter."
+    },
+    {
+      "destination": "standalone diagnostics",
+      "semantics": "Show selected MIDI input name, endpoint-open state, receive count, ignored count, last channel/CC/value, last mapping result, accepted control epoch, route transition count, lane event counts, dropped-event count, repair count, clamp count, and latched fault state."
+    }
+  ],
+  "endpoint_device_evidence": {
+    "notes": "The retained topology was previously user-confirmed with another standalone, but this Murmur Map mapping, endpoint selection, reconnect behavior, physical receipt, and feedback have not been exercised. Build and simulated protocol results do not create a Murmur Map device claim.",
+    "state": "deferred-murmur-map-physical-session"
+  },
+  "gesture_state_machines": [
+    {
+      "control": "select-waypoint",
+      "semantics": "CC40-43 value 127 selects default waypoint A-D for editing. Value 0 is an accepted release with no second transition. Selecting another waypoint while a draft is dirty discards that draft, restores the newly selected accepted state, and increments draft_discard_count."
+    },
+    {
+      "control": "select-lane",
+      "semantics": "CC44-46 value 127 selects Anchor, Thread, or Spark within the selected waypoint. Value 0 is an accepted release with no second transition. A dirty draft is discarded under the same explicit rule as waypoint selection."
+    },
+    {
+      "control": "capture-replace",
+      "semantics": "CC47 value 127 validates and transactionally copies the complete draft lane into its selected accepted waypoint at the next audio-block boundary. Value 0 does not capture twice; intermediate values fail closed. Capture with no dirty draft is accepted as a no-op and counted."
+    }
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {"cc": 20, "control": "tempo_milli_bpm", "mapping": "30000 + round-half-up(value*210000/127)", "timing": "next-audio-block-phase-continuous", "type": "continuous"},
+    {"cc": 21, "control": "travel_milli_quarters", "mapping": "round(250*pow(32,value/127))", "timing": "next-audio-block-future-edges", "type": "continuous"},
+    {"cc": 22, "control": "memory_u15", "mapping": "round-half-up(value*32767/127), with value 127 exactly 32767", "timing": "next-audio-block-future-route-slots", "type": "continuous"},
+    {"cc": 23, "control": "memory_length", "mapping": "2 + round-half-up(value*30/127)", "timing": "next-node-arrival", "type": "continuous"},
+    {"cc": 24, "control": "roam_u15", "mapping": "round-half-up(value*32767/127)", "timing": "next-fresh-destination", "type": "continuous"},
+    {"cc": 25, "control": "home_u15", "mapping": "round-half-up(value*32767/127)", "timing": "next-fresh-destination", "type": "continuous"},
+    {"cc": 26, "control": "radius_u15", "mapping": "round-half-up(value*32767/127), converted by Core to 0.05+0.95*u15/32767", "timing": "next-control-tick-then-128-sample-slew", "type": "continuous"},
+    {"cc": 27, "control": "density_u15", "mapping": "round-half-up(value*32767/127)", "timing": "next-semantic-lane-tick", "type": "continuous"},
+    {"cc": 28, "control": "draft_lane.interval_semitones", "mapping": "-24 + round-half-up(value*48/127)", "timing": "draft-only-until-capture", "type": "continuous"},
+    {"cc": 29, "control": "draft_lane.activity_u15", "mapping": "round-half-up(value*32767/127)", "timing": "draft-only-until-capture", "type": "continuous"},
+    {"cc": 30, "control": "draft_lane.timbre_u15", "mapping": "round-half-up(value*32767/127)", "timing": "draft-only-until-capture", "type": "continuous"},
+    {"cc": 31, "control": "draft_lane.color_u15", "mapping": "round-half-up(value*32767/127)", "timing": "draft-only-until-capture", "type": "continuous"},
+    {"cc": 32, "control": "draft_lane.decay_ms", "mapping": "round(40*pow(100,value/127))", "timing": "draft-only-until-capture", "type": "continuous"},
+    {"cc": 33, "control": "draft_lane.level_milli_db", "mapping": "-60000 + round-half-up(value*54000/127)", "timing": "draft-only-until-capture", "type": "continuous"},
+    {"cc": 34, "control": "draft_lane.pan_s15", "mapping": "-32767 + round-half-up(value*65534/127)", "timing": "draft-only-until-capture", "type": "continuous"},
+    {"cc": 35, "control": "root_midi_note", "mapping": "24 + round-half-up(value*60/127)", "timing": "next-audio-block-future-events", "type": "continuous"},
+    {"cc": 40, "control": "editor.selected_waypoint=A", "edge": "press-127-select", "type": "action"},
+    {"cc": 41, "control": "editor.selected_waypoint=B", "edge": "press-127-select", "type": "action"},
+    {"cc": 42, "control": "editor.selected_waypoint=C", "edge": "press-127-select", "type": "action"},
+    {"cc": 43, "control": "editor.selected_waypoint=D", "edge": "press-127-select", "type": "action"},
+    {"cc": 44, "control": "editor.selected_lane=anchor", "edge": "press-127-select", "type": "action"},
+    {"cc": 45, "control": "editor.selected_lane=thread", "edge": "press-127-select", "type": "action"},
+    {"cc": 46, "control": "editor.selected_lane=spark", "edge": "press-127-select", "type": "action"},
+    {"cc": 47, "control": "capture_replace", "edge": "press-127-validate-and-publish", "type": "action"}
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/murmur-map/contract/control-map.json",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "artifact": "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json",
+      "buttons": "CC40-43 select waypoint A-D; CC44-46 select Anchor/Thread/Spark; CC47 Capture/Replace; all momentary 127/0",
+      "channel": 16,
+      "encoders": "CC20-27 top row map Tempo, Travel, Memory, Length, Roam, Home, Radius, Density; CC28-35 bottom row map selected draft Interval, Activity, Timbre, Color, Decay, Level, Pan plus accepted global Root",
+      "sha256": "d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b"
+    }
+  ],
+  "title": "Murmur Map 0.1"
+}

@@ -510,6 +510,27 @@ export type InstrumentEvidenceBoundary = {
   physical_controller: "not-evaluated";
 };
 
+export type InstrumentCanonicalIdentity =
+  | { status: "not-promoted" }
+  | {
+      status: "canonical";
+      instrument_reference: {
+        instrument_id: string;
+        revision: number;
+        content_hash: string;
+      };
+      graph_reference: {
+        graph_id: string;
+        revision: number;
+        content_hash: string;
+      };
+      record_set_reference: {
+        record_set_id: string;
+        revision: number;
+        content_hash: string;
+      };
+    };
+
 export type InstrumentLibraryEntry = {
   prototype_id: string;
   revision: string;
@@ -517,6 +538,7 @@ export type InstrumentLibraryEntry = {
   summary: string;
   controller_label: string;
   lane: string;
+  canonical_identity?: InstrumentCanonicalIdentity;
   availability: InstrumentAvailability;
   launchable: boolean;
   evidence: InstrumentEvidenceBoundary;
@@ -525,11 +547,14 @@ export type InstrumentLibraryEntry = {
 
 export type InstrumentLibraryValue = {
   library_id: "instrument-lab-audition-library";
-  library_revision: 1;
-  claims: {
-    canonical_schuss_records: false;
-    production_ready: false;
-  };
+  library_revision: number;
+  claims:
+    | { canonical_schuss_records: false; production_ready: false }
+    | {
+        canonical_identity_count: number;
+        production_ready: false;
+        runtime_authority: "prototype-build-only";
+      };
   instrument_count: number;
   instruments: InstrumentLibraryEntry[];
 };

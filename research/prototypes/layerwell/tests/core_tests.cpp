@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -275,6 +276,136 @@ void testThreeLayersAndClearLastLoop() {
         "clearing the final committed layer returns to no-loop state");
 }
 
+void testNonDestructiveTrimAndLayerInheritance() {
+    layerwell::Core core;
+    expect(core.prepare(), "trim core prepares");
+    std::array<float, 16> left{};
+    std::array<float, 16> right{};
+    std::uint64_t sequence = 1U;
+    auto processEvent = [&](layerwell::EventKind kind, std::uint8_t index = 0U,
+                            double value = 0.0, std::uint32_t offset = 0U) {
+        const layerwell::Event event{offset, sequence++, kind, index, value};
+        return core.process(left.data(), right.data(), 16U, &event, 1U);
+    };
+
+    processEvent(layerwell::EventKind::capture_press);
+    for (std::uint32_t frame = 16U; frame < 48000U; frame += 16U) {
+        core.process(left.data(), right.data(), 16U);
+    }
+    processEvent(layerwell::EventKind::capture_press);
+    auto snapshot = core.snapshot();
+    expect(snapshot.layers[0].recorded_length_frames == 48000U
+            && snapshot.layers[0].playback_offset_frames == 0U,
+        "first capture retains its full recorded extent at offset zero");
+    expect(snapshot.trim_available && snapshot.trim_start_frames == 0U
+            && snapshot.trim_end_frames == 48000U
+            && snapshot.trim_extent_frames == 48000U,
+        "one idle layer exposes the full accepted trim window");
+
+    const auto* owner_before = core.committedSamples(0U, 0U);
+    std::vector<float> bytes_before(owner_before, owner_before + 48000U);
+    std::array<layerwell::Event, 2> trim{{
+        {16U, sequence++, layerwell::EventKind::set_trim_start, 0U, 4800.0},
+        {16U, sequence++, layerwell::EventKind::set_trim_end, 0U, 43200.0},
+    }};
+    auto report = core.process(
+        left.data(), right.data(), 16U, trim.data(), trim.size());
+    snapshot = core.snapshot();
+    expect(report.events_accepted == 2U && report.events_rejected == 0U,
+        "valid start and end trim events are accepted");
+    expect(snapshot.loop_length_frames == 38400U
+            && snapshot.trim_start_frames == 4800U
+            && snapshot.trim_end_frames == 43200U
+            && snapshot.phase_frames == 0U,
+        "trim selects [4800,43200) and resets shared phase at acceptance");
+    expect(snapshot.layers[0].recorded_length_frames == 48000U
+            && snapshot.layers[0].playback_offset_frames == 4800U,
+        "trim changes playback metadata but preserves recorded extent");
+    expect(core.committedSamples(0U, 0U) == owner_before
+            && std::memcmp(bytes_before.data(), owner_before,
+                bytes_before.size() * sizeof(float)) == 0,
+        "trim preserves committed owner and every recorded sample byte");
+
+    const auto window_before_reject = snapshot;
+    report = processEvent(
+        layerwell::EventKind::set_trim_end, 0U, 4800.0 + 23999.0);
+    snapshot = core.snapshot();
+    expect(report.events_rejected == 1U
+            && snapshot.loop_length_frames == window_before_reject.loop_length_frames
+            && snapshot.layers[0].playback_offset_frames
+                == window_before_reject.layers[0].playback_offset_frames,
+        "too-short trim is rejected without changing accepted window");
+    report = processEvent(
+        layerwell::EventKind::set_trim_start, 0U,
+        std::numeric_limits<double>::quiet_NaN());
+    snapshot = core.snapshot();
+    expect(report.events_rejected == 1U
+            && snapshot.diagnostics.trim_non_finite_rejections == 1U,
+        "non-finite trim is rejected and diagnosed");
+    expect(std::memcmp(bytes_before.data(), owner_before,
+               bytes_before.size() * sizeof(float)) == 0,
+        "rejected trim preserves committed bytes");
+
+    core.process(left.data(), right.data(), 16U);
+    std::array<layerwell::Event, 3> arm_second{{
+        {0U, sequence++, layerwell::EventKind::source_next, 0U, 0.0},
+        {0U, sequence++, layerwell::EventKind::select_layer, 1U, 0.0},
+        {0U, sequence++, layerwell::EventKind::capture_press, 0U, 0.0},
+    }};
+    core.process(
+        left.data(), right.data(), 16U,
+        arm_second.data(), arm_second.size());
+    expect(core.snapshot().capture_state == layerwell::CaptureState::waiting_boundary,
+        "later capture arms while trimmed phase is nonzero");
+    report = processEvent(layerwell::EventKind::adjust_trim_start, 0U, 48.0);
+    expect(report.events_rejected == 1U
+            && core.snapshot().capture_state
+                == layerwell::CaptureState::waiting_boundary,
+        "trim rejects while capture is busy without cancelling the take");
+
+    std::size_t guard = 0U;
+    while ((!core.snapshot().layers[1].occupied
+            || core.snapshot().capture_state != layerwell::CaptureState::idle)
+        && guard++ < 5000U) {
+        core.process(left.data(), right.data(), 16U);
+    }
+    snapshot = core.snapshot();
+    expect(snapshot.layers[1].occupied
+            && snapshot.layers[1].recorded_length_frames == 38400U
+            && snapshot.layers[1].playback_offset_frames == 0U,
+        "later Pamplist capture inherits exact trimmed length at offset zero");
+    expect(snapshot.loop_length_frames == 38400U
+            && snapshot.occupied_layer_count == 2U
+            && !snapshot.trim_available,
+        "second committed layer locks trim without changing shared period");
+    const auto locked_start = snapshot.layers[0].playback_offset_frames;
+    report = processEvent(layerwell::EventKind::adjust_trim_start, 0U, 48.0);
+    expect(report.events_rejected == 1U
+            && core.snapshot().layers[0].playback_offset_frames == locked_start,
+        "multi-layer trim request is rejected atomically");
+
+    processEvent(layerwell::EventKind::select_layer, 0U);
+    processEvent(layerwell::EventKind::clear_selected_layer);
+    snapshot = core.snapshot();
+    expect(snapshot.occupied_layer_count == 1U && snapshot.trim_available
+            && snapshot.trim_start_frames == 0U
+            && snapshot.trim_end_frames == 38400U
+            && snapshot.trim_extent_frames == 38400U,
+        "clearing back to the offset-zero layer restores bounded trim");
+    processEvent(layerwell::EventKind::set_trim_end, 0U, 30000.0, 16U);
+    snapshot = core.snapshot();
+    expect(snapshot.loop_length_frames == 30000U
+            && snapshot.phase_frames == 0U,
+        "remaining layer accepts a new inward trim");
+    processEvent(layerwell::EventKind::reset_trim, 0U, 0.0, 16U);
+    snapshot = core.snapshot();
+    expect(snapshot.loop_length_frames == 38400U
+            && snapshot.trim_start_frames == 0U
+            && snapshot.trim_end_frames == 38400U
+            && snapshot.diagnostics.trim_resets == 1U,
+        "trim reset restores the remaining recorded extent");
+}
+
 void testPartitionIdentityAndSafety() {
     const auto reference = renderTimeline(16U);
     for (const auto block : {64U, 128U, 512U}) {
@@ -297,6 +428,7 @@ int main() {
     testReplacementCancelAndOverflow();
     testRecordingCancelAndInvalidShapePreserve();
     testThreeLayersAndClearLastLoop();
+    testNonDestructiveTrimAndLayerInheritance();
     testPartitionIdentityAndSafety();
     if (failures != 0) {
         std::cerr << failures << " Layerwell Core test(s) failed\n";

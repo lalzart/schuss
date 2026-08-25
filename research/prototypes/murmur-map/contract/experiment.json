@@ -1,0 +1,137 @@
+{
+  "artifact_retention": {
+    "location": "build/murmur-map-evidence",
+    "policy": "reproducible-only"
+  },
+  "comparator_condition_id": "MM10_WHITE_SCENE",
+  "conditions": [
+    {
+      "events": [
+        "Render 96 seconds from defaults.",
+        "Use MEMORY=0 until 24 seconds to fill all 16 active route slots.",
+        "Set MEMORY=1 exactly at frame 1152000 and require exact destination-cycle recurrence afterward."
+      ],
+      "id": "MM01_LOCKED",
+      "purpose": "Prove that a filled destination ring becomes an exact, visible, block-invariant loop."
+    },
+    {
+      "events": [
+        "Render 120 seconds from defaults with MEMORY=0.92 for the full run."
+      ],
+      "id": "MM02_SLOW_EROSION",
+      "purpose": "Measure partial recurrence and gradual route replacement."
+    },
+    {
+      "events": [
+        "Render 96 seconds from defaults with MEMORY=0 for the full run."
+      ],
+      "id": "MM03_FRESH",
+      "purpose": "Establish the route-local but memory-free generation boundary."
+    },
+    {
+      "events": [
+        "Render 96 seconds from defaults.",
+        "Change HOME from 0 to 0.85 at frame 1536000 while retaining fixed route-stream draw accounting."
+      ],
+      "id": "MM04_HOME_PULL",
+      "purpose": "Verify that HOME changes return latency without shifting unrelated random draws."
+    },
+    {
+      "events": [
+        "Render 96 seconds with a filled locked route.",
+        "Move waypoint C from (0.78,0.84) to (0.52,0.66) at frame 1536000 without consuming PRNG state."
+      ],
+      "id": "MM05_MOVE_WAYPOINT",
+      "purpose": "Prove that geometry and C-influenced sound change while locked destination IDs remain exact."
+    },
+    {
+      "events": [
+        "Render 96 seconds from defaults.",
+        "At frame 1536000 transactionally replace waypoint B thread-lane activity, timbre, color, decay, level, and pan.",
+        "Require active pre-capture voices to retain their birth snapshots."
+      ],
+      "id": "MM06_CAPTURE_REPLACE",
+      "purpose": "Verify block-boundary semantic capture and immutable active-event state."
+    },
+    {
+      "events": [
+        "Render 96 seconds from defaults.",
+        "At the first node boundary on or after frame 1536000 reseed to 0x5245534545443031, invalidate the ring, retain old audio tails, and restart the route from HOME."
+      ],
+      "id": "MM07_RESEED",
+      "purpose": "Verify deterministic deferred reseed and route-memory invalidation."
+    },
+    {
+      "events": [
+        "Render 48 seconds at TEMPO=240, DENSITY=1, TRAVEL=0.25, RADIUS=0.05, LENGTH=32, ROAM=1, and HOME=1.",
+        "Apply bounded valid control changes every 4096 frames."
+      ],
+      "id": "MM08_EXTREMES",
+      "purpose": "Stress fixed capacities, fastest scheduling, numeric bounds, and rapid accepted controls."
+    },
+    {
+      "events": [
+        "Panic at frame zero.",
+        "Set DENSITY=0 and every waypoint lane activity to zero while leaving RUN=true for 24 seconds."
+      ],
+      "id": "MM09_EXACT_SILENCE",
+      "purpose": "Require every PCM sample to be exactly zero while the route trace remains valid."
+    },
+    {
+      "events": [
+        "Render 120 seconds with the same seed family, default waypoints, fixed voices, scale, mean lane density, and tempo as MM02.",
+        "Choose one waypoint independently at every event with no route locality, HOME, or destination memory."
+      ],
+      "id": "MM10_WHITE_SCENE",
+      "purpose": "Falsifying memoryless comparator for the route-coherence and steerability hypothesis."
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "canonical stereo 24-bit PCM WAV",
+      "name": "condition-stereo.wav"
+    },
+    {
+      "kind": "ordered JSON route-arrival and control-transition trace",
+      "name": "condition-route.json"
+    },
+    {
+      "kind": "ordered JSON lane-event trace with snapshot fields",
+      "name": "condition-events.json"
+    },
+    {
+      "kind": "JSON objective signal, recurrence, capacity, and scheduler metrics",
+      "name": "condition-metrics.json"
+    },
+    {
+      "kind": "JSON artifact manifest with proposal, contract, executable, output, and SHA-256 identities",
+      "name": "manifest.json"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 5572450605702590513,
+  "status": "ready",
+  "supported_block_frames": [
+    1,
+    16,
+    64,
+    128,
+    511,
+    512
+  ],
+  "timeline_convention": "Absolute half-open frame intervals [block_start, block_start+frames); an event at block_start applies before that sample, an event at the end belongs to the next block, GUI snapshots become accepted at the next block boundary, and random state advances only for named semantic decisions.",
+  "title": "Murmur Map 0.1",
+  "tolerances": {
+    "absolute_dc_mean_maximum": 0.01,
+    "block_partition_pcm": "byte-identical on the authenticated environment",
+    "block_partition_trace": "byte-identical canonical JSON",
+    "capacity_fault_count": 0,
+    "clamp_count": 0,
+    "exact_silence": "every stereo PCM sample exactly zero after frame-zero Panic",
+    "fresh_process_pcm": "byte-identical on the authenticated environment",
+    "locked_post_fill_destination_recurrence": 1.0,
+    "non_finite_count": 0,
+    "peak_absolute_exclusive_maximum": 0.98
+  }
+}

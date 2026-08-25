@@ -1,0 +1,122 @@
+{
+  "application_feedback": [
+    {
+      "authority": "accepted Pamplist Snapshot through the unchanged sixteen-slot surface model",
+      "message": "selected lane and Voice or Motion context, or Global, with semantic values and dependency-aware tooltips",
+      "purpose": "retain revision 0.5 control ownership while explaining when Phase, Shape, Rotate, and body controls can affect sound"
+    },
+    {
+      "authority": "differences between consecutive accepted Snapshot frame, lane-energy, lane-trigger-count, body-difference-energy, and Clear-count values",
+      "message": "seven fixed-colour impact rows, logarithmic energy trails, trigger sparks, cohesion haze, and one Clear marker",
+      "purpose": "show actual recent per-lane contribution and scheduling without making a waveform, raw MIDI, or UI timer authoritative"
+    },
+    {
+      "authority": "accepted Global controls and diagnostics",
+      "message": "Cohere dependency, active body values, Clear count, and temporary CLEARED feedback",
+      "purpose": "make effect-only Clear observable even when no audible body tail exists"
+    }
+  ],
+  "endpoint_device_evidence": {
+    "connection_policy": "No endpoint is enumerated or opened; the regular Launch Control 3 mapping remains revision 0.5.",
+    "notes": "Repository topology and synthetic messages prove transforms only. They do not prove endpoint identity, installed configuration, receipt, feel, feedback, or reconnect.",
+    "state": "deferred"
+  },
+  "gesture_state_machines": [
+    {
+      "id": "lane-select-or-mode-toggle",
+      "input": "channel 16 CC40 through CC46 press and release",
+      "state": "accepted selected lane, accepted Voice/Motion mode, and per-button down latch",
+      "transition": "revision 0.5 exact: another lane selects and preserves mode; accepted lane toggles mode once; duplicate positive and release do not dispatch"
+    },
+    {
+      "id": "global-select-clear",
+      "input": "channel 16 CC47 press and release or explicit JUCE Clear button",
+      "state": "accepted selected page, button latch, and effect-clear generation",
+      "transition": "revision 0.5 exact: enter Global without clearing, then one new edge increments Clear once; accepted count drives temporary feedback and one history marker"
+    },
+    {
+      "id": "voice-and-motion-rows",
+      "input": "channel 16 CC20 through CC27 or matching semantic JUCE values",
+      "state": "selected Voice record in Voice mode or selected Lane route record in Motion mode",
+      "transition": "revision 0.5 exact transforms and non-target isolation"
+    },
+    {
+      "id": "sequencer-row",
+      "input": "channel 16 CC28 through CC35 or matching semantic JUCE values",
+      "state": "selected lane Rate, Phase, Shape, Hits, Rotate, Chance, Repeat, and Depth",
+      "transition": "revision 0.5 exact transforms; new help states Phase is alignment, Shape requires a continuous Motion route, and Rotate requires Hits 1 through 15"
+    },
+    {
+      "id": "global-rows",
+      "input": "channel 16 CC20 through CC35 or matching semantic JUCE values while Global is accepted",
+      "state": "Drive, Cohere, Root, Spread, Tail, Damping, Width, Duck, BPM, Master, and six no-ops",
+      "transition": "revision 0.5 exact control transforms; revision 0.6 changes only internal modal-return and duck coefficients"
+    },
+    {
+      "id": "impact-history-poll",
+      "input": "20 Hz accepted Snapshot poll",
+      "state": "previous cumulative telemetry plus fixed 192-sample UI history",
+      "transition": "positive frame/counter deltas append one bounded sample; rollback rebases with zero; raw buffers and raw MIDI never enter the history"
+    }
+  ],
+  "not_applicable_rationale": "No new physical control, controller page, fader, shift gesture, endpoint feedback, preset, or hidden musical state is introduced. ImpactHistory is read-only accepted application feedback.",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {
+      "binding": "Phase remains value 0 through 127 added as value shifted left 25 to the selected lane's Q32 phase before step and local-phase extraction",
+      "id": "sequencer-phase-preserved",
+      "rejection": "it does not promise tone or hit-count change and Global uses Master in the same physical position"
+    },
+    {
+      "binding": "Shape remains one of eight bounded continuous lane functions multiplied by Depth and applied only through signed non-Trigger Motion routes",
+      "id": "sequencer-shape-preserved",
+      "rejection": "Trigger-only lanes do not gain implicit velocity or tone modulation"
+    },
+    {
+      "binding": "Rotate remains a modulo-16 offset inside the Euclidean predicate and preserves the accepted Hits count",
+      "id": "sequencer-rotate-preserved",
+      "rejection": "Hits zero and sixteen are explicitly invariant under Rotate"
+    },
+    {
+      "binding": "Global Drive through Duck, BPM, Master, no-op slots, page entry, and Clear generation retain revision 0.5 accepted transforms",
+      "id": "global-controls-preserved",
+      "rejection": "Root through Duck have no output effect while Cohere is exact zero"
+    },
+    {
+      "binding": "seven cumulative post-level pre-cohesion stereo energy values and existing trigger counts reduce to seven UI-only logarithmic levels and trigger flags",
+      "id": "impact-history-lanes",
+      "rejection": "telemetry is read-only, never controls DSP, and a reset/rollback produces no false full-scale sample"
+    },
+    {
+      "binding": "cumulative cohesion dry-difference energy reduces to a shared pink haze and effect-clear count deltas produce one vertical Clear marker and temporary button feedback",
+      "id": "impact-history-global",
+      "rejection": "the marker does not claim an audible change when no body state exists and does not erase truthful lane history"
+    }
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/pamplist/contract-r06/control-map.json",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "control": "top and bottom sixteen rotary positions",
+      "input": "unchanged JUCE semantic values or regular Launch Control 3 channel 16 CC20 through CC35",
+      "mode": "Voice, Motion, or Global",
+      "semantic": "exact revision 0.5 Voice/Motion/Sequencer/Global ownership with revised dependency tooltips only"
+    },
+    {
+      "control": "buttons 1 through 8 and explicit JUCE Voice/Motion/Clear actions",
+      "input": "unchanged application actions or channel 16 CC40 through CC47",
+      "mode": "all",
+      "semantic": "exact revision 0.5 lane selection, mode toggle, Global entry, and effect-only Clear"
+    },
+    {
+      "control": "ImpactHistory",
+      "input": "read-only accepted Snapshot telemetry at 20 Hz",
+      "mode": "always visible",
+      "semantic": "seven lane contribution histories in fixed lane colours, trigger sparks, shared-body haze, and Clear markers"
+    }
+  ],
+  "title": "Pamplist 0.6: Control Response and Impact Trails"
+}

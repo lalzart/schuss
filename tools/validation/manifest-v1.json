@@ -128,6 +128,14 @@
       "inputs": ["tools/instrument_lab/validate_task038_reuse.py", "tools/instrument_lab/generate_task038_source_dependencies.py", "tools/contracts/generate_task038_source_records.py", "tools/contracts/validate_task038_source_records.py", "tools/source_packages/generate_mutable_direct_v1.py", "contracts/record-sets/task038-instrument-source-dependencies-v1.json", "contracts/task038/**", "packages/dsp_adapters/mutable_braids_v1/**", "packages/dsp_sources/mutable_eurorack_braids_v1/**", "packages/dsp_sources/mutable_stmlib_v1/**", "research/prototypes/generative-drum-machine/contract/source-dependencies.json"]
     },
     {
+      "id": "task043.pamplist-canonical",
+      "kind": "command",
+      "argv": ["{python}", "tools/contracts/validate_task043_pamplist_canonical.py", "--check"],
+      "validation_profile": "current",
+      "cost_class": "semantic",
+      "inputs": ["tools/contracts/generate_task043_pamplist_canonical.py", "tools/contracts/validate_task043_pamplist_canonical.py", "tools/contracts/collection_provider_rules.py", "packages/schuss_core/control_plane.py", "packages/schuss_core/catalog_projection.py", "packages/schuss_core/instrument_library.py", "contracts/record-sets/task043-pamplist-canonical-v1.json", "contracts/task043/**", "schemas/catalog-corpus-v7.schema.json", "schemas/catalog-projection-v7.schema.json", "schemas/instrument-audition-library-v2.schema.json", "research/proposals/pamplist-r06.md", "research/prototypes/pamplist/**", "research/prototype_support/instrument_library/audition-library-v2.json"]
+    },
+    {
       "id": "configured.sources",
       "kind": "unittest-names",
       "tests": [
@@ -509,7 +517,8 @@
       "instrument-lab.contracts",
       "instrument-lab.unit",
       "source-packages.unit",
-      "task038.source-reuse"
+      "task038.source-reuse",
+      "task043.pamplist-canonical"
     ],
     "compatibility": ["contracts.compatibility-history"],
     "configured-sources": ["configured.sources"],

@@ -22,8 +22,12 @@ enum class SourceControlStatus : std::uint8_t {
 struct SourceProjection final {
     std::array<std::uint8_t, 16> encoder_values{};
     std::array<bool, 16> encoder_assigned{};
+    std::array<std::string_view, 16> encoder_labels{};
+    std::array<std::string_view, 16> encoder_tooltips{};
     std::array<bool, 8> button_assigned{};
     std::array<bool, 8> button_active{};
+    std::array<std::string_view, 8> button_labels{};
+    SourcePanelSnapshot panel{};
     std::uint64_t processed_frames{};
 };
 
@@ -48,11 +52,27 @@ public:
         std::uint8_t relative_value,
         std::uint64_t ingress_sequence) noexcept;
 
+    SourceControlStatus applyAbsoluteEncoder(
+        SourceId source,
+        std::size_t slot,
+        std::uint8_t absolute_value,
+        std::uint64_t ingress_sequence) noexcept;
+
+    SourceControlStatus applySurfaceValue(
+        SourceId source,
+        std::size_t slot,
+        double value,
+        std::uint64_t ingress_sequence) noexcept;
+
     SourceControlStatus applyButton(
         SourceId source,
         std::size_t slot,
         std::uint8_t value,
         std::uint64_t ingress_sequence) noexcept;
+
+    SourceControlStatus toggleRun(SourceId source) noexcept;
+    SourceControlStatus setContext(SourceId source, std::uint8_t context) noexcept;
+    SourceControlStatus clearEffect(SourceId source) noexcept;
 
     bool render(
         SourceId source,

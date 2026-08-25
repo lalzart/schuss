@@ -172,6 +172,14 @@ def _authority_values(
         return [authority["evidence_ref"]], {authority["source_id"]}
     if authority["kind"] == "schuss-native-core":
         return [authority["evidence_ref"]], {"schuss-native-core"}
+    if authority["kind"] == "schuss-instrument-prototype":
+        return (
+            sorted(
+                item["path"]
+                for item in authority["authorities"].values()
+            ),
+            {"mutable-instruments", "patcher", "schuss"},
+        )
     raise CatalogProjectionError("catalog addition source authority is unsupported")
 
 
@@ -305,6 +313,7 @@ def _validate_corpus(
         "catalog-corpus-v4",
         "catalog-corpus-v5",
         "catalog-corpus-v6",
+        "catalog-corpus-v7",
     }:
         review = corpus.get("current_ksoloti_review")
         if not isinstance(review, dict):
@@ -341,6 +350,7 @@ def _validate_corpus(
         "catalog-corpus-v4",
         "catalog-corpus-v5",
         "catalog-corpus-v6",
+        "catalog-corpus-v7",
     }:
         review = corpus.get("mutable_instruments_review")
         if not isinstance(review, dict):
@@ -442,7 +452,11 @@ def _validate_corpus(
             raise CatalogProjectionError(
                 "catalog v4 pinned extended implementation authority is stale"
             )
-        if corpus["schema_version"] in {"catalog-corpus-v5", "catalog-corpus-v6"}:
+        if corpus["schema_version"] in {
+            "catalog-corpus-v5",
+            "catalog-corpus-v6",
+            "catalog-corpus-v7",
+        }:
             task030_ids = {
                 f"schuss-implementation-{value:06d}" for value in range(112, 162)
             }
@@ -504,7 +518,7 @@ def _validate_corpus(
                         raise CatalogProjectionError(
                             f"catalog v5 extended source authority is stale: {identifier}"
                         )
-        if corpus["schema_version"] == "catalog-corpus-v6":
+        if corpus["schema_version"] in {"catalog-corpus-v6", "catalog-corpus-v7"}:
             host_ids = {
                 f"schuss-implementation-{value:06d}" for value in range(162, 169)
             }
@@ -513,7 +527,14 @@ def _validate_corpus(
                 for value in corpus["implementation_additions"]
                 if value["implementation_id"] in host_ids
             }
-            if set(host_additions) != host_ids or len(corpus["implementation_additions"]) != 102:
+            expected_implementation_count = (
+                102 if corpus["schema_version"] == "catalog-corpus-v6" else 103
+            )
+            if (
+                set(host_additions) != host_ids
+                or len(corpus["implementation_additions"])
+                != expected_implementation_count
+            ):
                 raise CatalogProjectionError(
                     "catalog v6 must add exactly the seven accepted host companions"
                 )
@@ -527,6 +548,42 @@ def _validate_corpus(
                     raise CatalogProjectionError(
                         f"catalog v6 host source/provider boundary is stale: {identifier}"
                     )
+        if corpus["schema_version"] == "catalog-corpus-v7":
+            family_matches = [
+                value
+                for value in corpus["family_additions"]
+                if value["family_id"] == "schuss-family-000109"
+            ]
+            implementation_matches = [
+                value
+                for value in corpus["implementation_additions"]
+                if value["implementation_id"] == "schuss-implementation-000170"
+            ]
+            if (
+                len(corpus["family_additions"]) != 82
+                or len(family_matches) != 1
+                or family_matches[0].get("abstraction_level") != "instrument"
+                or family_matches[0].get("source_authority", {}).get("kind")
+                != "schuss-instrument-prototype"
+            ):
+                raise CatalogProjectionError(
+                    "catalog v7 must add exactly the canonical Pamplist instrument family"
+                )
+            if (
+                len(implementation_matches) != 1
+                or implementation_matches[0].get("family_reference")
+                != {
+                    "family_id": family_matches[0]["family_id"],
+                    "revision": family_matches[0]["revision"],
+                    "content_hash": family_matches[0]["content_hash"],
+                }
+                or implementation_matches[0].get("form") != "transparent-compound"
+                or implementation_matches[0].get("source_authority", {}).get("kind")
+                != "schuss-instrument-prototype"
+            ):
+                raise CatalogProjectionError(
+                    "catalog v7 Pamplist implementation authority is stale"
+                )
 
 
 def _evidence_for_binding(
@@ -628,7 +685,10 @@ def _task033_availability_context(
     records: Mapping[str, tuple[dict[str, Any], ...]],
     core: Any,
 ) -> tuple[dict[str, Any], dict[tuple[str, tuple[str, int, str, str, int, str]], list[tuple[dict[str, Any], dict[str, Any]]]]] | None:
-    if corpus.get("schema_version") != "catalog-corpus-v6":
+    if corpus.get("schema_version") not in {
+        "catalog-corpus-v6",
+        "catalog-corpus-v7",
+    }:
         return None
     policies = list(records.get("availability_policies", ()))
     if len(policies) != 1:
@@ -636,11 +696,15 @@ def _task033_availability_context(
             "catalog v6 requires exactly one implementation availability policy"
         )
     policy = policies[0]
-    expected_catalog = {
-        "catalog_id": corpus["catalog_id"],
-        "revision": corpus["revision"],
-        "content_hash": corpus["content_hash"],
-    }
+    expected_catalog = (
+        copy.deepcopy(corpus["parent_corpus_reference"])
+        if corpus["schema_version"] == "catalog-corpus-v7"
+        else {
+            "catalog_id": corpus["catalog_id"],
+            "revision": corpus["revision"],
+            "content_hash": corpus["content_hash"],
+        }
+    )
     if policy.get("catalog_reference") != expected_catalog:
         raise CatalogProjectionError("availability policy catalog reference is stale")
     pair_keys = {
@@ -1186,6 +1250,7 @@ def build_catalog_projection(
                 "catalog-corpus-v4",
                 "catalog-corpus-v5",
                 "catalog-corpus-v6",
+                "catalog-corpus-v7",
             }:
                 implementation_summary["provenance_tags"] = sorted(provenance_tags)
             implementation_summaries.append(implementation_summary)
@@ -1222,6 +1287,7 @@ def build_catalog_projection(
             "catalog-corpus-v4",
             "catalog-corpus-v5",
             "catalog-corpus-v6",
+            "catalog-corpus-v7",
         }:
             entry.update(
                 {

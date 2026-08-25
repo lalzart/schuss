@@ -37,14 +37,16 @@
       "control": "lanes[selected].rate_index,phase_u7,shape,hits,rotation,probability,repeat,amplitude",
       "kind": "eight-slot-selected-lane-sequencer-record",
       "label": "RATE PHASE SHAPE HITS ROTATE CHANCE REPEAT DEPTH",
-      "owner": "selected-lane-sequencer"
+      "owner": "selected-lane-sequencer",
+      "presentation": "Phase is alignment rather than tone; Shape needs a non-Trigger Motion route; Rotate has distinct positions only for Hits 1 through 15"
     },
     {
       "context": "selected_page 7",
       "control": "cohesion.drive,cohere,root_note,spread,tail,damping,width,duck",
       "kind": "eight-slot-shared-post-sum-body-record",
       "label": "DRIVE COHERE ROOT SPREAD TAIL DAMP WIDTH DUCK",
-      "owner": "shared-cohesion-body"
+      "owner": "shared-cohesion-body",
+      "presentation": "Cohere zero is exact dry; all other body controls require Cohere above zero"
     },
     {
       "context": "selected_page 7 bottom row",
@@ -58,7 +60,16 @@
       "control": "effect_clear_generation",
       "kind": "effect-only-momentary-action",
       "label": "CLEAR FX",
-      "owner": "shared-cohesion-body"
+      "owner": "shared-cohesion-body",
+      "presentation": "temporary CLEARED text and an accepted history marker; no lane or transport reset"
+    },
+    {
+      "context": "all pages",
+      "control": "Snapshot lane_output_energy,lane_trigger_count,dry_difference_energy,effect_clear_count",
+      "kind": "read-only-fixed-seven-row-impact-history",
+      "label": "IMPACT TRAILS",
+      "owner": "accepted-presentation-state",
+      "presentation": "192 samples at 20 Hz; seven lane colours, energy trails, trigger sparks, cohesion haze, and Clear marker"
     }
   ],
   "bindings": [
@@ -251,6 +262,8 @@
   },
   "schema_version": "schuss-prototype-semantic-control-surface-v0",
   "surface_contract": {
+    "activity_history_capacity": 192,
+    "activity_history_rows": 7,
     "bottom_columns": 8,
     "context_authority": "accepted Controls and Snapshot through ui_model",
     "rotary_controls_visible": 16,

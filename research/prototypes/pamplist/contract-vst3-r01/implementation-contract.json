@@ -1,0 +1,85 @@
+{
+  "acceptance_tests": [
+    "The proposal fingerprint, every declared Pamplist input, the configured Macro Voice checkout, and authenticated JUCE source pass readiness authentication before implementation.",
+    "Exactly 178 musical parameters plus one host-only Run parameter have unique stable IDs, exact source domains, defaults, quantization, and exhaustive Controls round-trips.",
+    "Versioned state applies transactionally, restores the complete program plus seed, page, and mode, excludes Clear, requests a fresh Core, and rejects malformed or incomplete state without partial mutation.",
+    "At 48000 Hz direct-Core and processor paths match for fixed controls, block partitions, timestamped channel-16 CCs, Run, Clear, recall, and two independent instances while PCM remains finite and bounded.",
+    "Positive host blocks larger than 512 frames partition into bounded Core calls; unsupported sample rates and layouts produce deterministic silence without crashing.",
+    "The Release arm64 VST3 bundle exposes one zero-input stereo-output MIDI instrument, scans and instantiates through a separate JUCE VST3 host, creates and destroys an unattached editor, round-trips state, and renders the expected nonzero fixture.",
+    "Existing Pamplist focused, source, retained-evidence, prototype-freshness, standalone-target, Task 043 freshness, Schuss current, and one relocated VST3 reproduction check pass after implementation freeze.",
+    "Results report source, host structural, host signal, target build, real-time, Live, connected-device, listening, distribution, and production evidence independently."
+  ],
+  "decision_rights": {
+    "may": [
+      "Choose prototype-local VST3 manufacturer and plug-in codes, bundle and target names, adapter parameter IDs, state schema, processor/editor classes, fixed capacities, and bounded error presentation.",
+      "Adapt Run to one persistent host parameter while retaining Clear as a non-persistent one-shot and page/mode as private recalled presentation state.",
+      "Add the smallest direct processor and separate module-host fixtures, comparators, build receipt, and validation metadata required by this contract."
+    ],
+    "must_not": [
+      "Change Pamplist DSP equations, defaults, control laws, random addressing, controller gestures, source dependencies, retained revision 0.6 evidence, or Task 043 canonical records.",
+      "Create or imply a canonical JUCE provider, implementation binding, runtime, package, distribution approval, real-time result, Live result, device result, listening result, or production promotion.",
+      "Mutate configured upstream or JUCE checkouts, install or copy the plug-in, launch Ableton or another app, open endpoints, access hardware, or alter Git index, history, remotes, or publication state."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Frozen Task 045 proposal and ready source-reimplementation bundle under research/prototypes/pamplist/contract-vst3-r01.",
+    "JUCE-independent stable parameter descriptor and Controls conversion library with focused exhaustive tests.",
+    "JUCE VST3 processor, source-faithful editor, factory entry, versioned state seam, direct processor tests, and separate module-host tests.",
+    "Opt-in authenticated CMake VST3 target with copy-after-build disabled and updated exact dependency notices.",
+    "Release arm64 Pamplist.vst3 retained only in a build directory with build receipt, results, gaps, validation logs, and local completion routing."
+  ],
+  "dependency_contracts": [
+    "Pamplist 0.6 exact source files and hashes in source-equivalence.json remain the normative implementation source.",
+    "Configured patcher repository must authenticate at 08d3e6e1e2b61230308c20a15ded58ffdaf4656c with synthesis tree 58917f3e2e46a30337cfb6292a3504845b1d5552 and remains read-only.",
+    "JUCE 8.0.15 must be supplied as an authenticated local source tree; fetching is disabled by default and the source tree remains read-only.",
+    "Task 043 instrument records are a completeness cross-check only and do not define a canonical implementation/provider mapping for this VST3."
+  ],
+  "goal": {
+    "primary_claim": "At exactly 48000 Hz, the private arm64 VST3 host adapter preserves frozen Pamplist 0.6 program, timing, MIDI, state-action, and stereo signal behavior within the declared fresh-Core recall rule.",
+    "why": "Running Pamplist directly in Ableton removes the separate-process routing step and makes private recording, sampling, freezing, resampling, layering, automation, and multi-instance use practical."
+  },
+  "inputs": [
+    "AGENTS.md, docs/PROJECT_CONTEXT.md, accepted ADRs 0016-0018, docs/workflows/instrument-development.md, and active Task 045 governance.",
+    "Approved proposal research/proposals/pamplist-vst3-local.md at SHA-256 125826a47e649bc91d757d62d7b2a1543238769614c9b5f8b843c819291ee650.",
+    "The exact Pamplist 0.6 Core, Macro Voice adapter, control map, UI model, activity model, semantic surface, proposal, results, and dependency closure listed in source-equivalence.json.",
+    "Configured locked patcher Macro Voice source, authenticated JUCE 8.0.15 source, and the local arm64-capable Ableton Live 12 Suite 12.4.1 host identity.",
+    "Existing Pamplist focused suites, retained revision 0.6 evidence, authenticated standalone receipt, prototype freshness, and Task 043 canonical freshness checks."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "User request in the active 2026-08-24 task: Let's try to create a Solid personal-use VST3 of Pamplist.",
+      "state": "approved"
+    },
+    "path": "research/proposals/pamplist-vst3-local.md",
+    "revision": "0.1",
+    "sha256": "125826a47e649bc91d757d62d7b2a1543238769614c9b5f8b843c819291ee650"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "One private macOS arm64 VST3 instrument with zero audio inputs, stereo output, MIDI input, exactly 179 stable adapter parameters, and transactional state.",
+      "Exact frozen Pamplist Core reuse, bounded block and timestamped MIDI adaptation, per-instance lifecycle, source-faithful accepted-state editor, and offline host validation.",
+      "Release target build retained in the build tree, exact receipt, affected source and standalone regression, current profile, and one relocated reproduction."
+    ],
+    "out": [
+      "Core musical changes, host tempo or note-trigger modes, audio input or sidechain, sample recording/export, preset browser, other plug-in formats or platforms, and a generic plug-in framework.",
+      "Canonical provider/runtime/binding, Tide Pit or Layerwell work, installer, signing, notarization, packaging, public distribution, and production promotion.",
+      "Plug-in installation, Ableton or application launch, endpoint or physical-controller access, callback-deadline promotion, structured listening, Git publication, and hardware action."
+    ]
+  },
+  "status": "ready",
+  "target": "macOS arm64 VST3 instrument for Ableton Live 12.4.1 at exactly 48 kHz using authenticated JUCE 8.0.15",
+  "title": "Pamplist 0.6 Local VST3 Host Migration",
+  "work_type": "source-reimplementation",
+  "working_definition": {
+    "artifact": "Pamplist.vst3 private build bundle plus offline host-validation receipt",
+    "evidence_level": "target-build",
+    "success_observation": "A Release arm64 VST3 bundle remains uninstalled in the build tree, is discovered and instantiated as one zero-input stereo instrument by a separate JUCE VST3 host, passes parameter/state/editor/multi-instance and direct-signal comparisons at 48000 Hz, and records all higher evidence gates as unproved."
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "artifact": {
+    "architectures": [
+      "arm64"
+    ],
+    "binary_kind": "Mach-O 64-bit bundle arm64",
+    "bundle_path": "build/pamplist-vst3-task047-release/pamplist-vst3_artefacts/Release/VST3/Pamplist.vst3",
+    "bundle_tree_sha256": "01df1f867798940d5da01a82d44a1a6fc0aa6ff03282cea222c0d867799c53a0",
+    "files": [
+      {
+        "bytes": 866,
+        "path": "Contents/Info.plist",
+        "sha256": "a9120f931debdda2abbfc4e78b66c698183496ba9aa9888ff9dde68f3b18c087"
+      },
+      {
+        "bytes": 9025664,
+        "path": "Contents/MacOS/Pamplist",
+        "sha256": "8eef66b740d8ad9e0362482fc8e80e75f3f54bbb42e22065a3a5dd460a3a2f2b"
+      },
+      {
+        "bytes": 8,
+        "path": "Contents/PkgInfo",
+        "sha256": "d06a80ba92de0833d0ed03de1b02b7c8913f126d9e8c8931b190765dd5d83b11"
+      },
+      {
+        "bytes": 1029,
+        "path": "Contents/Resources/moduleinfo.json",
+        "sha256": "0f798fce0b4c60e97559f07143217892f1e03cfb221636735a060d01e32bb988"
+      },
+      {
+        "bytes": 2452,
+        "path": "Contents/_CodeSignature/CodeResources",
+        "sha256": "95bad33a994dfbef6aa2fe868c92292111eeade68dc896b7d552494246782695"
+      }
+    ]
+  },
+  "claims": {
+    "ableton_launched": false,
+    "app_or_endpoint_opened": false,
+    "bundle_installed": false,
+    "codesign_kind": "local-ad-hoc-seal-only",
+    "distribution_approved": false,
+    "listening_performed": false,
+    "module_host_offline_passed": true,
+    "module_host_rates_hz": [
+      44100,
+      48000,
+      96000
+    ],
+    "target_built": true
+  },
+  "input_fingerprint_sha256": "201f8bdef9f68e4f4c2c89b43ac4052ea77f50405b5e14563a9ca304563c530c",
+  "juce_manifest": {
+    "path": "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json",
+    "sha256": "db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5"
+  },
+  "parameter_contract": {
+    "adapter_parameters": 179,
+    "musical_parameters": 178,
+    "schema": "schuss-pamplist-vst3-state-v1"
+  },
+  "resampling_contract": {
+    "bypass_host_rate_hz": 48000,
+    "core_rate_hz": 48000,
+    "host_latency_frames": {
+      "176400": 239,
+      "192000": 260,
+      "32000": 44,
+      "44100": 60,
+      "48000": 0,
+      "88200": 120,
+      "96000": 130
+    },
+    "maximum_non_bypass_callback_frames": 8192,
+    "supported_host_rates_hz": [
+      32000,
+      44100,
+      48000,
+      88200,
+      96000,
+      176400,
+      192000
+    ]
+  },
+  "schema_version": "pamplist-fixed-rate-vst3-build-v1",
+  "source_authority": {
+    "files": [
+      {
+        "path": "ai/sdk/ksoloti-extended/objects/extended/synthesis/macro_voice_dsp.h",
+        "sha256": "d975dd8014b5f9eef27eea22d81f08d691a46e3cbfa5ac48f22a9102241be4a6"
+      },
+      {
+        "path": "ai/sdk/ksoloti-extended/objects/extended/synthesis/macro-voice.manifest.json",
+        "sha256": "11cf12ec38c0ed4db983b8c762fc09900ad0ab09a211ca0c7573336c8616d5b4"
+      },
+      {
+        "path": "ai/sdk/ksoloti-extended/objects/extended/synthesis/vendor/README.md",
+        "sha256": "40f899a7a9547e444bb6ef0fe3e0f1016bc1ae812ada076065a61e77ba659a50"
+      }
+    ],
+    "revision": "08d3e6e1e2b61230308c20a15ded58ffdaf4656c",
+    "source_id": "patcher",
+    "subtree_git_tree": "58917f3e2e46a30337cfb6292a3504845b1d5552",
+    "subtree_path": "ai/sdk/ksoloti-extended/objects/extended/synthesis"
+  },
+  "status": "passed",
+  "target": "pamplist-vst3_VST3"
+}

@@ -14,9 +14,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[4]
 SOURCE = ROOT / "research/prototypes/layerwell"
 DEFAULT_BUILD = ROOT / "build/layerwell-juce-evidence"
-RECEIPT = SOURCE / "contract/evidence/juce-build.json"
+RECEIPT = SOURCE / "contract-r02/evidence/juce-build.json"
 JUCE_MANIFEST = ROOT / "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json"
 JUCE_MANIFEST_SHA256 = "db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5"
+PAMPLIST = ROOT / "research/prototypes/pamplist"
+PAMPLIST_SOURCE_VERIFIER = PAMPLIST / "tests/verify_source_authority.py"
+TIDE_PIT = ROOT / "research/prototypes/tide-pit-gills"
 
 
 def sha256(path: Path) -> str:
@@ -29,18 +32,26 @@ def sha256(path: Path) -> str:
 
 def input_fingerprint() -> str:
     digest = hashlib.sha256()
-    roots = [SOURCE / "CMakeLists.txt", SOURCE / "include", SOURCE / "src"]
+    roots = [
+        SOURCE / "CMakeLists.txt",
+        SOURCE / "include",
+        SOURCE / "src",
+        TIDE_PIT / "CMakeLists.txt",
+        TIDE_PIT / "include",
+        TIDE_PIT / "src",
+        PAMPLIST / "CMakeLists.txt",
+        PAMPLIST / "include",
+        PAMPLIST / "src",
+        PAMPLIST / "source-dependencies.json",
+        PAMPLIST_SOURCE_VERIFIER,
+        JUCE_MANIFEST,
+    ]
     paths: list[Path] = []
     for candidate in roots:
         if candidate.is_file():
             paths.append(candidate)
         else:
             paths.extend(path for path in candidate.rglob("*") if path.is_file())
-    paths.extend([
-        ROOT / "research/prototypes/tide-pit-gills/CMakeLists.txt",
-        ROOT / "research/prototypes/generative-drum-machine/CMakeLists.txt",
-        JUCE_MANIFEST,
-    ])
     for path in sorted(set(paths), key=lambda item: item.relative_to(ROOT).as_posix()):
         relative = path.relative_to(ROOT).as_posix().encode("utf-8")
         digest.update(relative + b"\0" + path.read_bytes() + b"\0")
@@ -58,9 +69,27 @@ def app_binary(build: Path) -> Path:
     return build / "layerwell-instrument_artefacts/Release/Layerwell.app/Contents/MacOS/Layerwell"
 
 
+def pamplist_source_authentication() -> dict[str, object]:
+    completed = subprocess.run(
+        [sys.executable, str(PAMPLIST_SOURCE_VERIFIER), "--json"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if completed.returncode != 0:
+        detail = completed.stderr.strip() or completed.stdout.strip()
+        raise RuntimeError(f"Pamplist configured source authentication failed: {detail}")
+    try:
+        return json.loads(completed.stdout)
+    except json.JSONDecodeError as error:
+        raise RuntimeError("Pamplist source verifier emitted invalid JSON") from error
+
+
 def reproduce(build: Path, juce_source: Path) -> None:
     if not juce_source.is_dir():
         raise RuntimeError(f"JUCE source tree is missing: {juce_source}")
+    source_authentication = pamplist_source_authentication()
     run([
         sys.executable,
         str(ROOT / "tools/source_packages/validate_juce_source_tree.py"),
@@ -96,10 +125,12 @@ def reproduce(build: Path, juce_source: Path) -> None:
             "path": JUCE_MANIFEST.relative_to(ROOT).as_posix(),
             "sha256": sha256(JUCE_MANIFEST),
         },
-        "schema_version": "layerwell-authenticated-juce-build-v1",
+        "pamplist_configured_source": source_authentication,
+        "schema_version": "layerwell-authenticated-juce-build-v2",
         "status": "passed",
         "target": "layerwell-instrument",
     }
+    RECEIPT.parent.mkdir(parents=True, exist_ok=True)
     RECEIPT.write_text(
         json.dumps(receipt, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -109,7 +140,7 @@ def reproduce(build: Path, juce_source: Path) -> None:
 
 def check() -> None:
     receipt = json.loads(RECEIPT.read_text(encoding="utf-8"))
-    if receipt.get("schema_version") != "layerwell-authenticated-juce-build-v1":
+    if receipt.get("schema_version") != "layerwell-authenticated-juce-build-v2":
         raise RuntimeError("JUCE receipt schema drifted")
     if receipt.get("status") != "passed" or receipt.get("target") != "layerwell-instrument":
         raise RuntimeError("JUCE receipt does not record the named passing target")
@@ -127,6 +158,8 @@ def check() -> None:
         raise RuntimeError("JUCE receipt manifest binding drifted")
     if receipt.get("input_fingerprint_sha256") != input_fingerprint():
         raise RuntimeError("JUCE build inputs changed after the retained build")
+    if receipt.get("pamplist_configured_source") != pamplist_source_authentication():
+        raise RuntimeError("Pamplist configured source binding drifted")
     artifact = receipt.get("artifact", {})
     binary = ROOT / artifact.get("path", "")
     if not binary.is_file():

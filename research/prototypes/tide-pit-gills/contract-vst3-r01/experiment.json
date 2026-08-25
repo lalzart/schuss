@@ -1,0 +1,128 @@
+{
+  "artifact_retention": {
+    "location": "Build outputs remain under build/tide-pit-vst3-task046-release; only portable receipt, results, gaps, contracts, and reproducible commands are retained in the repository.",
+    "policy": "reproducible-only"
+  },
+  "comparator_condition_id": "direct-core-parity",
+  "conditions": [
+    {
+      "events": [
+        {
+          "at_sample": 0,
+          "event": "apply dense sixteen-parameter program through direct Core plus Q27HostBridge"
+        },
+        {
+          "at_sample": 31,
+          "event": "channel-16 CC20 value 127"
+        },
+        {
+          "at_sample": 79,
+          "event": "channel-16 CC30 value 0"
+        },
+        {
+          "at_sample": 257,
+          "event": "channel-16 CC40 press then release"
+        },
+        {
+          "at_sample": 511,
+          "event": "channel-16 CC41 Mutate press then release"
+        },
+        {
+          "at_sample": 1024,
+          "event": "channel-16 CC43 Freeze press then release"
+        }
+      ],
+      "id": "direct-core-parity",
+      "purpose": "Produce the exact direct Core plus Q27HostBridge PCM and accepted-state comparator for the same program and timestamped semantic events."
+    },
+    {
+      "events": [
+        {
+          "at_sample": 0,
+          "event": "instantiate VST3 processor at 48000 Hz stereo and apply the same dense program"
+        },
+        {
+          "at_sample": 31,
+          "event": "deliver the same raw MIDI buffer timeline"
+        },
+        {
+          "at_sample": 4096,
+          "event": "serialize complete state, restore into a fresh twin, and continue through declared mode-settling frames"
+        }
+      ],
+      "id": "vst3-processor-parity",
+      "purpose": "Falsify the central claim if the processor, parameter, MIDI, recall, or block adaptation path differs from the direct comparator."
+    },
+    {
+      "events": [
+        {
+          "at_sample": 0,
+          "event": "prepare at 44100 and 96000 Hz, attempt mono output, pass wrong-channel and unassigned CCs, and submit malformed state variants"
+        }
+      ],
+      "id": "negative-host-and-state",
+      "purpose": "Require exact silence or prior-state retention for unsupported host shapes and invalid input without crashes or partial transactions."
+    },
+    {
+      "events": [
+        {
+          "at_sample": 0,
+          "event": "create two identical instances with the dense program"
+        },
+        {
+          "at_sample": 2048,
+          "event": "Mutate and Freeze only the first instance"
+        },
+        {
+          "at_sample": 4096,
+          "event": "construct and destroy unattached editors for both instances"
+        }
+      ],
+      "id": "instance-and-editor-isolation",
+      "purpose": "Detect shared Core, event, state, scope, controller, or editor-owned endpoint behavior."
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "exact in-memory stereo float PCM and accepted-state trace",
+      "name": "direct-processor-parity"
+    },
+    {
+      "kind": "focused CTest results and allocation observation",
+      "name": "host-structural-results"
+    },
+    {
+      "kind": "uninstalled arm64 VST3 bundle metadata and tree hashes",
+      "name": "vst3-build-receipt"
+    },
+    {
+      "kind": "copied-root build and module-host result",
+      "name": "relocated-reproduction"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 33,
+  "status": "ready",
+  "supported_block_frames": [
+    1,
+    16,
+    64,
+    128,
+    511,
+    512,
+    513,
+    2048,
+    4096
+  ],
+  "timeline_convention": "Host callbacks are consecutive half-open sample ranges. Raw MIDI offsets are clamped to the current callback, equal-offset input order is preserved, and the existing bridge quantizes events to the first not-yet-rendered 16-frame source boundary.",
+  "title": "Tide Pit Local VST3 Host Migration",
+  "tolerances": {
+    "allocation_probe": "zero adapter-owned C++ heap allocations during the retained repeated processBlock window",
+    "direct_pcm": "exact float equality for every compared sample",
+    "finite_pcm": "every output sample finite and within [-1, 1]",
+    "invalid_host_shape": "exact stereo or available-channel silence",
+    "mode_state": "accepted Source, Lock, FX, Target, and Scale match desired targets after the declared source gesture queue settles",
+    "source_oracle": "retained Q27 byte stream SHA-256 39d8c2a67a1b9511b4a063914b01ab816635996a47530e6c09baa8accf45ad2b"
+  }
+}

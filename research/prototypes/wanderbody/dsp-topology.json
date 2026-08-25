@@ -1,0 +1,159 @@
+{
+  "claims": {
+    "canonical_schuss_record": false,
+    "executable_graph": false
+  },
+  "connections": [
+    {"from":"role.port.audio-in-left","kind":"finite-stereo-fold","to":"role.node.live-source-mix"},
+    {"from":"role.port.audio-in-right","kind":"finite-stereo-fold","to":"role.node.live-source-mix"},
+    {"from":"role.parameter.source","kind":"accepted-gains","to":"role.node.live-source-mix"},
+    {"from":"role.node.internal-exciter","kind":"bounded-excitation","to":"role.node.live-source-mix"},
+    {"from":"role.node.live-source-mix","kind":"capture-running-write","to":"role.node.capture-store"},
+    {"from":"role.parameter.motion","kind":"accepted-field-policy","to":"role.node.motion-policy"},
+    {"from":"role.node.motion-policy","kind":"fresh-position-and-direction","to":"role.node.decision-memory"},
+    {"from":"role.parameter.recurrence","kind":"accepted-selection-policy","to":"role.node.decision-memory"},
+    {"from":"role.node.decision-memory","kind":"complete-decision-tuple","to":"role.node.fragment-scheduler"},
+    {"from":"role.node.capture-store","kind":"validated-absolute-source-time","to":"role.node.fragment-voices"},
+    {"from":"role.node.fragment-scheduler","kind":"birth-command","to":"role.node.fragment-voices"},
+    {"from":"role.node.fragment-voices","kind":"windowed-stereo-memory","to":"role.node.stereo-mix"},
+    {"from":"role.node.fragment-voices","kind":"windowed-mono-excitation","to":"role.node.modal-body"},
+    {"from":"role.parameter.body","kind":"accepted-mode-shape","to":"role.node.modal-body"},
+    {"from":"role.node.modal-body","kind":"parallel-stereo-return","to":"role.node.stereo-mix"},
+    {"from":"role.node.live-source-mix","kind":"dry-stereo-source","to":"role.node.stereo-mix"},
+    {"from":"role.node.stereo-mix","kind":"bounded-left","to":"role.port.audio-out-left"},
+    {"from":"role.node.stereo-mix","kind":"bounded-right","to":"role.port.audio-out-right"},
+    {"from":"role.action.memory","kind":"freeze-clear-reset-panic","to":"role.fusion.core"},
+    {"from":"role.node.capture-store","kind":"decimated-observation","to":"role.display.memory"},
+    {"from":"role.fusion.core","kind":"accepted-observation","to":"role.display.accepted-state"},
+    {"from":"role.node.stereo-mix","kind":"fault-observation","to":"role.display.diagnostics"}
+  ],
+  "feedback_edges": [
+    {"from":"role.node.capture-store","kind":"bounded-circular-history","to":"role.node.capture-store"},
+    {"from":"role.node.motion-policy","kind":"position-velocity-and-direction","to":"role.node.motion-policy"},
+    {"from":"role.node.decision-memory","kind":"eight-tuple-cycle","to":"role.node.decision-memory"},
+    {"from":"role.node.fragment-voices","kind":"source-time-and-window-state","to":"role.node.fragment-voices"},
+    {"from":"role.node.modal-body","kind":"six-second-order-histories","to":"role.node.modal-body"}
+  ],
+  "fusion_boundary": {
+    "implementation_note": "One portable instrument-owned Core fuses these inspectable roles for the bounded prototype proof.",
+    "includes": [
+      "role.node.internal-exciter",
+      "role.node.live-source-mix",
+      "role.node.capture-store",
+      "role.node.motion-policy",
+      "role.node.decision-memory",
+      "role.node.fragment-scheduler",
+      "role.node.fragment-voices",
+      "role.node.modal-body",
+      "role.node.stereo-mix"
+    ],
+    "local_role": "role.fusion.core"
+  },
+  "nodes": [
+    {
+      "internals": ["triangle source", "short noise transient", "energy-dependent period", "independent seeded stream"],
+      "local_role": "role.node.internal-exciter",
+      "name": "bounded internal exciter",
+      "origin": "newly-designed",
+      "responsibility": "provide an optional finite sound source without external input",
+      "state_owner": true,
+      "unresolved_component_contract": ["bounded internal excitation policy"]
+    },
+    {
+      "internals": ["finite input repair", "stereo-to-mono capture fold", "nonnegative source normalization"],
+      "local_role": "role.node.live-source-mix",
+      "name": "live source mix",
+      "origin": "newly-designed",
+      "responsibility": "combine accepted external and internal source contributions",
+      "state_owner": false,
+      "unresolved_component_contract": ["live and internal source composition"]
+    },
+    {
+      "internals": ["eight-second device-rate mono store", "absolute write time", "valid interval", "epoch invalidation", "linear interpolation"],
+      "local_role": "role.node.capture-store",
+      "name": "recent-memory capture store",
+      "origin": "newly-designed",
+      "responsibility": "retain and validate a bounded recent source interval without stale reads",
+      "state_owner": true,
+      "unresolved_component_contract": ["bounded absolute-time audio memory"]
+    },
+    {
+      "internals": ["pendular hover phase", "correlated drunk velocity", "reflected field bounds", "exact zero-wander stillness"],
+      "local_role": "role.node.motion-policy",
+      "name": "field-bounded motion policy",
+      "origin": "newly-designed",
+      "responsibility": "produce deterministic local source positions and directions",
+      "state_owner": true,
+      "unresolved_component_contract": ["field-bounded correlated motion", "semantic random-draw accounting"]
+    },
+    {
+      "internals": ["eight complete tuples", "oldest-to-newest lock", "single permutation", "bounded declared mutation"],
+      "local_role": "role.node.decision-memory",
+      "name": "semantic recurrence memory",
+      "origin": "newly-designed",
+      "responsibility": "learn and replay complete fragment decisions independently of audio bytes",
+      "state_owner": true,
+      "unresolved_component_contract": ["bounded semantic decision recurrence"]
+    },
+    {
+      "internals": ["absolute-frame countdown", "energy-dependent overlap", "fixed report capacity", "oldest-voice stealing"],
+      "local_role": "role.node.fragment-scheduler",
+      "name": "bounded fragment scheduler",
+      "origin": "newly-designed",
+      "responsibility": "turn selected tuples into partition-independent voice births",
+      "state_owner": true,
+      "unresolved_component_contract": ["absolute-time fragment scheduler"]
+    },
+    {
+      "internals": ["four fixed voices", "Hann windows", "signed varispeed", "equal-power pan", "invalid-source release"],
+      "local_role": "role.node.fragment-voices",
+      "name": "four recent-memory voices",
+      "origin": "newly-designed",
+      "responsibility": "render frozen source-time commands into bounded stereo fragments",
+      "state_owner": true,
+      "unresolved_component_contract": ["windowed absolute-time fragment voice"]
+    },
+    {
+      "internals": ["six parallel second-order modes", "inharmonic stretch", "spectral weighting", "damping radius", "stereo pickup position"],
+      "local_role": "role.node.modal-body",
+      "name": "parallel six-mode body",
+      "origin": "newly-designed",
+      "responsibility": "add a bypassable finite decaying resonant return",
+      "state_owner": true,
+      "unresolved_component_contract": ["source-preserving parallel modal body"]
+    },
+    {
+      "internals": ["normalized dry memory and body gains", "direct-current blockers", "strict soft ceiling", "finite fault latch"],
+      "local_role": "role.node.stereo-mix",
+      "name": "bounded stereo safety mix",
+      "origin": "fused-implementation",
+      "responsibility": "combine live memory and body buses into finite stereo output",
+      "state_owner": true,
+      "unresolved_component_contract": ["bounded source-preserving stereo mix"]
+    }
+  ],
+  "prototype_id": "wanderbody",
+  "public_facets": {
+    "actions": [
+      {"data_type":"four monotonic semantic sequences","direction":"input","local_role":"role.action.memory","name":"freeze clear reset and panic"}
+    ],
+    "displays": [
+      {"data_type":"fixed decimated recent-memory observation","direction":"output","local_role":"role.display.memory","name":"recent memory"},
+      {"data_type":"accepted controls and finite state counters","direction":"output","local_role":"role.display.accepted-state","name":"accepted state"},
+      {"data_type":"bounded counters and fault code","direction":"output","local_role":"role.display.diagnostics","name":"diagnostics"}
+    ],
+    "parameters": [
+      {"data_type":"external and internal normalized gains","direction":"input","local_role":"role.parameter.source","name":"source controls"},
+      {"data_type":"anchor field hover drunk and wander values","direction":"input","local_role":"role.parameter.motion","name":"motion controls"},
+      {"data_type":"fresh locked shuffled mutated and mutation values","direction":"input","local_role":"role.parameter.recurrence","name":"recurrence controls"},
+      {"data_type":"body structure brightness damping and position values","direction":"input","local_role":"role.parameter.body","name":"body controls"}
+    ],
+    "ports": [
+      {"data_type":"float32 audio","direction":"input","local_role":"role.port.audio-in-left","name":"audio input left"},
+      {"data_type":"float32 audio","direction":"input","local_role":"role.port.audio-in-right","name":"audio input right"},
+      {"data_type":"float32 audio","direction":"output","local_role":"role.port.audio-out-left","name":"audio output left"},
+      {"data_type":"float32 audio","direction":"output","local_role":"role.port.audio-out-right","name":"audio output right"}
+    ]
+  },
+  "schema_version": "schuss-instrument-lab-dsp-topology-v1"
+}

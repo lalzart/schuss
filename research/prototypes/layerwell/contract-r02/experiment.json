@@ -1,0 +1,118 @@
+{
+  "artifact_retention": {
+    "location": "research/prototypes/layerwell/contract-r02/evidence",
+    "policy": "checked-in"
+  },
+  "comparator_condition_id": "LW02_CMP_UNTRIMMED",
+  "conditions": [
+    {
+      "events": [
+        "select Tide Pit and sweep every encoder mirror",
+        "press and release every source button",
+        "process deterministic source audio and scope frames"
+      ],
+      "id": "LW02_TIDE_PANEL",
+      "purpose": "Prove all sixteen encoders, eight buttons, four display lines, accepted mode, and bounded scope are exact accepted Tide Pit projections."
+    },
+    {
+      "events": [
+        "select Pamplist and visit all eight pages",
+        "visit Voice and Motion context for every page and edit all sixteen contextual slots",
+        "exercise Run Stop, Global Clear, dependency help, and seven-lane activity history"
+      ],
+      "id": "LW02_PAMPLIST_PANEL",
+      "purpose": "Prove every Pamplist surface field and action terminates at the existing accepted public model."
+    },
+    {
+      "events": [
+        "capture a deterministic 48000-frame first Tide Pit phrase",
+        "record committed bytes and owner",
+        "accept trim [4800,43200) and reset phase zero",
+        "play repeated active cycles"
+      ],
+      "id": "LW02_TRIM",
+      "purpose": "Prove metadata-only trim yields exact store[offset plus phase] playback, preserves committed bytes and owner, and establishes a 38400-frame active loop."
+    },
+    {
+      "events": [
+        "after LW02_TRIM select Pamplist and layer 2",
+        "arm at nonzero phase and wait for phase zero",
+        "record exactly 38400 frames into offset-zero staging and commit",
+        "attempt trim while two layers are occupied"
+      ],
+      "id": "LW02_LAYER_AFTER_TRIM",
+      "purpose": "Prove later source-only capture inherits the trimmed period, remains aligned, and locks further trim."
+    },
+    {
+      "events": [
+        "attempt trim while empty, waiting, and recording",
+        "attempt non-finite, out-of-range, reversed, and shorter-than-24000 windows",
+        "attempt trim with two occupied layers",
+        "clear back to one layer and accept a bounded inward trim",
+        "cancel and overflow provisional replacements"
+      ],
+      "id": "LW02_REJECT",
+      "purpose": "Prove every invalid transition is atomic, diagnostic, and preserves accepted state, owner, and sample hashes."
+    },
+    {
+      "events": [
+        "replay the LW02_TRIM ledger in a deliberately naive test-only path that ignores accepted trim and plays [0,48000)"
+      ],
+      "id": "LW02_CMP_UNTRIMMED",
+      "purpose": "Falsify the trim mechanism by requiring the untrimmed comparator PCM and state hashes to diverge from production."
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "stereo PCM WAV at 48 kHz",
+      "name": "layerwell.wav"
+    },
+    {
+      "kind": "canonical JSON accepted events, capture, ownership, recorded extents, trim, phase, and source-state trace",
+      "name": "event-state-trace.json"
+    },
+    {
+      "kind": "canonical JSON complete accepted Tide Pit and Pamplist panel trace",
+      "name": "panel-trace.json"
+    },
+    {
+      "kind": "canonical JSON synthetic MIDI input and accepted-state feedback trace",
+      "name": "controller-trace.json"
+    },
+    {
+      "kind": "canonical JSON frame, signal, allocation, limiter, event, trim, and source-advance metrics",
+      "name": "metrics.json"
+    },
+    {
+      "kind": "canonical JSON binding production trim and intentionally untrimmed comparator hashes",
+      "name": "untrimmed-comparator.json"
+    },
+    {
+      "kind": "SHA-256 manifest for retained outputs and preservation fixtures",
+      "name": "SHA256SUMS"
+    }
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 1279342930,
+  "status": "ready",
+  "supported_block_frames": [
+    16,
+    64,
+    128,
+    512
+  ],
+  "timeline_convention": "Events are stable-sorted by block-relative sample_offset then ingress_sequence and apply before the addressed sample. Capture start is inclusive and stop is exclusive. Trim is accepted only while idle with exactly one occupied layer, changes integer playback metadata without rewriting samples, and resets shared phase to zero. Established-loop capture starts at phase zero, records exactly the current active length, and commits before the following phase-zero sample is mixed.",
+  "title": "Layerwell 0.2: Embedded Tide Pit and Pamplist Sampler",
+  "tolerances": {
+    "accepted_state_panel_and_controller_trace": "byte-exact canonical JSON within one build and identical across all supported blocks",
+    "committed_buffer_sha256_after_trim_or_reject": "exactly unchanged",
+    "finite_samples_percent": 100,
+    "maximum_output_absolute": 1.0,
+    "partition_pcm": "byte-exact float-to-PCM result within one build",
+    "process_allocations": 0,
+    "recorded_trim_and_session_boundaries_frames": "exact integer equality",
+    "source_inactive_advance_frames": 0,
+    "untrimmed_comparator": "PCM and canonical state hash must differ from LW02_TRIM"
+  }
+}

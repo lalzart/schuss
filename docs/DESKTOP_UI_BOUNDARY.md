@@ -1,7 +1,8 @@
 # Desktop UI boundary
 
-Status: the consolidated Tauri desktop opens on an exact noncanonical
-Instrument Lab audition library and implements catalog/object browsing,
+Status: the consolidated Tauri desktop opens on a six-entry audition library
+with one canonical Pamplist musical identity and five noncanonical Instrument
+Lab prototypes, and implements catalog/object browsing,
 exact graph visualization and proposal, project-backed authoring, process-local
 build jobs, explicit Ksoloti Core discovery, and a read-back-verified
 volatile-RAM upload path. It also presents accepted project-local objects and
@@ -27,7 +28,7 @@ React/TypeScript presentation
 The product application is `apps/schuss_desktop/`. Browser-mode development
 uses a localhost Vite proxy to the same Python adapter; production has no
 renderer fallback. Both paths select exact application record set
-`schuss-record-set-000033@1` for the instrument library and capability surface.
+`schuss-record-set-000036@1` for the instrument library and capability surface.
 Workshop new-project creation remains pinned to
 `schuss-record-set-000028@1`. Additive v15 supplies
 `workspace.projects.list` and `workspace.project.create`; the renderer passes
@@ -60,8 +61,10 @@ desktop permission to invoke them.
 
 ## Instrument audition seam
 
-The generated audition library binds five exact prototype IDs and revisions to
-their current prototype-index and result-evidence bytes. Launch targets are
+The generated audition library binds six exact prototype IDs and revisions to
+their current prototype-index and result-evidence bytes. Pamplist additionally
+resolves exact canonical family, graph, instrument, and record-set identities;
+the other five entries remain explicitly unpromoted. Launch targets are
 explicit repository-relative build locators; the core rejects symlinks and
 escapes, requires a regular executable within its declared application bundle,
 and compares the current executable SHA-256 with retained exact evidence.

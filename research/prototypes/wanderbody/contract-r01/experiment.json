@@ -1,0 +1,123 @@
+{
+  "artifact_retention": {
+    "location": "research/prototypes/wanderbody/results",
+    "policy": "checked-in"
+  },
+  "comparator_condition_id": "WB10_UNCORRELATED",
+  "conditions": [
+    {
+      "events": [
+        {"action": "default-source-and-capture", "frame": 0},
+        {"action": "set-motion-hover", "frame": 96000},
+        {"action": "set-anchor-field-wander", "anchor": 0.56, "field": 0.18, "frame": 96000, "wander": 0.45}
+      ],
+      "id": "WB01_HOVER",
+      "purpose": "Prove every Hover launch stays inside the resolved field and follows the pendular direction policy."
+    },
+    {
+      "events": [
+        {"action": "default-source-and-capture", "frame": 0},
+        {"action": "set-motion-drunk", "frame": 96000},
+        {"action": "set-anchor-field-wander", "anchor": 0.50, "field": 0.42, "frame": 96000, "wander": 0.72}
+      ],
+      "id": "WB02_DRUNK",
+      "purpose": "Prove reflected Drunk steps are bounded deterministic and positively correlated."
+    },
+    {
+      "events": [
+        {"action": "fill-fresh-history", "frame": 0},
+        {"action": "set-recurrence-locked", "frame": 288000}
+      ],
+      "id": "WB03_LOCKED",
+      "purpose": "Prove an eight-tuple history repeats in exact oldest-to-newest order after lock."
+    },
+    {
+      "events": [
+        {"action": "fill-fresh-history", "frame": 0},
+        {"action": "set-recurrence-shuffled", "frame": 288000}
+      ],
+      "id": "WB04_SHUFFLED",
+      "purpose": "Prove shuffle changes order but preserves the exact frozen tuple set."
+    },
+    {
+      "events": [
+        {"action": "fill-fresh-history", "frame": 0},
+        {"action": "set-recurrence-mutated", "frame": 288000, "mutation": 0.55}
+      ],
+      "id": "WB05_MUTATED",
+      "purpose": "Prove mutation changes only bounded declared tuple dimensions while identity remains measurable."
+    },
+    {
+      "events": [
+        {"action": "impulse-source", "frame": 0},
+        {"action": "set-body", "body": 0.72, "brightness": 0.58, "damping": 0.62, "frame": 96000, "position": 0.31, "structure": 0.47}
+      ],
+      "id": "WB06_BODY",
+      "purpose": "Prove the original six-mode body adds a finite decaying parallel response and retains dry source."
+    },
+    {
+      "events": [
+        {"action": "default-source-and-capture", "frame": 0},
+        {"action": "freeze", "frame": 192000},
+        {"action": "unfreeze", "frame": 288000},
+        {"action": "clear", "frame": 384000}
+      ],
+      "id": "WB07_FREEZE_CLEAR",
+      "purpose": "Prove Freeze holds capture time and Clear performs bounded fade-invalidation without stale reads."
+    },
+    {
+      "events": [
+        {"action": "extreme-sweeps", "frame": 0},
+        {"action": "rapid-mode-cycle", "frame": 144000},
+        {"action": "panic-and-reset", "frame": 432000}
+      ],
+      "id": "WB08_EXTREMES",
+      "purpose": "Stress every public range mode transition capacity and non-finite recovery boundary."
+    },
+    {
+      "events": [
+        {"action": "exact-silence-source", "frame": 0},
+        {"action": "disable-internal-dry-memory-body", "frame": 0}
+      ],
+      "id": "WB09_SILENCE",
+      "purpose": "Prove the disabled instrument path produces exact zero PCM without semantic activity."
+    },
+    {
+      "events": [
+        {"action": "default-source-and-capture", "frame": 0},
+        {"action": "set-independent-uniform-comparator", "anchor": 0.50, "field": 0.42, "frame": 96000}
+      ],
+      "id": "WB10_UNCORRELATED",
+      "purpose": "Falsifying comparator: independent uniform launch positions should fail the positive step-correlation threshold."
+    }
+  ],
+  "outputs": [
+    {"kind": "stereo PCM wave", "name": "audio.wav"},
+    {"kind": "canonical semantic tuple trace", "name": "decisions.json"},
+    {"kind": "canonical objective measurements", "name": "metrics.json"},
+    {"kind": "matrix fingerprints and normalized metrics", "name": "manifest.json"}
+  ],
+  "sample_rate_hz": 48000,
+  "schema_version": "sonic-research-lab-experiment-v1",
+  "seed": 6287392609913679921,
+  "status": "ready",
+  "supported_block_frames": [1, 17, 64, 127, 256, 511, 1024],
+  "timeline_convention": "Zero-based absolute frames; each declared control or action applies before the addressed sample; every partition receives the identical semantic schedule and source sample stream.",
+  "title": "Wanderbody 0.1 standalone first playable",
+  "tolerances": {
+    "absolute_dc_mean_maximum": 0.0025,
+    "body_late_to_early_energy_maximum": 0.45,
+    "body_mid_energy_over_bypass_minimum": 1.05,
+    "comparator_absolute_step_correlation_maximum": 0.15,
+    "drunk_boundary_fraction_maximum": 0.20,
+    "drunk_lag1_step_correlation_minimum": 0.30,
+    "field_violation_count": 0,
+    "finite_failure_count": 0,
+    "locked_cycle_mismatch_count": 0,
+    "mutated_normalized_distance_exclusive_minimum": 0.0,
+    "mutated_normalized_distance_inclusive_maximum": 0.25,
+    "partition_decision_trace_exact": true,
+    "peak_absolute_exclusive_maximum": 0.98,
+    "shuffled_tuple_set_difference_count": 0
+  }
+}

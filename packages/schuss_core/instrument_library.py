@@ -1,4 +1,4 @@
-"""Exact, process-local audition sessions for Instrument Lab prototypes.
+"""Exact, process-local audition sessions for Schuss instrument prototypes.
 
 The public values deliberately omit repository paths and commands.  The core
 owns manifest validation, build identity checks, and direct argv-based process
@@ -20,9 +20,23 @@ from .control_plane import OperationContext, canonical_result_bytes, core
 
 REQUEST_SCHEMA_KEY = "operation_request_v19"
 RESULT_SCHEMA_KEY = "operation_result_v19"
-LIBRARY_SCHEMA_KEY = "instrument_audition_library_v1"
-DEFAULT_LIBRARY_PATH = Path(
-    "research/prototype_support/instrument_library/audition-library-v1.json"
+LIBRARY_SCHEMA_SPECS = (
+    (
+        "instrument_audition_library_v2",
+        "instrument-audition-library-v2",
+        Path(
+            "research/prototype_support/instrument_library/"
+            "audition-library-v2.json"
+        ),
+    ),
+    (
+        "instrument_audition_library_v1",
+        "instrument-audition-library-v1",
+        Path(
+            "research/prototype_support/instrument_library/"
+            "audition-library-v1.json"
+        ),
+    ),
 )
 LAUNCH_INTENT = "explicit-native-juce-audition"
 
@@ -94,14 +108,14 @@ def _default_process_factory(executable: Path) -> Any:
 
 
 class InstrumentLibraryService:
-    """Core-owned view of one generated, noncanonical audition library."""
+    """Core-owned view of one generated audition library and its exact identities."""
 
     def __init__(
         self,
         repository_root: Path,
         *,
         context: OperationContext,
-        library_path: Path = DEFAULT_LIBRARY_PATH,
+        library_path: Path | None = None,
         process_factory: Callable[[Path], Any] | None = None,
     ) -> None:
         root = Path(repository_root)
@@ -113,7 +127,7 @@ class InstrumentLibraryService:
             )
         self.repository_root = root.resolve(strict=True)
         self.context = context
-        self.library_path = Path(library_path)
+        self.library_path = Path(library_path) if library_path is not None else None
         self.process_factory = process_factory or _default_process_factory
         self._sessions: dict[str, dict[str, Any]] = {}
         self._next_session = 1
@@ -162,12 +176,24 @@ class InstrumentLibraryService:
         return resolved
 
     def _load_manifest(self) -> dict[str, Any]:
-        if LIBRARY_SCHEMA_KEY not in self.context.schemas:
-            raise InstrumentLibraryError(
-                "INSTRUMENT_LIBRARY_SCHEMA_UNAVAILABLE",
-                "selected record set has no instrument audition library schema",
+        if self.library_path is None:
+            selected = next(
+                (
+                    (schema_key, schema_version, path)
+                    for schema_key, schema_version, path in LIBRARY_SCHEMA_SPECS
+                    if schema_key in self.context.schemas
+                ),
+                None,
             )
-        path = self._repository_path(self.library_path, require_file=True)
+            if selected is None:
+                raise InstrumentLibraryError(
+                    "INSTRUMENT_LIBRARY_SCHEMA_UNAVAILABLE",
+                    "selected record set has no instrument audition library schema",
+                )
+            _schema_key, _schema_version, library_path = selected
+        else:
+            library_path = self.library_path
+        path = self._repository_path(library_path, require_file=True)
         try:
             value = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, UnicodeError, json.JSONDecodeError) as exc:
@@ -175,7 +201,18 @@ class InstrumentLibraryService:
                 "INSTRUMENT_LIBRARY_INVALID",
                 f"instrument library could not be read: {exc}",
             ) from exc
-        schema = self.context.schemas[LIBRARY_SCHEMA_KEY]
+        version = value.get("schema_version") if isinstance(value, dict) else None
+        matching_specs = [
+            (schema_key, expected_version)
+            for schema_key, expected_version, _path in LIBRARY_SCHEMA_SPECS
+            if expected_version == version
+        ]
+        if len(matching_specs) != 1 or matching_specs[0][0] not in self.context.schemas:
+            raise InstrumentLibraryError(
+                "INSTRUMENT_LIBRARY_SCHEMA_UNAVAILABLE",
+                "selected record set does not contain the library's exact schema",
+            )
+        schema = self.context.schemas[matching_specs[0][0]]
         errors = core.schema_errors(value, schema, schema)
         if errors:
             raise InstrumentLibraryError(
@@ -183,6 +220,64 @@ class InstrumentLibraryService:
                 "; ".join(errors),
             )
         return value
+
+    def _validated_canonical_identity(
+        self, entry: dict[str, Any]
+    ) -> dict[str, Any]:
+        identity = copy.deepcopy(
+            entry.get("canonical_identity", {"status": "not-promoted"})
+        )
+        if identity.get("status") == "not-promoted":
+            return identity
+        if identity.get("status") != "canonical":
+            raise InstrumentLibraryError(
+                "INSTRUMENT_CANONICAL_IDENTITY_INVALID",
+                "instrument canonical identity has an unsupported status",
+            )
+        if identity["record_set_reference"] != self.context.record_set_reference:
+            raise InstrumentLibraryError(
+                "INSTRUMENT_CANONICAL_RECORD_SET_CHANGED",
+                "canonical instrument identity names a different selected record set",
+            )
+
+        def resolve_exact(
+            reference: dict[str, Any], group: str, identifier: str
+        ) -> dict[str, Any]:
+            matches = [
+                value
+                for value in self.context.records.get(group, ())
+                if value.get(identifier) == reference[identifier]
+                and value.get("revision") == reference["revision"]
+                and value.get("content_hash") == reference["content_hash"]
+            ]
+            if len(matches) != 1:
+                raise InstrumentLibraryError(
+                    "INSTRUMENT_CANONICAL_REFERENCE_CHANGED",
+                    "canonical instrument identity does not resolve exactly once",
+                )
+            return matches[0]
+
+        graph = resolve_exact(identity["graph_reference"], "graphs", "graph_id")
+        instrument = resolve_exact(
+            identity["instrument_reference"],
+            "performance_instruments",
+            "instrument_id",
+        )
+        instrument_graph = {
+            key: instrument["graph_reference"][key]
+            for key in ("graph_id", "revision", "content_hash")
+        }
+        if instrument_graph != identity["graph_reference"]:
+            raise InstrumentLibraryError(
+                "INSTRUMENT_CANONICAL_GRAPH_CHANGED",
+                "canonical instrument and library graph references disagree",
+            )
+        if graph.get("graph_id") != instrument_graph["graph_id"]:
+            raise InstrumentLibraryError(
+                "INSTRUMENT_CANONICAL_GRAPH_CHANGED",
+                "canonical graph identity is inconsistent",
+            )
+        return identity
 
     def _validated_entry(self, entry: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
         prototype_path = self._repository_path(
@@ -264,7 +359,9 @@ class InstrumentLibraryService:
             return "build-required", None, actual
         return "verified-local-build", executable, actual
 
-    def _library_entries(self) -> list[tuple[dict[str, Any], Path | None]]:
+    def _library_entries(
+        self,
+    ) -> tuple[dict[str, Any], list[tuple[dict[str, Any], Path | None]]]:
         manifest = self._load_manifest()
         entries: list[tuple[dict[str, Any], Path | None]] = []
         identities: set[tuple[str, str]] = set()
@@ -286,6 +383,7 @@ class InstrumentLibraryService:
                 "summary": entry["summary"],
                 "controller_label": entry["controller_label"],
                 "lane": prototype["lane"],
+                "canonical_identity": self._validated_canonical_identity(entry),
                 "availability": availability,
                 "launchable": availability == "verified-local-build",
                 "evidence": {
@@ -304,17 +402,15 @@ class InstrumentLibraryService:
                 item[0]["revision"],
             )
         )
-        return entries
+        return manifest, entries
 
     def list_instruments(self) -> dict[str, Any]:
-        entries = [summary for summary, _executable in self._library_entries()]
+        manifest, validated_entries = self._library_entries()
+        entries = [summary for summary, _executable in validated_entries]
         return {
-            "library_id": "instrument-lab-audition-library",
-            "library_revision": 1,
-            "claims": {
-                "canonical_schuss_records": False,
-                "production_ready": False,
-            },
+            "library_id": manifest["library_id"],
+            "library_revision": manifest["revision"],
+            "claims": copy.deepcopy(manifest["claims"]),
             "instrument_count": len(entries),
             "instruments": entries,
         }
@@ -327,9 +423,10 @@ class InstrumentLibraryService:
                 "native audition requires the exact explicit launch intent",
                 location="$.payload.launch_intent",
             )
+        _manifest, entries = self._library_entries()
         matches = [
             (summary, executable)
-            for summary, executable in self._library_entries()
+            for summary, executable in entries
             if (summary["prototype_id"], summary["revision"]) == identity
         ]
         if len(matches) != 1:
@@ -394,8 +491,13 @@ def dispatch_instrument_operation(
     """Validate and dispatch one v19 instrument library operation."""
 
     operation = request.get("operation") if isinstance(request, dict) else None
-    required = (REQUEST_SCHEMA_KEY, RESULT_SCHEMA_KEY, LIBRARY_SCHEMA_KEY)
+    required = (REQUEST_SCHEMA_KEY, RESULT_SCHEMA_KEY)
     missing = sorted(name for name in required if name not in context.schemas)
+    if not any(
+        schema_key in context.schemas
+        for schema_key, _schema_version, _path in LIBRARY_SCHEMA_SPECS
+    ):
+        missing.append("instrument_audition_library_v1_or_v2")
     if missing:
         result = _result(
             "invalid-request",

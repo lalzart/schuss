@@ -89,6 +89,39 @@ bool allZero(const std::vector<std::int32_t>& values) {
     });
 }
 
+double normalizedStereoRmsDifference(
+    const Rendered& left,
+    const Rendered& right) {
+    expect(left.main.size() == right.main.size()
+            && left.auxiliary.size() == right.auxiliary.size()
+            && left.main.size() == left.auxiliary.size(),
+        "RMS difference input sizes disagree");
+    long double energy = 0.0L;
+    for (std::size_t frame = 0; frame < left.main.size(); ++frame) {
+        const auto main = static_cast<long double>(left.main[frame])
+            - static_cast<long double>(right.main[frame]);
+        const auto auxiliary = static_cast<long double>(left.auxiliary[frame])
+            - static_cast<long double>(right.auxiliary[frame]);
+        energy += main * main + auxiliary * auxiliary;
+    }
+    const auto denominator = 2.0L
+        * static_cast<long double>(left.main.size())
+        * 134217728.0L * 134217728.0L;
+    return std::sqrt(static_cast<double>(energy / denominator));
+}
+
+std::vector<std::uint64_t> laneTriggerFrames(
+    const Rendered& rendered,
+    std::size_t lane) {
+    std::vector<std::uint64_t> result;
+    for (const auto& event : rendered.events) {
+        if ((event.trigger_lane_mask & (1U << lane)) != 0U) {
+            result.push_back(event.absolute_frame);
+        }
+    }
+    return result;
+}
+
 pam::Controls sevenVoiceControls() {
     auto controls = pam::defaultControls();
     const std::array<pam::Shape, pam::kLaneCount> shapes{{
@@ -267,6 +300,8 @@ void testPartitionIdentity() {
                 == reference.snapshot.cohesion.mode_real
             && candidate.snapshot.cohesion.mode_imaginary
                 == reference.snapshot.cohesion.mode_imaginary
+            && candidate.snapshot.lane_output_energy
+                == reference.snapshot.lane_output_energy
             && candidate.snapshot.cohesion.dry_difference_energy
                 == reference.snapshot.cohesion.dry_difference_energy,
             "snapshot partition mismatch");
@@ -396,6 +431,58 @@ void testReset() {
         "reset did not reproduce fresh bytes");
 }
 
+void testLaneOutputTelemetry() {
+    auto controls = pam::defaultControls();
+    for (std::size_t lane = 0; lane < pam::kLaneCount; ++lane) {
+        controls.lanes[lane].routes.fill(0.0F);
+        controls.voices[lane].level = 0.0F;
+    }
+    constexpr std::size_t active_lane = 3U;
+    controls.lanes[active_lane].rate_index = 15U;
+    controls.lanes[active_lane].hits = 16U;
+    controls.lanes[active_lane].amplitude = 1.0F;
+    controls.lanes[active_lane].routes[
+        static_cast<std::size_t>(pam::Destination::trigger)] = 1.0F;
+    controls.voices[active_lane].level = 0.3F;
+
+    pam::Core core;
+    std::array<std::int32_t, 512U> main{};
+    std::array<std::int32_t, 512U> auxiliary{};
+    for (std::size_t block = 0; block < 8U; ++block) {
+        expect(core.process(
+            controls, main.data(), auxiliary.data(), main.size()),
+            "telemetry first process failed");
+    }
+    const auto first = core.snapshot();
+    expect(first.lane_output_energy[active_lane] > 0.0
+            && std::isfinite(first.lane_output_energy[active_lane]),
+        "active lane did not publish finite output energy: energy="
+            + std::to_string(first.lane_output_energy[active_lane])
+            + " triggers=" + std::to_string(
+                first.diagnostics.lane_trigger_count[active_lane])
+            + " started=" + std::to_string(
+                (first.started_lane_mask >> active_lane) & 1U));
+    for (std::size_t lane = 0; lane < pam::kLaneCount; ++lane) {
+        if (lane == active_lane) continue;
+        expect(first.lane_output_energy[lane] == 0.0,
+            "silent lane published output energy");
+    }
+
+    expect(core.process(controls, main.data(), auxiliary.data(), main.size()),
+        "telemetry second process failed");
+    const auto second = core.snapshot();
+    expect(second.lane_output_energy[active_lane]
+            > first.lane_output_energy[active_lane],
+        "active lane output energy was not monotone");
+    core.reset();
+    const auto reset = core.snapshot();
+    expect(reset.absolute_frame == 0U
+            && std::all_of(reset.lane_output_energy.begin(),
+                reset.lane_output_energy.end(),
+                [](double value) { return value == 0.0; }),
+        "Core reset did not clear lane output telemetry");
+}
+
 void testVoiceControlAndModelIsolation() {
     auto controls = pam::defaultControls();
     controls.lanes[1] = controls.lanes[0];
@@ -438,6 +525,67 @@ void testVoiceControlAndModelIsolation() {
         "lane-local MODEL SWEEP did not move its resolved model");
     expect(model.resolved_engines[1] == 20U,
         "lane-local MODEL SWEEP changed another lane's model");
+}
+
+void testSequencerControlResponse() {
+    auto base = pam::defaultControls();
+    base.master_gain = 0.35F;
+    base.voices[0].engine = 8U;
+    base.voices[0].level = 0.3F;
+    base.lanes[0].rate_index = 8U;
+    base.lanes[0].hits = 5U;
+    base.lanes[0].shape = pam::Shape::pulse;
+    base.lanes[0].amplitude = 1.0F;
+    base.lanes[0].routes.fill(0.0F);
+    base.lanes[0].routes[static_cast<std::size_t>(pam::Destination::trigger)] =
+        1.0F;
+
+    auto phase_shifted = base;
+    phase_shifted.lanes[0].phase_u7 = 64U;
+    const auto phase_zero_render = render(base, 96000U, 257U);
+    const auto phase_shifted_render = render(phase_shifted, 96000U, 257U);
+    expect(laneTriggerFrames(phase_zero_render, 0U)
+            != laneTriggerFrames(phase_shifted_render, 0U),
+        "Phase did not move eligible trigger frames");
+    expect(phase_zero_render.snapshot.accepted.lanes[0].hits == 5U
+            && phase_shifted_render.snapshot.accepted.lanes[0].hits == 5U
+            && phase_zero_render.snapshot.accepted.lanes[0].rate_index == 8U
+            && phase_shifted_render.snapshot.accepted.lanes[0].rate_index == 8U,
+        "Phase changed hit count or rate state");
+
+    auto rotated = base;
+    rotated.lanes[0].rotation = 3U;
+    const auto rotated_render = render(rotated, 96000U, 257U);
+    const auto base_triggers = laneTriggerFrames(phase_zero_render, 0U);
+    const auto rotated_triggers = laneTriggerFrames(rotated_render, 0U);
+    expect(base_triggers.size() == 5U && rotated_triggers.size() == 5U
+            && base_triggers != rotated_triggers,
+        "Rotate did not move a 5-of-16 pattern with cardinality preserved");
+
+    auto triangle_trigger_only = base;
+    triangle_trigger_only.lanes[0].shape = pam::Shape::triangle;
+    const auto triangle_trigger_render = render(
+        triangle_trigger_only, 96000U, 257U);
+    expect(triangle_trigger_render.main == phase_zero_render.main
+            && triangle_trigger_render.auxiliary
+                == phase_zero_render.auxiliary
+            && laneTriggerFrames(triangle_trigger_render, 0U)
+                == base_triggers,
+        "Shape changed a trigger-only lane despite having no continuous route");
+
+    auto pulse_routed = base;
+    pulse_routed.lanes[0].routes[
+        static_cast<std::size_t>(pam::Destination::pitch)] = 0.8F;
+    auto triangle_routed = pulse_routed;
+    triangle_routed.lanes[0].shape = pam::Shape::triangle;
+    const auto pulse_routed_render = render(pulse_routed, 96000U, 257U);
+    const auto triangle_routed_render = render(
+        triangle_routed, 96000U, 257U);
+    expect(laneTriggerFrames(pulse_routed_render, 0U)
+            == laneTriggerFrames(triangle_routed_render, 0U)
+            && normalizedStereoRmsDifference(
+                pulse_routed_render, triangle_routed_render) > 5.0e-4,
+        "Shape did not alter a routed continuous Motion destination");
 }
 
 void testStochasticSourceIsolation() {
@@ -511,6 +659,62 @@ void testExactDryAndActiveCohesion() {
         "nominal cohesion render recovered invalid state");
 }
 
+void testIndividualGlobalResponse() {
+    auto baseline = sevenVoiceControls();
+    baseline.cohesion.drive = 0.35F;
+    baseline.cohesion.cohere = 0.8F;
+    baseline.cohesion.root_note = 48.0F;
+    baseline.cohesion.spread = 0.45F;
+    baseline.cohesion.tail = 0.65F;
+    baseline.cohesion.damping = 0.4F;
+    baseline.cohesion.width = 0.7F;
+    baseline.cohesion.duck = 0.3F;
+
+    const auto expect_response = [&baseline](
+            const std::string& label,
+            const auto& set_low,
+            const auto& set_high) {
+        auto low = baseline;
+        auto high = baseline;
+        set_low(low.cohesion);
+        set_high(high.cohesion);
+        const auto low_render = render(low, 65536U, 257U);
+        const auto high_render = render(high, 65536U, 257U);
+        const auto difference = normalizedStereoRmsDifference(
+            low_render, high_render);
+        expect(difference >= 5.0e-4,
+            label + " response below frozen RMS threshold: "
+                + std::to_string(difference));
+        expect(low_render.snapshot.diagnostics.effect_recovery_count == 0U
+                && high_render.snapshot.diagnostics.effect_recovery_count == 0U
+                && low_render.snapshot.diagnostics.saturated_sample_count == 0U
+                && high_render.snapshot.diagnostics.saturated_sample_count == 0U,
+            label + " response produced nominal recovery or saturation");
+    };
+
+    expect_response("Drive",
+        [](pam::CohesionControls& value) { value.drive = 0.0F; },
+        [](pam::CohesionControls& value) { value.drive = 1.0F; });
+    expect_response("Root",
+        [](pam::CohesionControls& value) { value.root_note = 24.0F; },
+        [](pam::CohesionControls& value) { value.root_note = 84.0F; });
+    expect_response("Spread",
+        [](pam::CohesionControls& value) { value.spread = 0.0F; },
+        [](pam::CohesionControls& value) { value.spread = 1.0F; });
+    expect_response("Tail",
+        [](pam::CohesionControls& value) { value.tail = 0.0F; },
+        [](pam::CohesionControls& value) { value.tail = 1.0F; });
+    expect_response("Damping",
+        [](pam::CohesionControls& value) { value.damping = 0.0F; },
+        [](pam::CohesionControls& value) { value.damping = 1.0F; });
+    expect_response("Width",
+        [](pam::CohesionControls& value) { value.width = 0.0F; },
+        [](pam::CohesionControls& value) { value.width = 1.0F; });
+    expect_response("Duck",
+        [](pam::CohesionControls& value) { value.duck = 0.0F; },
+        [](pam::CohesionControls& value) { value.duck = 1.0F; });
+}
+
 void testEffectOnlyClear() {
     auto controls = sevenVoiceControls();
     controls.cohesion.drive = 0.25F;
@@ -530,6 +734,7 @@ void testEffectOnlyClear() {
     }
     for (auto& voice : controls.voices) voice.level = 0.0F;
     bool tail_nonzero = false;
+    std::int32_t tail_peak = 0;
     for (std::size_t frame = 0; frame < 8192U; frame += 512U) {
         expect(candidate.process(controls, candidate_main.data(), candidate_aux.data(),
             candidate_main.size()), "clear candidate tail failed");
@@ -540,8 +745,20 @@ void testEffectOnlyClear() {
                 [](std::int32_t value) { return value != 0; })
             || std::any_of(candidate_aux.begin(), candidate_aux.end(),
                 [](std::int32_t value) { return value != 0; });
+        for (const auto value : candidate_main) {
+            tail_peak = std::max<std::int32_t>(tail_peak,
+                static_cast<std::int32_t>(std::abs(
+                    static_cast<std::int64_t>(value))));
+        }
+        for (const auto value : candidate_aux) {
+            tail_peak = std::max<std::int32_t>(tail_peak,
+                static_cast<std::int32_t>(std::abs(
+                    static_cast<std::int64_t>(value))));
+        }
     }
     expect(tail_nonzero, "shared body produced no tail before Clear");
+    expect(static_cast<double>(tail_peak) / 134217728.0 >= 5.0e-4,
+        "shared body tail remained below the frozen Clear threshold");
 
     ++controls.effect_clear_generation;
     pam::ProcessReport clear_report{};
@@ -625,9 +842,12 @@ int main() {
     testTriggerEnableSemantics();
     testAllModels();
     testReset();
+    testLaneOutputTelemetry();
     testVoiceControlAndModelIsolation();
+    testSequencerControlResponse();
     testStochasticSourceIsolation();
     testExactDryAndActiveCohesion();
+    testIndividualGlobalResponse();
     testEffectOnlyClear();
     std::cout << "pamplist_core_tests: pass\n";
     return 0;

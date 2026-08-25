@@ -1,0 +1,90 @@
+{
+  "application_feedback": [
+    {
+      "destination": "continuous controls",
+      "rule": "Editor controls display accepted Core snapshot values; FX-A and FX-B retain source soft-pickup truth instead of showing uncaptured raw input as accepted."
+    },
+    {
+      "destination": "mode and action buttons",
+      "rule": "Source, Lock, Freeze, FX Mode, Target, Scale, and Mutate feedback is derived from accepted Snapshot and manual_mutations generation, not raw mouse, automation, or MIDI edges."
+    },
+    {
+      "destination": "host diagnostics",
+      "rule": "Requested parameter values, sample rate, block size, accepted and dropped events, state rejection count, and wrapper status are visibly separate from accepted musical state."
+    }
+  ],
+  "endpoint_device_evidence": {
+    "notes": "The plug-in owns no endpoint. Raw MIDI is tested only through JUCE buffers and the existing mapping; Ableton routing and physical Launch Control 3 behavior remain deferred.",
+    "state": "simulated-host-buffer-only"
+  },
+  "gesture_state_machines": [
+    {
+      "action": "Source desired state",
+      "rule": "Emit (desired minus projected plus 3) modulo 3 source_next events through the existing direct rising-edge source pulse."
+    },
+    {
+      "action": "Lock desired state",
+      "rule": "Emit one lock_toggle event only when desired and projected booleans differ."
+    },
+    {
+      "action": "FX desired state",
+      "rule": "Emit (desired minus projected plus 3) modulo 3 effect_next actions; each retains the existing 76-high and 76-low source effect-button tap sequence."
+    },
+    {
+      "action": "Target desired state",
+      "rule": "Emit (desired minus projected plus 4) modulo 4 target_next actions; each retains the existing 1508-high and 9-low source encoder hold sequence."
+    },
+    {
+      "action": "Scale desired state",
+      "rule": "Emit (desired minus projected plus 4) modulo 4 scale_next actions; each retains the existing 9-high and 9-low source encoder tap sequence."
+    },
+    {
+      "action": "Mutate and Freeze",
+      "rule": "Editor and channel-16 CC presses emit one existing mutate or capture_toggle event. Releases emit no Core event. Neither action is serialized or replayed on recall."
+    }
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {
+      "host_parameters": "tide.stage1 through tide.stage4, tide.rate, tide.memory, tide.material, tide.position, tide.fx-a, and tide.fx-b",
+      "mapping": "continuous normalized [0,1] to the corresponding existing SemanticAction at the next source quantum"
+    },
+    {
+      "host_parameter": "tide.root",
+      "mapping": "integer MIDI note 36 through 72 to set_root"
+    },
+    {
+      "host_parameters": "tide.source, tide.lock, tide.effect, tide.target, tide.scale",
+      "mapping": "discrete desired state reconciled by the existing cycle or toggle SemanticAction; accepted state remains Snapshot authority"
+    },
+    {
+      "raw_midi": "channel 16 CC20-30 and CC40-46",
+      "mapping": "existing control-map.json curves, edges, unassigned behavior, sample offsets, and source gestures without remapping"
+    },
+    {
+      "editor_actions": "Mutate and Freeze",
+      "mapping": "one non-persistent semantic action per button activation"
+    }
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/tide-pit-gills/contract-vst3-r01/control-map.json exhaustively compared with research/prototypes/tide-pit-gills/control-map.json and the compiled sixteen-parameter descriptors",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "surface": "VST3 host parameters",
+      "assignment": "Sixteen stable prototype-local parameters in fixed order: eleven continuous controls then Source, Lock, FX Mode, Target, and Scale."
+    },
+    {
+      "surface": "VST3 editor",
+      "assignment": "Eleven continuous controls, seven accepted-state action or mode buttons, four source display lines, status diagnostics, and a fixed 1024-sample stereo scope; no endpoint controls."
+    },
+    {
+      "surface": "Regular Launch Control 3 through host MIDI",
+      "assignment": "Channel 16, encoders CC20-35 and buttons CC40-47; existing Tide Pit assignments and unassigned controls are preserved, with no faders."
+    }
+  ],
+  "title": "Tide Pit Local VST3 Host Migration"
+}

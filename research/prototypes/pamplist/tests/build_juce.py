@@ -15,7 +15,7 @@ from typing import Any
 PROTOTYPE = Path(__file__).resolve().parents[1]
 REPO_ROOT = PROTOTYPE.parents[2]
 DEFAULT_BUILD = REPO_ROOT / "build" / "pamplist-juce"
-RECEIPT = PROTOTYPE / "contract-r05" / "juce-build.json"
+RECEIPT = PROTOTYPE / "contract-r06" / "juce-build.json"
 JUCE_MANIFEST = REPO_ROOT / "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json"
 JUCE_MANIFEST_SHA256 = "db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5"
 SOURCE_VERIFIER = PROTOTYPE / "tests" / "verify_source_authority.py"
@@ -58,8 +58,8 @@ def input_fingerprint() -> str:
         PROTOTYPE / "include",
         PROTOTYPE / "src",
         PROTOTYPE / "source-dependencies.json",
-        PROTOTYPE / "contract-r05/control-map.json",
-        PROTOTYPE / "contract-r05/implementation-contract.json",
+        PROTOTYPE / "contract-r06/control-map.json",
+        PROTOTYPE / "contract-r06/implementation-contract.json",
         JUCE_MANIFEST,
     ]
     paths: list[Path] = []
@@ -83,6 +83,9 @@ def validate_surface_source() -> None:
         encoding="utf-8"
     )
     source = (PROTOTYPE / "src/juce_main.cpp").read_text(encoding="utf-8")
+    activity_header = (
+        PROTOTYPE / "include/schuss/pamplist/activity_model.hpp"
+    ).read_text(encoding="utf-8")
     if "kSurfaceRotaryCount = 16U" not in header:
         raise RuntimeError("portable surface cardinality is not exactly sixteen")
     declaration = (
@@ -103,12 +106,25 @@ def validate_surface_source() -> None:
         "getValue() >= 0.5 ? 0.0 : 1.0",
         "presentation == pam::PresentationKind::trigger_switch",
         "if (!slider.userGestureActive())",
+        "class ImpactHistoryComponent final : public juce::Component",
+        "pam::ActivityReducer reducer_",
+        "pam::ImpactHistory history_",
+        "sample.lane_levels[lane]",
+        "sample.trigger_mask",
+        "sample.cohesion_level",
+        "sample.effect_cleared",
+        "impact_history_.pushSnapshot(snapshot)",
+        "std::array<juce::Colour, pam::kLaneCount>",
+        "setSize(1280, 840)",
+        'return "0.6.0"',
     ):
         if required not in source:
             raise RuntimeError(f"JUCE sixteen-control contract missing: {required}")
     for forbidden in ("primary_sliders_", "lane_sliders_"):
         if forbidden in source:
             raise RuntimeError(f"obsolete extra slider bank remains: {forbidden}")
+    if "kImpactHistoryCapacity = 192U" not in activity_header:
+        raise RuntimeError("ImpactHistory is not the frozen 192-sample value")
 
 
 def reproduce(build: Path, juce_source: Path) -> None:
@@ -143,6 +159,8 @@ def reproduce(build: Path, juce_source: Path) -> None:
         "claims": {
             "app_launched": False,
             "audio_endpoint_opened": False,
+            "impact_history_capacity": 192,
+            "impact_history_rows": 7,
             "midi_endpoint_opened": False,
             "surface_rotary_controls": 16,
             "target_built": True,
@@ -152,7 +170,7 @@ def reproduce(build: Path, juce_source: Path) -> None:
             "path": JUCE_MANIFEST.relative_to(REPO_ROOT).as_posix(),
             "sha256": sha256(JUCE_MANIFEST),
         },
-        "schema_version": "pamplist-authenticated-juce-build-v4",
+        "schema_version": "pamplist-authenticated-juce-build-v5",
         "source_authority": source,
         "status": "passed",
         "target": "pamplist",
@@ -166,13 +184,15 @@ def reproduce(build: Path, juce_source: Path) -> None:
 
 def check() -> None:
     document = json.loads(RECEIPT.read_text(encoding="utf-8"))
-    if document.get("schema_version") != "pamplist-authenticated-juce-build-v4":
+    if document.get("schema_version") != "pamplist-authenticated-juce-build-v5":
         raise RuntimeError("JUCE receipt schema drifted")
     if document.get("status") != "passed" or document.get("target") != "pamplist":
         raise RuntimeError("JUCE receipt does not record the named passing target")
     expected_claims = {
         "app_launched": False,
         "audio_endpoint_opened": False,
+        "impact_history_capacity": 192,
+        "impact_history_rows": 7,
         "midi_endpoint_opened": False,
         "surface_rotary_controls": 16,
         "target_built": True,

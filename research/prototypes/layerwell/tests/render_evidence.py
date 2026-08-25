@@ -14,17 +14,18 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[4]
 PROTOTYPE = ROOT / "research/prototypes/layerwell"
-DEFAULT_RENDERER = ROOT / "build/layerwell-core/layerwell-render"
-EVIDENCE = PROTOTYPE / "contract/evidence"
+DEFAULT_RENDERER = ROOT / "build/layerwell-focused/layerwell-render"
+EVIDENCE = PROTOTYPE / "contract-r02/evidence"
 RENDER_ARTIFACTS = (
     "layerwell.wav",
     "event-state-trace.json",
+    "panel-trace.json",
     "controller-trace.json",
     "metrics.json",
 )
 ARTIFACTS = RENDER_ARTIFACTS + (
-    "callback-edge-512.wav",
-    "callback-edge-comparator.json",
+    "untrimmed.wav",
+    "untrimmed-comparator.json",
 )
 
 
@@ -55,20 +56,20 @@ def check() -> None:
         raise SystemExit("Layerwell retained render is not fully finite")
     if metrics["peak_absolute"] > 1.0:
         raise SystemExit("Layerwell retained render exceeds output bound")
-    if not metrics["callback_edge_comparator_diverged"]:
+    if not metrics["untrimmed_comparator_diverged"]:
         raise SystemExit("Layerwell falsifying comparator did not diverge")
     comparator = json.loads(
-        (EVIDENCE / "callback-edge-comparator.json").read_text(encoding="utf-8")
+        (EVIDENCE / "untrimmed-comparator.json").read_text(encoding="utf-8")
     )
-    if comparator.get("schema") != "layerwell-callback-edge-comparator-v1":
+    if comparator.get("schema") != "layerwell-untrimmed-comparator-v1":
         raise SystemExit("Layerwell comparator schema drifted")
     if comparator.get("sample_exact_wav_sha256") != sha256(EVIDENCE / "layerwell.wav"):
         raise SystemExit("Layerwell comparator reference binding drifted")
-    if comparator.get("callback_edge_512_wav_sha256") != sha256(
-        EVIDENCE / "callback-edge-512.wav"
+    if comparator.get("untrimmed_wav_sha256") != sha256(
+        EVIDENCE / "untrimmed.wav"
     ):
         raise SystemExit("Layerwell comparator candidate binding drifted")
-    if comparator["sample_exact_wav_sha256"] == comparator["callback_edge_512_wav_sha256"]:
+    if comparator["sample_exact_wav_sha256"] == comparator["untrimmed_wav_sha256"]:
         raise SystemExit("Layerwell comparator artifacts do not diverge")
     print("Layerwell retained render evidence: valid")
 
@@ -94,43 +95,41 @@ def reproduce(renderer: Path, destination: Path) -> None:
             if hashes[block] != reference:
                 raise SystemExit(f"Layerwell partition evidence diverged at block {block}")
 
-        comparator_output = temporary_root / "callback-edge-512"
+        comparator_output = temporary_root / "untrimmed"
         subprocess.run(
             [
-                str(renderer), "--block", "512",
+                str(renderer), "--block", "128",
                 "--output-dir", str(comparator_output),
-                "--callback-edge",
+                "--untrimmed",
             ],
             check=True,
             cwd=ROOT,
         )
         comparator_wav = comparator_output / "layerwell.wav"
         if sha256(comparator_wav) == reference["layerwell.wav"]:
-            raise SystemExit("Layerwell callback-edge comparator did not diverge")
+            raise SystemExit("Layerwell untrimmed comparator did not diverge")
 
         destination.mkdir(parents=True, exist_ok=True)
         canonical = temporary_root / "128"
         for name in RENDER_ARTIFACTS:
             shutil.copyfile(canonical / name, destination / name)
-        shutil.copyfile(comparator_wav, destination / "callback-edge-512.wav")
+        shutil.copyfile(comparator_wav, destination / "untrimmed.wav")
         metrics_path = destination / "metrics.json"
         metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
-        metrics["callback_edge_comparator_diverged"] = True
+        metrics["untrimmed_comparator_diverged"] = True
         metrics_path.write_text(
             json.dumps(metrics, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
         comparator = {
-            "callback_edge_512_wav_sha256": sha256(
-                destination / "callback-edge-512.wav"
-            ),
-            "candidate_block_frames": 512,
+            "candidate_block_frames": 128,
             "diverged": True,
             "sample_exact_wav_sha256": sha256(destination / "layerwell.wav"),
-            "schema": "layerwell-callback-edge-comparator-v1",
-            "timing_change": "all events quantized to the next outer callback edge",
+            "schema": "layerwell-untrimmed-comparator-v1",
+            "timing_change": "ignore the accepted [4800, 43200) trim window",
+            "untrimmed_wav_sha256": sha256(destination / "untrimmed.wav"),
         }
-        (destination / "callback-edge-comparator.json").write_text(
+        (destination / "untrimmed-comparator.json").write_text(
             json.dumps(comparator, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )

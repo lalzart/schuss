@@ -1,0 +1,280 @@
+{
+  "checks": [
+    {
+      "command": [
+        "validate_implementation_bundle.py",
+        "research/prototypes/pamplist/contract-vst3-r01",
+        "--workspace-root",
+        ".",
+        "--phase",
+        "ready",
+        "--source-root",
+        "."
+      ],
+      "cost": "fast",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/proposals/pamplist-vst3-local.md",
+        "research/prototypes/pamplist/contract-vst3-r01/implementation-contract.json",
+        "research/prototypes/pamplist/contract-vst3-r01/source-equivalence.json",
+        "Every source-equivalence file hash"
+      ],
+      "id": "task045-readiness"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/pamplist/tests/verify_source_authority.py"
+      ],
+      "cost": "configured-source",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/prototypes/pamplist/source-dependencies.json",
+        "catalog/sources.local.yml runtime prerequisite",
+        "Configured patcher checkout identity and dirty scope"
+      ],
+      "id": "pamplist-configured-source"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "research/prototypes/pamplist/vst3",
+        "-B",
+        "build/pamplist-vst3-task045-release",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_OSX_ARCHITECTURES=arm64",
+        "-DPAMPLIST_JUCE_SOURCE_DIR=build/cinderwheel-juce-trial/_deps/juce-src",
+        "-DPAMPLIST_ALLOW_JUCE_FETCH=OFF"
+      ],
+      "cost": "native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/pamplist/vst3/CMakeLists.txt",
+        "research/prototypes/pamplist/vst3/include/schuss/pamplist/vst3_model.hpp",
+        "research/prototypes/pamplist/vst3/src/vst3_model.cpp",
+        "Authenticated JUCE and configured source identities"
+      ],
+      "id": "vst3-release-configure"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build/pamplist-vst3-task045-release",
+        "--config",
+        "Release",
+        "--target",
+        "pamplist-vst3-model-tests",
+        "pamplist-vst3-processor-tests",
+        "pamplist-vst3-allocation-tests"
+      ],
+      "cost": "native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "VST3 model, processor, state, editor seam, and focused test sources"
+      ],
+      "id": "vst3-focused-build"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/pamplist-vst3-task045-release",
+        "-C",
+        "Release",
+        "--output-on-failure",
+        "-R",
+        "pamplist_vst3_(model|processor|allocation)_tests"
+      ],
+      "cost": "native",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "VST3 focused executables",
+        "Frozen direct Core and timestamped comparator fixtures"
+      ],
+      "id": "vst3-direct-signal"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build/pamplist-vst3-task045-release",
+        "--config",
+        "Release",
+        "--target",
+        "pamplist-vst3_VST3",
+        "pamplist-vst3-module-tests"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "Authenticated JUCE 8.0.15 source",
+        "Pamplist VST3 adapter and frozen Core source closures",
+        "CMake target metadata"
+      ],
+      "id": "vst3-target"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/pamplist-vst3-task045-release",
+        "-C",
+        "Release",
+        "--output-on-failure",
+        "-R",
+        "pamplist_vst3_module_tests"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "Built Pamplist.vst3 bundle",
+        "Separate JUCE VST3 module-host executable"
+      ],
+      "id": "vst3-module-host"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/pamplist/tests/build_juce.py",
+        "--check"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "Frozen Pamplist 0.6 standalone source closure",
+        "Retained authenticated JUCE standalone build receipt"
+      ],
+      "id": "pamplist-standalone-receipt"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/pamplist/vst3/tests/build_vst3.py",
+        "--check"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "Frozen Task 045 VST3 input fingerprint",
+        "Release bundle files, arm64 identity, valid local ad-hoc seal, and module-host receipt"
+      ],
+      "id": "vst3-build-receipt"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "current"
+      ],
+      "cost": "routine",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "Task 045 governance and project-authored source/doc changes",
+        "Current validation manifest inputs"
+      ],
+      "id": "schuss-current"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/pamplist/vst3/tests/reproduce_vst3.py",
+        "--build-type",
+        "Release",
+        "--architecture",
+        "arm64",
+        "--juce-source",
+        "build/cinderwheel-juce-trial/_deps/juce-src"
+      ],
+      "cost": "reproduction",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "Frozen Task 045 source and bundle",
+        "Configured Macro Voice source identity",
+        "Authenticated JUCE source identity"
+      ],
+      "id": "vst3-relocated-reproduction"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "The proposal identifies the frozen source, host seam, licensing boundary, fidelity rules, failure modes, and explicit proof gaps.",
+      "status": "available"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The approved proposal fingerprint exactly matches the ready implementation contract and active Task 045 scope.",
+      "status": "available"
+    },
+    {
+      "check_ids": [
+        "task045-readiness",
+        "pamplist-configured-source"
+      ],
+      "level": "source",
+      "promotion_rule": "Ready bundle and configured source fingerprints pass, implementation exists, notices are complete, and frozen-source diff review finds no unauthorized mutation.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "vst3-release-configure",
+        "vst3-focused-build",
+        "schuss-current"
+      ],
+      "level": "host-structural",
+      "promotion_rule": "Stable parameter, state, bounds, negative, lifecycle, editor-seam, governance, and affected regression checks pass.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "vst3-direct-signal"
+      ],
+      "level": "host-signal",
+      "promotion_rule": "Direct Core and processor renders, timestamped MIDI, state twin, invalid host, and multi-instance fixtures meet exact frozen tolerances.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "vst3-target",
+        "vst3-module-host",
+        "pamplist-standalone-receipt",
+        "vst3-build-receipt",
+        "vst3-relocated-reproduction"
+      ],
+      "level": "target-build",
+      "promotion_rule": "Authenticated Release arm64 VST3 and standalone targets build, the actual bundle scans and instantiates in a separate module host, and relocated reproduction passes without installation.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "A later authorized host session must measure callback deadlines, xruns, CPU, memory, and multi-instance stress against a declared budget.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "A later authorized session must operate Live MIDI routing or a physical Launch Control 3 and retain endpoint, receipt, feedback, and lifecycle evidence.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "A later documented audition must assess single and layered sound, automation, state recall, record, freeze, and resample behavior.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "Canonical provider identity, host matrix, state migration, packaging, signing, notarization, distribution licensing, publication, and release gates require separate acceptance.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

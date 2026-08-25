@@ -1,0 +1,50 @@
+{
+  "claims": {
+    "allocates_canonical_records": false,
+    "executable_graph": false
+  },
+  "needs": [
+    {
+      "local_role": "role.node.capture-store",
+      "required_contract": "bounded absolute-time audio memory"
+    },
+    {
+      "local_role": "role.node.decision-memory",
+      "required_contract": "bounded semantic decision recurrence"
+    },
+    {
+      "local_role": "role.node.fragment-scheduler",
+      "required_contract": "absolute-time fragment scheduler"
+    },
+    {
+      "local_role": "role.node.fragment-voices",
+      "required_contract": "windowed absolute-time fragment voice"
+    },
+    {
+      "local_role": "role.node.internal-exciter",
+      "required_contract": "bounded internal excitation policy"
+    },
+    {
+      "local_role": "role.node.live-source-mix",
+      "required_contract": "live and internal source composition"
+    },
+    {
+      "local_role": "role.node.modal-body",
+      "required_contract": "source-preserving parallel modal body"
+    },
+    {
+      "local_role": "role.node.motion-policy",
+      "required_contract": "field-bounded correlated motion"
+    },
+    {
+      "local_role": "role.node.motion-policy",
+      "required_contract": "semantic random-draw accounting"
+    },
+    {
+      "local_role": "role.node.stereo-mix",
+      "required_contract": "bounded source-preserving stereo mix"
+    }
+  ],
+  "prototype_id": "wanderbody",
+  "schema_version": "schuss-instrument-lab-promotion-needs-v1"
+}

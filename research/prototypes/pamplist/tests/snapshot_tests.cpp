@@ -62,6 +62,36 @@ bool coherent(const pam::Controls& value) {
         && value.voices[6].note == expected.voices[6].note;
 }
 
+pam::Snapshot stampedSnapshot(std::uint32_t stamp) {
+    pam::Snapshot value{};
+    value.accepted = stamped(stamp);
+    value.absolute_frame = static_cast<std::uint64_t>(stamp) * 16U;
+    value.accepted_sequence = static_cast<std::uint64_t>(stamp) * 31U;
+    value.diagnostics.effect_clear_count = stamp * 7U;
+    value.cohesion.dry_difference_energy = static_cast<double>(stamp) * 0.25;
+    for (std::size_t lane = 0; lane < pam::kLaneCount; ++lane) {
+        value.lane_output_energy[lane] =
+            static_cast<double>(stamp) * 8.0 + static_cast<double>(lane);
+        value.diagnostics.lane_trigger_count[lane] =
+            static_cast<std::uint64_t>(stamp) * 13U + lane;
+    }
+    return value;
+}
+
+bool coherent(const pam::Snapshot& value) {
+    const auto expected = stampedSnapshot(value.accepted.seed);
+    return coherent(value.accepted)
+        && value.absolute_frame == expected.absolute_frame
+        && value.accepted_sequence == expected.accepted_sequence
+        && value.diagnostics.effect_clear_count
+            == expected.diagnostics.effect_clear_count
+        && value.cohesion.dry_difference_energy
+            == expected.cohesion.dry_difference_energy
+        && value.lane_output_energy == expected.lane_output_energy
+        && value.diagnostics.lane_trigger_count
+            == expected.diagnostics.lane_trigger_count;
+}
+
 }  // namespace
 
 int main() {
@@ -89,6 +119,29 @@ int main() {
     writer.join();
     expect(!torn.load(std::memory_order_relaxed),
         "whole-control snapshot tore under contention");
+
+    pam::AtomicAcceptedSnapshot accepted_mailbox;
+    accepted_mailbox.publish(stampedSnapshot(1U));
+    start.store(false, std::memory_order_release);
+    done.store(false, std::memory_order_release);
+    torn.store(false, std::memory_order_release);
+    std::thread accepted_writer([&]() {
+        while (!start.load(std::memory_order_acquire)) {}
+        for (std::uint32_t stamp = 2U; stamp < 100000U; ++stamp) {
+            accepted_mailbox.publish(stampedSnapshot(stamp));
+        }
+        done.store(true, std::memory_order_release);
+    });
+    start.store(true, std::memory_order_release);
+    auto accepted_fallback = stampedSnapshot(1U);
+    while (!done.load(std::memory_order_acquire)) {
+        const auto value = accepted_mailbox.load(accepted_fallback);
+        if (!coherent(value)) torn.store(true, std::memory_order_relaxed);
+        accepted_fallback = value;
+    }
+    accepted_writer.join();
+    expect(!torn.load(std::memory_order_relaxed),
+        "whole accepted Snapshot telemetry tore under contention");
     std::cout << "pamplist_snapshot_tests: pass\n";
     return 0;
 }

@@ -1,0 +1,93 @@
+{
+  "acceptance_tests": [
+    "The bundle validates ready against the exact approved proposal SHA-256 before DSP edits begin.",
+    "Portable Core tests cover route selection, HOME behavior, destination-memory lock and erosion, block-invariant scheduling, waypoint validation, event snapshots, reset, panic, reseed, recall, silence, numeric safety, and fixed capacities.",
+    "Every Launch Control 3 channel, CC, value boundary, semantic transform, selection gesture, draft edit, capture action, and ignored-message result is exhaustively compared with control-map.json.",
+    "The frozen MM01 through MM10 render experiment produces deterministic route, event, metric, and stereo-audio artifacts at 48 kHz with no non-finite sample, overflow, capacity fault, or peak at or above 0.98.",
+    "Supported block partitions 1, 16, 64, 128, 511, and 512 preserve exact route/event traces and PCM for the same seed and semantic timeline on the authenticated environment.",
+    "The optional standalone compiles and links against the authenticated JUCE 8.0.15 tree without launching the app or opening an endpoint."
+  ],
+  "decision_rights": {
+    "may": [
+      "Implement the proposal's four-default-waypoint vertical slice with fixed capacity for eight waypoints, three fixed Braids-backed voice lanes, Gaussian scene interpolation, PCG32 route memory, and a restrained standalone map editor.",
+      "Freeze an instrument-owned regular Launch Control 3 mapping on the retained channel-16 CC20-35 and CC40-47 topology.",
+      "Choose prototype-local C++ data structures, bounded mailboxes, test fixtures, diagnostics, and UI layout that preserve the approved public semantics and evidence ceiling.",
+      "Correct implementation defects found by focused or objective checks while recording corrections and rerunning only invalidated checks before freeze."
+    ],
+    "must_not": [
+      "Change the approved proposal bytes, shared Mutable source packages, shared Braids adapter, source-release authority, JUCE authority, controller topology, or inherited Task 043 through 047 work.",
+      "Allocate canonical family, implementation, graph, instrument, provider, runtime-factory, target, backend, package, or production identity.",
+      "Launch the application, open audio or MIDI endpoints, exercise a physical controller, install a plugin, access hardware, distribute, publish, stage, commit, or push.",
+      "Promote structural, render, synthetic protocol, or target-build evidence into live real-time, connected-device, listening, distribution, or production claims."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "A ready implementation bundle under research/prototypes/murmur-map/contract bound to proposal revision 0.1.",
+    "A noncanonical JUCE-independent C++17 Murmur Map Core with fixed-capacity route, destination memory, event scheduler, three voice lanes, accepted snapshots, and deterministic state operations.",
+    "An exhaustive regular Launch Control 3 semantic adapter and mapping tests, with controller edits terminating at public Murmur Map controls and drafts.",
+    "A deterministic offline renderer, MM01-MM10 comparator evidence runner, objective metrics, and retained reproducible manifests under build/murmur-map-evidence.",
+    "A private macOS arm64 JUCE 8.0.15 standalone map/editor with explicit MIDI input selection, refresh, receive diagnostics, and accepted-state feedback.",
+    "Prototype documentation, exact source dependencies and notices, topology/control descriptors, results, gaps, promotion needs, and implementation handoff."
+  ],
+  "dependency_contracts": [
+    "schuss-source-release-000008@1 and packages/dsp_sources/mutable_eurorack_braids_v1/SOURCE_PACKAGE.json remain the exact selected Braids source authority and physical closure; distribution review remains required.",
+    "schuss-source-release-000009@1 and packages/dsp_sources/mutable_stmlib_v1/SOURCE_PACKAGE.json remain the exact selected stmlib source authority and physical closure; distribution review remains required.",
+    "packages/dsp_adapters/mutable_braids_v1/ADAPTER.json and SchussMutableBraidsV1::Core are consumed byte-identically; Murmur Map adds no model or shared-adapter behavior.",
+    "schuss-source-release-000007@1 and research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json are the sole JUCE source and complete-tree authorities; fetching is disabled.",
+    "research/prototype_support/controllers/novation-launch-control-3-regular-v1.json is physical topology authority only; Murmur Map owns labels, mappings, gestures, feedback, and draft/capture semantics.",
+    "SchussInstrumentLab::Core is linked from research/prototype_support/instrument_lab; no shared lab implementation is copied into the consumer."
+  ],
+  "goal": {
+    "primary_claim": "A visible, steerable route through performer-authored sound waypoints, with probabilistically replayed destinations and an exact lock, produces more coherent and controllable generative material than matched independent scene draws.",
+    "why": "Schuss already covers generative percussion, resonant counterpoint, drones, mutation textures, and sampling; Murmur Map tests a distinct screen-native melodic control-space instrument whose variation can be recognized, retained, and edited during performance."
+  },
+  "inputs": [
+    "Approved proposal research/proposals/modular-generative-juce-instrument-study.md revision 0.1 at SHA-256 65180864c42996a3e7a68de0b7356522329b25043e3ef5721e7e49fd3d49926f.",
+    "User approval and scope expansion on 2026-08-25: Okay please create Murmur map as standalone JUCE instrument with Launch Control 3 controls.",
+    "AGENTS.md, docs/PROJECT_CONTEXT.md, docs/STATUS.md, docs/workflows/instrument-development.md, and accepted ADRs 0016, 0017, and 0018.",
+    "Exact shared Braids and stmlib source releases 000008@1 and 000009@1, their physical package manifests, and mutable_braids_v1 adapter manifest.",
+    "Exact JUCE source release 000007@1 and complete extracted-tree manifest for JUCE 8.0.15 commit 91ad83ae34a81e0833b1a2b0866f54846370ae53.",
+    "Regular Novation Launch Control 3 prototype topology SHA-256 d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "User message in this thread on 2026-08-25: Okay please create Murmur map as standalone JUCE instrument with Launch Control 3 controls.",
+      "state": "approved"
+    },
+    "path": "research/proposals/modular-generative-juce-instrument-study.md",
+    "revision": "0.1",
+    "sha256": "65180864c42996a3e7a68de0b7356522329b25043e3ef5721e7e49fd3d49926f"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "New-design implementation under research/prototypes/murmur-map only, plus result backfill to the new proposal file after implementation freeze.",
+      "Four editable default waypoints with fixed capacity for two through eight, a selected HOME waypoint, complete distance-weighted route graph, 2-32-slot destination memory, exact lock, slow erosion, and deterministic reseed.",
+      "Three persistent monophonic lanes using the existing sine-triangle, FM, and filtered-noise Braids adapter models at their required internal rate with an instrument-owned two-to-one decimator.",
+      "Deterministic 48 kHz Core, objective renderer/comparator, fixed-capacity event and UI mailboxes, source/control/topology validation, and authenticated standalone target build.",
+      "Regular Launch Control 3 Custom Mode 1 mapping on MIDI channel 16 with 16 absolute encoders, eight momentary buttons, public-control reducers, draft waypoint editing, capture, endpoint selection, and message diagnostics."
+    ],
+    "out": [
+      "Direct Marbles, Frames, Stages, Tides, Rings, Beads, Grids, or other upstream imports; module-panel or brand emulation; and undocumented behavioral-fidelity claims.",
+      "VST3, AU, Ableton, plugin installation, arbitrary host sample rates, arbitrary audio inputs, MIDI note-pool capture, controller feedback transmission, or OLED integration.",
+      "Application launch, visual QA, live callback deadline or xrun measurement, physical MIDI/audio endpoint use, controller configuration, connected-device proof, or listening evaluation.",
+      "Canonical catalog, graph, instrument, performance-configuration, provider, backend, Ksoloti/Gills, desktop-library, packaging, distribution, publication, or production integration.",
+      "Mutation of shared source packages/adapters, source locks, current governance routing, or inherited uncommitted work."
+    ]
+  },
+  "status": "ready",
+  "target": "portable C++17 Instrument Lab Core at 48 kHz with exact shared Braids adapter and authenticated JUCE 8.0.15 macOS arm64 standalone",
+  "title": "Murmur Map 0.1",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "build/murmur-map-juce-release/murmur-map_artefacts/Release/Murmur Map.app",
+    "evidence_level": "target-build",
+    "success_observation": "The exact proposal-bound Core, renderer, controller adapter, UI support, and standalone target pass focused structural and host-signal checks; the named app bundle compiles and links against the authenticated JUCE 8.0.15 tree without being launched, installed, or promoted to real-time, connected-device, listening, distribution, or production evidence."
+  }
+}

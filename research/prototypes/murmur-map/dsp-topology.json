@@ -1,0 +1,157 @@
+{
+  "claims": {
+    "canonical_schuss_record": false,
+    "executable_graph": false
+  },
+  "connections": [
+    {"from": "role.parameter.performance", "kind": "accepted-global-values", "to": "role.node.route-walker"},
+    {"from": "role.parameter.performance", "kind": "accepted-density-and-pitch-values", "to": "role.node.event-scheduler"},
+    {"from": "role.parameter.waypoint-authoring", "kind": "transactional-capture", "to": "role.node.waypoint-store"},
+    {"from": "role.action.capture", "kind": "validate-and-publish", "to": "role.node.waypoint-store"},
+    {"from": "role.action.transport", "kind": "reset-panic-and-reseed", "to": "role.node.route-walker"},
+    {"from": "role.node.waypoint-store", "kind": "stable-identity-and-geometry", "to": "role.node.route-walker"},
+    {"from": "role.node.route-walker", "kind": "fresh-or-replayed-destination", "to": "role.node.route-memory"},
+    {"from": "role.node.route-memory", "kind": "destination-identity", "to": "role.node.route-walker"},
+    {"from": "role.node.route-walker", "kind": "raised-cosine-position", "to": "role.node.scene-interpolator"},
+    {"from": "role.node.waypoint-store", "kind": "authored-lane-state", "to": "role.node.scene-interpolator"},
+    {"from": "role.node.route-walker", "kind": "arrival-boundary", "to": "role.node.event-scheduler"},
+    {"from": "role.node.scene-interpolator", "kind": "bounded-continuous-scene", "to": "role.node.event-scheduler"},
+    {"from": "role.node.event-scheduler", "kind": "birth-time-lane-event", "to": "role.node.pitch-quantizer"},
+    {"from": "role.node.pitch-quantizer", "kind": "constrained-pitch-event", "to": "role.node.lane-voices"},
+    {"from": "role.node.event-scheduler", "kind": "frozen-timbre-envelope-and-pan", "to": "role.node.lane-voices"},
+    {"from": "role.node.lane-voices", "kind": "ninety-six-kilohertz-mono-lanes", "to": "role.node.voice-wrapper"},
+    {"from": "role.node.voice-wrapper", "kind": "forty-eight-kilohertz-shaped-lanes", "to": "role.node.mixer"},
+    {"from": "role.node.mixer", "kind": "left", "to": "role.port.audio-out-left"},
+    {"from": "role.node.mixer", "kind": "right", "to": "role.port.audio-out-right"},
+    {"from": "role.node.route-walker", "kind": "canonical-observation", "to": "role.display.route-trace"},
+    {"from": "role.node.event-scheduler", "kind": "canonical-observation", "to": "role.display.event-trace"},
+    {"from": "role.node.waypoint-store", "kind": "accepted-state-observation", "to": "role.display.accepted-state"},
+    {"from": "role.node.mixer", "kind": "bounded-fault-observation", "to": "role.display.diagnostics"}
+  ],
+  "feedback_edges": [
+    {"from": "role.node.route-memory", "kind": "cyclic-read-write-head", "to": "role.node.route-memory"},
+    {"from": "role.node.route-walker", "kind": "current-and-destination-state", "to": "role.node.route-walker"},
+    {"from": "role.node.lane-voices", "kind": "oscillator-state", "to": "role.node.lane-voices"},
+    {"from": "role.node.voice-wrapper", "kind": "envelope-decimator-and-bridge-state", "to": "role.node.voice-wrapper"}
+  ],
+  "fusion_boundary": {
+    "implementation_note": "One portable instrument-owned Core fuses these inspectable local roles for the bounded prototype proof.",
+    "includes": [
+      "role.node.waypoint-store",
+      "role.node.route-memory",
+      "role.node.route-walker",
+      "role.node.scene-interpolator",
+      "role.node.event-scheduler",
+      "role.node.pitch-quantizer",
+      "role.node.lane-voices",
+      "role.node.voice-wrapper",
+      "role.node.mixer"
+    ],
+    "local_role": "role.fusion.core"
+  },
+  "nodes": [
+    {
+      "internals": ["two-to-eight stable waypoint identities", "two-dimensional positions", "three authored lane states per waypoint", "transactional validation"],
+      "local_role": "role.node.waypoint-store",
+      "name": "authored sound-map store",
+      "origin": "newly-designed",
+      "responsibility": "retain validated musical places independently of edit presentation state",
+      "state_owner": true,
+      "unresolved_component_contract": ["authored sound-map state", "transactional musical-state capture"]
+    },
+    {
+      "internals": ["two-to-thirty-two destination slots", "validity flags", "cyclic head", "exact lock and probabilistic replacement"],
+      "local_role": "role.node.route-memory",
+      "name": "bounded destination memory",
+      "origin": "newly-designed",
+      "responsibility": "retain semantic destination decisions while allowing controlled erosion",
+      "state_owner": true,
+      "unresolved_component_contract": ["bounded semantic route memory"]
+    },
+    {
+      "internals": ["four independent seeded streams", "locality temperature", "home return", "fixed draw accounting", "distance-scaled travel", "raised-cosine edge motion"],
+      "local_role": "role.node.route-walker",
+      "name": "seeded map walker",
+      "origin": "newly-designed",
+      "responsibility": "choose and traverse fresh or remembered waypoint identities deterministically",
+      "state_owner": true,
+      "unresolved_component_contract": ["seeded route policy", "semantic random-draw accounting"]
+    },
+    {
+      "internals": ["radial-basis weights", "normalized nearest fallback", "linear activity-timbre-color-pan blend", "logarithmic decay blend", "decibel level blend", "one-hundred-twenty-eight-frame slew"],
+      "local_role": "role.node.scene-interpolator",
+      "name": "bounded scene interpolator",
+      "origin": "newly-designed",
+      "responsibility": "turn the current map position into stable continuous lane states",
+      "state_owner": true,
+      "unresolved_component_contract": ["two-dimensional authored-scene interpolation"]
+    },
+    {
+      "internals": ["persistent q32 musical phase", "arrival anchor events", "half-quarter thread events", "quarter-quarter spark events", "per-lane probability streams", "fixed block capacities"],
+      "local_role": "role.node.event-scheduler",
+      "name": "musical lane scheduler",
+      "origin": "newly-designed",
+      "responsibility": "emit bounded birth-time lane events at semantic musical boundaries",
+      "state_owner": true,
+      "unresolved_component_contract": ["musical-phase event scheduler", "birth-time lane-event snapshot"]
+    },
+    {
+      "internals": ["nine scale families", "lower-note deterministic tie break", "twelve-to-one-hundred-eight note bound"],
+      "local_role": "role.node.pitch-quantizer",
+      "name": "scale-aware pitch resolver",
+      "origin": "newly-designed",
+      "responsibility": "resolve waypoint intervals into constrained future-event pitches",
+      "state_owner": false,
+      "unresolved_component_contract": ["bounded musical pitch quantizer"]
+    },
+    {
+      "internals": ["one sine-triangle lane", "one frequency-modulated lane", "one filtered-noise lane", "deterministic excitation"],
+      "local_role": "role.node.lane-voices",
+      "name": "three fixed synthesis lanes",
+      "origin": "source-derived",
+      "responsibility": "render three contrasting persistent source-model voices",
+      "state_owner": true,
+      "unresolved_component_contract": ["licensed macro-oscillator host primitive"]
+    },
+    {
+      "internals": ["forty-eight-frame attack", "exponential decay", "immutable event snapshot", "five-tap two-to-one decimation", "short retrigger bridge"],
+      "local_role": "role.node.voice-wrapper",
+      "name": "birth-snapshot voice wrapper",
+      "origin": "newly-designed",
+      "responsibility": "shape and rate-convert each source voice without rereading an active event",
+      "state_owner": true,
+      "unresolved_component_contract": ["birth-snapshot voice", "deterministic integer rate converter"]
+    },
+    {
+      "internals": ["equal-power pan", "bounded three-lane accumulation", "direct-current blocker", "single final clamp and fault counters"],
+      "local_role": "role.node.mixer",
+      "name": "bounded stereo mixer",
+      "origin": "fused-implementation",
+      "responsibility": "sum the three shaped lanes into finite stereo output and objective observations",
+      "state_owner": true,
+      "unresolved_component_contract": ["bounded stereo instrument mixer"]
+    }
+  ],
+  "prototype_id": "murmur-map",
+  "public_facets": {
+    "actions": [
+      {"data_type": "transactional semantic action", "direction": "input", "local_role": "role.action.capture", "name": "capture selected draft"},
+      {"data_type": "reset panic and deferred-reseed actions", "direction": "input", "local_role": "role.action.transport", "name": "state and safety actions"}
+    ],
+    "displays": [
+      {"data_type": "ordered destination observation", "direction": "output", "local_role": "role.display.route-trace", "name": "route trace"},
+      {"data_type": "ordered birth-snapshot observation", "direction": "output", "local_role": "role.display.event-trace", "name": "lane event trace"},
+      {"data_type": "accepted musical and edit state", "direction": "output", "local_role": "role.display.accepted-state", "name": "accepted state"},
+      {"data_type": "bounded counters and latched fault", "direction": "output", "local_role": "role.display.diagnostics", "name": "diagnostics"}
+    ],
+    "parameters": [
+      {"data_type": "tempo travel memory length roam home radius density root scale and run values", "direction": "input", "local_role": "role.parameter.performance", "name": "route and performance controls"},
+      {"data_type": "selected position interval activity timbre color decay level and pan draft", "direction": "input", "local_role": "role.parameter.waypoint-authoring", "name": "waypoint authoring state"}
+    ],
+    "ports": [
+      {"data_type": "float32 audio", "direction": "output", "local_role": "role.port.audio-out-left", "name": "audio out left"},
+      {"data_type": "float32 audio", "direction": "output", "local_role": "role.port.audio-out-right", "name": "audio out right"}
+    ]
+  },
+  "schema_version": "schuss-instrument-lab-dsp-topology-v1"
+}

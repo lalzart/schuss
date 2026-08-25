@@ -1,0 +1,34 @@
+{
+  "schema": "layerwell-event-state-trace-v2",
+  "condition": "LW02_TRIM",
+  "timeline_convention": "event-before-sample; capture start inclusive and stop exclusive; accepted trim resets phase zero",
+  "events": [
+    {"frame": 0, "sequence": 1, "kind": "capture-press", "value": 0},
+    {"frame": 48000, "sequence": 2, "kind": "capture-press", "value": 0},
+    {"frame": 48000, "sequence": 3, "kind": "trim-start", "value": 4800},
+    {"frame": 48000, "sequence": 4, "kind": "trim-end", "value": 43200},
+    {"frame": 48000, "sequence": 5, "kind": "source-next", "value": 0},
+    {"frame": 72000, "sequence": 6, "kind": "select-layer", "value": 0},
+    {"frame": 72000, "sequence": 7, "kind": "capture-press", "value": 0}
+  ],
+  "capture_boundaries": {"first_start": 0, "first_commit": 48000, "second_arm": 72000, "second_start": 86400, "second_commit": 124800},
+  "final": {
+    "absolute_frame": 144000,
+    "accepted_sequence": 7,
+    "loop_length_frames": 38400,
+    "phase_frames": 19200,
+    "trim_start_frames": 4800,
+    "trim_end_frames": 43200,
+    "trim_extent_frames": 48000,
+    "trim_available": false,
+    "selected_source": "PAMPLIST",
+    "selected_layer": 1,
+    "capture_state": "IDLE",
+    "layers": [
+      {"index": 0, "occupied": true, "muted": false, "store_owner": 3, "recorded_length_frames": 48000, "playback_offset_frames": 4800},
+      {"index": 1, "occupied": true, "muted": false, "store_owner": 0, "recorded_length_frames": 38400, "playback_offset_frames": 0},
+      {"index": 2, "occupied": false, "muted": false, "store_owner": 2, "recorded_length_frames": 0, "playback_offset_frames": 0}
+    ],
+    "source_processed_frames": [48000, 96000]
+  }
+}

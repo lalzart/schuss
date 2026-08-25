@@ -1,0 +1,228 @@
+#!/usr/bin/env python3
+"""Build and host-test Pamplist VST3 once from an isolated relocated root."""
+
+from __future__ import annotations
+
+import argparse
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+
+
+ROOT = Path(__file__).resolve().parents[5]
+CONSUMER_RELATIVE = Path("research/prototypes/pamplist")
+VST3_RELATIVE = CONSUMER_RELATIVE / "vst3"
+SUPPORT_RELATIVE = Path("research/prototype_support/instrument_lab")
+INSTRUMENT_LAB_TOOLS = ROOT / "tools/instrument_lab"
+if str(INSTRUMENT_LAB_TOOLS) not in sys.path:
+    sys.path.insert(0, str(INSTRUMENT_LAB_TOOLS))
+
+from reproduce import copy_relocated_repository, tree_hash  # noqa: E402
+
+
+def environment() -> dict[str, str]:
+    result = dict(os.environ)
+    result.update(
+        {
+            "LANG": "C",
+            "LC_ALL": "C",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "TZ": "UTC",
+        }
+    )
+    return result
+
+
+def run(command: list[str], cwd: Path, *, capture: bool = False) -> str:
+    print("+", " ".join(command), flush=True)
+    completed = subprocess.run(
+        command,
+        cwd=cwd,
+        env=environment(),
+        check=False,
+        text=True,
+        stdout=subprocess.PIPE if capture else None,
+        stderr=subprocess.STDOUT if capture else None,
+    )
+    if completed.returncode != 0:
+        if capture and completed.stdout:
+            print(completed.stdout, file=sys.stderr, end="")
+        raise RuntimeError(
+            f"command failed with exit {completed.returncode}: {' '.join(command)}"
+        )
+    return (completed.stdout or "").strip()
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--build-type", choices=("Debug", "Release"), default="Release")
+    parser.add_argument("--architecture", choices=("arm64",), default="arm64")
+    parser.add_argument("--juce-source", type=Path, required=True)
+    parser.add_argument("--source-root", type=Path)
+    arguments = parser.parse_args()
+    juce_source = arguments.juce_source.resolve()
+    source_verifier = ROOT / CONSUMER_RELATIVE / "tests/verify_source_authority.py"
+
+    try:
+        if not juce_source.is_dir():
+            raise RuntimeError(f"JUCE source tree is missing: {juce_source}")
+        patcher_root = (
+            arguments.source_root.resolve()
+            if arguments.source_root is not None
+            else Path(
+                run(
+                    [sys.executable, str(source_verifier), "--print-source-root"],
+                    ROOT,
+                    capture=True,
+                )
+            ).resolve()
+        )
+        if not patcher_root.is_dir():
+            raise RuntimeError(
+                f"configured Pamplist source tree is missing: {patcher_root}"
+            )
+        run(
+            [
+                sys.executable,
+                str(ROOT / "tools/source_packages/validate_juce_source_tree.py"),
+                "--repo-root",
+                str(ROOT),
+                "--source-tree",
+                str(juce_source),
+                "--check",
+            ],
+            ROOT,
+        )
+        expected_tree = tree_hash(ROOT / CONSUMER_RELATIVE)
+        expected_support_tree = tree_hash(ROOT / SUPPORT_RELATIVE)
+
+        with tempfile.TemporaryDirectory(
+            prefix="pamplist-vst3-relocated-reproduction-"
+        ) as temporary:
+            temporary_root = Path(temporary)
+            relocated = temporary_root / "repository"
+            copy_relocated_repository(ROOT, relocated)
+            relocated_catalog = relocated / "catalog"
+            relocated_catalog.mkdir(parents=True)
+            shutil.copy2(
+                ROOT / "catalog/sources.lock.json",
+                relocated_catalog / "sources.lock.json",
+            )
+            consumer = relocated / CONSUMER_RELATIVE
+            if tree_hash(consumer) != expected_tree:
+                raise RuntimeError("relocated Pamplist tree differs before build")
+            if tree_hash(relocated / SUPPORT_RELATIVE) != expected_support_tree:
+                raise RuntimeError(
+                    "relocated Instrument Lab support tree differs before build"
+                )
+
+            run(
+                [
+                    sys.executable,
+                    str(consumer / "tests/verify_source_authority.py"),
+                    "--source-root",
+                    str(patcher_root),
+                ],
+                relocated,
+            )
+            build = temporary_root / "build"
+            run(
+                [
+                    "cmake",
+                    "-S",
+                    str(relocated / VST3_RELATIVE),
+                    "-B",
+                    str(build),
+                    f"-DCMAKE_BUILD_TYPE={arguments.build_type}",
+                    f"-DCMAKE_OSX_ARCHITECTURES={arguments.architecture}",
+                    f"-DPAMPLIST_PATCHER_ROOT={patcher_root}",
+                    f"-DPAMPLIST_JUCE_SOURCE_DIR={juce_source}",
+                    "-DPAMPLIST_ALLOW_JUCE_FETCH=OFF",
+                ],
+                relocated,
+            )
+            run(
+                [
+                    "cmake",
+                    "--build",
+                    str(build),
+                    "--config",
+                    arguments.build_type,
+                    "--target",
+                    "pamplist-vst3-model-tests",
+                    "pamplist-vst3-processor-tests",
+                    "pamplist-vst3-allocation-tests",
+                    "pamplist-vst3-module-tests",
+                    "--parallel",
+                ],
+                relocated,
+            )
+            run(
+                [
+                    "ctest",
+                    "--test-dir",
+                    str(build),
+                    "-C",
+                    arguments.build_type,
+                    "--output-on-failure",
+                    "-R",
+                    "^pamplist_vst3_",
+                ],
+                relocated,
+            )
+            bundle = (
+                build
+                / f"pamplist-vst3_artefacts/{arguments.build_type}/VST3/Pamplist.vst3"
+            )
+            binary = bundle / "Contents/MacOS/Pamplist"
+            run(
+                ["/usr/bin/codesign", "--verify", "--deep", "--strict", str(bundle)],
+                relocated,
+            )
+            slices = run(["/usr/bin/lipo", "-archs", str(binary)], relocated, capture=True)
+            if slices != arguments.architecture:
+                raise RuntimeError(
+                    f"relocated VST3 architecture drift: expected "
+                    f"{arguments.architecture}, observed {slices}"
+                )
+            if tree_hash(consumer) != expected_tree:
+                raise RuntimeError("relocated build mutated the Pamplist source tree")
+            if tree_hash(relocated / SUPPORT_RELATIVE) != expected_support_tree:
+                raise RuntimeError(
+                    "relocated build mutated the Instrument Lab support tree"
+                )
+
+        run(
+            [sys.executable, str(source_verifier), "--source-root", str(patcher_root)],
+            ROOT,
+        )
+        run(
+            [
+                sys.executable,
+                str(ROOT / "tools/source_packages/validate_juce_source_tree.py"),
+                "--repo-root",
+                str(ROOT),
+                "--source-tree",
+                str(juce_source),
+                "--check",
+            ],
+            ROOT,
+        )
+    except (OSError, RuntimeError) as error:
+        print(f"Pamplist VST3 reproduction failed: {error}", file=sys.stderr)
+        return 1
+
+    print(f"Pamplist relocated source tree sha256: {expected_tree}")
+    print(f"Instrument Lab relocated support tree sha256: {expected_support_tree}")
+    print(
+        "Pamplist relocated Release VST3 build, local seal, scan, instantiate, "
+        "state, editor, allocation, and offline signal tests passed"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

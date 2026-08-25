@@ -95,45 +95,60 @@ void testInputMap() {
             && result.event.kind == layerwell::EventKind::adjust_layer_level
             && result.event.index == 0U,
         "Mixer bottom encoder 1 maps layer 1 level");
-    result = cc(adapter, 0xBFU, 92U, 65U, 12U);
+    result = cc(adapter, 0xBFU, 81U, 65U, 12U);
+    expect(result.has_event
+            && result.event.kind == layerwell::EventKind::adjust_trim_start
+            && result.event.value == layerwell::kTrimFineStepFrames,
+        "Mixer top encoder 5 adjusts trim start by the fine frame step");
+    result = cc(adapter, 0xBFU, 82U, 63U, 13U);
+    expect(result.has_event
+            && result.event.kind == layerwell::EventKind::adjust_trim_end
+            && result.event.value == -layerwell::kTrimFineStepFrames,
+        "Mixer top encoder 6 adjusts trim end by the fine frame step");
+    result = cc(adapter, 0xBFU, 92U, 65U, 14U);
     expect(!result.has_event
             && result.status == layerwell::MidiParseStatus::unassigned,
         "unused Mixer encoder remains explicit and dark");
-    result = cc(adapter, 0xB0U, 37U, 127U, 13U);
+    result = cc(adapter, 0xB0U, 37U, 127U, 15U);
     expect(result.has_event
             && result.event.kind == layerwell::EventKind::select_layer
             && result.event.index == 0U,
         "Mixer button 1 selects layer 1");
-    result = cc(adapter, 0xB0U, 40U, 127U, 14U);
+    result = cc(adapter, 0xB0U, 40U, 127U, 16U);
     expect(result.has_event
             && result.event.kind == layerwell::EventKind::toggle_layer_mute
             && result.event.index == 0U,
         "Mixer button 4 toggles layer 1 mute");
-    result = cc(adapter, 0xB0U, 43U, 127U, 15U);
+    result = cc(adapter, 0xB0U, 43U, 127U, 17U);
     expect(result.has_event
             && result.event.kind == layerwell::EventKind::capture_press,
         "Mixer button 7 drives capture");
-    result = cc(adapter, 0xB0U, 44U, 127U, 16U);
+    result = cc(adapter, 0xB0U, 44U, 127U, 18U);
     expect(result.has_event
             && result.event.kind == layerwell::EventKind::toggle_monitor,
         "Mixer button 8 toggles monitor without Shift");
 
-    result = cc(adapter, 0xB6U, 63U, 127U, 17U);
+    result = cc(adapter, 0xB6U, 63U, 127U, 19U);
     expect(!result.has_event && adapter.shiftHeld(),
         "official channel-7 CC63 Shift press is tracked");
-    result = cc(adapter, 0xB0U, 44U, 127U, 18U);
+    result = cc(adapter, 0xBFU, 82U, 65U, 20U);
+    expect(result.has_event
+            && result.event.kind == layerwell::EventKind::adjust_trim_end
+            && result.event.value == layerwell::kTrimCoarseStepFrames,
+        "Shift changes trim encoder to the coarse frame step");
+    result = cc(adapter, 0xB0U, 44U, 127U, 21U);
     expect(result.has_event
             && result.event.kind == layerwell::EventKind::clear_selected_layer,
         "Shift plus Mixer button 8 clears selected layer");
-    result = cc(adapter, 0xB6U, 63U, 0U, 19U);
+    result = cc(adapter, 0xB6U, 63U, 0U, 22U);
     expect(!result.has_event && !adapter.shiftHeld(), "Shift release clears chord state");
 
-    result = cc(adapter, 0xB2U, 77U, 64U, 20U);
+    result = cc(adapter, 0xB2U, 77U, 64U, 23U);
     expect(!result.has_event
             && result.status == layerwell::MidiParseStatus::ignored_channel,
         "wrong MIDI channel remains distinct");
     const std::array<std::uint8_t, 2> malformed{{0xB0U, 37U}};
-    result = adapter.parse(malformed.data(), malformed.size(), 0U, 21U);
+    result = adapter.parse(malformed.data(), malformed.size(), 0U, 24U);
     expect(result.status == layerwell::MidiParseStatus::invalid_message,
         "malformed MIDI is rejected");
 }
@@ -158,6 +173,31 @@ void testFeedbackAndAcceptedState() {
         "connection enables bottom relative row");
     expect(findCc(connection, 0xBFU, 13U) != nullptr,
         "accepted encoder position is sent on channel 16");
+
+    auto trim_snapshot = snapshot;
+    trim_snapshot.layers[0].occupied = true;
+    trim_snapshot.layers[0].recorded_length_frames = 48000U;
+    trim_snapshot.layers[0].playback_offset_frames = 4800U;
+    trim_snapshot.loop_length_frames = 38400U;
+    trim_snapshot.trim_start_frames = 4800U;
+    trim_snapshot.trim_end_frames = 43200U;
+    trim_snapshot.trim_extent_frames = 48000U;
+    trim_snapshot.occupied_layer_count = 1U;
+    trim_snapshot.trim_available = true;
+    const auto trim_sync = adapter.stateSyncMessages(trim_snapshot);
+    const auto* trim_start = findCc(trim_sync, 0xBFU, 17U);
+    const auto* trim_end = findCc(trim_sync, 0xBFU, 18U);
+    expect(trim_start != nullptr && trim_start->bytes[2] == 13U,
+        "accepted trim start drives Mixer top encoder 5 feedback");
+    expect(trim_end != nullptr && trim_end->bytes[2] == 114U,
+        "accepted trim end drives Mixer top encoder 6 feedback");
+    trim_snapshot.trim_available = false;
+    const auto locked_sync = adapter.stateSyncMessages(trim_snapshot);
+    trim_start = findCc(locked_sync, 0xBFU, 17U);
+    trim_end = findCc(locked_sync, 0xBFU, 18U);
+    expect(trim_start != nullptr && trim_start->bytes[2] == 0U
+            && trim_end != nullptr && trim_end->bytes[2] == 0U,
+        "locked trim controls return neutral accepted feedback");
 
     auto mode = cc(adapter, 0xB6U, 30U, 2U, 30U);
     std::array<float, 16> left{};

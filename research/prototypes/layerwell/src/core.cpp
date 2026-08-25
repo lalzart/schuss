@@ -26,7 +26,12 @@ bool sourceQuantized(EventKind kind) noexcept {
         case EventKind::source_next:
         case EventKind::select_source:
         case EventKind::source_encoder_relative:
+        case EventKind::source_encoder_absolute:
+        case EventKind::source_surface_value:
         case EventKind::source_button:
+        case EventKind::source_toggle_run:
+        case EventKind::source_set_context:
+        case EventKind::source_clear_effect:
             return true;
         default:
             return false;
@@ -43,6 +48,29 @@ bool midiByte(double value, std::uint8_t& result) noexcept {
     const auto rounded = std::lround(value);
     if (std::abs(value - static_cast<double>(rounded)) > 0.000001) return false;
     result = static_cast<std::uint8_t>(rounded);
+    return true;
+}
+
+bool integerFrame(double value, std::uint32_t& result) noexcept {
+    if (!std::isfinite(value) || value < 0.0
+        || value > static_cast<double>(kMaximumLoopFrames)) {
+        return false;
+    }
+    const auto rounded = std::llround(value);
+    if (std::abs(value - static_cast<double>(rounded)) > 0.000001) return false;
+    result = static_cast<std::uint32_t>(rounded);
+    return true;
+}
+
+bool integerDelta(double value, std::int64_t& result) noexcept {
+    if (!std::isfinite(value)
+        || value < -static_cast<double>(kMaximumLoopFrames)
+        || value > static_cast<double>(kMaximumLoopFrames)) {
+        return false;
+    }
+    const auto rounded = std::llround(value);
+    if (std::abs(value - static_cast<double>(rounded)) > 0.000001) return false;
+    result = rounded;
     return true;
 }
 
@@ -177,6 +205,51 @@ struct Core::Impl final {
         return false;
     }
 
+    std::size_t occupiedCount() const noexcept {
+        std::size_t count = 0U;
+        for (const auto& layer : layers) {
+            if (layer.occupied) ++count;
+        }
+        return count;
+    }
+
+    std::size_t soleOccupiedLayer() const noexcept {
+        for (std::size_t index = 0U; index < layers.size(); ++index) {
+            if (layers[index].occupied) return index;
+        }
+        return layers.size();
+    }
+
+    bool trimAvailable() const noexcept {
+        return capture_state == CaptureState::idle
+            && loop_length != 0U
+            && occupiedCount() == 1U;
+    }
+
+    bool applyTrimWindow(
+        std::uint32_t start,
+        std::uint32_t end,
+        bool reset_request) noexcept {
+        if (!trimAvailable()) {
+            ++diagnostics.trim_rejections;
+            ++diagnostics.trim_locked_rejections;
+            return false;
+        }
+        auto& layer = layers[soleOccupiedLayer()];
+        if (start >= end
+            || end > layer.recorded_length_frames
+            || end - start < kMinimumLoopFrames) {
+            ++diagnostics.trim_rejections;
+            return false;
+        }
+        layer.playback_offset_frames = start;
+        loop_length = end - start;
+        phase = 0U;
+        ++diagnostics.trim_accepts;
+        if (reset_request) ++diagnostics.trim_resets;
+        return true;
+    }
+
     bool abortCapture(bool cancelled, ProcessReport& report) noexcept {
         if (!busyCapture()) return false;
         capture_state = CaptureState::idle;
@@ -198,6 +271,8 @@ struct Core::Impl final {
         auto& target = layers[capture_layer];
         std::swap(target.store_owner, staging_owner);
         target.occupied = true;
+        target.recorded_length_frames = length;
+        target.playback_offset_frames = 0U;
         if (first_capture) {
             loop_length = length;
             phase = 0U;
@@ -311,6 +386,22 @@ struct Core::Impl final {
                 if (status != SourceControlStatus::accepted) return reject();
                 return accept();
             }
+            case EventKind::source_encoder_absolute: {
+                std::uint8_t value{};
+                if (!midiByte(event.value, value) || event.index >= 16U) return reject();
+                const auto status = sources.applyAbsoluteEncoder(
+                    selected_source, event.index, value, event.ingress_sequence);
+                if (status != SourceControlStatus::accepted) return reject();
+                return accept();
+            }
+            case EventKind::source_surface_value: {
+                if (event.index >= 16U || !std::isfinite(event.value)) return reject();
+                const auto status = sources.applySurfaceValue(
+                    selected_source, event.index, event.value,
+                    event.ingress_sequence);
+                if (status != SourceControlStatus::accepted) return reject();
+                return accept();
+            }
             case EventKind::source_button: {
                 std::uint8_t value{};
                 if (!midiByte(event.value, value) || event.index >= 8U) return reject();
@@ -322,6 +413,24 @@ struct Core::Impl final {
                 }
                 return accept();
             }
+            case EventKind::source_toggle_run:
+                if (sources.toggleRun(selected_source)
+                    != SourceControlStatus::accepted) {
+                    return reject();
+                }
+                return accept();
+            case EventKind::source_set_context:
+                if (sources.setContext(selected_source, event.index)
+                    != SourceControlStatus::accepted) {
+                    return reject();
+                }
+                return accept();
+            case EventKind::source_clear_effect:
+                if (sources.clearEffect(selected_source)
+                    != SourceControlStatus::accepted) {
+                    return reject();
+                }
+                return accept();
             case EventKind::adjust_layer_pan:
             case EventKind::adjust_layer_level:
             case EventKind::adjust_monitor_level:
@@ -351,6 +460,44 @@ struct Core::Impl final {
                 }
                 return accept();
             }
+            case EventKind::adjust_trim_start:
+            case EventKind::adjust_trim_end: {
+                std::int64_t delta{};
+                if (!integerDelta(event.value, delta)) {
+                    ++diagnostics.trim_rejections;
+                    if (!std::isfinite(event.value)) {
+                        ++diagnostics.trim_non_finite_rejections;
+                    }
+                    return reject();
+                }
+                if (!trimAvailable()) {
+                    static_cast<void>(applyTrimWindow(0U, 0U, false));
+                    return reject();
+                }
+                const auto& layer = layers[soleOccupiedLayer()];
+                const auto current_start = static_cast<std::int64_t>(
+                    layer.playback_offset_frames);
+                const auto current_end = current_start
+                    + static_cast<std::int64_t>(loop_length);
+                const auto requested_start = event.kind == EventKind::adjust_trim_start
+                    ? current_start + delta
+                    : current_start;
+                const auto requested_end = event.kind == EventKind::adjust_trim_end
+                    ? current_end + delta
+                    : current_end;
+                if (requested_start < 0 || requested_end < 0
+                    || requested_start > static_cast<std::int64_t>(kMaximumLoopFrames)
+                    || requested_end > static_cast<std::int64_t>(kMaximumLoopFrames)) {
+                    ++diagnostics.trim_rejections;
+                    return reject();
+                }
+                if (!applyTrimWindow(
+                        static_cast<std::uint32_t>(requested_start),
+                        static_cast<std::uint32_t>(requested_end), false)) {
+                    return reject();
+                }
+                return accept();
+            }
             case EventKind::set_layer_pan:
                 if (event.index >= kLayerCount) return reject();
                 layers[event.index].pan = boundedOrDefault(
@@ -370,6 +517,43 @@ struct Core::Impl final {
                 master_level = boundedOrDefault(
                     event.value, 0.0f, 1.0f, kDefaultMasterLevel, diagnostics);
                 return accept();
+            case EventKind::set_trim_start:
+            case EventKind::set_trim_end: {
+                std::uint32_t requested{};
+                if (!integerFrame(event.value, requested)) {
+                    ++diagnostics.trim_rejections;
+                    if (!std::isfinite(event.value)) {
+                        ++diagnostics.trim_non_finite_rejections;
+                    }
+                    return reject();
+                }
+                if (!trimAvailable()) {
+                    static_cast<void>(applyTrimWindow(0U, 0U, false));
+                    return reject();
+                }
+                const auto& layer = layers[soleOccupiedLayer()];
+                const auto current_start = layer.playback_offset_frames;
+                const auto current_end = current_start + loop_length;
+                const auto start = event.kind == EventKind::set_trim_start
+                    ? requested
+                    : current_start;
+                const auto end = event.kind == EventKind::set_trim_end
+                    ? requested
+                    : current_end;
+                if (!applyTrimWindow(start, end, false)) return reject();
+                return accept();
+            }
+            case EventKind::reset_trim: {
+                if (!trimAvailable()) {
+                    static_cast<void>(applyTrimWindow(0U, 0U, true));
+                    return reject();
+                }
+                const auto& layer = layers[soleOccupiedLayer()];
+                if (!applyTrimWindow(0U, layer.recorded_length_frames, true)) {
+                    return reject();
+                }
+                return accept();
+            }
             case EventKind::toggle_layer_mute:
                 if (event.index >= kLayerCount) return reject();
                 layers[event.index].muted = !layers[event.index].muted;
@@ -384,6 +568,8 @@ struct Core::Impl final {
                 if (busyCapture()) return reject();
                 if (layers[selected_layer].occupied) {
                     layers[selected_layer].occupied = false;
+                    layers[selected_layer].recorded_length_frames = 0U;
+                    layers[selected_layer].playback_offset_frames = 0U;
                     ++diagnostics.cleared_layers;
                     if (!anyOccupied()) {
                         loop_length = 0U;
@@ -444,10 +630,17 @@ struct Core::Impl final {
             for (std::size_t index = 0U; index < layers.size(); ++index) {
                 const auto& layer = layers[index];
                 if (!layer.occupied || layer.muted) continue;
+                const auto sample_index = static_cast<std::uint64_t>(
+                    layer.playback_offset_frames) + phase;
+                if (sample_index >= layer.recorded_length_frames
+                    || sample_index >= kMaximumLoopFrames) {
+                    ++diagnostics.playback_invariant_faults;
+                    continue;
+                }
                 const auto& store = stores[layer.store_owner];
                 const auto sample = right_channel
-                    ? store.right[phase]
-                    : store.left[phase];
+                    ? store.right[sample_index]
+                    : store.left[sample_index];
                 const auto pan = right_channel ? pan_right[index] : pan_left[index];
                 mixed += static_cast<double>(sample)
                     * seam
@@ -682,15 +875,38 @@ Snapshot Core::snapshot() const noexcept {
     result.monitor_enabled = impl_->monitor_enabled;
     result.prepared = impl_->prepared;
 
-    const auto selected = impl_->sources.projection(impl_->selected_source);
+    result.occupied_layer_count = static_cast<std::uint8_t>(
+        impl_->occupiedCount());
+    if (result.occupied_layer_count != 0U) {
+        const auto index = impl_->soleOccupiedLayer();
+        if (index < impl_->layers.size()) {
+            const auto& layer = impl_->layers[index];
+            result.trim_start_frames = layer.playback_offset_frames;
+            result.trim_end_frames = layer.playback_offset_frames
+                + impl_->loop_length;
+            result.trim_extent_frames = layer.recorded_length_frames;
+        }
+    }
+    result.trim_available = impl_->trimAvailable();
+
+    const auto tide = impl_->sources.projection(SourceId::tide_pit);
+    const auto pamplist = impl_->sources.projection(SourceId::pamplist);
+    const auto& selected = impl_->selected_source == SourceId::tide_pit
+        ? tide
+        : pamplist;
     result.source_encoder_values = selected.encoder_values;
     result.source_encoder_assigned = selected.encoder_assigned;
+    result.source_encoder_labels = selected.encoder_labels;
+    result.source_encoder_tooltips = selected.encoder_tooltips;
     result.source_button_assigned = selected.button_assigned;
     result.source_button_active = selected.button_active;
-    result.source_processed_frames[0] =
-        impl_->sources.projection(SourceId::tide_pit).processed_frames;
-    result.source_processed_frames[1] =
-        impl_->sources.projection(SourceId::generative_drums).processed_frames;
+    result.source_button_labels = selected.button_labels;
+    result.source_panel.tide_pit = tide.panel.tide_pit;
+    result.source_panel.tide_scope = tide.panel.tide_scope;
+    result.source_panel.pamplist = pamplist.panel.pamplist;
+    result.source_panel.pamplist_impact = pamplist.panel.pamplist_impact;
+    result.source_processed_frames[0] = tide.processed_frames;
+    result.source_processed_frames[1] = pamplist.processed_frames;
     return result;
 }
 
@@ -719,7 +935,7 @@ const float* Core::committedSamples(
 const char* sourceName(SourceId source) noexcept {
     switch (source) {
         case SourceId::tide_pit: return "TIDE PIT";
-        case SourceId::generative_drums: return "GENERATIVE DRUMS";
+        case SourceId::pamplist: return "PAMPLIST";
     }
     return "INVALID";
 }

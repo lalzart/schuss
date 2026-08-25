@@ -1,0 +1,293 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "$SONIC_RESEARCH_LAB_SKILL/scripts/validate_implementation_bundle.py",
+        "research/prototypes/vst3-resampling/contract-r01",
+        "--workspace-root",
+        ".",
+        "--source-root",
+        ".",
+        "--phase",
+        "ready"
+      ],
+      "cost": "fast source and proposal authentication",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/proposals/tide-pit-pamplist-vst3-resampling.md",
+        "research/prototypes/vst3-resampling/contract-r01",
+        "Task 045 and Task 046 predecessor authorities"
+      ],
+      "id": "task047-ready-source"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/instrument-lab-task047",
+        "--output-on-failure",
+        "-R",
+        "^instrument_lab_core_tests$"
+      ],
+      "cost": "focused native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototype_support/instrument_lab/include/schuss/instrument_lab/fixed_rate_resampler.hpp",
+        "research/prototype_support/instrument_lab/tests/core_tests.cpp",
+        "research/prototypes/vst3-resampling/contract-r01/experiment.json"
+      ],
+      "id": "fixed-rate-resampler-focused"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/tide-pit-vst3-task047-release",
+        "-C",
+        "Release",
+        "--output-on-failure",
+        "-R",
+        "^tide_pit_vst3_(model|processor|allocation)_tests$"
+      ],
+      "cost": "focused native signal and structure",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototype_support/instrument_lab/include/schuss/instrument_lab/fixed_rate_resampler.hpp",
+        "research/prototypes/tide-pit-gills/vst3"
+      ],
+      "id": "tide-pit-vst3-multirate"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/pamplist-vst3-task047-release",
+        "-C",
+        "Release",
+        "--output-on-failure",
+        "-R",
+        "^pamplist_vst3_(model|processor|allocation)_tests$"
+      ],
+      "cost": "focused native signal and structure",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototype_support/instrument_lab/include/schuss/instrument_lab/fixed_rate_resampler.hpp",
+        "research/prototypes/pamplist/vst3"
+      ],
+      "id": "pamplist-vst3-multirate"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/tide-pit-gills/vst3/tests/build_vst3.py",
+        "--check",
+        "--build-dir",
+        "build/tide-pit-vst3-task047-release"
+      ],
+      "cost": "native Release target build and actual-module host",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/tide-pit-gills/vst3",
+        "research/prototype_support/instrument_lab",
+        "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json"
+      ],
+      "id": "tide-pit-vst3-target-build"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/pamplist/vst3/tests/build_vst3.py",
+        "--check",
+        "--build-dir",
+        "build/pamplist-vst3-task047-release"
+      ],
+      "cost": "configured native Release target build and actual-module host",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/pamplist/vst3",
+        "research/prototype_support/instrument_lab",
+        "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json",
+        "configured Pamplist Macro Voice source"
+      ],
+      "id": "pamplist-vst3-target-build"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/tide-pit-juce-task047",
+        "--output-on-failure",
+        "-R",
+        "^tide_pit_"
+      ],
+      "cost": "adjacent native regression",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/tide-pit-gills"
+      ],
+      "id": "tide-pit-adjacent"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build/pamplist-juce-task047",
+        "--output-on-failure",
+        "-R",
+        "^pamplist_"
+      ],
+      "cost": "configured adjacent native regression",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/pamplist",
+        "configured Pamplist Macro Voice source"
+      ],
+      "id": "pamplist-adjacent"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "current"
+      ],
+      "cost": "routine current profile",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "Task 047 complete diff",
+        "tools/validation/manifest-v1.json"
+      ],
+      "id": "schuss-current"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "compatibility"
+      ],
+      "cost": "selected shared-support compatibility profile",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototype_support/instrument_lab"
+      ],
+      "id": "schuss-compatibility"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/tide-pit-gills/vst3/tests/reproduce_vst3.py",
+        "--juce-source",
+        "$JUCE_SOURCE_ROOT"
+      ],
+      "cost": "one relocated Release reproduction",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/tide-pit-gills complete consumer tree",
+        "research/prototype_support/instrument_lab",
+        "authenticated JUCE source tree"
+      ],
+      "id": "tide-pit-relocated-reproduction"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/pamplist/vst3/tests/reproduce_vst3.py",
+        "--juce-source",
+        "$JUCE_SOURCE_ROOT",
+        "--source-root",
+        "$PAMPLIST_SOURCE_ROOT"
+      ],
+      "cost": "one configured relocated Release reproduction",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/pamplist complete consumer tree",
+        "research/prototype_support/instrument_lab",
+        "authenticated JUCE and Pamplist source trees"
+      ],
+      "id": "pamplist-relocated-reproduction"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "Cited sources support the selected mechanism.",
+      "status": "passed"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The approved proposal fingerprint matches the implementation contract.",
+      "status": "passed"
+    },
+    {
+      "check_ids": [
+        "task047-ready-source"
+      ],
+      "level": "source",
+      "promotion_rule": "Implementation exists with provenance and complete-diff review.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "fixed-rate-resampler-focused",
+        "schuss-current",
+        "schuss-compatibility"
+      ],
+      "level": "host-structural",
+      "promotion_rule": "Focused state, bounds, negative, and adapter-parity checks pass.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "fixed-rate-resampler-focused",
+        "tide-pit-vst3-multirate",
+        "pamplist-vst3-multirate",
+        "tide-pit-adjacent",
+        "pamplist-adjacent"
+      ],
+      "level": "host-signal",
+      "promotion_rule": "Objective renders meet frozen tolerances and repeatability requirements.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "tide-pit-vst3-target-build",
+        "pamplist-vst3-target-build",
+        "tide-pit-relocated-reproduction",
+        "pamplist-relocated-reproduction"
+      ],
+      "level": "target-build",
+      "promotion_rule": "The named target compiler and linker accept the artifact.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "Worst-case and p99 callback measurements meet a declared budget.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "Authorized device I/O, controls, feedback, and lifecycle checks pass.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "A documented, appropriately blinded listening protocol supports the claim.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "Canonical identities, graphs, providers, packaging, and release gates are accepted separately.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

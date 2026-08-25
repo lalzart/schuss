@@ -1,0 +1,104 @@
+{
+  "acceptance_tests": [
+    "The exact revision 0.6 proposal and every bundle artifact pass ready validation before implementation edits.",
+    "The configured macro-voice source remains exact, authenticated, read-only, and unchanged from revision 0.5.",
+    "Phase and Rotate produce the frozen event-timing differences without changing rate or hit cardinality; Shape changes routed modulation and PCM while trigger-only timing remains exact.",
+    "Every questioned field is exhaustively accepted through the portable surface and controller maps with non-target equality.",
+    "Each active Global body parameter produces a frozen nonzero response meeting the experiment tolerance, while Cohere zero retains the exact revision 0.5 dry audio hash.",
+    "The stronger modal return and ducking remain finite, stable, Q27 bounded, partition exact, and free of nominal saturation or recovery.",
+    "Clear removes a frozen audible effect tail exactly once while preserving every lane, voice, scheduler, and source state field.",
+    "Seven cumulative per-lane energy values are finite, monotone, partition exact, silent when appropriate, and reset safely.",
+    "The portable activity reducer captures energy, trigger, cohesion, and Clear deltas across accepted Snapshot polls and handles reset without false activity.",
+    "The JUCE app owns one fixed 192-sample seven-lane ImpactHistory with the existing seven colours, trigger sparks, cohesion haze, and Clear markers; no callback buffer is read by UI code.",
+    "Post-construction Core processing remains allocation-free and all focused Release and sanitizer tests pass.",
+    "The authenticated local JUCE 8.0.15 tree configures, compiles, links, and fingerprints Pamplist.app without launch or endpoint access.",
+    "Focused, affected objective, prototype-freshness, current, and relocated checks pass after implementation freeze with evidence levels reported independently."
+  ],
+  "decision_rights": {
+    "may": [
+      "Choose Pamplist-local activity telemetry layout, fixed history geometry, existing-palette colour treatment, tooltips, Clear feedback copy, and window dimensions.",
+      "Increase only the existing modal return multiplier to 12.0 and duck sensitivity factor to 24.0 as frozen by the proposal.",
+      "Add Pamplist-local portable activity reduction, tests, deterministic revision 0.6 fixtures, and successor metadata.",
+      "Build and hash one authenticated standalone target without launching it or opening endpoints."
+    ],
+    "must_not": [
+      "Repurpose or replace Phase, Shape, Rotate, Trigger, Motion routes, Euclidean scheduling, rate, probability, repeat, or source voice behavior.",
+      "Change, copy, normalize, clean, reset, or replace authenticated source, model order or names, source RNG behavior, dry mixing, controller topology, or CC transforms.",
+      "Add another effect, control, page, lane, shared visualization framework, external dependency, preset, plug-in, Ksoloti, or Gills behavior.",
+      "Let body controls alter Cohere-zero PCM or let telemetry decide audio behavior.",
+      "Put UI, painting, allocation, locks, I/O, JSON, endpoint work, or unbounded storage on the audio path.",
+      "Modify retained revision 0.2 through 0.5 proposal, contract, or evidence bytes.",
+      "Alter audition-library, canonical catalog, graph, provider, runtime, device profile, machine, source-release, or production records.",
+      "Infer visual quality, audible approval, real-time safety, endpoint/device behavior, embedded feasibility, packaging, distribution, or production status from structural or build evidence.",
+      "Launch, enumerate or open endpoints, access hardware, install, stage, commit, push, package, publish, upload, or flash."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Approved revision 0.6 proposal and ready bundle under research/prototypes/pamplist/contract-r06.",
+    "Focused Phase, Shape, Rotate, individual Global response, exact dry, and Clear tests and evidence.",
+    "Cumulative per-lane output energy in accepted Snapshot state plus a portable activity reducer.",
+    "JUCE seven-colour 192-sample ImpactHistory with trigger sparks, cohesion haze, Clear markers, and accepted-state feedback.",
+    "Updated renderer, retained evidence, authenticated app build receipt, prototype metadata, topology, handoff, results, and gaps with predecessor authorities preserved."
+  ],
+  "dependency_contracts": [
+    "Macro voices remain read-only configured source at patcher commit 08d3e6e1e2b61230308c20a15ded58ffdaf4656c and synthesis tree 58917f3e2e46a30337cfb6292a3504845b1d5552; missing, dirty, or mismatched source fails closed.",
+    "Revision 0.5 retained evidence is immutable comparator authority; dry audio SHA-256 a07ed1a3d461f538349cd5c12678e732d1619efc6e8ec623dce30ffd31e47912 must remain exact at Cohere zero.",
+    "Instrument Lab v1 supplies only the portable host seam and evidence boundary; Pamplist owns telemetry, activity reduction, visual history, and musical state.",
+    "JUCE 8.0.15 is an authenticated local build-only dependency with fetching disabled and no presence in Core processing.",
+    "Regular Launch Control 3 topology SHA-256 d69475e54e1bc0a3f441f0bcb5863084c73dbeff5d995670b17c8e894654510b remains physical/protocol authority; no mapping changes or endpoint claims enter revision 0.6.",
+    "No new external source, asset, package, or library enters this revision."
+  ],
+  "goal": {
+    "primary_claim": "Pamplist preserves its existing lane sequencer semantics, makes the existing shared body and effect-only Clear objectively legible, and exposes a bounded accepted-Snapshot seven-lane impact history in the standalone application.",
+    "why": "The user's revision 0.5 audition found Phase, Shape, Rotate, most Global fields, and Clear apparently ineffective and requested a persistent per-lane visualizer better suited to percussion than an oscilloscope."
+  },
+  "inputs": [
+    "AGENTS.md, docs/PROJECT_CONTEXT.md, docs/STATUS.md, ADRs 0016 and 0018, and docs/workflows/instrument-development.md.",
+    "Committed Pamplist revision 0.5 proposal, implementation, source closure, tests, retained evidence, target-build receipt, and handoff.",
+    "The user's current-thread direct audition report about Phase, Shape, Rotate, Global controls, Clear, and a seven-colour persistent visualizer.",
+    "research/proposals/pamplist-r06.md revision 0.6 at the exact SHA-256 recorded below.",
+    "catalog/sources.lock.json and machine-local catalog/sources.local.yml for the authenticated read-only Macro Voice source.",
+    "Revision 0.5 exact dry comparator, regular Launch Control 3 topology, Instrument Lab seam, and authenticated JUCE 8.0.15 source-tree authority.",
+    "Local Tide Pit and Generative Drums presentation mechanisms as non-normative design comparisons."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "Current-thread user request on 2026-08-24: verify Phase, Shape, Rotate, the Global controls, and Clear; correct ineffective behavior where warranted; and add a persistent different-colour per-instrument visualization suited to percussion.",
+      "state": "approved"
+    },
+    "path": "research/proposals/pamplist-r06.md",
+    "revision": "0.6",
+    "sha256": "a923b9665a6024d986a5ae8ac094aa9d41cd634de03c45c8ca954630ea43e917"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "Existing seven lane/voice systems, accepted Voice/Motion/Sequencer contexts, and Global/Clear page.",
+      "Objective trace and dependency explanation for Phase, Shape, Rotate, and every Global control.",
+      "Frozen modal return multiplier 12.0, duck factor 24.0, exact linear Cohere and exact Cohere-zero dry behavior.",
+      "Per-lane cumulative pre-cohesion energy telemetry, portable activity reduction, fixed seven-colour ImpactHistory, trigger sparks, cohesion haze, and Clear markers.",
+      "Portable Core/UI tests, deterministic renderer/evidence, source authentication, focused/sanitizer validation, authenticated unlaunched standalone, metadata freshness, current, and affected relocated reproduction."
+    ],
+    "out": [
+      "New or repurposed sequencer, voice, route, effect, mixing, control, page, preset, plug-in, Ksoloti, or Gills behavior.",
+      "Authenticated source changes, model-bank changes, controller remapping, shared infrastructure, or dependency changes.",
+      "Application launch, visual inspection by Codex, endpoint access, physical-controller work, callback timing/resource measurement, or structured listening claim.",
+      "Audition-library entry, canonical graph/catalog/provider/runtime integration, packaging, distribution, publication, staging, commit, push, upload, or flash."
+    ]
+  },
+  "status": "ready",
+  "target": "Schuss Instrument Lab v1 portable C++17 Core, deterministic 48 kHz renderer, and authenticated JUCE 8.0.15 macOS standalone",
+  "title": "Pamplist 0.6: Control Response and Impact Trails",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "built but unlaunched revision 0.6 Pamplist.app plus deterministic control-response, exact-dry, Global/Clear, and activity-history evidence",
+    "evidence_level": "target-build",
+    "success_observation": "The source remains exact; Phase/Shape/Rotate dependencies and individual Global responses meet frozen tests; Cohere-zero audio matches revision 0.5 exactly; the stronger body and Clear meet safety/response bounds; cumulative lane telemetry and fixed history tests pass; and authenticated Pamplist.app compiles, links, and fingerprints without launch or endpoint access."
+  }
+}

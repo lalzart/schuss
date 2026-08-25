@@ -24,6 +24,10 @@ function identity(item: InstrumentLibraryEntry): string {
   return `${item.prototype_id}@${item.revision}`;
 }
 
+function identityLabel(item: InstrumentLibraryEntry): "Canonical" | "Prototype" {
+  return item.canonical_identity?.status === "canonical" ? "Canonical" : "Prototype";
+}
+
 export function InstrumentLibrary() {
   const [library, setLibrary] = useState<InstrumentLibraryValue | null>(null);
   const [selectedIdentity, setSelectedIdentity] = useState("");
@@ -103,10 +107,10 @@ export function InstrumentLibrary() {
         <div>
           <span className={styles.eyebrow}>INSTRUMENT LAB</span>
           <h1 id="instrument-library-title">Instruments</h1>
-          <p>Choose a Juice instrument and open its verified native performance app.</p>
+          <p>Choose a Schuss instrument and open its verified native performance app.</p>
         </div>
         <div className={styles.libraryMeta}>
-          <span>NONCANONICAL PROTOTYPES</span>
+          <span>SCHUSS INSTRUMENTS</span>
           <strong>{library ? `${library.instrument_count} instruments` : "Local library"}</strong>
         </div>
       </header>
@@ -134,7 +138,7 @@ export function InstrumentLibrary() {
               <span>LIBRARY</span>
               <span>{library.instrument_count.toString().padStart(2, "0")}</span>
             </div>
-            <div className={styles.instrumentList} aria-label="Juice instruments">
+            <div className={styles.instrumentList} aria-label="Schuss instruments">
               {library.instruments.map((item, index) => {
                 const key = identity(item);
                 return (
@@ -147,7 +151,7 @@ export function InstrumentLibrary() {
                     <span className={styles.index}>{String(index + 1).padStart(2, "0")}</span>
                     <span className={styles.rowText}>
                       <strong>{item.display_name}</strong>
-                      <span>{item.controller_label} · rev {item.revision}</span>
+                      <span>{identityLabel(item)} · {item.controller_label} · rev {item.revision}</span>
                     </span>
                     <span className={styles.availability} data-availability={item.availability}>
                       {AVAILABILITY_LABELS[item.availability]}
@@ -169,6 +173,7 @@ export function InstrumentLibrary() {
 
               <dl className={styles.facts}>
                 <div><dt>Controller</dt><dd>{selected.controller_label}</dd></div>
+                <div><dt>Identity</dt><dd>{identityLabel(selected)}</dd></div>
                 <div><dt>Local build</dt><dd data-availability={selected.availability}>{AVAILABILITY_LABELS[selected.availability]}</dd></div>
                 <div><dt>Application</dt><dd>{selected.evidence.application_launch}</dd></div>
                 <div><dt>Controller receipt</dt><dd>{selected.evidence.physical_controller}</dd></div>
@@ -177,7 +182,9 @@ export function InstrumentLibrary() {
 
               <div className={styles.boundaryNote}>
                 <strong>Audition boundary</strong>
-                <p>Opening starts the exact verified standalone build. It does not establish device, controller, listening, or production evidence.</p>
+                <p>{selected.canonical_identity?.status === "canonical"
+                  ? "This musical identity is canonical. Opening still uses its exact Instrument Lab build; no canonical provider, device, controller, listening, or production evidence is implied."
+                  : "Opening starts the exact verified standalone build. It does not establish device, controller, listening, or production evidence."}</p>
               </div>
 
               {selectedSession && (

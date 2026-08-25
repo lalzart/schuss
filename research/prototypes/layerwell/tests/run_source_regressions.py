@@ -37,9 +37,9 @@ def main() -> int:
             ],
         )
         build_and_test(
-            "research/prototypes/generative-drum-machine",
-            "build/layerwell-regression-generative-drums",
-            ["-DGDM_ENABLE_JUCE=OFF"],
+            "research/prototypes/pamplist",
+            "build/layerwell-regression-pamplist",
+            ["-DPAMPLIST_ENABLE_JUCE=OFF"],
         )
     except (OSError, RuntimeError) as exc:
         print(f"Layerwell source regression failed: {exc}", file=sys.stderr)

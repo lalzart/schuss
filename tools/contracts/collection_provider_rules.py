@@ -653,6 +653,18 @@ def validate_values(
         if catalog_projection is not None
         else None
     )
+    catalog_records = list(records.get("catalog", ()))
+    if (
+        len(catalog_records) == 1
+        and catalog_records[0].get("schema_version") == "catalog-corpus-v7"
+    ):
+        # Task 043 adds one semantic instrument identity without superseding the
+        # exact Task 033 provider shelf.  The inherited provider/collection
+        # records therefore continue to close against their v6 catalog parent;
+        # Pamplist intentionally has no provider claim in this record set.
+        projection_reference = copy.deepcopy(
+            catalog_records[0]["parent_corpus_reference"]
+        )
     implementations = _catalog_implementations(catalog_projection)
     source_releases = valid["source_releases"]
     generic_records = _generic_record_registry(all_records or {})

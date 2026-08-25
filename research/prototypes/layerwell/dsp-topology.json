@@ -7,11 +7,13 @@
     {"from": "role.parameter.source-select", "kind": "resident-source-choice", "to": "role.node.source-switch"},
     {"from": "role.parameter.source-performance", "kind": "source-owned-semantic-values", "to": "role.node.source-switch"},
     {"from": "role.node.source-switch", "kind": "selected-source-advance", "to": "role.node.tide-source"},
-    {"from": "role.node.source-switch", "kind": "selected-source-advance", "to": "role.node.drum-source"},
+    {"from": "role.node.source-switch", "kind": "selected-source-advance", "to": "role.node.pamplist-source"},
     {"from": "role.node.tide-source", "kind": "selected-stereo-signal", "to": "role.node.capture-state"},
-    {"from": "role.node.drum-source", "kind": "selected-stereo-signal", "to": "role.node.capture-state"},
+    {"from": "role.node.pamplist-source", "kind": "selected-stereo-signal", "to": "role.node.capture-state"},
     {"from": "role.action.capture", "kind": "capture-transition", "to": "role.node.capture-state"},
     {"from": "role.node.loop-phase", "kind": "phase-zero-boundary", "to": "role.node.capture-state"},
+    {"from": "role.parameter.trim-window", "kind": "single-layer-metadata-window", "to": "role.node.loop-phase"},
+    {"from": "role.parameter.trim-window", "kind": "playback-offset-and-length", "to": "role.node.sample-stores"},
     {"from": "role.node.capture-state", "kind": "provisional-stereo-write", "to": "role.node.sample-stores"},
     {"from": "role.node.sample-stores", "kind": "three-aligned-stereo-layers", "to": "role.node.layer-mix"},
     {"from": "role.parameter.layer-level", "kind": "three-bounded-levels", "to": "role.node.layer-mix"},
@@ -27,7 +29,7 @@
   ],
   "feedback_edges": [
     {"from": "role.node.tide-source", "kind": "retained-source-state", "to": "role.node.tide-source"},
-    {"from": "role.node.drum-source", "kind": "retained-source-state", "to": "role.node.drum-source"},
+    {"from": "role.node.pamplist-source", "kind": "retained-source-state", "to": "role.node.pamplist-source"},
     {"from": "role.node.loop-phase", "kind": "integer-cycle-phase", "to": "role.node.loop-phase"},
     {"from": "role.node.sample-stores", "kind": "committed-owner-playback", "to": "role.node.sample-stores"}
   ],
@@ -63,11 +65,11 @@
       "unresolved_component_contract": ["licensed resident musical source"]
     },
     {
-      "internals": ["exact public streaming Core", "existing parameter reducer", "deterministic seed"],
-      "local_role": "role.node.drum-source",
-      "name": "generative drum source",
+      "internals": ["exact public Macro Voice Core", "existing contextual reducer and surface model", "seven-lane accepted activity reduction"],
+      "local_role": "role.node.pamplist-source",
+      "name": "Pamplist source",
       "origin": "source-derived",
-      "responsibility": "produce the selected generative drum stereo phrase without changing its musical behavior",
+      "responsibility": "produce the selected Pamplist stereo phrase and complete accepted panel state without changing its musical behavior",
       "state_owner": true,
       "unresolved_component_contract": ["licensed resident musical source"]
     },
@@ -81,7 +83,7 @@
       "unresolved_component_contract": ["provisional cycle capture"]
     },
     {
-      "internals": ["integer frame index", "first-take length", "phase-zero wrap"],
+      "internals": ["integer frame index", "active trimmed length", "phase-zero wrap", "trim reset to zero phase"],
       "local_role": "role.node.loop-phase",
       "name": "session loop phase",
       "origin": "newly-designed",
@@ -90,7 +92,7 @@
       "unresolved_component_contract": ["sample-exact session phase"]
     },
     {
-      "internals": ["three committed owners", "one staging owner", "fixed stereo float capacity"],
+      "internals": ["three committed owners", "one staging owner", "fixed stereo float capacity", "recorded extent", "playback offset"],
       "local_role": "role.node.sample-stores",
       "name": "four fixed sample stores",
       "origin": "newly-designed",
@@ -125,6 +127,7 @@
       {"data_type": "capture-state action", "direction": "input", "local_role": "role.action.capture", "name": "capture arm stop or cancel"},
       {"data_type": "toggle action", "direction": "input", "local_role": "role.action.monitor", "name": "toggle selected-source monitor"},
       {"data_type": "three-way destructive musical action", "direction": "input", "local_role": "role.action.clear", "name": "clear selected committed layer"},
+      {"data_type": "metadata reset action", "direction": "input", "local_role": "role.action.trim-reset", "name": "reset sole-layer trim to recorded extent"},
       {"data_type": "safety action", "direction": "input", "local_role": "role.action.panic", "name": "abort provisional capture and silence source for the current request"}
     ],
     "displays": [
@@ -134,6 +137,7 @@
     "parameters": [
       {"data_type": "two-way selection", "direction": "input", "local_role": "role.parameter.source-select", "name": "resident source"},
       {"data_type": "selected-source semantic values", "direction": "input", "local_role": "role.parameter.source-performance", "name": "resident source performance state"},
+      {"data_type": "two integer frame boundaries", "direction": "input", "local_role": "role.parameter.trim-window", "name": "sole-layer non-destructive trim start and end"},
       {"data_type": "three normalized values", "direction": "input", "local_role": "role.parameter.layer-level", "name": "layer levels"},
       {"data_type": "three bipolar values", "direction": "input", "local_role": "role.parameter.layer-pan", "name": "layer pans"},
       {"data_type": "normalized value", "direction": "input", "local_role": "role.parameter.monitor-level", "name": "source monitor level"},

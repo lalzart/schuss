@@ -23,6 +23,8 @@ constexpr double kQ27Scale = 134217728.0;
 constexpr double kMaximumModalFrequencyHz = 21599.0;
 constexpr double kDenormalThreshold = 1.0e-20;
 constexpr double kSmootherSnapThreshold = 1.0e-7;
+constexpr double kModalReturnGain = 12.0;
+constexpr double kDuckSensitivity = 24.0;
 
 constexpr std::array<double, kCohesionModeCount> kHarmonicRatios{{
     1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
@@ -518,6 +520,7 @@ struct Core::Impl final {
         voice_auxiliary_quantum{};
     std::array<std::int32_t, kMacroVoiceQuantumFrames> main_quantum{};
     std::array<std::int32_t, kMacroVoiceQuantumFrames> auxiliary_quantum{};
+    std::array<double, kLaneCount> lane_output_energy{};
     std::size_t quantum_cursor{kMacroVoiceQuantumFrames};
     bool has_accepted{};
     bool was_running{};
@@ -585,6 +588,7 @@ struct Core::Impl final {
         quantum_cursor = kMacroVoiceQuantumFrames;
         was_running = false;
         voice_started.fill(false);
+        lane_output_energy.fill(0.0);
         resetEffectRuntimeToAccepted();
         setResolvedToBase();
     }
@@ -638,6 +642,8 @@ struct Core::Impl final {
             public_snapshot.lane_addresses[lane] = lanes[lane].address;
             public_snapshot.source_random_states[lane] =
                 voices[lane]->randomState();
+            public_snapshot.lane_output_energy[lane] =
+                lane_output_energy[lane];
             if (voice_started[lane]) {
                 public_snapshot.started_lane_mask = static_cast<std::uint8_t>(
                     public_snapshot.started_lane_mask | (1U << lane));
@@ -896,9 +902,11 @@ struct Core::Impl final {
         wet_left /= weight_sum;
         wet_right /= weight_sum;
         const auto duck_gain = 1.0
-            / (1.0 + 6.0 * duck * cohesion.duck_envelope);
-        const auto effect_left = driven_left + 0.82 * wet_left * duck_gain;
-        const auto effect_right = driven_right + 0.82 * wet_right * duck_gain;
+            / (1.0 + kDuckSensitivity * duck * cohesion.duck_envelope);
+        const auto effect_left = driven_left
+            + kModalReturnGain * wet_left * duck_gain;
+        const auto effect_right = driven_right
+            + kModalReturnGain * wet_right * duck_gain;
         output_left = dry_left + cohere * (effect_left - dry_left);
         output_right = dry_right + cohere * (effect_right - dry_right);
         valid = std::isfinite(output_left)
@@ -1082,10 +1090,19 @@ struct Core::Impl final {
             std::int64_t main_sum = 0;
             std::int64_t auxiliary_sum = 0;
             for (std::size_t lane = 0; lane < kLaneCount; ++lane) {
-                main_sum += scaleContributionQ27(
+                const auto lane_main = scaleContributionQ27(
                     voice_main_quantum[lane][frame], resolved_levels[lane]);
-                auxiliary_sum += scaleContributionQ27(
+                const auto lane_auxiliary = scaleContributionQ27(
                     voice_auxiliary_quantum[lane][frame], resolved_levels[lane]);
+                main_sum += lane_main;
+                auxiliary_sum += lane_auxiliary;
+                const auto normalized_main =
+                    static_cast<double>(lane_main) / kQ27Scale;
+                const auto normalized_auxiliary =
+                    static_cast<double>(lane_auxiliary) / kQ27Scale;
+                lane_output_energy[lane] +=
+                    normalized_main * normalized_main
+                    + normalized_auxiliary * normalized_auxiliary;
             }
             double effect_left = 0.0;
             double effect_right = 0.0;

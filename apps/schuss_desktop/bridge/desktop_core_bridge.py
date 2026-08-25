@@ -29,7 +29,7 @@ from tools.contracts import validator_core as core  # noqa: E402
 
 RECORD_SET_PATH = (
     REPOSITORY_ROOT
-    / "contracts/record-sets/ui-desktop-instrument-library-v1.json"
+    / "contracts/record-sets/task043-pamplist-canonical-v1.json"
 )
 ALLOWED_OPERATIONS = {
     "application.describe": (

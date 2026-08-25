@@ -1,3 +1,4 @@
+#include "schuss/pamplist/activity_model.hpp"
 #include "schuss/pamplist/control_map.hpp"
 #include "schuss/pamplist/core.hpp"
 #include "schuss/pamplist/ui_model.hpp"
@@ -26,7 +27,7 @@ namespace fs = std::filesystem;
 namespace {
 
 constexpr std::string_view kProposalSha256 =
-    "8c15dd3c38ca8a585c2603d219daccbba9446dff7a08156e0ba579fac25e1423";
+    "a923b9665a6024d986a5ae8ac094aa9d41cd634de03c45c8ca954630ea43e917";
 constexpr std::string_view kSourceRevision =
     "08d3e6e1e2b61230308c20a15ded58ffdaf4656c";
 constexpr std::string_view kSourceTree =
@@ -302,6 +303,59 @@ void activateLane(
     return controls;
 }
 
+[[nodiscard]] pam::Controls sequenceControls() {
+    auto controls = clearedControls();
+    controls.master_gain = 0.65F;
+    activateLane(
+        controls, 0U, 8U, 0.3F, 8U, 0U,
+        pam::Shape::pulse, 5U, 0U, 48.0F);
+    return controls;
+}
+
+[[nodiscard]] pam::Controls globalResponseControls() {
+    auto controls = clearedControls();
+    const std::array<pam::Shape, pam::kLaneCount> shapes{{
+        pam::Shape::pulse,
+        pam::Shape::triangle,
+        pam::Shape::sine,
+        pam::Shape::ramp,
+        pam::Shape::exponential_decay,
+        pam::Shape::sample_hold,
+        pam::Shape::smooth_random,
+    }};
+    const std::array<std::uint8_t, pam::kLaneCount> rates{{
+        8U, 10U, 6U, 11U, 4U, 12U, 2U,
+    }};
+    const std::array<std::uint8_t, pam::kLaneCount> models{{
+        0U, 3U, 6U, 9U, 12U, 15U, 21U,
+    }};
+    for (std::size_t lane = 0; lane < pam::kLaneCount; ++lane) {
+        activateLane(
+            controls,
+            lane,
+            models[lane],
+            0.07F,
+            rates[lane],
+            static_cast<std::uint8_t>(lane * 13U),
+            shapes[lane],
+            static_cast<std::uint8_t>(5U + lane),
+            static_cast<std::uint8_t>(lane * 2U),
+            36.0F + static_cast<float>(lane * 4U));
+        if (lane != 0U) {
+            controls.lanes[lane].routes[lane] = lane == 2U ? -0.25F : 0.25F;
+        }
+    }
+    controls.cohesion.drive = 0.35F;
+    controls.cohesion.cohere = 0.8F;
+    controls.cohesion.root_note = 48.0F;
+    controls.cohesion.spread = 0.45F;
+    controls.cohesion.tail = 0.65F;
+    controls.cohesion.damping = 0.4F;
+    controls.cohesion.width = 0.7F;
+    controls.cohesion.duck = 0.3F;
+    return controls;
+}
+
 void appendCorePart(
     Rendered& rendered,
     const std::string& part,
@@ -454,7 +508,121 @@ void appendSweep(Rendered& rendered, std::size_t block_frames) {
     const std::string& condition,
     std::size_t block_frames) {
     Rendered rendered{};
-    if (condition == "PAMP_R05_AUDIO_CMP") {
+    if (condition == "PAMP_R06_DRY_CMP") {
+        auto controls = sevenVoiceControls();
+        controls.cohesion.drive = 1.0F;
+        controls.cohesion.cohere = 0.0F;
+        controls.lane_control_mode = pam::LaneControlMode::voice;
+        appendPart(rendered, "revision-05-dry-seven", controls, 131072U,
+            block_frames);
+    } else if (condition == "PAMP_R06_SEQUENCE") {
+        const auto base = sequenceControls();
+        appendPart(rendered, "phase-0", base, 96000U, block_frames);
+        auto phase = base;
+        phase.lanes[0].phase_u7 = 64U;
+        appendPart(rendered, "phase-64", phase, 96000U, block_frames);
+        auto rotated = base;
+        rotated.lanes[0].rotation = 3U;
+        appendPart(rendered, "rotate-3", rotated, 96000U, block_frames);
+        auto trigger_triangle = base;
+        trigger_triangle.lanes[0].shape = pam::Shape::triangle;
+        appendPart(rendered, "trigger-only-triangle", trigger_triangle,
+            96000U, block_frames);
+        const std::array<std::pair<const char*, pam::Shape>, 7U> shapes{{
+            {"routed-pulse", pam::Shape::pulse},
+            {"routed-triangle", pam::Shape::triangle},
+            {"routed-sine", pam::Shape::sine},
+            {"routed-ramp", pam::Shape::ramp},
+            {"routed-decay", pam::Shape::exponential_decay},
+            {"routed-hold", pam::Shape::sample_hold},
+            {"routed-smooth", pam::Shape::smooth_random},
+        }};
+        for (const auto& [part, shape] : shapes) {
+            auto routed = base;
+            routed.lanes[0].shape = shape;
+            routed.lanes[0].routes[
+                static_cast<std::size_t>(pam::Destination::pitch)] = 0.8F;
+            appendPart(rendered, part, routed, 96000U, block_frames);
+        }
+    } else if (condition == "PAMP_R06_GLOBAL") {
+        const auto baseline = globalResponseControls();
+        const auto append_pair = [&rendered, &baseline, block_frames](
+                const std::string& name,
+                const auto& set_low,
+                const auto& set_high) {
+            auto low = baseline;
+            auto high = baseline;
+            set_low(low.cohesion);
+            set_high(high.cohesion);
+            appendPart(rendered, name + "-low", low, 65536U, block_frames);
+            appendPart(rendered, name + "-high", high, 65536U, block_frames);
+        };
+        append_pair("drive",
+            [](pam::CohesionControls& value) { value.drive = 0.0F; },
+            [](pam::CohesionControls& value) { value.drive = 1.0F; });
+        append_pair("root",
+            [](pam::CohesionControls& value) { value.root_note = 24.0F; },
+            [](pam::CohesionControls& value) { value.root_note = 84.0F; });
+        append_pair("spread",
+            [](pam::CohesionControls& value) { value.spread = 0.0F; },
+            [](pam::CohesionControls& value) { value.spread = 1.0F; });
+        append_pair("tail",
+            [](pam::CohesionControls& value) { value.tail = 0.0F; },
+            [](pam::CohesionControls& value) { value.tail = 1.0F; });
+        append_pair("damping",
+            [](pam::CohesionControls& value) { value.damping = 0.0F; },
+            [](pam::CohesionControls& value) { value.damping = 1.0F; });
+        append_pair("width",
+            [](pam::CohesionControls& value) { value.width = 0.0F; },
+            [](pam::CohesionControls& value) { value.width = 1.0F; });
+        append_pair("duck",
+            [](pam::CohesionControls& value) { value.duck = 0.0F; },
+            [](pam::CohesionControls& value) { value.duck = 1.0F; });
+
+        pam::Core clear_core;
+        auto clear = cohesionControls(0.8F);
+        clear.cohesion.drive = 0.25F;
+        clear.cohesion.tail = 0.8F;
+        appendCorePart(rendered, "clear-excitation", clear_core, clear,
+            32768U, block_frames);
+        for (auto& voice : clear.voices) voice.level = 0.0F;
+        appendCorePart(rendered, "tail-before-clear", clear_core, clear,
+            8192U, block_frames);
+        ++clear.effect_clear_generation;
+        appendCorePart(rendered, "after-clear", clear_core, clear,
+            8192U, block_frames);
+
+        pam::Core no_clear_core;
+        auto no_clear = cohesionControls(0.8F);
+        no_clear.cohesion.drive = 0.25F;
+        no_clear.cohesion.tail = 0.8F;
+        appendCorePart(rendered, "no-clear-excitation", no_clear_core,
+            no_clear, 32768U, block_frames);
+        for (auto& voice : no_clear.voices) voice.level = 0.0F;
+        appendCorePart(rendered, "no-clear-tail", no_clear_core, no_clear,
+            8192U, block_frames);
+        appendCorePart(rendered, "no-clear-continue", no_clear_core,
+            no_clear, 8192U, block_frames);
+    } else if (condition == "PAMP_R06_ACTIVITY") {
+        pam::Core core;
+        auto controls = cohesionControls(0.72F);
+        const std::array<std::size_t, 7U> intervals{{
+            113U, 257U, 509U, 997U, 241U, 443U, 811U,
+        }};
+        for (std::size_t sample = 0U;
+             sample < pam::kImpactHistoryCapacity + 8U;
+             ++sample) {
+            std::ostringstream part;
+            part << "activity-" << std::setw(3) << std::setfill('0') << sample;
+            appendCorePart(rendered, part.str(), core, controls,
+                intervals[sample % intervals.size()], block_frames);
+        }
+        ++controls.effect_clear_generation;
+        appendCorePart(rendered, "activity-clear", core, controls, 113U,
+            block_frames);
+        appendPart(rendered, "unstarted-rebase", clearedControls(), 4096U,
+            block_frames);
+    } else if (condition == "PAMP_R05_AUDIO_CMP") {
         auto controls = sevenVoiceControls();
         controls.cohesion.drive = 1.0F;
         controls.cohesion.cohere = 0.0F;
@@ -717,6 +885,18 @@ void writeFloatArray(
     out << ']';
 }
 
+template <std::size_t Count>
+void writeDoubleArray(
+    std::ostringstream& out,
+    const std::array<double, Count>& values) {
+    out << '[';
+    for (std::size_t index = 0; index < values.size(); ++index) {
+        if (index != 0U) out << ',';
+        out << lab::finiteJsonNumber(values[index]);
+    }
+    out << ']';
+}
+
 [[nodiscard]] std::string snapshotsJson(
     const std::string& condition,
     const std::vector<PartSnapshot>& snapshots) {
@@ -751,10 +931,22 @@ void writeFloatArray(
             << value.diagnostics.unsupported_process_count << '}'
             << ",\"lane_addresses\":";
         writeNumericArray(out, value.lane_addresses);
+        out << ",\"lane_output_energy\":";
+        writeDoubleArray(out, value.lane_output_energy);
         out << ",\"lane_phase_q32\":";
         writeNumericArray(out, value.lane_phase_q32);
         out << ",\"lane_remainders\":";
         writeNumericArray(out, value.lane_remainders);
+        out << ",\"lane_steps\":";
+        writeNumericArray(out, value.lane_steps);
+        out << ",\"lane_values\":";
+        writeFloatArray(out, value.lane_values);
+        out << ",\"modulation_values\":[";
+        for (std::size_t lane = 0; lane < pam::kLaneCount; ++lane) {
+            if (lane != 0U) out << ',';
+            writeFloatArray(out, value.modulation_values[lane]);
+        }
+        out << ']';
         out << ",\"master_phase_q32\":" << value.master_phase_q32
             << ",\"master_remainder\":" << value.master_remainder
             << ",\"cohesion\":{\"applied_clear_generation\":"
@@ -812,6 +1004,63 @@ void writeFloatArray(
             << static_cast<unsigned int>(value.started_lane_mask)
             << ",\"trigger_lane_mask\":"
             << static_cast<unsigned int>(value.trigger_lane_mask) << '}';
+    }
+    out << "]}\n";
+    return out.str();
+}
+
+[[nodiscard]] std::string activityJson(
+    const std::string& condition,
+    const std::vector<PartSnapshot>& snapshots) {
+    pam::ActivityReducer reducer;
+    pam::ImpactHistory history;
+    std::vector<std::pair<std::string, pam::ActivitySample>> samples;
+    std::size_t maximum_history_size = 0U;
+    std::size_t history_size_before_rebase = 0U;
+    std::uint64_t oldest_before_rebase = 0U;
+    std::uint64_t newest_before_rebase = 0U;
+    for (const auto& recorded : snapshots) {
+        const auto sample = reducer.reduce(recorded.snapshot);
+        samples.emplace_back(recorded.part, sample);
+        if (sample.rebased) {
+            history_size_before_rebase = history.size();
+            if (history.size() != 0U) {
+                oldest_before_rebase = history.oldest(0U).frame_count;
+                newest_before_rebase = history.oldest(history.size() - 1U).frame_count;
+            }
+            history.clear();
+        }
+        if (sample.frame_count != 0U) history.push(sample);
+        maximum_history_size = std::max(maximum_history_size, history.size());
+    }
+
+    std::ostringstream out;
+    out << "{\"condition\":" << jsonString(condition)
+        << ",\"history\":{\"capacity\":" << pam::kImpactHistoryCapacity
+        << ",\"final_size\":" << history.size()
+        << ",\"maximum_size\":" << maximum_history_size
+        << ",\"newest_frame_count_before_rebase\":"
+        << newest_before_rebase
+        << ",\"oldest_frame_count_before_rebase\":"
+        << oldest_before_rebase
+        << ",\"size_before_rebase\":" << history_size_before_rebase
+        << "},\"samples\":[";
+    for (std::size_t index = 0; index < samples.size(); ++index) {
+        if (index != 0U) out << ',';
+        const auto& [part, sample] = samples[index];
+        out << "{\"cohesion_level\":"
+            << lab::finiteJsonNumber(sample.cohesion_level)
+            << ",\"effect_cleared\":"
+            << (sample.effect_cleared ? "true" : "false")
+            << ",\"frame_count\":" << sample.frame_count
+            << ",\"lane_levels\":";
+        writeFloatArray(out, sample.lane_levels);
+        out << ",\"part\":" << jsonString(part)
+            << ",\"rebased\":" << (sample.rebased ? "true" : "false")
+            << ",\"trigger_deltas\":";
+        writeNumericArray(out, sample.trigger_deltas);
+        out << ",\"trigger_mask\":"
+            << static_cast<unsigned int>(sample.trigger_mask) << '}';
     }
     out << "]}\n";
     return out.str();
@@ -1148,10 +1397,12 @@ void writeOutputs(
     writeText(output / "events.json", eventsJson(condition, rendered.events));
     writeText(output / "snapshots.json", snapshotsJson(condition, rendered.snapshots));
     writeText(output / "metrics.json", metricsJson(condition, rendered));
+    writeText(output / "activity.json", activityJson(condition, rendered.snapshots));
     writeText(output / "controller-trace.json", controllerTraceJson());
     writeText(output / "surface.json", surfaceJson(condition));
 
-    const std::array<std::string, 6> primary{{
+    const std::array<std::string, 7> primary{{
+        "activity.json",
         "audio.wav",
         "controller-trace.json",
         "events.json",
@@ -1178,14 +1429,15 @@ void writeOutputs(
              << jsonString(
                  "a07ed1a3d461f538349cd5c12678e732d1619efc6e8ec623dce30ffd31e47912")
              << ",\"proposal_sha256\":" << jsonString(kProposalSha256)
-             << ",\"renderer_revision\":5"
+             << ",\"renderer_revision\":6"
              << ",\"sample_rate_hz\":" << pam::kSampleRateHz
              << ",\"seed\":" << pam::kDefaultSeed
              << ",\"source_revision\":" << jsonString(kSourceRevision)
              << ",\"source_tree\":" << jsonString(kSourceTree) << "}\n";
     writeText(output / "manifest.json", manifest.str());
 
-    const std::array<std::string, 7> all{{
+    const std::array<std::string, 8> all{{
+        "activity.json",
         "audio.wav",
         "controller-trace.json",
         "events.json",

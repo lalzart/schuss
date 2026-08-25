@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(layerwell_prototype VERSION 0.1.0 LANGUAGES C CXX)
+project(layerwell_prototype VERSION 0.2.0 LANGUAGES C CXX)
 
 option(LAYERWELL_ENABLE_JUCE "Build the authenticated-JUCE standalone" OFF)
 set(LAYERWELL_JUCE_SOURCE_DIR "" CACHE PATH "Authenticated JUCE 8.0.15 source tree")
 option(LAYERWELL_ALLOW_JUCE_FETCH "Fetch JUCE rather than use authenticated local source" OFF)
 option(LAYERWELL_ENABLE_SANITIZERS "Enable ASan and UBSan" OFF)
+set(PAMPLIST_PATCHER_ROOT "" CACHE PATH "Configured locked patcher checkout")
 
 enable_testing()
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
@@ -17,9 +18,8 @@ add_subdirectory(
     "${CMAKE_CURRENT_BINARY_DIR}/tide-pit-gills"
     EXCLUDE_FROM_ALL)
 
-# The two exact Mutable closures export overlapping braids/stmlib namespace
-# symbols. Keep both source projects byte-for-byte unchanged and make the
-# isolation a private property of Layerwell's Tide Pit target instances.
+# Keep Tide Pit's exact upstream namespace isolation private to Layerwell's
+# parent graph. The unchanged standalone source project retains its defaults.
 target_compile_definitions(tide_pit_mutable PRIVATE
     braids=tidepit_private_braids
     stmlib=tidepit_private_stmlib)
@@ -28,34 +28,83 @@ target_compile_definitions(tide_pit_core PRIVATE
     stmlib=tidepit_private_stmlib)
 
 # Tide Pit's unchanged project owns the one Instrument Lab subdirectory in this
-# parent graph. Recreate only the Generative Drums public Core target from its
-# exact declared source list so its unchanged standalone CMake never attempts a
-# second Instrument Lab subdirectory or registers unrelated child tests.
-set(MUTABLE_BRAIDS_V1_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../../packages/dsp_adapters/mutable_braids_v1"
-    "${CMAKE_CURRENT_BINARY_DIR}/mutable_braids_v1"
-    EXCLUDE_FROM_ALL)
-set(LAYERWELL_GDM_SOURCE
-    "${CMAKE_CURRENT_SOURCE_DIR}/../generative-drum-machine")
-add_library(generative_drum_machine_core STATIC
-    "${LAYERWELL_GDM_SOURCE}/src/control_map.cpp"
-    "${LAYERWELL_GDM_SOURCE}/src/core.cpp")
-target_include_directories(generative_drum_machine_core
-    PUBLIC "${LAYERWELL_GDM_SOURCE}/include"
-    PRIVATE "${LAYERWELL_GDM_SOURCE}/generated")
-target_link_libraries(generative_drum_machine_core
+# parent graph. Authenticate Pamplist's configured source, then recreate only
+# Pamplist's exact public targets so its standalone CMake and tests stay out of
+# the parent graph and all Pamplist project bytes remain read-only.
+set(LAYERWELL_PAMPLIST_SOURCE
+    "${CMAKE_CURRENT_SOURCE_DIR}/../pamplist")
+set(LAYERWELL_PAMPLIST_SOURCE_VERIFIER
+    "${LAYERWELL_PAMPLIST_SOURCE}/tests/verify_source_authority.py")
+if(NOT PAMPLIST_PATCHER_ROOT)
+    execute_process(
+        COMMAND "${Python3_EXECUTABLE}" "${LAYERWELL_PAMPLIST_SOURCE_VERIFIER}"
+            --print-source-root
+        RESULT_VARIABLE LAYERWELL_PAMPLIST_ROOT_RESULT
+        OUTPUT_VARIABLE PAMPLIST_PATCHER_ROOT
+        ERROR_VARIABLE LAYERWELL_PAMPLIST_ROOT_ERROR
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(NOT LAYERWELL_PAMPLIST_ROOT_RESULT EQUAL 0)
+        message(FATAL_ERROR
+            "Layerwell Pamplist configured source prerequisite failed: ${LAYERWELL_PAMPLIST_ROOT_ERROR}")
+    endif()
+endif()
+cmake_path(ABSOLUTE_PATH PAMPLIST_PATCHER_ROOT NORMALIZE)
+execute_process(
+    COMMAND "${Python3_EXECUTABLE}" "${LAYERWELL_PAMPLIST_SOURCE_VERIFIER}"
+        --source-root "${PAMPLIST_PATCHER_ROOT}"
+    RESULT_VARIABLE LAYERWELL_PAMPLIST_SOURCE_RESULT
+    OUTPUT_VARIABLE LAYERWELL_PAMPLIST_SOURCE_OUTPUT
+    ERROR_VARIABLE LAYERWELL_PAMPLIST_SOURCE_ERROR)
+if(NOT LAYERWELL_PAMPLIST_SOURCE_RESULT EQUAL 0)
+    message(FATAL_ERROR
+        "Layerwell Pamplist source authentication failed: ${LAYERWELL_PAMPLIST_SOURCE_OUTPUT}${LAYERWELL_PAMPLIST_SOURCE_ERROR}")
+endif()
+set(LAYERWELL_PAMPLIST_SYNTHESIS_DIR
+    "${PAMPLIST_PATCHER_ROOT}/ai/sdk/ksoloti-extended/objects/extended/synthesis")
+
+add_library(pamplist_macro_voice STATIC
+    "${LAYERWELL_PAMPLIST_SOURCE}/src/macro_voice.cpp")
+target_include_directories(pamplist_macro_voice
+    PUBLIC "${LAYERWELL_PAMPLIST_SOURCE}/include"
+    SYSTEM PRIVATE "${LAYERWELL_PAMPLIST_SYNTHESIS_DIR}")
+target_compile_features(pamplist_macro_voice PUBLIC cxx_std_17)
+if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang|Clang|GNU")
+    target_compile_options(pamplist_macro_voice PRIVATE -w)
+endif()
+schuss_instrument_lab_enable_sanitizers(
+    pamplist_macro_voice ${LAYERWELL_ENABLE_SANITIZERS})
+if(LAYERWELL_ENABLE_SANITIZERS
+        AND CMAKE_CXX_COMPILER_ID MATCHES "AppleClang|Clang")
+    # The authenticated wrapper converts signed Q15 samples to Q27 with a
+    # signed left shift. Keep its exact bytes and all other ASan/UBSan checks,
+    # but exclude that known source-boundary operation from shift-base UBSan.
+    target_compile_options(pamplist_macro_voice PRIVATE
+        -fno-sanitize=shift-base)
+endif()
+
+add_library(pamplist_core STATIC
+    "${LAYERWELL_PAMPLIST_SOURCE}/src/activity_model.cpp"
+    "${LAYERWELL_PAMPLIST_SOURCE}/src/control_map.cpp"
+    "${LAYERWELL_PAMPLIST_SOURCE}/src/core.cpp"
+    "${LAYERWELL_PAMPLIST_SOURCE}/src/ui_model.cpp")
+target_include_directories(pamplist_core
+    PUBLIC "${LAYERWELL_PAMPLIST_SOURCE}/include")
+target_link_libraries(pamplist_core
     PUBLIC SchussInstrumentLab::Core
-    PRIVATE SchussMutableBraidsV1::Core)
-target_compile_features(generative_drum_machine_core PUBLIC cxx_std_17)
-schuss_instrument_lab_enable_warnings(generative_drum_machine_core)
+    PRIVATE pamplist_macro_voice)
+target_compile_features(pamplist_core PUBLIC cxx_std_17)
+schuss_instrument_lab_enable_warnings(pamplist_core)
+schuss_instrument_lab_enable_sanitizers(
+    pamplist_core ${LAYERWELL_ENABLE_SANITIZERS})
 
 add_executable(layerwell_source_link_gate tests/source_link_gate.cpp)
 target_link_libraries(layerwell_source_link_gate PRIVATE
-    generative_drum_machine_core
+    pamplist_core
     tide_pit_core)
 target_compile_features(layerwell_source_link_gate PRIVATE cxx_std_17)
 schuss_instrument_lab_enable_warnings(layerwell_source_link_gate)
+schuss_instrument_lab_enable_sanitizers(
+    layerwell_source_link_gate ${LAYERWELL_ENABLE_SANITIZERS})
 add_test(NAME layerwell_source_link_gate COMMAND layerwell_source_link_gate)
 
 add_library(layerwell_core STATIC
@@ -63,7 +112,7 @@ add_library(layerwell_core STATIC
     src/source_adapters.cpp)
 target_include_directories(layerwell_core PUBLIC include)
 target_link_libraries(layerwell_core PUBLIC
-    generative_drum_machine_core
+    pamplist_core
     tide_pit_core
     SchussInstrumentLab::Core)
 target_compile_features(layerwell_core PUBLIC cxx_std_17)
@@ -139,6 +188,7 @@ if(LAYERWELL_ENABLE_JUCE)
     target_sources(layerwell-instrument PRIVATE src/juce_main.cpp)
     target_link_libraries(layerwell-instrument PRIVATE
         layerwell_controller
+        tide_pit_ui_model
         juce::juce_audio_basics
         juce::juce_audio_devices
         juce::juce_core

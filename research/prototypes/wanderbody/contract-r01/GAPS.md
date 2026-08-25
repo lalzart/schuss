@@ -1,0 +1,14 @@
+# Wanderbody 0.1 standalone first playable implementation gap register
+
+> Status: active
+
+| ID | Gap | Severity | Owner/stage | Current decision | Proof required | Disposition |
+|---|---|---|---|---|---|---|
+| GAP-001 | No live callback deadline, xrun, restart, CPU, or memory profile exists. | high | real-time follow-up | Cap evidence at offline host signal and unlaunched target build. | Named device, rates, block sizes, machines, callback timing distribution, allocation/lock instrumentation, xruns, and restart stress. | deferred |
+| GAP-002 | The standalone is not launched and no audio or MIDI endpoint is opened. | high | device follow-up | Build only; device settings are source/target structure. | Authorized app launch plus endpoint selection, input/output, stop/restart, error, and reconnect evidence. | deferred |
+| GAP-003 | Hover, Drunk, recurrence, and body have no listening approval. | high | listening follow-up | Retain only objective locality, recurrence, and decay claims. | Randomized exact-build listening protocol with source-relatedness, recurrence-recognition, and body-masking criteria. | deferred |
+| GAP-004 | Eight seconds, four voices, eight tuples, six modes, linear interpolation, and defaults are provisional. | medium | product profiling/listening | Centralize all values in one revision-0.1 configuration and do not expose them as stable API/file promises. | Representative CPU/memory profile and documented playing sessions comparing alternatives. | deferred |
+| GAP-005 | Version-1 state excludes captured PCM and active tails. | medium | persistence follow-up | Restore controls/seed/recurrence at a reset boundary and report empty capture explicitly. | Chosen preset/session media policy, missing-media behavior, migration, size/cost, and crash-recovery tests. | deferred |
+| GAP-006 | MIDI learn and a physical performance mapping are absent. | medium | control/device follow-up | GUI semantic controls only; MIDI device selector creates no mapping claim. | Approved semantic map, exhaustive compiled comparison, endpoint receipt, feedback, reconnect, and controller operation evidence. | deferred |
+| GAP-007 | JUCE and product distribution licensing, signing, notarization, packaging, accessibility, and OS support are not decided. | high | release/product follow-up | Private local uninstalled prototype only. | Accepted licensing/business path, release matrix, notices, packaging, accessibility, signing/notarization, and distribution review. | deferred |
+| GAP-008 | No canonical Schuss graph, instrument, provider, runtime, or product identity exists. | medium | promotion follow-up | Keep prototype noncanonical and non-production. | Separate promotion task with exact semantic identity, topology, provider/runtime coverage, record set, evidence, and acceptance. | deferred |

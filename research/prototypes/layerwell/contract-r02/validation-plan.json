@@ -1,0 +1,212 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/verify_source_authorities.py"
+      ],
+      "cost": "fast",
+      "evidence_level": "source",
+      "freshness_inputs": [
+        "research/prototypes/layerwell/source-dependencies.json",
+        "research/prototypes/tide-pit-gills/prototype-index.json",
+        "research/prototypes/pamplist/prototype-index.json",
+        "research/prototypes/pamplist/source-dependencies.json",
+        "catalog/sources.lock.json"
+      ],
+      "id": "source-authorities"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/run_focused.py"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/layerwell/CMakeLists.txt",
+        "research/prototypes/layerwell/include",
+        "research/prototypes/layerwell/src",
+        "research/prototypes/layerwell/tests"
+      ],
+      "id": "focused-layerwell"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/run_source_regressions.py"
+      ],
+      "cost": "native",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/tide-pit-gills",
+        "research/prototypes/pamplist"
+      ],
+      "id": "affected-source-regressions"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/render_evidence.py",
+        "--check"
+      ],
+      "cost": "native",
+      "evidence_level": "host-signal",
+      "freshness_inputs": [
+        "research/prototypes/layerwell/contract-r02/experiment.json",
+        "research/prototypes/layerwell/include",
+        "research/prototypes/layerwell/src",
+        "research/prototypes/layerwell/tests"
+      ],
+      "id": "objective-render-r02"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/build_juce.py",
+        "--check"
+      ],
+      "cost": "native",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json",
+        "research/prototypes/layerwell/CMakeLists.txt",
+        "research/prototypes/layerwell/include",
+        "research/prototypes/layerwell/src"
+      ],
+      "id": "authenticated-juce-build"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/instrument_lab/validate_prototype.py",
+        "--repo-root",
+        ".",
+        "--consumer-root",
+        "research/prototypes/layerwell",
+        "--check"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "research/prototypes/layerwell/prototype-index.json",
+        "research/prototypes/layerwell/contract-r02",
+        "research/prototypes/layerwell/README.md",
+        "research/prototypes/layerwell/dsp-topology.json",
+        "research/prototypes/layerwell/semantic-control-surface.json",
+        "research/prototypes/layerwell/source-dependencies.json"
+      ],
+      "id": "prototype-freshness"
+    },
+    {
+      "command": [
+        "python3",
+        "research/prototypes/layerwell/tests/reproduce_fresh_root.py"
+      ],
+      "cost": "reproduction",
+      "evidence_level": "target-build",
+      "freshness_inputs": [
+        "research/prototypes/layerwell",
+        "research/prototypes/tide-pit-gills",
+        "research/prototypes/pamplist",
+        "research/prototype_support/instrument_lab",
+        "catalog/sources.lock.json"
+      ],
+      "id": "relocated-reproduction"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/validation/run.py",
+        "--profile",
+        "current"
+      ],
+      "cost": "fast",
+      "evidence_level": "host-structural",
+      "freshness_inputs": [
+        "docs/governance/current-state.json",
+        "docs/STATUS.md",
+        "docs/ROADMAP.md",
+        "docs/tasks/README.md",
+        "research/prototypes/layerwell"
+      ],
+      "id": "schuss-current"
+    }
+  ],
+  "evidence_levels": [
+    {
+      "check_ids": [],
+      "level": "research",
+      "promotion_rule": "Bounded prior and exact local source research support the selected mechanism.",
+      "status": "available"
+    },
+    {
+      "check_ids": [],
+      "level": "proposal",
+      "promotion_rule": "The explicitly approved proposal fingerprint matches the ready implementation contract.",
+      "status": "available"
+    },
+    {
+      "check_ids": [
+        "source-authorities"
+      ],
+      "level": "source",
+      "promotion_rule": "Exact source authorities authenticate and complete-diff review shows only Layerwell-owned changes.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "focused-layerwell",
+        "affected-source-regressions",
+        "prototype-freshness",
+        "schuss-current"
+      ],
+      "level": "host-structural",
+      "promotion_rule": "Focused state, panel, trim, bounds, allocation, negative, source-regression, and prototype checks pass.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "objective-render-r02"
+      ],
+      "level": "host-signal",
+      "promotion_rule": "Frozen renders meet exact partition, preservation, comparator, finite, and alignment tolerances.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [
+        "authenticated-juce-build",
+        "relocated-reproduction"
+      ],
+      "level": "target-build",
+      "promotion_rule": "The authenticated target and relocated exact dependency closure configure, compile, link, and test without launch.",
+      "status": "planned"
+    },
+    {
+      "check_ids": [],
+      "level": "real-time",
+      "promotion_rule": "Worst-case and p99 callback measurements meet a declared budget in an authorized run.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "connected-device",
+      "promotion_rule": "Authorized endpoint, physical controls, feedback, and lifecycle checks pass.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "listening",
+      "promotion_rule": "A documented audition supports source identity, seam, trim, alignment, and musical-quality claims.",
+      "status": "deferred"
+    },
+    {
+      "check_ids": [],
+      "level": "production-integration",
+      "promotion_rule": "Canonical identities, graphs, providers, packaging, distribution, and release gates are accepted separately.",
+      "status": "deferred"
+    }
+  ],
+  "schema_version": "sonic-research-lab-validation-plan-v1",
+  "status": "ready"
+}

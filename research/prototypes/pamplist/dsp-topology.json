@@ -80,6 +80,21 @@
       "to": "role.display.state"
     },
     {
+      "from": "role.node.dry-mixer",
+      "kind": "seven-cumulative-post-level-pre-cohesion-energy-values",
+      "to": "role.display.impact-history"
+    },
+    {
+      "from": "role.node.timeline",
+      "kind": "seven-cumulative-trigger-counts",
+      "to": "role.display.impact-history"
+    },
+    {
+      "from": "role.node.cohesion-body",
+      "kind": "cumulative-dry-difference-energy-and-clear-count",
+      "to": "role.display.impact-history"
+    },
+    {
       "from": "role.node.final-output",
       "kind": "bounded-source-effect-and-final-diagnostics",
       "to": "role.display.diagnostics"
@@ -216,6 +231,8 @@
         "strictly sub-unity poles",
         "stereo mode panning",
         "peak-following wet duck",
+        "revision-zero-point-six modal return gain twelve",
+        "revision-zero-point-six duck sensitivity twenty-four",
         "exact-zero Cohere dry selection",
         "effect-only clear generation"
       ],
@@ -274,6 +291,12 @@
         "direction": "output",
         "local_role": "role.display.state",
         "name": "accepted page and Voice or Motion context, seven base and resolved voice states, sixteen-slot surface, and shared-body state"
+      },
+      {
+        "data_type": "accepted cumulative seven-lane energy and trigger values plus shared-body difference and clear values",
+        "direction": "output",
+        "local_role": "role.display.impact-history",
+        "name": "bounded seven-lane impact-history input state"
       },
       {
         "data_type": "bounded per-lane source effect and final counters",

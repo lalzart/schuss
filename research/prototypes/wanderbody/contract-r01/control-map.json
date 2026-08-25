@@ -1,0 +1,73 @@
+{
+  "application_feedback": [
+    {
+      "destination": "standalone controls and status",
+      "semantics": "Every displayed control mode freeze state capture span decision count history count voice count and diagnostic is read from the latest accepted Core snapshot rather than raw GUI input."
+    },
+    {
+      "destination": "standalone memory view",
+      "semantics": "The UI draws only a fixed 256-sample decimated snapshot with accepted write position anchor field and active-head observations; it never reads or writes the live capture store."
+    },
+    {
+      "destination": "audio and MIDI device settings",
+      "semantics": "JUCE presents selectable device configuration; no selected endpoint name receipt result or lifecycle claim is serialized into musical Core state."
+    }
+  ],
+  "endpoint_device_evidence": {
+    "notes": "The target may expose JUCE device settings when a user later launches it. Task 048 performs no app launch endpoint enumeration input receipt output playback MIDI mapping or reconnect test.",
+    "state": "deferred-no-wanderbody-device-session"
+  },
+  "gesture_state_machines": [
+    {
+      "control": "freeze",
+      "semantics": "A rising GUI action toggles accepted capture writes at the next block boundary; repeated action sequence numbers are ignored."
+    },
+    {
+      "control": "clear",
+      "semantics": "A rising action begins a 10 ms memory-body fade, invalidates capture and recurrence once zero is reached, then restores the eligible path; repeated action sequence numbers are idempotent."
+    },
+    {
+      "control": "reset-panic",
+      "semantics": "Reset reconstructs defaults seed memory and diagnostics without reallocating; Panic preserves controls and capture but clears voices body scheduler and output history."
+    }
+  ],
+  "not_applicable_rationale": "",
+  "schema_version": "sonic-research-lab-control-map-v1",
+  "semantic_bindings": [
+    {"control": "external", "mapping": "clamp normalized value to 0..1 then 20 ms slew", "timing": "next-block target then sample slew", "type": "continuous"},
+    {"control": "internal", "mapping": "clamp normalized value to 0..1 then 20 ms slew", "timing": "next-block target then sample slew", "type": "continuous"},
+    {"control": "anchor", "mapping": "normalized center of the current valid source interval", "timing": "next future decision after 20 ms slew", "type": "continuous"},
+    {"control": "field", "mapping": "0.01 plus 0.47 times normalized value", "timing": "next future decision after 20 ms slew", "type": "continuous"},
+    {"control": "motion", "mapping": "0 selects Hover and 1 selects Drunk", "timing": "next future decision", "type": "categorical"},
+    {"control": "wander", "mapping": "normalized Hover extent and Drunk step scale with exact zero stillness", "timing": "next future decision after 20 ms slew", "type": "continuous"},
+    {"control": "recurrence", "mapping": "0 Fresh 1 Locked 2 Shuffled 3 Mutated", "timing": "next future decision", "type": "categorical"},
+    {"control": "mutation", "mapping": "normalized bound for declared tuple perturbations", "timing": "next Mutated decision", "type": "continuous"},
+    {"control": "fragment", "mapping": "0.08 plus 0.40 times normalized value seconds", "timing": "future voice births", "type": "continuous"},
+    {"control": "energy", "mapping": "controls internal trigger period and fragment hop within fixed capacities", "timing": "future exciter and scheduler boundaries", "type": "continuous"},
+    {"control": "body", "mapping": "normalized parallel modal return with exact-zero structural bypass", "timing": "20 ms slew", "type": "continuous"},
+    {"control": "structure", "mapping": "normalized modal inharmonic stretch", "timing": "per-block coefficient ramp", "type": "continuous"},
+    {"control": "brightness", "mapping": "normalized higher-mode gain weighting", "timing": "per-block coefficient ramp", "type": "continuous"},
+    {"control": "damping", "mapping": "0.12 times 40 to the normalized value seconds", "timing": "per-block coefficient ramp", "type": "continuous"},
+    {"control": "position", "mapping": "normalized sine pickup and excitation weighting", "timing": "per-block coefficient ramp", "type": "continuous"},
+    {"control": "dry", "mapping": "normalized live-bus mix contribution", "timing": "20 ms slew", "type": "continuous"},
+    {"control": "memory", "mapping": "normalized fragment-bus mix contribution", "timing": "20 ms slew", "type": "continuous"},
+    {"control": "freeze", "edge": "monotonic action sequence", "timing": "next block boundary", "type": "action"},
+    {"control": "clear", "edge": "monotonic action sequence", "timing": "next block boundary and bounded fade state machine", "type": "action"},
+    {"control": "reset", "edge": "monotonic action sequence", "timing": "next block boundary", "type": "action"},
+    {"control": "panic", "edge": "monotonic action sequence", "timing": "next block boundary", "type": "action"}
+  ],
+  "source_of_truth": {
+    "artifact": "research/prototypes/wanderbody/contract-r01/control-map.json",
+    "strategy": "exhaustive-compare"
+  },
+  "status": "ready",
+  "surface_assignments": [
+    {
+      "actions": "Freeze Clear Reset Panic",
+      "continuous_controls": "External Internal Anchor Field Wander Mutation Fragment Energy Body Structure Brightness Damping Position Dry Memory",
+      "surface": "Wanderbody standalone GUI",
+      "switches": "Motion Hover or Drunk and Recurrence Fresh Locked Shuffled or Mutated"
+    }
+  ],
+  "title": "Wanderbody 0.1 standalone first playable"
+}

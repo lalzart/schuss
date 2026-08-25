@@ -1,0 +1,98 @@
+{
+  "acceptance_tests": [
+    "The exact proposal fingerprint and this bundle validate at ready before the first Layerwell Core, source adapter, controller, or JUCE implementation edit.",
+    "One parent build links the unchanged Tide Pit public Core and accepted Pamplist 0.6 public Core against one Instrument Lab authority without duplicate target or global-symbol ambiguity.",
+    "Source selection retains inactive source state, advances only the selected Core, and projects every embedded panel field from the accepted Layerwell snapshot.",
+    "Exhaustive panel tests cover all Tide Pit encoders, buttons, display lines, accepted mode, and scope, plus all Pamplist pages, contexts, controls, actions, help, and seven-lane activity history.",
+    "The first capture preserves the revision 0.1 inclusive-start, exclusive-stop, 24000-to-1536000-frame, source-only, provisional-owner contract.",
+    "Trim accepts only while capture is idle and exactly one layer is occupied, remains inside that layer's recorded extent, preserves at least 24000 frames, changes no sample byte or owner, and resets shared phase to zero.",
+    "Invalid, non-finite, busy, empty, multi-layer, out-of-range, and too-short trim requests change no accepted window, phase, owner, storage, or layer state and increment bounded diagnostics.",
+    "A later capture begins at phase zero, records exactly the current trimmed length into offset-zero staging storage, commits before the following phase-zero mix, and locks trim after the second layer commits.",
+    "Clearing back to one occupied layer restores bounded inward trim against that remaining layer's own recorded extent; clearing the final layer removes the session loop.",
+    "Frozen 16, 64, 128, and 512-frame timelines produce byte-identical accepted event, state, panel, controller, PCM, and metric artifacts within one build; the deliberately untrimmed comparator diverges.",
+    "Repeated process calls allocate nothing, perform no lock, file, endpoint, JSON, paint, or unbounded work, and emit only finite samples in [-1, 1].",
+    "Affected Tide Pit and Pamplist authority/focused suites remain valid and their source project bytes are unchanged.",
+    "The authenticated JUCE 8.0.15 Layerwell.app target configures, compiles, and links with one engine and both embedded panels without launching or opening endpoints.",
+    "The final focused, adjacent, current, sanitizer, retained-evidence, and relocated reproduction checks pass at their declared evidence levels."
+  ],
+  "decision_rights": {
+    "may": [
+      "Define Layerwell-owned fixed-capacity neutral panel snapshots, passive JUCE panel classes, GUI-to-Core mailbox commands, bounded scope/activity reductions, and restrained source-derived layout.",
+      "Choose integer trim presentation units and relative-encoder steps while preserving exact frame state, the minimum length, and the one-layer lock.",
+      "Create the smallest parent-only CMake source composition and private namespace isolation that preserves exact Tide Pit and Pamplist project bytes.",
+      "Add focused fixtures, diagnostics, comparators, receipts, and prototype-local records required by this bounded implementation."
+    ],
+    "must_not": [
+      "Change Tide Pit, Pamplist, or Generative Drums DSP equations, defaults, controls, source identity, canonical records, or standalone evidence.",
+      "Add a third source, generic plug-in or process host, generic panel ABI, per-layer loop periods, timestretch, slicing, destructive cropping, persistence, or external transport.",
+      "Infer physical controller, endpoint, visual, real-time, listening, distribution, production, or canonical success from source, host, synthetic-protocol, render, or target-build evidence.",
+      "Launch the app, open endpoints, access hardware, stage, commit, push, publish, or mutate inherited Task 043 or unrelated work."
+    ]
+  },
+  "deferred_evidence": [
+    "real-time",
+    "connected-device",
+    "listening",
+    "production-integration"
+  ],
+  "deliverables": [
+    "Frozen Layerwell 0.2 proposal and ready implementation bundle under research/prototypes/layerwell/contract-r02.",
+    "Portable Layerwell Core and exact Tide Pit/Pamplist adapters with three source-only layers, staging, shared trim metadata, accepted panel state, and deterministic diagnostics.",
+    "Source-faithful Tide Pit and Pamplist embedded JUCE panels hosted by the one Layerwell engine above a permanent sampler strip.",
+    "Regular Launch Control 3 DAW-mode mapping and pure synthetic feedback tests for both source surfaces and trim.",
+    "Deterministic render/state/panel/controller evidence, prototype metadata, source/notice closure, results, gaps, handoff, and authenticated unlaunched target-build receipt."
+  ],
+  "dependency_contracts": [
+    "Tide Pit is consumed read-only through its exact public Core, control map, UI model, source-equivalence authority, adapter/source packages, and retained notices; no source project byte may change.",
+    "Pamplist 0.6 is consumed read-only through its public Core, contextual control map, UI model, activity model, and configured macro-voice source authenticated at patcher commit 08d3e6e1e2b61230308c20a15ded58ffdaf4656c and synthesis tree 58917f3e2e46a30337cfb6292a3504845b1d5552.",
+    "The parent uses one SchussInstrumentLab::Core authority, recreates only the exact Pamplist public targets needed for composition, and changes no configured or upstream source byte.",
+    "JUCE must be an operator-supplied exact 8.0.15 source tree authenticated by research/prototype_support/instrument_lab/juce-8.0.15-source-tree.json; download is forbidden.",
+    "All existing third-party notices remain in the local closure; no distribution approval is asserted."
+  ],
+  "goal": {
+    "primary_claim": "Layerwell 0.2 can embed the complete accepted Tide Pit or Pamplist performance surface inside one three-layer source sampler and correct the sole loop's start/end by non-destructive integer metadata without breaking sample-exact alignment.",
+    "why": "Layerwell 0.1 proved composition and capture but hid the source instruments behind a generic shell and could not correct an imperfect first loop boundary."
+  },
+  "inputs": [
+    "Task 044, AGENTS.md, project context, accepted ADRs, Instrument Lab workflow, and completed Task 042 Layerwell 0.1 authority.",
+    "Completed but uncommitted Task 043 Pamplist 0.6 authority, preserved as inherited read-only work.",
+    "Exact Tide Pit public Core, control reducer, UI model, scope behavior, source authority, and notices.",
+    "Exact Pamplist 0.6 public Core, contextual reducer, surface/activity/help models, configured-source authority, and notices.",
+    "Regular Novation Launch Control 3 repository topology and official DAW-mode protocol authority.",
+    "Authenticated JUCE 8.0.15 local source seam and existing Layerwell deterministic evidence infrastructure."
+  ],
+  "proposal": {
+    "approval": {
+      "reference": "User request on 2026-08-24: All right, let's try to do it with just the pamplist and TidePit. Generative drums is too similar to Pamplist, which I prefer. Please try to create this.",
+      "state": "approved"
+    },
+    "path": "research/proposals/layerwell-r02.md",
+    "revision": "0.2",
+    "sha256": "56d1ab8ab8575e4a6f59eabbe976db11986ab02cf9ae750ae5cfae88584efeb6"
+  },
+  "schema_version": "sonic-research-lab-implementation-contract-v2",
+  "scope": {
+    "in": [
+      "Exactly Tide Pit and Pamplist as resident read-only sources, with Generative Drums removed only from Layerwell.",
+      "One Layerwell audio/MIDI engine, a replaceable source-faithful upper panel, and a permanent lower three-layer sampler strip.",
+      "Complete accepted source panel models and bounded source visual histories.",
+      "Three committed stereo stores plus one staging store, source-only transactional capture, and one shared non-destructive loop window.",
+      "Trim only while idle with exactly one occupied layer; later captures inherit the active trimmed cycle and then lock trim.",
+      "Pure regular Launch Control 3 mapping, deterministic tests/renders, prototype records, and authenticated build without launch."
+    ],
+    "out": [
+      "Generative Drums changes, other sources, arbitrary hosting, separate application routing, and duplicate source engines.",
+      "Independent layer periods, timestretch, resampling, reverse, slicing, waveform editing, destructive cropping, overdub, import/export, persistence, presets, and external clock.",
+      "Canonical/catalog/provider/runtime promotion, distribution, signing, notarization, packaging, app launch, endpoint selection, device access, listening, staging, commit, push, and publication."
+    ]
+  },
+  "status": "ready",
+  "target": "Portable C++17 Instrument Lab Core and authenticated JUCE 8.0.15 macOS standalone",
+  "title": "Layerwell 0.2: Embedded Tide Pit and Pamplist Sampler",
+  "work_type": "new-design",
+  "working_definition": {
+    "artifact": "built but unlaunched Layerwell.app with embedded Tide Pit and Pamplist panels and three-layer shared-trim sampler",
+    "evidence_level": "target-build",
+    "success_observation": "The exact portable source composition, exhaustive panel/trim/controller focused suite, and deterministic 16/64/128/512 render matrix pass; the configured and relocated source checks pass; and Layerwell.app configures, compiles, and links against authenticated JUCE 8.0.15 without launch or endpoint access."
+  }
+}

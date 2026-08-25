@@ -149,6 +149,10 @@ struct Snapshot final {
     std::array<std::uint64_t, kLaneCount> lane_steps{};
     std::array<std::uint64_t, kLaneCount> lane_addresses{};
     std::array<float, kLaneCount> lane_values{};
+    // Monotone normalized stereo energy for each post-level, pre-cohesion
+    // lane contribution. UI clients difference accepted snapshots rather than
+    // reading callback buffers or trying to catch one-quantum peaks.
+    std::array<double, kLaneCount> lane_output_energy{};
     std::array<std::array<float, kDestinationCount>, kLaneCount>
         modulation_values{};
     std::uint8_t trigger_lane_mask{};

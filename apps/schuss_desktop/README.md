@@ -1,7 +1,9 @@
 # Schuss desktop
 
 Status: one consolidated local desktop application that opens on an exact
-library of noncanonical Instrument Lab prototypes. A separate Workshop retains
+six-entry Schuss instrument library. Pamplist has canonical musical identity;
+the other five entries remain noncanonical Instrument Lab prototypes. A
+separate Workshop retains
 catalog browsing, project-backed node patching, process-local build jobs,
 explicit Ksoloti Core discovery, and a fake-tested read-back-verified
 volatile-RAM upload path. Firmware flash, DFU, reset, SD writes, packaging, and
@@ -24,8 +26,9 @@ npm run dev
 ```
 
 The first core load validates exact additive application record set
-`schuss-record-set-000033@1`. The instrument library binds five exact prototype
-revisions and checks only declared native build artifacts. Workshop project
+`schuss-record-set-000036@1`. The instrument library binds six exact prototype
+revisions, resolves Pamplist's canonical instrument and graph records, and
+checks only declared native build artifacts. Workshop project
 creation deliberately remains pinned to its established workspace-shell base,
 `schuss-record-set-000028@1`; existing projects continue to load their exact
 immutable base. The contexts are separate rather than silently rebasing old
@@ -38,8 +41,9 @@ npm run dev:web
 
 ## Product surfaces
 
-- **Instruments** is the default home. It lists five exact prototype revisions,
-  shows verified-build or unavailable state, and launches only a declared JUCE
+- **Instruments** is the default home. It lists six exact revisions, labels
+  Pamplist as canonical and the remaining entries as prototypes, shows
+  verified-build or unavailable state, and launches only a declared JUCE
   standalone executable whose current SHA-256 matches retained evidence.
 - **Workshop** retains the complete patcher, project, build, and Ksoloti
   workflow. Its patcher renders exact graph nodes, contract-owned ports, and connections;
@@ -83,9 +87,10 @@ The renderer supplies only exact prototype identity plus the literal
 command. The core revalidates a repository-controlled regular executable and
 starts it through direct argv without a shell. The main window grants only
 `core:default`; no filesystem, shell, HTTP, USB, or hardware plug-in is granted
-to the renderer. An audition session is process-local observation and does not
-establish application-launch, controller-receipt, listening, real-time, device,
-or production evidence.
+to the renderer. Pamplist's canonical musical identity does not turn this
+prototype launch path into a canonical provider. An audition session is
+process-local observation and does not establish application-launch,
+controller-receipt, listening, real-time, device, or production evidence.
 
 ## Validation
 
@@ -104,6 +109,7 @@ python3 -m unittest \
   tools.contracts.tests.test_desktop_build_device_sessions \
   tools.contracts.tests.test_desktop_patcher_bridge \
   tools.contracts.tests.test_task039_instrument_library \
+  tools.contracts.tests.test_task043_pamplist_canonical \
   tools.contracts.tests.test_desktop_patcher_operations \
   tools.contracts.tests.test_desktop_workspace_shell \
   tools.contracts.tests.test_desktop_ui_structure

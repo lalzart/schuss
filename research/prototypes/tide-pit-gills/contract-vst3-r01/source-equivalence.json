@@ -1,0 +1,133 @@
+{
+  "dependencies": [
+    {
+      "authentication": "The shared package manifest, per-file hashes, component resolution, and Tide Pit source-lock validator authenticate the exact 21-file closure.",
+      "distribution_disposition": "Retain Emilie Gillet MIT notices; this private-use task grants no independent distribution approval.",
+      "id": "mutable-ksoloti-v1",
+      "license": "MIT",
+      "revision": "package revision 1; source package manifest 9f45e860f1fff388cc18dab077232196befbc7cfb6f383effd35331bf102f2a1"
+    },
+    {
+      "authentication": "Instrument Lab authenticates the local 4425-file JUCE tree against manifest db7daa7f6937fb8774b11784efa3977b5f8f91bb718a63cf262166c8d4115ac5 and disables fetch by default.",
+      "distribution_disposition": "Private local build only; JUCE and VST3 redistribution, signing, and packaging require a fresh license review.",
+      "id": "juce-vst3-host-adapter",
+      "license": "JUCE commercial terms or AGPLv3, plus bundled VST3 SDK terms",
+      "revision": "JUCE 8.0.15 commit 91ad83ae34a81e0833b1a2b0866f54846370ae53"
+    }
+  ],
+  "fidelity": {
+    "allowed_changes": [
+      "Replace the standalone audio and physical MIDI endpoint shell with a zero-input stereo VST3 processor that receives host buffers and host MIDI.",
+      "Expose the eleven source continuous controls plus desired Source, Lock, FX Mode, Target, and Scale as sixteen stable prototype-local host parameters.",
+      "Serialize only the complete sixteen-parameter program while resetting evolving capture, mutation, random, timeline, tail, gesture, diagnostic, MIDI-edge, and scope state on recall.",
+      "Represent Mutate and Freeze as non-persistent editor and raw-MIDI one-shots and never replay them during state restoration.",
+      "Use the existing Q27HostBridge to adapt arbitrary positive host callback lengths without resampling or changing source event quantization."
+    ],
+    "excluded": [
+      "Host tempo synchronization, MIDI note triggering, sidechain or audio input, MIDI output, captured-buffer persistence, sample export, preset browser, and sample-rate conversion.",
+      "Other plug-in formats, universal or x86_64, Windows or Linux, installer, identity signing, notarization, packaging, public distribution, and production integration.",
+      "Ableton scan or workflow, callback deadlines, physical controller or endpoint behavior, listening approval, and canonical Schuss provider or runtime claims."
+    ],
+    "preserve": [
+      "Exact Tide Pit signal graph, tables, algorithms, constants, update order, 48000-Hz rate, 16-frame source quantum, Q27 boundary, fixed seed, and per-instance random sequence.",
+      "Four stage controls, Rate, Memory, Material, Position, FX-A, FX-B, Root, their defaults and source curves, and the source soft-pickup behavior.",
+      "REED/RND/FOLD, Lock, CLEAN/FILT/DRIVE, PIT/BODY/GRAIN/ALL, MAJ5/MIN5/DOR/HARM, Mutate, Freeze, exact gesture durations, controller map, display text, accepted state, and known HARM mismatch.",
+      "Original source file bytes, shared Mutable package, generated defined-C++ voice overlay, retained bit-exact Q27 oracle, and existing standalone evidence."
+    ]
+  },
+  "files": [
+    {
+      "license": "MIT, Lance Ship",
+      "path": "projects/tide-pit-gills/LICENSE.md",
+      "role": "normative",
+      "sha256": "2701d4f24dfe91723d1d43103daa123e8be61e53ad09f142735c91f58a06baac"
+    },
+    {
+      "license": "Project documentation",
+      "path": "projects/tide-pit-gills/README.md",
+      "role": "supporting",
+      "sha256": "be3a5174d13f03fc02faff57b9afa3275faf34b3210850c7f50b219fdad7b52a"
+    },
+    {
+      "license": "MIT project",
+      "path": "projects/tide-pit-gills/tidepit-gills.axp",
+      "role": "normative",
+      "sha256": "35b8df83ffc06bacca1890d936525c75758b193bcf7ef7edd69082acdb7e963c"
+    },
+    {
+      "license": "MIT project",
+      "path": "projects/tide-pit-gills/tidepit.axo",
+      "role": "normative",
+      "sha256": "8e62fdfd1f6b101cb5b6f876d3d54538af8be9a04a46cddba2711eaabc3b9009"
+    },
+    {
+      "license": "MIT, Lance Ship, with attributed Mutable MIT DSP",
+      "path": "projects/tide-pit-gills/tidepit_dsp.h",
+      "role": "normative",
+      "sha256": "3f75a3aa337109e7de270cb4a4aa7281f71ba4de443f057b4e37299e3bd7b32e"
+    },
+    {
+      "license": "MIT, Lance Ship, with attributed Mutable MIT DSP",
+      "path": "projects/tide-pit-gills/tidepit_voice.h",
+      "role": "normative",
+      "sha256": "e6cd224160df87afbfda5743c5124a4600c5f3c6fe4c02df272c41916cd6566c"
+    }
+  ],
+  "intentional_deviations": [
+    "The VST3 exposes five persistent desired mode values and reconciles them only through existing cyclic or toggle source actions.",
+    "Mutate and Freeze remain non-persistent one-shot actions so state recall cannot unexpectedly mutate or claim to restore captured audio.",
+    "State recall starts a fresh Core at seed 0x21 and restores only the complete parameter program; all evolving DSP and diagnostic state resets.",
+    "The processor rejects non-48000-Hz operation and unsupported layouts to exact silence rather than silently resampling or redesigning the source.",
+    "JUCE may add its standard bypass parameter and non-automatable VST3 MIDI-controller service parameters; they are wrapper protocol, not Tide Pit musical parameters."
+  ],
+  "not_applicable_rationale": "",
+  "oracle": {
+    "commands": [
+      "ctest --test-dir build/tide-pit-vst3-task046-release -C Release --output-on-failure -R ^tide_pit_vst3_",
+      "ctest --test-dir build/tide-pit-juce --output-on-failure -R ^tide_pit_",
+      "python3 research/prototypes/tide-pit-gills/tests/validate_render_matrix.py build/tide-pit-juce/tide-pit-render"
+    ],
+    "fixtures": [
+      "Existing 12000-source-block Q27 CLEAN reference at seed 0x21 with retained SHA-256 39d8c2a67a1b9511b4a063914b01ab816635996a47530e6c09baa8accf45ad2b.",
+      "Default and dense sixteen-parameter programs with all persistent modes exercised and Mutate and Freeze one-shots delivered at fixed sample offsets.",
+      "Host block matrix 1, 16, 64, 128, 511, 512, 513, 2048, and 4096 plus unsupported 44100 and 96000 Hz and mono-layout negatives."
+    ],
+    "kind": "bit-exact",
+    "metrics": [
+      "Existing canonical Q27 byte count and SHA-256.",
+      "Exact direct Core plus Q27HostBridge versus processor float PCM and accepted-state trace.",
+      "Finite and bounded PCM, nonzero enabled-fixture energy, event and state counters, parameter fingerprint, module identity, and source-tree non-mutation."
+    ],
+    "tolerances": {
+      "direct_processor_pcm": "exact float equality because both paths use the same Core, bridge, event convention, and Q27 conversion",
+      "finite_samples": "all",
+      "normalized_peak_maximum": 1.0,
+      "source_golden": "byte exact on the retained Apple Clang Release oracle",
+      "state_equivalence": "complete sixteen-parameter equality plus fresh-Core signal and normalized accepted-mode equality after declared gesture settling"
+    }
+  },
+  "reuse": {
+    "controller_map": {
+      "artifact": "research/prototypes/tide-pit-gills/control-map.json",
+      "sha256": "a91f4ee46b3339f455d5d277f4b8f25d378c652eb946d6c017076e44fd356f60",
+      "strategy": "reuse-fingerprinted"
+    },
+    "ui_shell": {
+      "artifact": "research/prototypes/tide-pit-gills/include/tidepit/ui_model.hpp",
+      "sha256": "c43620444595de670480acc374f75b8c0ae69d5f67e96b8f3da469c6f429163a",
+      "strategy": "reuse-fingerprinted"
+    }
+  },
+  "schema_version": "sonic-research-lab-source-equivalence-v1",
+  "source_authority": {
+    "dirty_state": "The six Tide Pit target files match their frozen hashes; unrelated history and work outside that target are not source authority and remain untouched.",
+    "observed_branch": "main",
+    "repository_id": "gills-instruments",
+    "revision": "Tide Pit target introduced at 53287e49e5bcc5fb0d73b546d88431f82467f969 with identical target bytes observed at 9b5e4f9beb911805d32444730803f69ce333890d",
+    "source_id": "gills-instruments:tide-pit-gills",
+    "source_root_id": "gills-instruments"
+  },
+  "status": "ready",
+  "unresolved_items": [],
+  "work_type": "source-reimplementation"
+}

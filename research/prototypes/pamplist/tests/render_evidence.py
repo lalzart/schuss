@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce or authenticate Pamplist revision 0.5 objective evidence."""
+"""Reproduce or authenticate Pamplist revision 0.6 objective evidence."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import argparse
 import copy
 import hashlib
 import json
+import math
 from pathlib import Path
 import shutil
 import subprocess
@@ -18,15 +19,20 @@ import wave
 PROTOTYPE = Path(__file__).resolve().parents[1]
 REPO_ROOT = PROTOTYPE.parents[2]
 BUILD = REPO_ROOT / "build" / "pamplist-evidence-build"
-EXPERIMENT = PROTOTYPE / "contract-r05" / "experiment.json"
-EVIDENCE = PROTOTYPE / "contract-r05" / "evidence"
-PREDECESSOR_AUDIO = PROTOTYPE / "contract-r04/evidence/PAMP_R04_DRY7/audio.wav"
-PROPOSAL_SHA256 = "8c15dd3c38ca8a585c2603d219daccbba9446dff7a08156e0ba579fac25e1423"
+EXPERIMENT = PROTOTYPE / "contract-r06" / "experiment.json"
+EVIDENCE = PROTOTYPE / "contract-r06" / "evidence"
+PREDECESSOR_AUDIO = (
+    PROTOTYPE / "contract-r05/evidence/PAMP_R05_AUDIO_CMP/audio.wav"
+)
+PROPOSAL_SHA256 = (
+    "a923b9665a6024d986a5ae8ac094aa9d41cd634de03c45c8ca954630ea43e917"
+)
 PREDECESSOR_AUDIO_SHA256 = (
     "a07ed1a3d461f538349cd5c12678e732d1619efc6e8ec623dce30ffd31e47912"
 )
 CONDITION_ARTIFACTS = (
     "SHA256SUMS",
+    "activity.json",
     "audio.wav",
     "controller-trace.json",
     "events.json",
@@ -36,30 +42,12 @@ CONDITION_ARTIFACTS = (
     "surface.json",
 )
 MODEL_NAMES = [
-    "Virtual Analog VCF",
-    "Phase Distortion",
-    "6-Op FM A",
-    "6-Op FM B",
-    "6-Op FM C",
-    "Wave Terrain",
-    "String Machine",
-    "Chiptune",
-    "Virtual Analog",
-    "Waveshaping",
-    "2-Op FM",
-    "Granular Formant",
-    "Harmonic / Additive",
-    "Wavetable",
-    "Chord",
-    "Speech",
-    "Swarm",
-    "Noise",
-    "Particle",
-    "String",
-    "Modal Resonator",
-    "Bass Drum",
-    "Snare Drum",
-    "Hi-Hat",
+    "Virtual Analog VCF", "Phase Distortion", "6-Op FM A", "6-Op FM B",
+    "6-Op FM C", "Wave Terrain", "String Machine", "Chiptune",
+    "Virtual Analog", "Waveshaping", "2-Op FM", "Granular Formant",
+    "Harmonic / Additive", "Wavetable", "Chord", "Speech", "Swarm",
+    "Noise", "Particle", "String", "Modal Resonator", "Bass Drum",
+    "Snare Drum", "Hi-Hat",
 ]
 
 
@@ -101,18 +89,44 @@ def validate_local_manifest(directory: Path) -> None:
             raise RuntimeError(f"{directory.name}: local artifact drifted: {name}")
 
 
-def wav_chunks(path: Path, chunk_frames: int) -> list[bytes]:
-    with wave.open(str(path), "rb") as stream:
+def part_bytes(directory: Path, metrics: dict[str, Any]) -> dict[str, bytes]:
+    with wave.open(str(directory / "audio.wav"), "rb") as stream:
         if (
             stream.getnchannels() != 2
             or stream.getframerate() != 48000
             or stream.getsampwidth() != 3
         ):
-            raise RuntimeError(f"{path}: WAV format drifted")
-        chunks: list[bytes] = []
-        while stream.tell() < stream.getnframes():
-            chunks.append(stream.readframes(chunk_frames))
-        return chunks
+            raise RuntimeError(f"{directory.name}: WAV format drifted")
+        raw = stream.readframes(stream.getnframes())
+    result: dict[str, bytes] = {}
+    offset = 0
+    for part in metrics["parts"]:
+        byte_count = part["frame_count"] * 6
+        result[part["part"]] = raw[offset : offset + byte_count]
+        offset += byte_count
+    if offset != len(raw):
+        raise RuntimeError(f"{directory.name}: part timeline does not cover WAV")
+    return result
+
+
+def pcm24(data: bytes) -> list[int]:
+    values: list[int] = []
+    for offset in range(0, len(data), 3):
+        value = int.from_bytes(data[offset : offset + 3], "little")
+        values.append(value - (1 << 24) if value & (1 << 23) else value)
+    return values
+
+
+def normalized_rms_difference(left: bytes, right: bytes) -> float:
+    if len(left) != len(right):
+        raise RuntimeError("RMS comparison lengths disagree")
+    left_values = pcm24(left)
+    right_values = pcm24(right)
+    square = sum(
+        (left_value - right_value) ** 2
+        for left_value, right_value in zip(left_values, right_values)
+    )
+    return math.sqrt(square / len(left_values)) / float(1 << 23)
 
 
 def validate_surface(condition: str, directory: Path) -> None:
@@ -129,34 +143,37 @@ def validate_surface(condition: str, directory: Path) -> None:
         if not context["top_group"] or not context["bottom_group"] or not context["guide"]:
             raise RuntimeError(f"{condition}: surface grouping/help is incomplete")
         if any(not slot["label"] or not slot["tooltip"] for slot in slots):
-            raise RuntimeError(f"{condition}: a surface slot lacks label/help")
+            raise RuntimeError(f"{condition}: a surface slot lacks semantic help")
     voice, motion, global_context = contexts
-    if not all(slot["enabled"] for slot in voice["top_slots"] + voice["bottom_slots"]):
-        raise RuntimeError(f"{condition}: Voice has a disabled semantic slot")
-    if not all(slot["enabled"] for slot in motion["top_slots"] + motion["bottom_slots"]):
-        raise RuntimeError(f"{condition}: Motion has a disabled semantic slot")
     for context in (voice, motion):
         semantics = [
             slot["semantic"]
             for slot in context["top_slots"] + context["bottom_slots"]
         ]
-        if len(set(semantics)) != 16:
-            raise RuntimeError(f"{condition}: lane context has duplicate targets")
+        if len(set(semantics)) != 16 or not all(
+            slot["enabled"] for slot in context["top_slots"] + context["bottom_slots"]
+        ):
+            raise RuntimeError(f"{condition}: lane surface target contract drifted")
     if [slot["semantic"] for slot in voice["bottom_slots"]] != [
         slot["semantic"] for slot in motion["bottom_slots"]
     ]:
         raise RuntimeError(f"{condition}: Sequencer row changed with lane context")
-    trigger = motion["top_slots"][0]
+    phase, shape, rotate = (
+        voice["bottom_slots"][1], voice["bottom_slots"][2],
+        voice["bottom_slots"][4],
+    )
     if (
-        trigger["label"] != "TRIGGER"
-        or trigger["minimum"] != 0
-        or trigger["maximum"] != 1
-        or trigger["interval"] != 1
+        "alignment" not in phase["tooltip"]
+        or "Trigger On" not in shape["tooltip"]
+        or "Hits 0 or 16" not in rotate["tooltip"]
     ):
-        raise RuntimeError(f"{condition}: Trigger is not a binary surface slot")
-    enabled_global_bottom = [slot["enabled"] for slot in global_context["bottom_slots"]]
-    if enabled_global_bottom != [True, True, False, False, False, False, False, False]:
-        raise RuntimeError(f"{condition}: Global disabled-slot contract drifted")
+        raise RuntimeError(f"{condition}: sequencer dependency help drifted")
+    if "require Cohere above zero" not in global_context["guide"]:
+        raise RuntimeError(f"{condition}: Global dependency help drifted")
+    if [slot["enabled"] for slot in global_context["bottom_slots"]] != [
+        True, True, False, False, False, False, False, False
+    ]:
+        raise RuntimeError(f"{condition}: Global reserved-slot contract drifted")
 
 
 def phase_messages(trace: dict[str, Any], phase: str) -> list[dict[str, Any]]:
@@ -166,115 +183,68 @@ def phase_messages(trace: dict[str, Any], phase: str) -> list[dict[str, Any]]:
 def validate_controller_trace(condition: str, directory: Path) -> None:
     trace = load_json(directory / "controller-trace.json")
     messages = trace["messages"]
-    if not all(message["surface_slot_count"] == 16 for message in messages):
-        raise RuntimeError(f"{condition}: controller trace lost the sixteen-slot surface")
-
-    voice = phase_messages(trace, "voice-top")
-    if not voice or any(message["lane_change_mask"] != 0 for message in voice):
-        raise RuntimeError(f"{condition}: Voice top row changed Motion/Sequencer state")
-    if any(message["voice_change_mask"] not in (0, 1) for message in voice):
-        raise RuntimeError(f"{condition}: Voice top row changed a non-selected voice")
-
-    motion = phase_messages(trace, "motion-top")
-    if not motion or any(message["voice_change_mask"] != 0 for message in motion):
-        raise RuntimeError(f"{condition}: Motion top row changed a base voice")
-    if any(message["lane_change_mask"] not in (0, 1) for message in motion):
-        raise RuntimeError(f"{condition}: Motion top row changed a non-selected lane")
-    trigger = [message for message in motion if message["cc"] == 20]
-    expected_trigger = {0: 0, 63: 0, 64: 1, 127: 1}
-    if {message["value"]: message["continuous"] for message in trigger} != expected_trigger:
-        raise RuntimeError(f"{condition}: Trigger controller boundary drifted")
-
-    motion_bottom = phase_messages(trace, "sequencer-motion")
-    voice_bottom = phase_messages(trace, "sequencer-voice")
-    motion_transforms = {
-        (message["cc"], message["value"]): (
-            message["continuous"], message["discrete"], message["integer"]
-        )
-        for message in motion_bottom
-    }
-    voice_transforms = {
-        (message["cc"], message["value"]): (
-            message["continuous"], message["discrete"], message["integer"]
-        )
-        for message in voice_bottom
-    }
-    if motion_transforms != voice_transforms:
-        raise RuntimeError(f"{condition}: Sequencer transforms depend on lane context")
-    if any(message["voice_change_mask"] != 0 for message in motion_bottom + voice_bottom):
-        raise RuntimeError(f"{condition}: Sequencer changed a voice record")
-
+    if not messages or any(message["surface_slot_count"] != 16 for message in messages):
+        raise RuntimeError(f"{condition}: controller surface cardinality drifted")
+    trigger = [
+        message for message in phase_messages(trace, "motion-top")
+        if message["cc"] == 20
+    ]
+    if {message["value"]: message["continuous"] for message in trigger} != {
+        0: 0, 63: 0, 64: 1, 127: 1
+    }:
+        raise RuntimeError(f"{condition}: Trigger Off/On boundary drifted")
     by_phase = {message["phase"]: message for message in messages}
-    toggle = by_phase["toggle-motion"]
-    if not (
-        toggle["status"] == "accepted-press"
-        and toggle["before_lane_control_mode"] == 0
-        and toggle["accepted_lane_control_mode"] == 1
-        and toggle["lane_change_mask"] == 0
-        and toggle["voice_change_mask"] == 0
-    ):
-        raise RuntimeError(f"{condition}: selected-lane mode toggle drifted")
-    if by_phase["toggle-motion-hold"]["status"] != "accepted-hold":
-        raise RuntimeError(f"{condition}: duplicate mode edge was not a hold")
-    select_lane = by_phase["select-lane-2"]
-    if not (
-        select_lane["accepted_selected_page"] == 1
-        and select_lane["accepted_lane_control_mode"] == 1
-        and select_lane["lane_change_mask"] == 0
-        and select_lane["voice_change_mask"] == 0
-    ):
-        raise RuntimeError(f"{condition}: lane selection did not preserve Motion")
-
-    global_messages = phase_messages(trace, "global")
-    if any(
-        message["lane_change_mask"] != 0
-        or message["voice_change_mask"] != 0
-        or message["accepted_lane_control_mode"] != 1
-        for message in global_messages
-    ):
-        raise RuntimeError(f"{condition}: Global changed lane/voice/mode state")
-    enter = by_phase["enter-global"]
-    clear = by_phase["clear-global"]
-    if not (
-        enter["accepted_selected_page"] == 7
-        and enter["accepted_clear_generation"] == 0
-        and clear["accepted_clear_generation"] == 1
-        and by_phase["clear-global-hold"]["status"] == "accepted-hold"
+    if (
+        by_phase["enter-global"]["accepted_selected_page"] != 7
+        or by_phase["clear-global"]["accepted_clear_generation"] != 1
+        or by_phase["clear-global-hold"]["status"] != "accepted-hold"
     ):
         raise RuntimeError(f"{condition}: Global entry/Clear edge grammar drifted")
-    returned = by_phase["return-lane-1"]
-    if returned["accepted_selected_page"] != 0 or returned["accepted_lane_control_mode"] != 1:
-        raise RuntimeError(f"{condition}: Motion did not survive Global excursion")
-    if trace["diagnostics"]["ignored_global"] != 24:
-        raise RuntimeError(f"{condition}: Global no-op count drifted")
 
 
-def normalized_snapshot(snapshot: dict[str, Any]) -> dict[str, Any]:
-    result = copy.deepcopy(snapshot)
-    result.pop("part", None)
+def event_trigger_frames(
+    events: list[dict[str, Any]], metrics: dict[str, Any]
+) -> dict[str, list[int]]:
+    offsets: dict[str, int] = {}
+    cursor = 0
+    for part in metrics["parts"]:
+        offsets[part["part"]] = cursor
+        cursor += part["frame_count"]
+    result: dict[str, list[int]] = {name: [] for name in offsets}
+    for event in events:
+        if event["trigger_lane_mask"] & 1:
+            result[event["part"]].append(
+                event["absolute_frame"] - offsets[event["part"]]
+            )
     return result
 
 
-def validate_condition(condition: str, directory: Path) -> dict[str, Any]:
+def validate_common(condition: str, directory: Path) -> tuple[
+    dict[str, Any], list[dict[str, Any]], dict[str, Any]
+]:
     validate_local_manifest(directory)
     manifest = load_json(directory / "manifest.json")
-    if manifest["model_names"] != MODEL_NAMES:
-        raise RuntimeError(f"{condition}: source-order model names drifted")
-    if manifest["proposal_sha256"] != PROPOSAL_SHA256:
-        raise RuntimeError(f"{condition}: proposal fingerprint drifted")
-    if manifest["predecessor_audio_sha256"] != PREDECESSOR_AUDIO_SHA256:
-        raise RuntimeError(f"{condition}: predecessor comparator binding drifted")
-    if manifest["renderer_revision"] != 5:
-        raise RuntimeError(f"{condition}: renderer revision drifted")
+    if (
+        manifest["condition"] != condition
+        or manifest["model_names"] != MODEL_NAMES
+        or manifest["proposal_sha256"] != PROPOSAL_SHA256
+        or manifest["predecessor_audio_sha256"] != PREDECESSOR_AUDIO_SHA256
+        or manifest["renderer_revision"] != 6
+    ):
+        raise RuntimeError(f"{condition}: renderer authority binding drifted")
+    for name, fingerprint in manifest["files"].items():
+        if sha256(directory / name) != fingerprint:
+            raise RuntimeError(f"{condition}: manifest file binding drifted: {name}")
 
     metrics = load_json(directory / "metrics.json")
-    if metrics["finite_samples_percent"] != 100:
-        raise RuntimeError(f"{condition}: non-finite sample tolerance failed")
-    if metrics["peak_main_q27"] > 134217727 or metrics["peak_auxiliary_q27"] > 134217727:
-        raise RuntimeError(f"{condition}: Q27 output bound failed")
+    if (
+        metrics["finite_samples_percent"] != 100
+        or metrics["peak_main_q27"] > 134217727
+        or metrics["peak_auxiliary_q27"] > 134217727
+    ):
+        raise RuntimeError(f"{condition}: finite/Q27 bound failed")
     for field in (
-        "saturated_frame_count",
-        "diagnostic_saturated_sample_count",
+        "saturated_frame_count", "diagnostic_saturated_sample_count",
         "effect_recovery_count",
     ):
         if metrics[field] != 0:
@@ -285,94 +255,252 @@ def validate_condition(condition: str, directory: Path) -> dict[str, Any]:
         raise RuntimeError(f"{condition}: modal pole guard failed")
 
     snapshots = load_json(directory / "snapshots.json")["snapshots"]
+    if len(snapshots) != len(metrics["parts"]):
+        raise RuntimeError(f"{condition}: part/snapshot cardinality drifted")
     for snapshot in snapshots:
         diagnostics = snapshot["diagnostics"]
         for field in (
-            "clamped_control_count",
-            "effect_recovery_count",
-            "invalid_control_count",
-            "non_finite_source_count",
-            "saturated_sample_count",
-            "unsupported_process_count",
+            "clamped_control_count", "effect_recovery_count",
+            "invalid_control_count", "non_finite_source_count",
+            "saturated_sample_count", "unsupported_process_count",
         ):
             if diagnostics[field] != 0:
-                raise RuntimeError(f"{condition}: nominal diagnostic {field} is nonzero")
+                raise RuntimeError(
+                    f"{condition}: nominal diagnostic {field} is nonzero"
+                )
+        if any(
+            not math.isfinite(value) or value < 0
+            for value in snapshot["lane_output_energy"]
+        ):
+            raise RuntimeError(f"{condition}: lane energy is invalid")
 
+    activity = load_json(directory / "activity.json")
+    if activity["condition"] != condition:
+        raise RuntimeError(f"{condition}: activity condition binding drifted")
     validate_controller_trace(condition, directory)
     validate_surface(condition, directory)
+    return metrics, snapshots, activity
 
-    if condition == "PAMP_R05_AUDIO_CMP":
-        if sha256(directory / "audio.wav") != PREDECESSOR_AUDIO_SHA256:
-            raise RuntimeError("PAMP_R05_AUDIO_CMP: revision 0.4 audio parity failed")
-        snapshot = snapshots[-1]
-        if [voice["model"] for voice in snapshot["accepted"]["voices"]] != [
-            0, 3, 6, 9, 12, 15, 21
-        ]:
-            raise RuntimeError("PAMP_R05_AUDIO_CMP: seven-model set drifted")
-        if snapshot["accepted"]["lane_control_mode"] != 0:
-            raise RuntimeError("PAMP_R05_AUDIO_CMP: accepted mode is not Voice")
-        if snapshot["started_lane_mask"] != 0x7F:
-            raise RuntimeError("PAMP_R05_AUDIO_CMP: not all voices started")
-    elif condition == "PAMP_R05_TRIGGER":
-        parts = metrics["parts"]
-        if [part["part"] for part in parts] != [
-            "trigger-cc0", "trigger-cc63", "trigger-cc64", "trigger-cc127"
-        ]:
-            raise RuntimeError("PAMP_R05_TRIGGER: part order drifted")
-        for part in parts[:2]:
-            if (
-                part["nonzero_main"] != 0
-                or part["nonzero_auxiliary"] != 0
-                or part["trigger_count"] != 0
-                or part["started_lane_mask"] != 0
-            ):
-                raise RuntimeError("PAMP_R05_TRIGGER: Off is not exact silence")
-        for part in parts[2:]:
-            if (
-                part["nonzero_main"] == 0
-                or part["nonzero_auxiliary"] == 0
-                or part["trigger_count"] == 0
-                or part["started_lane_mask"] != 1
-            ):
-                raise RuntimeError("PAMP_R05_TRIGGER: On is inactive")
-        chunks = wav_chunks(directory / "audio.wav", 8192)
-        if chunks[0] != chunks[1] or any(chunks[0]) or chunks[2] != chunks[3]:
-            raise RuntimeError("PAMP_R05_TRIGGER: Off/On byte equivalence failed")
-        accepted_triggers = [snapshot["accepted"]["lanes"][0]["routes"][0] for snapshot in snapshots]
-        if accepted_triggers != [0, 0, 1, 1]:
-            raise RuntimeError("PAMP_R05_TRIGGER: accepted Trigger states drifted")
-        if normalized_snapshot(snapshots[2]) != normalized_snapshot(snapshots[3]):
-            raise RuntimeError("PAMP_R05_TRIGGER: CC64 and CC127 state diverged")
-        events = load_json(directory / "events.json")["events"]
-        by_part: dict[str, list[dict[str, Any]]] = {}
-        for event in events:
-            normalized = dict(event)
-            part = normalized.pop("part")
-            by_part.setdefault(part, []).append(normalized)
-        for part_events in by_part.values():
-            if part_events:
-                origin = part_events[0]["absolute_frame"]
-                for event in part_events:
-                    event["absolute_frame"] -= origin
-        if by_part["trigger-cc64"] != by_part["trigger-cc127"]:
-            raise RuntimeError("PAMP_R05_TRIGGER: CC64 and CC127 events diverged")
-    elif condition == "PAMP_R05_SURFACE":
-        chunks = wav_chunks(directory / "audio.wav", 16384)
-        if len(chunks) != 2 or chunks[0] != chunks[1]:
-            raise RuntimeError("PAMP_R05_SURFACE: Voice/Motion changed PCM")
-        if [snapshot["accepted"]["lane_control_mode"] for snapshot in snapshots] != [0, 1]:
-            raise RuntimeError("PAMP_R05_SURFACE: mode snapshots drifted")
-    elif condition == "PAMP_R05_GLOBAL":
-        chunks = wav_chunks(directory / "audio.wav", 16384)
-        if len(chunks) != 2 or chunks[0] != chunks[1]:
-            raise RuntimeError("PAMP_R05_GLOBAL: page selection changed PCM")
-        if [snapshot["accepted"]["selected_page"] for snapshot in snapshots] != [0, 7]:
-            raise RuntimeError("PAMP_R05_GLOBAL: selected-page snapshots drifted")
-        if any(snapshot["accepted"]["lane_control_mode"] != 1 for snapshot in snapshots):
-            raise RuntimeError("PAMP_R05_GLOBAL: Motion was not retained")
+
+def validate_dry(
+    directory: Path, metrics: dict[str, Any], snapshots: list[dict[str, Any]]
+) -> dict[str, Any]:
+    if sha256(directory / "audio.wav") != PREDECESSOR_AUDIO_SHA256:
+        raise RuntimeError("PAMP_R06_DRY_CMP: revision 0.5 dry parity failed")
+    if len(metrics["parts"]) != 1 or len(snapshots) != 1:
+        raise RuntimeError("PAMP_R06_DRY_CMP: comparator shape drifted")
+    snapshot = snapshots[0]
+    if (
+        snapshot["accepted"]["cohesion"]["cohere"] != 0
+        or snapshot["started_lane_mask"] != 0x7F
+        or any(value <= 0 for value in snapshot["lane_output_energy"])
+    ):
+        raise RuntimeError("PAMP_R06_DRY_CMP: dry seven-lane state drifted")
+    return {
+        "audio_sha256": sha256(directory / "audio.wav"),
+        "lane_output_energy": snapshot["lane_output_energy"],
+    }
+
+
+def validate_sequence(
+    directory: Path, metrics: dict[str, Any], snapshots: list[dict[str, Any]]
+) -> dict[str, Any]:
+    expected = [
+        "phase-0", "phase-64", "rotate-3", "trigger-only-triangle",
+        "routed-pulse", "routed-triangle", "routed-sine", "routed-ramp",
+        "routed-decay", "routed-hold", "routed-smooth",
+    ]
+    if [part["part"] for part in metrics["parts"]] != expected:
+        raise RuntimeError("PAMP_R06_SEQUENCE: part order drifted")
+    chunks = part_bytes(directory, metrics)
+    events = load_json(directory / "events.json")["events"]
+    triggers = event_trigger_frames(events, metrics)
+    accepted = {snapshot["part"]: snapshot["accepted"] for snapshot in snapshots}
+    base = accepted["phase-0"]["lanes"][0]
+    if (
+        triggers["phase-0"] == triggers["phase-64"]
+        or base["hits"] != accepted["phase-64"]["lanes"][0]["hits"]
+        or base["rate_index"] != accepted["phase-64"]["lanes"][0]["rate_index"]
+    ):
+        raise RuntimeError("PAMP_R06_SEQUENCE: Phase response/dependency failed")
+    if (
+        len(triggers["phase-0"]) != 5
+        or len(triggers["rotate-3"]) != 5
+        or triggers["phase-0"] == triggers["rotate-3"]
+        or base["hits"] != accepted["rotate-3"]["lanes"][0]["hits"]
+    ):
+        raise RuntimeError("PAMP_R06_SEQUENCE: Rotate response/cardinality failed")
+    if (
+        chunks["phase-0"] != chunks["trigger-only-triangle"]
+        or triggers["phase-0"] != triggers["trigger-only-triangle"]
+    ):
+        raise RuntimeError("PAMP_R06_SEQUENCE: trigger-only Shape parity failed")
+    routed = [name for name in expected if name.startswith("routed-")]
+    if len({hashlib.sha256(chunks[name]).digest() for name in routed}) != len(routed):
+        raise RuntimeError("PAMP_R06_SEQUENCE: routed Shape PCM is not distinct")
+    differences: dict[str, float] = {}
+    for name in routed[1:]:
+        difference = normalized_rms_difference(chunks["routed-pulse"], chunks[name])
+        differences[name] = difference
+        if difference <= 5e-4:
+            raise RuntimeError(f"PAMP_R06_SEQUENCE: {name} response is too small")
+        if triggers[name] != triggers["routed-pulse"]:
+            raise RuntimeError(f"PAMP_R06_SEQUENCE: {name} changed trigger timing")
+    return {
+        "phase_0_trigger_frames": triggers["phase-0"],
+        "phase_64_trigger_frames": triggers["phase-64"],
+        "rotate_3_trigger_frames": triggers["rotate-3"],
+        "routed_shape_rms_difference_from_pulse": differences,
+        "trigger_only_shape_audio_equal": True,
+    }
+
+
+def validate_global(
+    directory: Path, metrics: dict[str, Any], snapshots: list[dict[str, Any]]
+) -> dict[str, Any]:
+    parameters = ["drive", "root", "spread", "tail", "damping", "width", "duck"]
+    chunks = part_bytes(directory, metrics)
+    differences: dict[str, float] = {}
+    for parameter in parameters:
+        difference = normalized_rms_difference(
+            chunks[f"{parameter}-low"], chunks[f"{parameter}-high"]
+        )
+        differences[parameter] = difference
+        if difference < 5e-4:
+            raise RuntimeError(
+                f"PAMP_R06_GLOBAL: {parameter} response {difference:.9f} is too small"
+            )
+    tail_peak = max(abs(value) for value in pcm24(chunks["tail-before-clear"]))
+    if tail_peak / float(1 << 23) < 5e-4:
+        raise RuntimeError("PAMP_R06_GLOBAL: pre-Clear tail is too quiet")
+    if any(chunks["after-clear"]) or not any(chunks["no-clear-continue"]):
+        raise RuntimeError("PAMP_R06_GLOBAL: Clear exact-zero/reference failed")
+
+    events = load_json(directory / "events.json")["events"]
+    clear_events = [event for event in events if event["effect_cleared"]]
+    if len(clear_events) != 1 or clear_events[0]["part"] != "after-clear":
+        raise RuntimeError("PAMP_R06_GLOBAL: Clear provenance event drifted")
+    by_part = {snapshot["part"]: snapshot for snapshot in snapshots}
+    cleared = by_part["after-clear"]
+    reference = by_part["no-clear-continue"]
+    cleared_controls = copy.deepcopy(cleared["accepted"])
+    cleared_controls["effect_clear_generation"] = reference["accepted"][
+        "effect_clear_generation"
+    ]
+    if cleared_controls != reference["accepted"]:
+        raise RuntimeError("PAMP_R06_GLOBAL: Clear changed accepted musical controls")
+    for key in (
+        "lane_addresses", "lane_phase_q32", "lane_remainders", "lane_steps",
+        "master_phase_q32", "master_remainder", "resolved_levels",
+        "resolved_models", "resolved_notes", "source_random_states",
+        "started_lane_mask",
+    ):
+        if cleared[key] != reference[key]:
+            raise RuntimeError(f"PAMP_R06_GLOBAL: Clear changed {key}")
+    if (
+        cleared["diagnostics"]["lane_trigger_count"]
+        != reference["diagnostics"]["lane_trigger_count"]
+        or cleared["diagnostics"]["effect_clear_count"] != 1
+        or any(cleared["cohesion"]["mode_real"])
+        or any(cleared["cohesion"]["mode_imaginary"])
+        or cleared["cohesion"]["duck_envelope"] != 0
+    ):
+        raise RuntimeError("PAMP_R06_GLOBAL: Clear state isolation failed")
+    return {
+        "after_clear_nonzero_samples": sum(value != 0 for value in pcm24(chunks["after-clear"])),
+        "global_parameter_rms_differences": differences,
+        "no_clear_continue_nonzero_samples": sum(
+            value != 0 for value in pcm24(chunks["no-clear-continue"])
+        ),
+        "tail_before_clear_peak_normalized": tail_peak / float(1 << 23),
+    }
+
+
+def validate_activity(
+    metrics: dict[str, Any],
+    snapshots: list[dict[str, Any]],
+    activity: dict[str, Any],
+) -> dict[str, Any]:
+    if len(snapshots) != 202 or snapshots[-2]["part"] != "activity-clear":
+        raise RuntimeError("PAMP_R06_ACTIVITY: frozen activity timeline drifted")
+    running = snapshots[:-2]
+    for previous, current in zip(running, running[1:]):
+        if current["absolute_frame"] <= previous["absolute_frame"]:
+            raise RuntimeError("PAMP_R06_ACTIVITY: frame telemetry is not monotone")
+        if any(
+            right < left
+            for left, right in zip(
+                previous["lane_output_energy"], current["lane_output_energy"]
+            )
+        ):
+            raise RuntimeError("PAMP_R06_ACTIVITY: lane energy is not monotone")
+    if any(value <= 0 for value in running[-1]["lane_output_energy"]):
+        raise RuntimeError("PAMP_R06_ACTIVITY: an active lane has no energy")
+    if (
+        any(snapshots[-1]["lane_output_energy"])
+        or snapshots[-1]["started_lane_mask"] != 0
+    ):
+        raise RuntimeError("PAMP_R06_ACTIVITY: unstarted rebase is not silent")
+
+    samples = activity["samples"]
+    if len(samples) != len(snapshots):
+        raise RuntimeError("PAMP_R06_ACTIVITY: reducer sample count drifted")
+    for sample in samples:
+        values = sample["lane_levels"] + [sample["cohesion_level"]]
+        if any(not math.isfinite(value) or not 0 <= value <= 1 for value in values):
+            raise RuntimeError("PAMP_R06_ACTIVITY: display level escaped [0,1]")
+    if not all(
+        any(sample["lane_levels"][lane] > 0 for sample in samples)
+        for lane in range(7)
+    ):
+        raise RuntimeError("PAMP_R06_ACTIVITY: a lane never reached the display")
+    if not any(sample["cohesion_level"] > 0 for sample in samples):
+        raise RuntimeError("PAMP_R06_ACTIVITY: cohesion field never became active")
+    clear_samples = [sample for sample in samples if sample["effect_cleared"]]
+    if len(clear_samples) != 1 or clear_samples[0]["part"] != "activity-clear":
+        raise RuntimeError("PAMP_R06_ACTIVITY: Clear marker reduction drifted")
+    reset = samples[-1]
+    if (
+        not reset["rebased"]
+        or reset["frame_count"] != 0
+        or reset["trigger_mask"] != 0
+        or reset["effect_cleared"]
+        or any(reset["lane_levels"])
+    ):
+        raise RuntimeError("PAMP_R06_ACTIVITY: reset produced false activity")
+    history = activity["history"]
+    if (
+        history["capacity"] != 192
+        or history["maximum_size"] != 192
+        or history["size_before_rebase"] != 192
+        or history["final_size"] != 0
+    ):
+        raise RuntimeError("PAMP_R06_ACTIVITY: fixed history contract drifted")
+    if metrics["effect_clear_count"] != 1:
+        raise RuntimeError("PAMP_R06_ACTIVITY: accepted Clear count drifted")
+    return {
+        "clear_marker_count": len(clear_samples),
+        "final_active_lane_energy": running[-1]["lane_output_energy"],
+        "history": history,
+        "rebase_is_exact_zero": True,
+    }
+
+
+def validate_condition(condition: str, directory: Path) -> dict[str, Any]:
+    metrics, snapshots, activity = validate_common(condition, directory)
+    if condition == "PAMP_R06_DRY_CMP":
+        observations = validate_dry(directory, metrics, snapshots)
+    elif condition == "PAMP_R06_SEQUENCE":
+        observations = validate_sequence(directory, metrics, snapshots)
+    elif condition == "PAMP_R06_GLOBAL":
+        observations = validate_global(directory, metrics, snapshots)
+    elif condition == "PAMP_R06_ACTIVITY":
+        observations = validate_activity(metrics, snapshots, activity)
     else:
-        raise RuntimeError(f"unknown revision 0.5 condition: {condition}")
-    return metrics
+        raise RuntimeError(f"unknown revision 0.6 condition: {condition}")
+    result = copy.deepcopy(metrics)
+    result["validated_observations"] = observations
+    return result
 
 
 def write_top_level_manifest(
@@ -382,15 +510,14 @@ def write_top_level_manifest(
     hashes: dict[str, dict[str, str]],
     metrics: dict[str, dict[str, Any]],
 ) -> None:
-    comparator_audio = hashes["PAMP_R05_AUDIO_CMP"]["audio.wav"]
-    if comparator_audio != PREDECESSOR_AUDIO_SHA256:
-        raise RuntimeError("revision 0.4 audio comparator did not match")
+    if hashes["PAMP_R06_DRY_CMP"]["audio.wav"] != PREDECESSOR_AUDIO_SHA256:
+        raise RuntimeError("revision 0.5 audio comparator did not match")
     manifest = {
         "comparator": {
             "audio_equal": True,
             "expected_sha256": PREDECESSOR_AUDIO_SHA256,
-            "id": "PAMP_R05_AUDIO_CMP",
-            "predecessor": "contract-r04/PAMP_R04_DRY7",
+            "id": "PAMP_R06_DRY_CMP",
+            "predecessor": "contract-r05/PAMP_R05_AUDIO_CMP",
         },
         "conditions": {
             condition: {
@@ -401,7 +528,7 @@ def write_top_level_manifest(
         },
         "proposal_sha256": PROPOSAL_SHA256,
         "sample_rate_hz": 48000,
-        "schema_version": "pamplist-render-evidence-v4",
+        "schema_version": "pamplist-render-evidence-v5",
         "seed": 1346456912,
         "supported_block_frames": blocks,
     }
@@ -423,9 +550,12 @@ def authenticate_retained(destination: Path) -> None:
     top_sums = destination / "SHA256SUMS"
     manifest_path = destination / "evidence-manifest.json"
     if not top_sums.is_file() or not manifest_path.is_file():
-        raise RuntimeError("missing retained Pamplist revision 0.5 evidence")
-    if not PREDECESSOR_AUDIO.is_file() or sha256(PREDECESSOR_AUDIO) != PREDECESSOR_AUDIO_SHA256:
-        raise RuntimeError("revision 0.4 predecessor audio is missing or drifted")
+        raise RuntimeError("missing retained Pamplist revision 0.6 evidence")
+    if (
+        not PREDECESSOR_AUDIO.is_file()
+        or sha256(PREDECESSOR_AUDIO) != PREDECESSOR_AUDIO_SHA256
+    ):
+        raise RuntimeError("revision 0.5 predecessor audio is missing or drifted")
     expected: dict[str, str] = {}
     for line in top_sums.read_text(encoding="utf-8").splitlines():
         fingerprint, name = line.split("  ", 1)
@@ -454,10 +584,14 @@ def authenticate_retained(destination: Path) -> None:
         hashes = condition_hashes(directory)
         if hashes != manifest["conditions"][condition]["artifacts"]:
             raise RuntimeError(f"{condition}: retained manifest binding drifted")
-        validate_condition(condition, directory)
-    if sha256(destination / "PAMP_R05_AUDIO_CMP/audio.wav") != sha256(PREDECESSOR_AUDIO):
-        raise RuntimeError("retained revision 0.4 audio parity no longer holds")
-    print(f"Pamplist retained revision 0.5 render evidence: valid ({destination})")
+        validated_metrics = validate_condition(condition, directory)
+        if validated_metrics != manifest["conditions"][condition]["metrics"]:
+            raise RuntimeError(f"{condition}: retained objective metrics drifted")
+    if sha256(destination / "PAMP_R06_DRY_CMP/audio.wav") != sha256(
+        PREDECESSOR_AUDIO
+    ):
+        raise RuntimeError("retained revision 0.5 dry parity no longer holds")
+    print(f"Pamplist retained revision 0.6 render evidence: valid ({destination})")
 
 
 def reproduce(destination: Path) -> None:
@@ -470,9 +604,11 @@ def reproduce(destination: Path) -> None:
         "cmake", "-S", str(PROTOTYPE), "-B", str(BUILD),
         "-DCMAKE_BUILD_TYPE=Release",
     ])
-    run(["cmake", "--build", str(BUILD), "--target", "pamplist-render", "--parallel"])
-    renderer = BUILD / "pamplist-render"
-    with tempfile.TemporaryDirectory(prefix="pamplist-r05-render-") as temporary:
+    run([
+        "cmake", "--build", str(BUILD), "--target", "pamplist-render",
+        "--parallel",
+    ])
+    with tempfile.TemporaryDirectory(prefix="pamplist-r06-render-") as temporary:
         root = Path(temporary)
         baseline_hashes: dict[str, dict[str, str]] = {}
         baseline_metrics: dict[str, dict[str, Any]] = {}
@@ -480,20 +616,19 @@ def reproduce(destination: Path) -> None:
             for condition in conditions:
                 output = root / f"block-{block}" / condition
                 run([
-                    str(renderer),
+                    str(BUILD / "pamplist-render"),
                     "--condition", condition,
                     "--block", str(block),
                     "--output", str(output),
                 ])
                 hashes = condition_hashes(output)
-                metrics = validate_condition(condition, output)
+                condition_metrics = validate_condition(condition, output)
                 if block == blocks[0]:
                     baseline_hashes[condition] = hashes
-                    baseline_metrics[condition] = metrics
+                    baseline_metrics[condition] = condition_metrics
                 elif hashes != baseline_hashes[condition]:
                     changed = sorted(
-                        name
-                        for name in CONDITION_ARTIFACTS
+                        name for name in CONDITION_ARTIFACTS
                         if hashes[name] != baseline_hashes[condition][name]
                     )
                     raise RuntimeError(
@@ -502,14 +637,10 @@ def reproduce(destination: Path) -> None:
         baseline = root / f"block-{blocks[0]}"
         shutil.copytree(baseline, destination)
         write_top_level_manifest(
-            destination,
-            blocks,
-            conditions,
-            baseline_hashes,
-            baseline_metrics,
+            destination, blocks, conditions, baseline_hashes, baseline_metrics
         )
     authenticate_retained(destination)
-    print(f"Pamplist revision 0.5 render matrix reproduced: {destination}")
+    print(f"Pamplist revision 0.6 render matrix reproduced: {destination}")
 
 
 def main() -> int:
@@ -524,7 +655,9 @@ def main() -> int:
             authenticate_retained(arguments.output.resolve())
         else:
             reproduce(arguments.output.resolve())
-    except (OSError, KeyError, ValueError, RuntimeError, subprocess.CalledProcessError) as error:
+    except (
+        OSError, KeyError, ValueError, RuntimeError, subprocess.CalledProcessError
+    ) as error:
         print(f"Pamplist render evidence failed: {error}")
         return 1
     return 0
